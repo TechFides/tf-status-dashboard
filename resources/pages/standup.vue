@@ -107,7 +107,7 @@
 import axios from '~/plugins/axios';
 import NoteList from '../components/NoteList';
 import ProjectStatusPicker from '../components/ProjectStatusPicker';
-import { parse, format, addWeeks, setDay } from 'date-fns';
+import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
 import { mapState } from 'vuex';
 import DatePickerField from '../components/DatePickerField'
 
@@ -270,11 +270,14 @@ export default {
         return;
       }
 
+      const currentDate = new Date();
       const { deadlineDate } = this.noteDialog;
+      const resultDate = setHours(deadlineDate, getHours(currentDate));
+
       const note = {
         id: this.noteDialog.id,
         projectId: this.noteDialog.selectedProject.value,
-        deadlineDate: deadlineDate.toISOString(),
+        deadlineDate: resultDate.toISOString(),
         note: this.noteDialog.note,
       };
 
