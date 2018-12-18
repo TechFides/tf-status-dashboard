@@ -1,6 +1,6 @@
 <template>
   <div class="note-columns mx-3">
-    <v-card v-for="(item, index) in notes" :key="index" color="brown lighten-5" class="note-card mt-3">
+    <v-card v-for="item in notes" :key="item.id" color="brown lighten-5" class="note-card mt-3">
       <div class="pa-2">
         <v-layout row nowrap>
           <h2>{{ item.projectCode }}</h2>
