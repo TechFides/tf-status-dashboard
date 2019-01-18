@@ -15,8 +15,9 @@ const Database = use('Database');
 class UserSeeder {
   async run () {
     await Database.table('users').insert({
-      name: 'Tomáš Bruckner',
-      alias: 'Tom',
+      first_name: 'Tomáš',
+      last_name: 'Bruckner',
+      username: 'Tom',
     });
   }
 }
