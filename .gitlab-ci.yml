@@ -6,9 +6,9 @@ stages:
 install:
   stage: install
   cache:
-    key: "$CI_BUILD_REF_NAME-client-$CI_PIPELINE_ID"
+    key: "$CI_BUILD_REF_NAME-$CI_PIPELINE_ID"
     paths:
-      - client/node_modules/
+      - node_modules/
   script:
     - npm ci
   tags:
@@ -17,9 +17,9 @@ install:
 lint:
   stage: lint
   cache:
-    key: "$CI_BUILD_REF_NAME-client-$CI_PIPELINE_ID"
+    key: "$CI_BUILD_REF_NAME-$CI_PIPELINE_ID"
     paths:
-      - client/node_modules/
+      - node_modules/
     policy: pull
   script:
     - npm run lint
@@ -31,7 +31,6 @@ cleanup:
   when: always
   script:
     # Clean unused cache folder from removed branches
-    - clear-cache -g "$CI_PROJECT_NAMESPACE" -p "$CI_PROJECT_NAME" -b "$CI_BUILD_REF_NAME-client-$CI_PIPELINE_ID"
-    - clear-cache -g "$CI_PROJECT_NAMESPACE" -p "$CI_PROJECT_NAME" -b "$CI_BUILD_REF_NAME-server-$CI_PIPELINE_ID"
+    - clear-cache -g "$CI_PROJECT_NAMESPACE" -p "$CI_PROJECT_NAME" -b "$CI_BUILD_REF_NAME-$CI_PIPELINE_ID"
   tags:
     - nodejs-8
