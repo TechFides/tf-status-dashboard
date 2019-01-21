@@ -109,7 +109,7 @@ import NoteList from '../components/NoteList';
 import ProjectStatusPicker from '../components/ProjectStatusPicker';
 import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
 import { mapState } from 'vuex';
-import DatePickerField from '../components/DatePickerField'
+import DatePickerField from '../components/DatePickerField';
 
 export default {
   fetch ({ store, params }) {
@@ -296,7 +296,7 @@ export default {
         selectedProject: this.projectNames.find(v => v.value === note.projectId),
         deadlineDate: parse(note.deadlineDate),
         note: note.text,
-      }
+      };
     },
     async createStandup (i) {
       await this.$store.dispatch('createStandup');
