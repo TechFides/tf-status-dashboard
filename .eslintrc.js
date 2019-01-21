@@ -3,12 +3,12 @@ module.exports = {
   parser: 'babel-eslint',
   env: {
     browser: true,
-    node: true
+    node: true,
   },
   extends: 'standard',
   // required to lint *.vue files
   plugins: [
-    'html'
+    'html',
   ],
   // add your custom rules here
   rules: {
@@ -20,13 +20,13 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
     // do not allow console.logs etc...
     'no-console': 0,
-    'semi': 0,
+    'semi': ['error', 'always'],
     'comma-dangle': ['error', 'always-multiline'],
     'no-unused-vars': 0,
     'space-before-function-paren': 0,
     'comma-spacing': 0,
   },
   globals: {
-    'use': true
-  }
-}
+    'use': true,
+  },
+};

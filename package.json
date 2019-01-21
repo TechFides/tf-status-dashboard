@@ -1,6 +1,6 @@
 {
-  "name": "adonuxt",
-  "version": "1.0.0",
+  "name": "dashboard",
+  "version": "1.1.0",
   "author": "",
   "description": "",
   "license": "MIT",
@@ -12,7 +12,7 @@
     "build": "node ./ace nuxtbuild",
     "start": "nodemon --inspect --watch app --watch bootstrap --watch config --watch .env -x node server.js",
     "precommit": "npm run lint",
-    "lint": "standard && eslint --ext .js,.vue resources/"
+    "lint": "eslint --ext .js,.vue resources/ app/"
   },
   "dependencies": {
     "@adonisjs/ace": "^5.0.8",
