@@ -90,6 +90,12 @@ Route
   .delete('/api/users/:id', 'UserController.deleteUser');
 
 /**
+ * ROLES
+ */
+Route
+  .get('/api/roles', 'RoleController.getRoles');
+
+/**
  * NUXT
  */
 Route

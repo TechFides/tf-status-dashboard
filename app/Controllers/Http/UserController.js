@@ -1,6 +1,7 @@
 'use strict';
 
 const UserModel = use('App/Models/User');
+const RoleModel = use('Adonis/Acl/Role');
 
 class UserController {
   static mapToDbEntity (request) {
@@ -24,6 +25,7 @@ class UserController {
   async getUsers ({ request, response, params }) {
     const users = await UserModel
       .query()
+      .with('roles')
       .fetch();
 
     return users.toJSON();
@@ -53,7 +55,10 @@ class UserController {
       user.password = request.input('password');
     }
 
-    await user.save();
+    await Promise.all([
+      user.save(),
+      this._setRoles(user, request.input('roles')),
+    ]);
 
     return user.toJSON();
   }
@@ -68,6 +73,26 @@ class UserController {
     } catch (e) {
       return e.toJSON();
     }
+  }
+
+  async _setRoles(user, roles) {
+    const attachedRoles = await user.getRoles();
+
+    const toAttach = roles
+      .filter(slug => roles.includes(slug))
+      .map(slug => RoleModel.findBy('slug', slug));
+
+    const toDetach = attachedRoles
+      .filter(slug => !roles.includes(slug))
+      .map(slug => RoleModel.findBy('slug', slug));
+
+    const attach = await Promise.all(toAttach).then(result => result.map(role => role.id));
+    const detach = await Promise.all(toDetach).then(result => result.map(role => role.id));
+
+    return Promise.all([
+      user.roles().attach(attach),
+      user.roles().detach(detach),
+    ]);
   }
 }
 

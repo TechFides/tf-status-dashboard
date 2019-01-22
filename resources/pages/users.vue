@@ -30,6 +30,14 @@
                                 label="Expy"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
+                  <v-select
+                          label="Role"
+                          :items="roleItems"
+                          multiple
+                          v-model="modalItem.roles">
+                  </v-select>
+                </v-flex>
+                <v-flex xs12 sm6 md4>
                   <v-checkbox
                     label="Aktivní"
                     v-model="modalItem.isActive"
@@ -90,11 +98,15 @@ import { mapState } from 'vuex';
 
 export default {
   async fetch ({ store, params }) {
-    await store.dispatch('getUsers');
+    await Promise.all([
+      store.dispatch('getUsers'),
+      store.dispatch('getRoles'),
+    ]);
   },
   computed: {
     ...mapState([
       'users',
+      'roles',
     ]),
     headers: function () {
       return [
@@ -136,6 +148,12 @@ export default {
         },
       ];
     },
+    roleItems () {
+      return this.roles.map(r => ({
+        text: r.name,
+        value: r.slug,
+      }));
+    },
   },
   data () {
     return {
@@ -152,6 +170,7 @@ export default {
         totalExp: 0,
         isActive: true,
         username: '',
+        roles: [],
       },
       defaultModalItem: {
         id: null,
@@ -161,6 +180,7 @@ export default {
         totalExp: 0,
         isActive: true,
         username: '',
+        roles: [],
       },
     };
   },
@@ -178,6 +198,7 @@ export default {
         totalExp: item.totalExp,
         isActive: item.isActive === 1,
         username: item.username,
+        roles: item.roles,
       };
 
       this.modalTitle = 'Upravit uživatele';

@@ -7,6 +7,7 @@ export const state = () => ({
   standups: [],
   standupRatings: {},
   users: [],
+  roles: [],
 });
 
 const sortByProperty = function (property, a, b) {
@@ -121,7 +122,11 @@ export const mutations = {
       level: calculateLevel(u.total_exp),
       totalExp: u.total_exp,
       username: u.username,
+      roles: u.roles.map(r => r.slug),
     }));
+  },
+  setRoles (state, roles) {
+    state.roles = roles;
   },
 };
 
@@ -214,5 +219,10 @@ export const actions = {
     const users = await axios.get('/api/users');
 
     commit('setUsers', users.data);
+  },
+  async getRoles ({ commit }) {
+    const roles = await axios.get('/api/roles');
+
+    commit('setRoles', roles.data);
   },
 };
