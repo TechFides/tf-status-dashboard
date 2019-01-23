@@ -50,16 +50,6 @@ Route
   .validator('StoreProjectValidator');
 Route
   .delete('/api/projects/:id', 'ProjectController.deleteProject');
-Route
-  .get('/api/projects', 'ProjectController.getProjects');
-Route
-  .post('/api/projects', 'ProjectController.createProject')
-  .validator('StoreProjectValidator');
-Route
-  .put('/api/projects/:id', 'ProjectController.editProject')
-  .validator('StoreProjectValidator');
-Route
-  .delete('/api/projects/:id', 'ProjectController.deleteProject');
 
 /**
  * PROJECT RATINGS
