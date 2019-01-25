@@ -78,7 +78,6 @@
 </template>
 
 <script>
-import axios from '~/plugins/axios';
 import { mapState } from 'vuex';
 
 export default {
@@ -132,7 +131,7 @@ export default {
         };
 
         this.$store.commit('updateRating', ratingData);
-        await axios.post('/api/projectRatings', ratingData);
+        await this.$axios.$post('/api/projectRatings', ratingData);
       } catch (e) {
         // TODO handle error
         console.error(e);

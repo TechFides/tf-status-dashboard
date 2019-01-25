@@ -1,5 +1,3 @@
-import axios from '~/plugins/axios';
-
 export const state = () => ({
   notes: [],
   projects: [],
@@ -132,20 +130,20 @@ export const mutations = {
 
 export const actions = {
   async getProjects ({ commit }) {
-    const res = await axios.get('/api/projects',
+    const res = await this.$axios.$get('/api/projects',
       getProjectParams(),
     );
 
     commit('setProjects', res.data);
   },
   async getAllProjects ({ commit }) {
-    const res = await axios.get('/api/projects');
+    const res = await this.$axios.$get('/api/projects');
 
-    commit('setAllProjects', res.data);
+    commit('setAllProjects', res);
   },
   async createStandup ({ commit }) {
-    await axios.post('/api/standups');
-    const res = await axios.get(
+    await this.$axios.$post('/api/standups');
+    const res = await this.$axios.$get(
       '/api/projectRatings',
       getDateParams(),
     );
@@ -155,74 +153,74 @@ export const actions = {
   async getProjectsForMonth ({ commit }, date) {
     const dateParams = getDateParams(date);
     const [projectData, ratingsData] = await Promise.all([
-      axios.get(
+      this.$axios.$get(
         '/api/projects',
       ),
-      axios.get(
+      this.$axios.$get(
         '/api/projectRatings',
         dateParams,
       ),
     ]);
 
-    const projects = filterProjectsByRatings(projectData.data, ratingsData.data);
+    const projects = filterProjectsByRatings(projectData, ratingsData);
 
     commit('setProjects', projects);
-    commit('setProjectRatings', ratingsData.data);
+    commit('setProjectRatings', ratingsData);
   },
   async getStandupData ({ commit }) {
     const [projectData, ratingsData] = await Promise.all([
-      axios.get(
+      this.$axios.$get(
         '/api/projects',
         getProjectParams(),
       ),
-      axios.get(
+      this.$axios.$get(
         '/api/projectRatings',
         getDateParams(),
       ),
     ]);
 
-    commit('setProjects', projectData.data);
-    commit('setProjectRatings', ratingsData.data);
+    commit('setProjects', projectData);
+    commit('setProjectRatings', ratingsData);
   },
   async getNotes ({ commit }) {
-    const notes = await axios.get('/api/notes');
+    const notes = await this.$axios.$get('/api/notes');
 
-    commit('setNotes', notes.data);
+    commit('setNotes', notes);
   },
   async createNote ({ dispatch }, note) {
-    await axios.post('/api/notes', note);
+    await this.$axios.$post('/api/notes', note);
     dispatch('getNotes');
   },
   async editNote ({ dispatch }, note) {
-    await axios.put(`/api/notes/${note.id}`, note);
+    await this.$axios.$put(`/api/notes/${note.id}`, note);
     dispatch('getNotes');
   },
   async markNoteCompleted ({ commit }, noteId) {
     const [_, notes] = await Promise.all(
       [
-        axios.post(`/api/notes/${noteId}/completed`),
-        axios.get(`/api/notes`),
+        this.$axios.$post(`/api/notes/${noteId}/completed`),
+        this.$axios.$get(`/api/notes`),
       ],
     );
 
     commit('setNotes', notes.data);
   },
   async getProjectStatistics ({ commit }, params) {
-    const projectStatistics = await axios.get(
+    const projectStatistics = await this.$axios.$get(
       `/api/statistics/projects`,
       { params },
     );
 
-    commit('setProjectStatistics', projectStatistics.data);
+    commit('setProjectStatistics', projectStatistics);
   },
   async getUsers ({ commit }) {
-    const users = await axios.get('/api/users');
+    const users = await this.$axios.$get('/api/users');
 
-    commit('setUsers', users.data);
+    commit('setUsers', users);
   },
   async getRoles ({ commit }) {
-    const roles = await axios.get('/api/roles');
+    const roles = await this.$axios.$get('/api/roles');
 
-    commit('setRoles', roles.data);
+    commit('setRoles', roles);
   },
 };

@@ -93,7 +93,6 @@
 </template>
 
 <script>
-import axios from '~/plugins/axios';
 import { mapState } from 'vuex';
 
 export default {
@@ -208,7 +207,7 @@ export default {
       const confirmed = confirm(`Opravdu chcete smazat uživatele ${item.firstName} ${item.lastName}?`);
 
       if (confirmed) {
-        await axios.delete(`/api/users/${item.id}`);
+        await this.$axios.$delete(`/api/users/${item.id}`);
         await this.$store.dispatch('getUsers');
       }
     },
@@ -218,12 +217,12 @@ export default {
     },
     async save () {
       if (this.modalItem.id) {
-        await axios.put(`/api/users/${this.modalItem.id}`,
+        await this.$axios.$put(`/api/users/${this.modalItem.id}`,
           {
             ...this.modalItem,
           });
       } else {
-        await axios.post('/api/users',
+        await this.$axios.$post('/api/users',
           {
             ...this.modalItem,
           });

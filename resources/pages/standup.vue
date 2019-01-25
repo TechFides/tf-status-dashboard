@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import axios from '~/plugins/axios';
+const axios = require('axios');
 import NoteList from '../components/NoteList';
 import ProjectStatusPicker from '../components/ProjectStatusPicker';
 import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
