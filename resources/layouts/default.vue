@@ -83,18 +83,34 @@
 
 <script>
 export default {
+  computed: {
+    items () {
+      const items = [
+        {icon: 'apps', title: 'Dashboard', to: '/'},
+        {icon: 'radio_button_unchecked', title: 'Standup', to: '/standup'},
+        {icon: 'laptop_windows', title: 'Projekty', to: '/projects', availableFor: ['admin']},
+        {icon: 'bar_chart', title: 'Statistiky', to: '/statistics', availableFor: ['admin', 'user']},
+        {icon: 'face', title: 'Uživatelé', to: '/users', availableFor: ['admin', 'user']},
+      ];
+
+      return items.filter(item => {
+        if (typeof item.availableFor === 'undefined') {
+          return true;
+        }
+
+        if (this.$auth.user) {
+          return this.$auth.user.roles.some(role => item.availableFor.includes(role.slug));
+        }
+
+        return false;
+      });
+    },
+  },
   data () {
     return {
       clipped: true,
       drawer: false,
       fixed: false,
-      items: [
-        { icon: 'apps', title: 'Dashboard', to: '/' },
-        { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup' },
-        { icon: 'laptop_windows', title: 'Projekty', to: '/projects' },
-        { icon: 'bar_chart', title: 'Statistiky', to: '/statistics' },
-        { icon: 'face', title: 'Uživatelé', to: '/users' },
-      ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
