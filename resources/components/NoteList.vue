@@ -5,8 +5,8 @@
         <v-layout row nowrap>
           <h2>{{ item.projectCode }}</h2>
           <v-spacer></v-spacer>
-          <v-icon class="mr-1" size="20" @click="$emit('edit', item)">edit</v-icon>
-          <v-icon size="20" @click="markNoteCompleted(item)" color="green">done</v-icon>
+          <v-icon v-if="editable" class="mr-1" size="20" @click="$emit('edit', item)">edit</v-icon>
+          <v-icon v-if="editable" size="20" @click="markNoteCompleted(item)" color="green">done</v-icon>
         </v-layout>
         <div class="note-text mb-2">{{ item.text }}</div>
         <v-divider></v-divider>
@@ -30,7 +30,7 @@ import { mapState } from 'vuex';
 
 export default {
   name: 'note-list',
-  props: [],
+  props: ['editable'],
   data () {
     return {};
   },

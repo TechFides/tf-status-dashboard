@@ -1,6 +1,6 @@
 <template>
   <div class="text-xs-center">
-    <v-dialog
+    <v-dialog :disabled="disabled"
       v-model="dialog"
       width="1080"
     >
@@ -81,7 +81,7 @@
 import { mapState } from 'vuex';
 
 export default {
-  props: ['date', 'projectId', 'standupId', 'projectRating'],
+  props: ['date', 'projectId', 'standupId', 'projectRating', 'disabled'],
   data () {
     return {
       dialog: false,

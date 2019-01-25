@@ -30,12 +30,15 @@ Route
   .get('/api/notes', 'NoteController.getNotes');
 Route
   .post('/api/notes', 'NoteController.createNote')
-  .validator('StoreNoteValidator');
+  .validator('StoreNoteValidator')
+  .middleware('auth');
 Route
   .put('/api/notes/:id', 'NoteController.editNote')
-  .validator('StoreNoteValidator');
+  .validator('StoreNoteValidator')
+  .middleware('auth');
 Route
-  .post('/api/notes/:id/completed', 'NoteController.markCompleted');
+  .post('/api/notes/:id/completed', 'NoteController.markCompleted')
+  .middleware('auth');
 
 /**
  * PROJECTS
@@ -44,12 +47,15 @@ Route
   .get('/api/projects', 'ProjectController.getProjects');
 Route
   .post('/api/projects', 'ProjectController.createProject')
-  .validator('StoreProjectValidator');
+  .validator('StoreProjectValidator')
+  .middleware(['auth', 'is:admin']);
 Route
   .put('/api/projects/:id', 'ProjectController.editProject')
-  .validator('StoreProjectValidator');
+  .validator('StoreProjectValidator')
+  .middleware(['auth', 'is:admin']);
 Route
-  .delete('/api/projects/:id', 'ProjectController.deleteProject');
+  .delete('/api/projects/:id', 'ProjectController.deleteProject')
+  .middleware(['auth', 'is:admin']);
 
 /**
  * PROJECT RATINGS
@@ -57,7 +63,8 @@ Route
 Route
   .get('/api/projectRatings', 'ProjectRatingController.getProjectRatings');
 Route
-  .post('/api/projectRatings', 'ProjectRatingController.setProjectRating');
+  .post('/api/projectRatings', 'ProjectRatingController.setProjectRating')
+  .middleware('auth');
 
 /**
  * STANDUPS
@@ -65,29 +72,35 @@ Route
 Route
   .get('/api/standups', 'StandupController.getStandups');
 Route
-  .post('/api/standups', 'StandupController.createStandup');
+  .post('/api/standups', 'StandupController.createStandup')
+  .middleware(['auth', 'is:admin']);
 Route
-  .delete('/api/standups', 'StandupController.deleteStandup');
+  .delete('/api/standups', 'StandupController.deleteStandup')
+  .middleware(['auth', 'is:admin']);
 
 /**
  * STATISTICS
  */
 Route
-  .get('/api/statistics/projects', 'StatisticsController.getProjectStatistics');
+  .get('/api/statistics/projects', 'StatisticsController.getProjectStatistics')
+  .middleware('auth');
 
 /**
  * USERS
  */
 Route
-  .get('/api/users', 'UserController.getUsers');
+  .get('/api/users', 'UserController.getUsers')
+  .middleware(['auth']);
 Route
   .post('/api/users', 'UserController.createUser')
-  .validator('StoreUserValidator');
+  .validator('StoreUserValidator')
+  .middleware(['auth', 'is:admin']);
 Route
   .put('/api/users/:id', 'UserController.editUser')
   .validator('StoreUserValidator');
 Route
-  .delete('/api/users/:id', 'UserController.deleteUser');
+  .delete('/api/users/:id', 'UserController.deleteUser')
+  .middleware(['auth', 'is:admin']);
 
 /**
  * ROLES
@@ -98,5 +111,9 @@ Route
 /**
  * NUXT
  */
+Route
+  .any('/users', 'NuxtController.render')
+  .middleware(['auth']);
+
 Route
   .any('*', 'NuxtController.render');
