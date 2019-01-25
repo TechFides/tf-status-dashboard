@@ -8,7 +8,10 @@ class AuthController {
     try {
       const { token } = await auth.attempt(username, password);
       const user = await UserModel
-        .findByOrFail('username', username);
+        .query()
+        .with('roles')
+        .where('username', username)
+        .first();
 
       return {
         token,
@@ -26,7 +29,15 @@ class AuthController {
 
   async me ({ request, response, auth }) {
     try {
-      return await auth.getUser();
+      const user = await auth.getUser();
+
+      const data = await UserModel
+        .query()
+        .with('roles')
+        .where('username', user.username)
+        .first();
+
+      return { data: data };
     } catch (e) {
       response.status(401).send({ message: 'Invalid credentials' });
     }

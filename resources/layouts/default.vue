@@ -29,7 +29,7 @@
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
       <div v-if="$auth.$state.loggedIn">
-        Přihlášen jako {{ $auth.user }}
+        Přihlášen jako {{ $auth.user.first_name }} {{ $auth.user.last_name}}
         <v-btn @click="logout">Odhlásit</v-btn>
       </div>
       <v-dialog v-else v-model="loginDialog.isOpen" @keydown.enter="login" @keydown.esc="closeLoginDialog"
