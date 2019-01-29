@@ -90,7 +90,7 @@ Route
  */
 Route
   .get('/api/users', 'UserController.getUsers')
-  .middleware(['auth']);
+  .middleware('auth');
 Route
   .post('/api/users', 'UserController.createUser')
   .validator('StoreUserValidator')
@@ -113,7 +113,7 @@ Route
  */
 Route
   .any('/users', 'NuxtController.render')
-  .middleware(['auth']);
+  .middleware('auth');
 
 Route
   .any('*', 'NuxtController.render');
