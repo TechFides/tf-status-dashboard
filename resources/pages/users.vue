@@ -213,7 +213,7 @@ export default {
       const confirmed = confirm(`Opravdu chcete smazat uživatele ${item.firstName} ${item.lastName}?`);
 
       if (confirmed) {
-        await this.$axios.$delete(`/api/users/${item.id}`);
+        await this.$store.dispatch('deleteUser', item.id);
         await this.$store.dispatch('getUsers');
       }
     },
@@ -223,18 +223,11 @@ export default {
     },
     async save () {
       if (this.modalItem.id) {
-        await this.$axios.$put(`/api/users/${this.modalItem.id}`,
-          {
-            ...this.modalItem,
-          });
+        await this.$store.dispatch('editUser', this.modalItem);
       } else {
-        await this.$axios.$post('/api/users',
-          {
-            ...this.modalItem,
-          });
+        await this.$store.dispatch('createUser', this.modalItem);
       }
 
-      await this.$store.dispatch('getUsers');
       this.dialog = false;
     },
   },

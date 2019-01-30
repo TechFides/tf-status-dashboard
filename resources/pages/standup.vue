@@ -105,7 +105,6 @@
 </template>
 
 <script>
-const axios = require('axios');
 import NoteList from '../components/NoteList';
 import ProjectStatusPicker from '../components/ProjectStatusPicker';
 import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
@@ -114,34 +113,10 @@ import DatePickerField from '../components/DatePickerField';
 
 export default {
   fetch ({ store, params }) {
-    const promises = [];
-    const date = new Date();
-    const dateParams = {
-      month: date.getMonth(),
-      year: date.getFullYear(),
-    };
-
-    promises.push(axios.get('/api/projects',
-      { params: { isActive: true } },
-      ).then(res => {
-        store.commit('setProjects', res.data);
-      }),
-    );
-
-    promises.push(axios.get('/api/projectRatings',
-      { params: dateParams },
-      ).then(res => {
-        store.commit('setProjectRatings', res.data);
-      }),
-    );
-
-    promises.push(axios.get('/api/notes')
-      .then(res => {
-        store.commit('setNotes', res.data);
-      }),
-    );
-
-    return Promise.all(promises);
+    return Promise.all([
+      store.dispatch('getStandupData'),
+      store.dispatch('getNotes'),
+    ]);
   },
   computed: {
     ...mapState([

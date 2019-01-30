@@ -136,10 +136,26 @@ export const actions = {
 
     commit('setProjects', res.data);
   },
+  async createProject ({ dispatch }, project) {
+    await this.$axios.$post('/api/projects', project);
+    dispatch('getAllProjects');
+  },
+  async editProject ({ dispatch }, project) {
+    await this.$axios.$put(`/api/projects/${project.id}`, project);
+    dispatch('getAllProjects');
+  },
+  async deleteProject ({ dispatch }, projectId) {
+    await this.$axios.$delete(`/api/projects/${projectId}`);
+    dispatch('getAllProjects');
+  },
   async getAllProjects ({ commit }) {
     const res = await this.$axios.$get('/api/projects');
 
     commit('setAllProjects', res);
+  },
+  async editRating ({ dispatch }, ratingData) {
+    await this.$axios.$post('/api/projectRatings', ratingData);
+    dispatch('updateRating', ratingData);
   },
   async createStandup ({ commit }) {
     await this.$axios.$post('/api/standups');
@@ -217,6 +233,18 @@ export const actions = {
     const users = await this.$axios.$get('/api/users');
 
     commit('setUsers', users);
+  },
+  async createUser ({ dispatch }, user) {
+    await this.$axios.$post('/api/users', user);
+    dispatch('getUsers');
+  },
+  async editUser ({ dispatch }, user) {
+    await this.$axios.$put(`/api/users/${user.id}`, user);
+    dispatch('getUsers');
+  },
+  async deleteUser ({ dispatch }, userId) {
+    await this.$axios.$delete(`/api/users/${userId}`);
+    dispatch('getUsers');
   },
   async getRoles ({ commit }) {
     const roles = await this.$axios.$get('/api/roles');

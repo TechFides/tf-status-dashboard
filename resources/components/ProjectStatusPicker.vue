@@ -130,8 +130,7 @@ export default {
           standupId: this.standupId,
         };
 
-        this.$store.commit('updateRating', ratingData);
-        await this.$axios.$post('/api/projectRatings', ratingData);
+        await this.$store.dispatch('editRating', ratingData);
       } catch (e) {
         // TODO handle error
         console.error(e);

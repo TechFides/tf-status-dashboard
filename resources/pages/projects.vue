@@ -150,7 +150,7 @@ export default {
       const confirmed = confirm(`Opravdu chcete smazat projekt ${item.code}?`);
 
       if (confirmed) {
-        await this.$axios.$delete(`/api/projects/${item.id}`);
+        await this.$store.dispatch('deleteProject');
         await this.$store.dispatch('getAllProjects');
       }
     },
@@ -160,15 +160,9 @@ export default {
     },
     async save () {
       if (this.modalItem.id) {
-        await this.$axios.$put(`/api/projects/${this.modalItem.id}`,
-          {
-            ...this.modalItem,
-          });
+        await this.$store.dispatch('editProject', this.modalItem);
       } else {
-        await this.$axios.$post('/api/projects',
-          {
-            ...this.modalItem,
-          });
+        await this.$store.dispatch('createProject', this.modalItem);
       }
 
       await this.$store.dispatch('getProjects');
