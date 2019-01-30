@@ -1,6 +1,6 @@
 <template>
   <v-layout column justify-center align-end>
-    <v-btn v-if="isAdmin" @click="createNewUser()" color="primary" dark class="mb-2">Nový uživatel</v-btn>
+    <v-btn v-if="isAdmin()" @click="createNewUser()" color="primary" dark class="mb-2">Nový uživatel</v-btn>
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>
@@ -11,7 +11,7 @@
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap column>
-                <v-flex xs12 sm6 md4 v-if="isAdmin">
+                <v-flex xs12 sm6 md4 v-if="isAdmin()">
                   <v-text-field :rules="[rules.required]" v-model="modalItem.username"
                                 label="Přihlašovací jméno"></v-text-field>
                 </v-flex>
@@ -25,11 +25,11 @@
                 <v-flex xs12 sm6 md4>
                   <v-text-field :rules="[rules.required]" v-model="modalItem.lastName" label="Příjmení"></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4 v-if="isAdmin">
+                <v-flex xs12 sm6 md4 v-if="isAdmin()">
                   <v-text-field type="number" v-model="modalItem.totalExp"
                                 label="Expy"></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4 v-if="isAdmin">
+                <v-flex xs12 sm6 md4 v-if="isAdmin()">
                   <v-select
                           label="Role"
                           :items="roleItems"
@@ -37,7 +37,7 @@
                           v-model="modalItem.roles">
                   </v-select>
                 </v-flex>
-                <v-flex xs12 sm6 md4 v-if="isAdmin">
+                <v-flex xs12 sm6 md4 v-if="isAdmin()">
                   <v-checkbox
                     label="Aktivní"
                     v-model="modalItem.isActive"
@@ -79,7 +79,7 @@
           >
             edit
           </v-icon>
-          <v-icon v-if="isAdmin"
+          <v-icon v-if="isAdmin()"
             small
             @click="deleteItem(props.item)"
           >
@@ -152,12 +152,6 @@ export default {
         text: r.name,
         value: r.slug,
       }));
-    },
-    isAdmin() {
-      return this.$auth.user && this.$auth.user.roles.some(role => role.slug === 'admin');
-    },
-    isUser() {
-      return this.$auth.user && this.$auth.user.roles.some(role => role.slug === 'user');
     },
   },
   data () {

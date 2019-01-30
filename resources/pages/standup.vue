@@ -3,7 +3,7 @@
     <v-layout row reverse>
 
       <v-dialog v-model="noteDialog.isOpen" max-width="500px">
-        <v-btn v-if="isAdmin || isUser" slot="activator" color="primary" right @click="resetNote">
+        <v-btn v-if="isAdmin() || isUser()" slot="activator" color="primary" right @click="resetNote">
           Přidat cíl
         </v-btn>
         <v-form @submit.prevent="createNote">
@@ -39,7 +39,7 @@
         </v-form>
       </v-dialog>
 
-      <v-btn v-if="isAdmin" color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
+      <v-btn v-if="isAdmin()" color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
 
       <v-flex md1 class="pad">
         <v-dialog
@@ -93,14 +93,14 @@
               :project-rating='i.rating'
               :project-id='i.projectId'
               :standup-id='i.standupId'
-              :disabled='!isAdmin && !isUser'
+              :disabled='!isAdmin() && !isUser()'
               :date="formatDate(item.standup.date)"
             />
           </td>
         </template>
       </v-data-table>
     </v-layout>
-    <note-list @edit="editNote" :editable="isAdmin || isUser"></note-list>
+    <note-list @edit="editNote" :editable="isAdmin() || isUser()"></note-list>
   </div>
 </template>
 
@@ -159,12 +159,6 @@ export default {
     },
     noteDialogTitle() {
       return this.noteDialog.id ? 'Upravení cíle' : 'Vytvoření cíle';
-    },
-    isAdmin() {
-      return this.$auth.user && this.$auth.user.roles.some(role => role.slug === 'admin');
-    },
-    isUser() {
-      return this.$auth.user && this.$auth.user.roles.some(role => role.slug === 'user');
     },
   },
   data () {
