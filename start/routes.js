@@ -90,14 +90,15 @@ Route
  */
 Route
   .get('/api/users', 'UserController.getUsers')
-  .middleware('auth');
+  .middleware(['auth', 'is:admin']);
 Route
   .post('/api/users', 'UserController.createUser')
   .validator('StoreUserValidator')
   .middleware(['auth', 'is:admin']);
 Route
   .put('/api/users/:id', 'UserController.editUser')
-  .validator('StoreUserValidator');
+  .validator('StoreUserValidator')
+  .middleware(['auth', 'is:admin']);
 Route
   .delete('/api/users/:id', 'UserController.deleteUser')
   .middleware(['auth', 'is:admin']);
@@ -113,7 +114,7 @@ Route
  */
 Route
   .any('/users', 'NuxtController.render')
-  .middleware('auth');
+  .middleware(['auth', 'is:admin']);
 
 Route
   .any('*', 'NuxtController.render');

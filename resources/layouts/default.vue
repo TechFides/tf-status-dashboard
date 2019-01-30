@@ -90,7 +90,7 @@ export default {
         {icon: 'radio_button_unchecked', title: 'Standup', to: '/standup'},
         {icon: 'laptop_windows', title: 'Projekty', to: '/projects', availableFor: ['admin']},
         {icon: 'bar_chart', title: 'Statistiky', to: '/statistics', availableFor: ['admin', 'user']},
-        {icon: 'face', title: 'Uživatelé', to: '/users', availableFor: ['admin', 'user']},
+        {icon: 'face', title: 'Uživatelé', to: '/users', availableFor: ['admin']},
       ];
 
       return items.filter(item => {
