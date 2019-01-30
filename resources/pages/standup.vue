@@ -87,7 +87,7 @@
                   <i slot="activator" class="material-icons alert-icon" v-if="fillIcon(h.text, h.hasIcon)">
                     report_problem
                   </i>
-                  <span>Nemá žádný cíl nebo u cíle je datum deadlinu menší než dnešní datum</span>
+                  <span>Chybí cíl na další standup</span>
                 </v-tooltip>
               </nav>
             </th>
@@ -271,17 +271,16 @@ export default {
       };
     },
     fillIcon (projectCode, hasIcon) {
-      let date = format(new Date(), 'YYYY-MM-DD');
-      let result = false;
-      result = this.notes.every(element => {
+      const date = format(new Date(), 'YYYY-MM-DD');
+      const hasNote = this.notes.every(element => {
         return projectCode !== element.projectCode && hasIcon;
       });
-      if (!result) {
-        result = this.notes.some(element => {
-          return projectCode === element.projectCode && element.deadlineDate < date;
-        });
-      }
-      return result;
+      const hasNoteBeforeDeadline = this.notes.every(element => {
+        return projectCode === element.projectCode && element.deadlineDate < date;
+      });
+      console.log(hasNote + projectCode);
+      console.log(hasNoteBeforeDeadline + projectCode);
+      return hasNote || hasNoteBeforeDeadline;
     },
     async createNote () {
       if (
