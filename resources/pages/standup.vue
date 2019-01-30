@@ -81,6 +81,9 @@
         <template slot="headers" slot-scope="props">
           <tr>
             <th v-for="h in props.headers">
+              <i class="material-icons" v-if="fillIcon(h.text, h.hasIcon)">
+                report_problem
+              </i>
               <div class="text-xs-center header">{{ h.text }}</div>
             </th>
           </tr>
@@ -154,14 +157,15 @@ export default {
         align: 'center',
         sortable: false,
         value: project.code,
+        hasIcon: true,
       }));
-
       return [
         {
           text: 'Datum',
           align: 'left',
           sortable: false,
           value: 'Datum',
+          hasIcon: false,
         },
         ...projects,
       ];
@@ -261,6 +265,19 @@ export default {
         deadlineDate: date,
       };
     },
+    fillIcon (projectCode, hasIcon) {
+      let date = format(new Date(), 'YYYY-MM-DD');
+      let result = false;
+      result = this.notes.every(element => {
+        return projectCode !== element.projectCode && hasIcon;
+      });
+      if (!result) {
+        result = this.notes.some(element => {
+          return projectCode === element.projectCode && element.deadlineDate < date;
+        });
+      }
+      return result;
+    },
     async createNote () {
       if (
         !this.noteDialog.note ||
@@ -326,5 +343,9 @@ export default {
 
 .header {
   font-size: 3em !important;
+}
+
+.material-icons {
+  color:brown;
 }
 </style>
