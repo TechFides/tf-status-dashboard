@@ -81,10 +81,15 @@
         <template slot="headers" slot-scope="props">
           <tr>
             <th v-for="h in props.headers">
-              <i class="material-icons alert-icon" v-if="fillIcon(h.text, h.hasIcon)">
-                report_problem
-              </i>
-              <div class="text-xs-center header">{{ h.text }}</div>
+              <nav>
+                <div class="text-xs-center header align-project">{{ h.text }}</div>
+                <v-tooltip bottom>
+                  <i slot="activator" class="material-icons alert-icon" v-if="fillIcon(h.text, h.hasIcon)">
+                    report_problem
+                  </i>
+                  <span>Nemá žádný cíl nebo u cíle je datum deadlinu menší než dnešní datum</span>
+                </v-tooltip>
+              </nav>
             </th>
           </tr>
         </template>
@@ -347,5 +352,11 @@ export default {
 
 .material-icons.alert-icon {
   color:#c62828;
+  vertical-align: top;
 }
+
+.align-project {
+  display: inline-block;
+}
+
 </style>
