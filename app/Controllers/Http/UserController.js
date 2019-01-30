@@ -41,7 +41,9 @@ class UserController {
     }
 
     user.password = request.input('password');
+
     await user.save();
+    await this._setRoles(user, request.input('roles'));
 
     return user.toJSON();
   }
@@ -55,10 +57,8 @@ class UserController {
       user.password = request.input('password');
     }
 
-    await Promise.all([
-      user.save(),
-      this._setRoles(user, request.input('roles')),
-    ]);
+    await user.save();
+    await this._setRoles(user, request.input('roles'));
 
     return user.toJSON();
   }

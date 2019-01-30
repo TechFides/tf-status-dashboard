@@ -169,7 +169,7 @@ export default {
         totalExp: 0,
         isActive: true,
         username: '',
-        roles: [],
+        roles: ['user'],
       },
       defaultModalItem: {
         id: null,
@@ -179,7 +179,7 @@ export default {
         totalExp: 0,
         isActive: true,
         username: '',
-        roles: [],
+        roles: ['user'],
       },
     };
   },
