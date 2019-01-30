@@ -81,7 +81,7 @@
         <template slot="headers" slot-scope="props">
           <tr>
             <th v-for="h in props.headers">
-              <i class="material-icons" v-if="fillIcon(h.text, h.hasIcon)">
+              <i class="material-icons alert-icon" v-if="fillIcon(h.text, h.hasIcon)">
                 report_problem
               </i>
               <div class="text-xs-center header">{{ h.text }}</div>
@@ -345,7 +345,7 @@ export default {
   font-size: 3em !important;
 }
 
-.material-icons {
-  color:brown;
+.material-icons.alert-icon {
+  color:#c62828;
 }
 </style>
