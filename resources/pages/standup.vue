@@ -165,6 +165,7 @@ export default {
         value: project.code,
         hasIcon: true,
       }));
+      
       return [
         {
           text: 'Datum',
