@@ -84,7 +84,8 @@
               <nav>
                 <div class="text-xs-center header align-project">{{ h.text }}</div>
                 <v-tooltip bottom>
-                  <i slot="activator" class="material-icons alert-icon" v-if="fillIcon(h.text, h.hasIcon)">
+                  <i slot="activator" class="material-icons alert-icon" 
+                    v-if="!checkPojectsNote(h.text, h.hasIcon)">
                     report_problem
                   </i>
                   <span>Chybí cíl na další standup</span>
@@ -270,17 +271,12 @@ export default {
         deadlineDate: date,
       };
     },
-    fillIcon (projectCode, hasIcon) {
-      const date = format(new Date(), 'YYYY-MM-DD');
-      const hasNote = this.notes.every(element => {
-        return projectCode !== element.projectCode && hasIcon;
+    checkPojectsNote (projectCode, hasIcon) {
+      const date = format(new Date(), 'YYYY-MM-DD 00:00:00');
+      const hasNoteAfterDeadline = this.notes.some(element => {
+        return element.projectCode === projectCode && element.deadlineDate > date;
       });
-      const hasNoteBeforeDeadline = this.notes.every(element => {
-        return projectCode === element.projectCode && element.deadlineDate < date;
-      });
-      console.log(hasNote + projectCode);
-      console.log(hasNoteBeforeDeadline + projectCode);
-      return hasNote || hasNoteBeforeDeadline;
+      return hasNoteAfterDeadline || !hasIcon;
     },
     async createNote () {
       if (
