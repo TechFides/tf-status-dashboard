@@ -85,7 +85,7 @@
                 <div class="text-xs-center header align-project">{{ h.text }}</div>
                 <v-tooltip bottom>
                   <i slot="activator" class="material-icons alert-icon" 
-                    v-if="!checkPojectsNote(h.text, h.hasIcon)">
+                    v-if="isMissingNote(h.text, h.hasIcon)">
                     report_problem
                   </i>
                   <span>Chybí cíl na další standup</span>
@@ -165,7 +165,7 @@ export default {
         value: project.code,
         hasIcon: true,
       }));
-      
+
       return [
         {
           text: 'Datum',
@@ -272,12 +272,12 @@ export default {
         deadlineDate: date,
       };
     },
-    checkPojectsNote (projectCode, hasIcon) {
+    isMissingNote (projectCode, hasIcon) {
       const date = format(new Date(), 'YYYY-MM-DD 00:00:00');
       const hasNoteAfterDeadline = this.notes.some(element => {
         return element.projectCode === projectCode && element.deadlineDate > date;
       });
-      return hasNoteAfterDeadline || !hasIcon;
+      return !hasNoteAfterDeadline && hasIcon;
     },
     async createNote () {
       if (
