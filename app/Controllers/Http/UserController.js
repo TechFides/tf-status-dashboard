@@ -86,8 +86,11 @@ class UserController {
       .filter(slug => !roles.includes(slug))
       .map(slug => RoleModel.findBy('slug', slug));
 
-    const attach = await Promise.all(toAttach).then(result => result.map(role => role.id));
-    const detach = await Promise.all(toDetach).then(result => result.map(role => role.id));
+    const rolesToAttach = await Promise.all(toAttach);
+    const rolesToDetach = await Promise.all(toDetach);
+
+    const attach = rolesToAttach.map(role => role.id);
+    const detach = rolesToDetach.map(role => role.id);
 
     return Promise.all([
       user.roles().attach(attach),
