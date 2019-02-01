@@ -81,7 +81,16 @@
         <template slot="headers" slot-scope="props">
           <tr>
             <th v-for="h in props.headers">
-              <div class="text-xs-center header">{{ h.text }}</div>
+              <nav>
+                <div class="text-xs-center header align-project">{{ h.text }}</div>
+                <v-tooltip bottom>
+                  <i slot="activator" class="material-icons alert-icon" 
+                    v-if="isMissingNote(h.text, h.hasIcon)">
+                    report_problem
+                  </i>
+                  <span>Chybí cíl na další standup</span>
+                </v-tooltip>
+              </nav>
             </th>
           </tr>
         </template>
@@ -130,6 +139,7 @@ export default {
         align: 'center',
         sortable: false,
         value: project.code,
+        hasIcon: true,
       }));
 
       return [
@@ -138,6 +148,7 @@ export default {
           align: 'left',
           sortable: false,
           value: 'Datum',
+          hasIcon: false,
         },
         ...projects,
       ];
@@ -237,6 +248,13 @@ export default {
         deadlineDate: date,
       };
     },
+    isMissingNote (projectCode, hasIcon) {
+      const date = format(new Date(), 'YYYY-MM-DD 00:00:00');
+      const hasNoteAfterDeadline = this.notes.some(element => {
+        return element.projectCode === projectCode && element.deadlineDate > date;
+      });
+      return !hasNoteAfterDeadline && hasIcon;
+    },
     async createNote () {
       if (
         !this.noteDialog.note ||
@@ -303,4 +321,14 @@ export default {
 .header {
   font-size: 3em !important;
 }
+
+.material-icons.alert-icon {
+  color:#c62828;
+  vertical-align: top;
+}
+
+.align-project {
+  display: inline-block;
+}
+
 </style>
