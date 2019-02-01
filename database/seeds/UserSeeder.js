@@ -10,14 +10,17 @@
 |
 */
 
-const Database = use('Database');
+const Factory = use('Factory');
 
 class UserSeeder {
   async run () {
-    await Database.table('users').insert({
-      name: 'Tomáš Bruckner',
-      alias: 'Tom',
+    const user = await Factory.model('App/Models/User').create({
+      first_name: 'Tomáš',
+      last_name: 'Bruckner',
+      username: 'Tom',
     });
+
+    await user.roles().attach([1]);
   }
 }
 

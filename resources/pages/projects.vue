@@ -68,7 +68,6 @@
 </template>
 
 <script>
-import axios from '~/plugins/axios';
 import { mapState } from 'vuex';
 import format from 'date-fns/format';
 
@@ -151,7 +150,7 @@ export default {
       const confirmed = confirm(`Opravdu chcete smazat projekt ${item.code}?`);
 
       if (confirmed) {
-        await axios.delete(`/api/projects/${item.id}`);
+        await this.$store.dispatch('deleteProject');
         await this.$store.dispatch('getAllProjects');
       }
     },
@@ -161,15 +160,9 @@ export default {
     },
     async save () {
       if (this.modalItem.id) {
-        await axios.put(`/api/projects/${this.modalItem.id}`,
-          {
-            ...this.modalItem,
-          });
+        await this.$store.dispatch('editProject', this.modalItem);
       } else {
-        await axios.post('/api/projects',
-          {
-            ...this.modalItem,
-          });
+        await this.$store.dispatch('createProject', this.modalItem);
       }
 
       await this.$store.dispatch('getProjects');

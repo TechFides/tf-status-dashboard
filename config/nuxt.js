@@ -21,7 +21,10 @@ module.exports = {
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' },
     ],
   },
-  plugins: ['~/plugins/vuetify.js'],
+  plugins: [
+    '~/plugins/vuetify.js',
+    '~/plugins/auth.js',
+  ],
   css: [
     '~/assets/style/app.styl',
   ],
@@ -36,7 +39,7 @@ module.exports = {
         endpoints: {
           login: { url: '/api/auth/login', method: 'post', propertyName: 'token' },
           logout: { url: '/api/auth/logout', method: 'post' },
-          user: { url: '/api/auth/me', method: 'get', propertyName: 'username' },
+          user: { url: '/api/auth/me', method: 'get', propertyName: 'data' },
         },
       },
     },

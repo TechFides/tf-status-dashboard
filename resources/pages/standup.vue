@@ -3,7 +3,7 @@
     <v-layout row reverse>
 
       <v-dialog v-model="noteDialog.isOpen" max-width="500px">
-        <v-btn slot="activator" color="primary" right @click="resetNote">
+        <v-btn v-if="isAdmin() || isUser()" slot="activator" color="primary" right @click="resetNote">
           Přidat cíl
         </v-btn>
         <v-form @submit.prevent="createNote">
@@ -39,7 +39,7 @@
         </v-form>
       </v-dialog>
 
-      <v-btn color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
+      <v-btn v-if="isAdmin()" color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
 
       <v-flex md1 class="pad">
         <v-dialog
@@ -93,18 +93,18 @@
               :project-rating='i.rating'
               :project-id='i.projectId'
               :standup-id='i.standupId'
+              :disabled='!isAdmin() && !isUser()'
               :date="formatDate(item.standup.date)"
             />
           </td>
         </template>
       </v-data-table>
     </v-layout>
-    <note-list @edit="editNote"></note-list>
+    <note-list @edit="editNote" :editable="isAdmin() || isUser()"></note-list>
   </div>
 </template>
 
 <script>
-import axios from '~/plugins/axios';
 import NoteList from '../components/NoteList';
 import ProjectStatusPicker from '../components/ProjectStatusPicker';
 import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
@@ -113,34 +113,10 @@ import DatePickerField from '../components/DatePickerField';
 
 export default {
   fetch ({ store, params }) {
-    const promises = [];
-    const date = new Date();
-    const dateParams = {
-      month: date.getMonth(),
-      year: date.getFullYear(),
-    };
-
-    promises.push(axios.get('/api/projects',
-      { params: { isActive: true } },
-      ).then(res => {
-        store.commit('setProjects', res.data);
-      }),
-    );
-
-    promises.push(axios.get('/api/projectRatings',
-      { params: dateParams },
-      ).then(res => {
-        store.commit('setProjectRatings', res.data);
-      }),
-    );
-
-    promises.push(axios.get('/api/notes')
-      .then(res => {
-        store.commit('setNotes', res.data);
-      }),
-    );
-
-    return Promise.all(promises);
+    return Promise.all([
+      store.dispatch('getStandupData'),
+      store.dispatch('getNotes'),
+    ]);
   },
   computed: {
     ...mapState([

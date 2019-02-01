@@ -30,6 +30,14 @@
                                 label="Expy"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
+                  <v-select
+                          label="Role"
+                          :items="roleItems"
+                          multiple
+                          v-model="modalItem.roles">
+                  </v-select>
+                </v-flex>
+                <v-flex xs12 sm6 md4>
                   <v-checkbox
                     label="Aktivní"
                     v-model="modalItem.isActive"
@@ -85,16 +93,19 @@
 </template>
 
 <script>
-import axios from '~/plugins/axios';
 import { mapState } from 'vuex';
 
 export default {
   async fetch ({ store, params }) {
-    await store.dispatch('getUsers');
+    await Promise.all([
+      store.dispatch('getUsers'),
+      store.dispatch('getRoles'),
+    ]);
   },
   computed: {
     ...mapState([
       'users',
+      'roles',
     ]),
     headers: function () {
       return [
@@ -136,6 +147,12 @@ export default {
         },
       ];
     },
+    roleItems () {
+      return this.roles.map(r => ({
+        text: r.name,
+        value: r.slug,
+      }));
+    },
   },
   data () {
     return {
@@ -152,6 +169,7 @@ export default {
         totalExp: 0,
         isActive: true,
         username: '',
+        roles: ['user'],
       },
       defaultModalItem: {
         id: null,
@@ -161,6 +179,7 @@ export default {
         totalExp: 0,
         isActive: true,
         username: '',
+        roles: ['user'],
       },
     };
   },
@@ -178,6 +197,7 @@ export default {
         totalExp: item.totalExp,
         isActive: item.isActive === 1,
         username: item.username,
+        roles: item.roles,
       };
 
       this.modalTitle = 'Upravit uživatele';
@@ -187,7 +207,7 @@ export default {
       const confirmed = confirm(`Opravdu chcete smazat uživatele ${item.firstName} ${item.lastName}?`);
 
       if (confirmed) {
-        await axios.delete(`/api/users/${item.id}`);
+        await this.$store.dispatch('deleteUser', item.id);
         await this.$store.dispatch('getUsers');
       }
     },
@@ -197,18 +217,11 @@ export default {
     },
     async save () {
       if (this.modalItem.id) {
-        await axios.put(`/api/users/${this.modalItem.id}`,
-          {
-            ...this.modalItem,
-          });
+        await this.$store.dispatch('editUser', this.modalItem);
       } else {
-        await axios.post('/api/users',
-          {
-            ...this.modalItem,
-          });
+        await this.$store.dispatch('createUser', this.modalItem);
       }
 
-      await this.$store.dispatch('getUsers');
       this.dialog = false;
     },
   },
