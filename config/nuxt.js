@@ -23,6 +23,7 @@ module.exports = {
   },
   plugins: [
     '~/plugins/vuetify.js',
+    '~/plugins/auth-inject.js',
     '~/plugins/auth.js',
   ],
   css: [
@@ -43,6 +44,9 @@ module.exports = {
         },
       },
     },
+  },
+  router: {
+    middleware: 'authenticated',
   },
   /*
   ** Customize the progress bar color
