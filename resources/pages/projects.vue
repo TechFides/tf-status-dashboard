@@ -1,6 +1,13 @@
 <template>
   <v-layout column justify-center align-end>
     <v-btn @click="createNewProject()" color="primary" dark class="mb-2">Nový projekt</v-btn>
+
+    <v-flex style="width: 95%">
+      <v-text-field v-model="filteringText"
+        label="Hledej"
+      ></v-text-field>
+    </v-flex>
+
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>
@@ -36,7 +43,7 @@
 
     <v-data-table
       :headers='headers'
-      :items='allProjects'
+      :items='filteredProject'
       item-key="code"
       hide-actions
       fill-height
@@ -107,6 +114,16 @@ export default {
         },
       ];
     },
+    filteredProject () {
+      return this.allProjects.filter((element) => {
+        let isActive = element.isActive ? 'ANO' : 'NE';
+        let description = element.description === null ? '' : element.description.toUpperCase();
+
+        return element.code.match(this.filteringText.toUpperCase()) ||
+          isActive.match(this.filteringText.toUpperCase()) ||
+          description.match(this.filteringText.toUpperCase());
+      });
+    },
   },
   data () {
     return {
@@ -128,6 +145,7 @@ export default {
         description: '',
         isActive: true,
       },
+      filteringText: '',
     };
   },
   methods: {
@@ -196,4 +214,5 @@ export default {
 .header {
   font-size: 2em !important;
 }
+
 </style>

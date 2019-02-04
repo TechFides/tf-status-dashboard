@@ -1,6 +1,13 @@
 <template>
   <v-layout column justify-center align-end>
     <v-btn @click="createNewUser()" color="primary" dark class="mb-2">Nový uživatel</v-btn>
+
+    <v-flex style="width: 95%">
+      <v-text-field v-model="filteringText"
+        label="Hledej"
+      ></v-text-field>
+    </v-flex>
+
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>
@@ -58,7 +65,7 @@
 
     <v-data-table
       :headers='headers'
-      :items='users'
+      :items='filteredUsers'
       item-key="id"
       hide-actions
       fill-height
@@ -147,6 +154,16 @@ export default {
         },
       ];
     },
+    filteredUsers () {
+      return this.users.filter((element) => {
+        let fullName = (`${element.firstName} ${element.lastName}`).toUpperCase();
+        let isActive = element.isActive ? 'ANO' : 'NE';
+
+        return element.username.toUpperCase().match(this.filteringText.toUpperCase()) ||
+          fullName.match(this.filteringText.toUpperCase()) ||
+          isActive.match(this.filteringText.toUpperCase());
+      });
+    },
     roleItems () {
       return this.roles.map(r => ({
         text: r.name,
@@ -181,6 +198,7 @@ export default {
         username: '',
         roles: ['user'],
       },
+      filteringText: '',
     };
   },
   methods: {
