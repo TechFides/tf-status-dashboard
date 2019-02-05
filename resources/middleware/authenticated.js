@@ -1,12 +1,20 @@
+// routes accessibled by role 'admin'
+const ADMIN_ROUTES = [
+  'project',
+  'statistics',
+  'users',
+];
+
+// routes accessibled by role 'user'
+const USER_ROUTES = [
+  'statistics',
+];
 
 export default function ({app, store, route, redirect}) {
-  if (route.name === 'projects' && !app.isAdmin()) {
+  if (ADMIN_ROUTES.includes(route.name) && !app.isAdmin()) {
     return redirect('/');
   }
-  if (route.name === 'statistics' && !(app.isAdmin() || app.isUser())) {
-    return redirect('/');
-  }
-  if (route.name === 'users' && !app.isAdmin()) {
+  if (USER_ROUTES.includes(route.name) && !app.isUser()) {
     return redirect('/');
   }
 };

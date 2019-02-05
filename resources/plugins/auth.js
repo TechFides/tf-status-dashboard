@@ -4,10 +4,10 @@ const AuthRoles = {};
 
 AuthRoles.install = function (Vue, options) {
   Vue.prototype.isAdmin = function () {
-    return this.$auth.user && this.$auth.user.roles.some(role => role.slug === 'admin');
+    return this.$store.app.isAdmin();
   };
   Vue.prototype.isUser = function () {
-    return this.$auth.user && this.$auth.user.roles.some(role => role.slug === 'user');
+    return this.$store.app.isUser();
   };
 };
 
