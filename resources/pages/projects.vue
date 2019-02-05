@@ -1,13 +1,6 @@
 <template>
   <v-layout column justify-center align-end>
-    <v-btn @click="createNewProject()" color="primary" dark class="mb-2" >Nový projekt</v-btn>
-
-    <v-container grid-list-xl fluid>
-      <v-flex xs12 sm6 md3>
-        <v-text-field v-model="filteringText" label="Hledej..." append-icon="search" solo>
-        </v-text-field>
-      </v-flex>
-    </v-container>
+    <v-btn @click="createNewProject()" color="primary" dark>Nový projekt</v-btn>
 
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
@@ -42,36 +35,43 @@
       </v-card>
     </v-dialog>
 
-    <v-data-table
-      :headers='headers'
-      :items='filteredProject'
-      item-key="code"
-      hide-actions
-      fill-height
-      class='elevation-1 fullscreen'
-    >
-      <template slot='items' slot-scope='props'>
-        <td class='text-xs-center element'>{{ props.item.code }}</td>
-        <td class='text-xs-center element'>{{ props.item.description }}</td>
-        <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
-        <td class="justify-center layout px-0">
-          <v-icon
-            small
-            class="mr-2"
-            @click="editItem(props.item)"
-          >
-            edit
-          </v-icon>
-          <v-icon
-            small
-            @click="deleteItem(props.item)"
-          >
-            delete
-          </v-icon>
-        </td>
+    <v-card class='elevation-1 fullscreen'>
+      <v-card-title>
+        <v-flex xs4>
+          <v-text-field v-model="filteringText" append-icon="search" label="Hledej..." single-line hide-details box>
+          </v-text-field>
+        </v-flex>
+      </v-card-title>
 
-      </template>
-    </v-data-table>
+      <v-data-table
+        :headers='headers'
+        :items='filteredProject'
+        item-key="code"
+        hide-actions
+        fill-height
+      >
+        <template slot='items' slot-scope='props'>
+          <td class='text-xs-center element'>{{ props.item.code }}</td>
+          <td class='text-xs-center element'>{{ props.item.description }}</td>
+          <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
+          <td class="justify-center layout px-0">
+            <v-icon
+              small
+              class="mr-2"
+              @click="editItem(props.item)"
+            >
+              edit
+            </v-icon>
+            <v-icon
+              small
+              @click="deleteItem(props.item)"
+            >
+              delete
+            </v-icon>
+          </td>
+        </template>
+      </v-data-table>
+    </v-card>
   </v-layout>
 </template>
 
@@ -216,7 +216,7 @@ export default {
   font-size: 2em !important;
 }
 
-.searchInput {
+.align-element {
   display: inline-block;
 }
 

@@ -2,13 +2,6 @@
   <v-layout column justify-center align-end>
     <v-btn @click="createNewUser()" color="primary" dark class="mb-2">Nový uživatel</v-btn>
 
-    <v-container grid-list-xl fluid>
-      <v-flex xs12 sm6 md3>
-        <v-text-field v-model="filteringText" label="Hledej..." append-icon="search" solo>
-        </v-text-field>
-      </v-flex>
-    </v-container>
-
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>
@@ -64,39 +57,48 @@
       </v-card>
     </v-dialog>
 
-    <v-data-table
-      :headers='headers'
-      :items='filteredUsers'
-      item-key="id"
-      hide-actions
-      fill-height
-      must-sort
-      class='elevation-1 fullscreen'
-    >
-      <template slot='items' slot-scope='props'>
-        <td class='text-xs-center element'>{{ `${props.item.firstName} ${props.item.lastName}` }}</td>
-        <td class='text-xs-center element'>{{ props.item.username }}</td>
-        <td class='text-xs-center element'>{{ props.item.level }}</td>
-        <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
-        <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
-        <td class="justify-center layout px-0">
-          <v-icon
-            small
-            class="mr-2"
-            @click="editItem(props.item)"
-          >
-            edit
-          </v-icon>
-          <v-icon
-            small
-            @click="deleteItem(props.item)"
-          >
-            delete
-          </v-icon>
-        </td>
+    <v-card class='elevation-1 fullscreen'>
+      <v-card-title>
+        <v-flex xs4>
+          <v-text-field v-model="filteringText" append-icon="search" label="Hledej..." single-line hide-details box>
+          </v-text-field>
+        </v-flex>
+      </v-card-title>
 
-      </template>
-    </v-data-table>
+      <v-data-table
+        :headers='headers'
+        :items='filteredUsers'
+        item-key="id"
+        hide-actions
+        fill-height
+        must-sort
+        class='elevation-1 fullscreen'
+      >
+        <template slot='items' slot-scope='props'>
+          <td class='text-xs-center element'>{{ `${props.item.firstName} ${props.item.lastName}` }}</td>
+          <td class='text-xs-center element'>{{ props.item.username }}</td>
+          <td class='text-xs-center element'>{{ props.item.level }}</td>
+          <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
+          <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
+          <td class="justify-center layout px-0">
+            <v-icon
+              small
+              class="mr-2"
+              @click="editItem(props.item)"
+            >
+              edit
+            </v-icon>
+            <v-icon
+              small
+              @click="deleteItem(props.item)"
+            >
+              delete
+            </v-icon>
+          </td>
+
+        </template>
+      </v-data-table>
+    </v-card>
   </v-layout>
 </template>
 
