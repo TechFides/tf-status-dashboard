@@ -1,12 +1,13 @@
 <template>
   <v-layout column justify-center align-end>
-    <v-btn @click="createNewProject()" color="primary" dark class="mb-2">Nový projekt</v-btn>
+    <v-btn @click="createNewProject()" color="primary" dark class="mb-2" >Nový projekt</v-btn>
 
-    <v-flex style="width: 95%">
-      <v-text-field v-model="filteringText"
-        label="Hledej"
-      ></v-text-field>
-    </v-flex>
+    <v-container grid-list-xl fluid>
+      <v-flex xs12 sm6 md3>
+        <v-text-field v-model="filteringText" label="Hledej..." append-icon="search" solo>
+        </v-text-field>
+      </v-flex>
+    </v-container>
 
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
@@ -213,6 +214,10 @@ export default {
 
 .header {
   font-size: 2em !important;
+}
+
+.searchInput {
+  display: inline-block;
 }
 
 </style>

@@ -2,11 +2,12 @@
   <v-layout column justify-center align-end>
     <v-btn @click="createNewUser()" color="primary" dark class="mb-2">Nový uživatel</v-btn>
 
-    <v-flex style="width: 95%">
-      <v-text-field v-model="filteringText"
-        label="Hledej"
-      ></v-text-field>
-    </v-flex>
+    <v-container grid-list-xl fluid>
+      <v-flex xs12 sm6 md3>
+        <v-text-field v-model="filteringText" label="Hledej..." append-icon="search" solo>
+        </v-text-field>
+      </v-flex>
+    </v-container>
 
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
@@ -161,7 +162,9 @@ export default {
 
         return element.username.toUpperCase().match(this.filteringText.toUpperCase()) ||
           fullName.match(this.filteringText.toUpperCase()) ||
-          isActive.match(this.filteringText.toUpperCase());
+          isActive.match(this.filteringText.toUpperCase()) ||
+          element.level.toString().match(this.filteringText) ||
+          element.totalExp.toString().match(this.filteringText);
       });
     },
     roleItems () {
