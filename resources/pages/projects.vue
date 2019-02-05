@@ -69,6 +69,7 @@
               delete
             </v-icon>
           </td>
+          
         </template>
       </v-data-table>
     </v-card>
@@ -214,10 +215,6 @@ export default {
 
 .header {
   font-size: 2em !important;
-}
-
-.align-element {
-  display: inline-block;
 }
 
 </style>
