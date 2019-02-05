@@ -68,6 +68,7 @@
       <template slot='items' slot-scope='props'>
         <td class='text-xs-center element'>{{ `${props.item.firstName} ${props.item.lastName}` }}</td>
         <td class='text-xs-center element'>{{ props.item.username }}</td>
+        <td class='text-xs-center element'>{{ userRoles(props.item) }}</td>
         <td class='text-xs-center element'>{{ props.item.level }}</td>
         <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
         <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
@@ -120,6 +121,12 @@ export default {
           align: 'center',
           sortable: true,
           value: 'username',
+        },
+        {
+          text: 'Role',
+          align: 'center',
+          sortable: true,
+          value: 'roles',
         },
         {
           text: 'Level',
@@ -223,6 +230,12 @@ export default {
       }
 
       this.dialog = false;
+    },
+    userRoles(user) {
+      return this.roles
+              .filter(r => user.roles.includes(r.slug))
+              .map(r => r.name)
+              .join(', ');
     },
   },
 };
