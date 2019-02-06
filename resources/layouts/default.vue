@@ -146,6 +146,7 @@ export default {
       });
     },
     logout () {
+      this.closeLoginDialog();
       this.$auth.logout();
     },
   },
