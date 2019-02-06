@@ -75,11 +75,11 @@
         class='elevation-1 fullscreen'
       >
         <template slot='items' slot-scope='props'>
-          <td class='text-xs-center element'>{{ `${props.item.firstName} ${props.item.lastName}` }}</td>
+          <td class='text-xs-center element'>{{ getFullName(props.item.firstName, props.item.lastName) }}</td>
           <td class='text-xs-center element'>{{ props.item.username }}</td>
           <td class='text-xs-center element'>{{ props.item.level }}</td>
           <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
-          <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
+          <td class='text-xs-center element'>{{ isProjectActive(props.item.isActive, false) }}</td>
           <td class="justify-center layout px-0">
             <v-icon
               small
@@ -159,12 +159,11 @@ export default {
     },
     filteredUsers () {
       return this.users.filter((element) => {
-        let fullName = (`${element.firstName} ${element.lastName}`).toUpperCase();
-        let isActive = element.isActive ? 'ANO' : 'NE';
+        const uppercasedFilterText = this.filteringText.toUpperCase();
 
-        return element.username.toUpperCase().match(this.filteringText.toUpperCase()) ||
-          fullName.match(this.filteringText.toUpperCase()) ||
-          isActive.match(this.filteringText.toUpperCase()) ||
+        return element.username.toUpperCase().match(uppercasedFilterText) ||
+          this.getFullName(element.firstName, element.lastName).toUpperCase().match(uppercasedFilterText) ||
+          this.isProjectActive(element.isActive, true).match(uppercasedFilterText) ||
           element.level.toString().match(this.filteringText) ||
           element.totalExp.toString().match(this.filteringText);
       });
@@ -246,6 +245,14 @@ export default {
       }
 
       this.dialog = false;
+    },
+    isProjectActive (isActive, toUpper) {
+      const result = isActive ? 'ano' : 'ne';
+
+      return toUpper ? result.toUpperCase() : result.toLowerCase();
+    },
+    getFullName (firstName, lastName) {
+      return `${firstName} ${lastName}`;
     },
   },
 };

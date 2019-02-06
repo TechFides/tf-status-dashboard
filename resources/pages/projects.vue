@@ -53,7 +53,7 @@
         <template slot='items' slot-scope='props'>
           <td class='text-xs-center element'>{{ props.item.code }}</td>
           <td class='text-xs-center element'>{{ props.item.description }}</td>
-          <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
+          <td class='text-xs-center element'>{{ isProjectActive(props.item.isActive, false) }}</td>
           <td class="justify-center layout px-0">
             <v-icon
               small
@@ -118,12 +118,12 @@ export default {
     },
     filteredProject () {
       return this.allProjects.filter((element) => {
-        let isActive = element.isActive ? 'ANO' : 'NE';
-        let description = element.description === null ? '' : element.description.toUpperCase();
+        const description = element.description === null ? '' : element.description.toUpperCase();
+        const uppercasedFilterText = this.filteringText.toUpperCase();
 
-        return element.code.match(this.filteringText.toUpperCase()) ||
-          isActive.match(this.filteringText.toUpperCase()) ||
-          description.match(this.filteringText.toUpperCase());
+        return element.code.match(uppercasedFilterText) ||
+          this.isProjectActive(element.isActive, true).match(uppercasedFilterText) ||
+          description.match(uppercasedFilterText);
       });
     },
   },
@@ -198,6 +198,11 @@ export default {
       const d = new Date(date);
 
       return format(d, 'DD/MM/YYYY');
+    },
+    isProjectActive (isActive, toUpper) {
+      const result = isActive ? 'ano' : 'ne';
+
+      return toUpper ? result.toUpperCase() : result.toLowerCase();
     },
   },
 };
