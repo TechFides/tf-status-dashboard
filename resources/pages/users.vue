@@ -96,6 +96,11 @@
 <script>
 import { mapState } from 'vuex';
 
+const roleTranslation = {
+  user: 'Uživatel',
+  admin: 'Administrátor',
+};
+
 export default {
   async fetch ({ store, params }) {
     await Promise.all([
@@ -156,7 +161,7 @@ export default {
     },
     roleItems () {
       return this.roles.map(r => ({
-        text: r.name,
+        text: roleTranslation[r.slug],
         value: r.slug,
       }));
     },
@@ -234,7 +239,7 @@ export default {
     userRoles(user) {
       return this.roles
               .filter(r => user.roles.includes(r.slug))
-              .map(r => r.name)
+              .map(r => roleTranslation[r.slug])
               .join(', ');
     },
   },
