@@ -1,6 +1,7 @@
 <template>
   <v-layout column justify-center align-end>
-    <v-btn @click="createNewProject()" color="primary" dark class="mb-2">Nový projekt</v-btn>
+    <v-btn @click="createNewProject()" color="primary" dark>Nový projekt</v-btn>
+
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>
@@ -34,36 +35,44 @@
       </v-card>
     </v-dialog>
 
-    <v-data-table
-      :headers='headers'
-      :items='allProjects'
-      item-key="code"
-      hide-actions
-      fill-height
-      class='elevation-1 fullscreen'
-    >
-      <template slot='items' slot-scope='props'>
-        <td class='text-xs-center element'>{{ props.item.code }}</td>
-        <td class='text-xs-center element'>{{ props.item.description }}</td>
-        <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
-        <td class="justify-center layout px-0">
-          <v-icon
-            small
-            class="mr-2"
-            @click="editItem(props.item)"
-          >
-            edit
-          </v-icon>
-          <v-icon
-            small
-            @click="deleteItem(props.item)"
-          >
-            delete
-          </v-icon>
-        </td>
+    <v-card class='elevation-1 fullscreen'>
+      <v-card-title>
+        <v-flex xs4>
+          <v-text-field v-model="filteringText" append-icon="search" label="Hledej..." single-line hide-details box>
+          </v-text-field>
+        </v-flex>
+      </v-card-title>
 
-      </template>
-    </v-data-table>
+      <v-data-table
+        :headers='headers'
+        :items='filteredProject'
+        item-key="code"
+        hide-actions
+        fill-height
+      >
+        <template slot='items' slot-scope='props'>
+          <td class='text-xs-center element'>{{ props.item.code }}</td>
+          <td class='text-xs-center element'>{{ props.item.description }}</td>
+          <td class='text-xs-center element'>{{ isProjectActive(props.item.isActive, false) }}</td>
+          <td class="justify-center layout px-0">
+            <v-icon
+              small
+              class="mr-2"
+              @click="editItem(props.item)"
+            >
+              edit
+            </v-icon>
+            <v-icon
+              small
+              @click="deleteItem(props.item)"
+            >
+              delete
+            </v-icon>
+          </td>
+          
+        </template>
+      </v-data-table>
+    </v-card>
   </v-layout>
 </template>
 
@@ -107,6 +116,16 @@ export default {
         },
       ];
     },
+    filteredProject () {
+      return this.allProjects.filter((element) => {
+        const description = element.description === null ? '' : element.description.toUpperCase();
+        const uppercasedFilterText = this.filteringText.toUpperCase();
+
+        return element.code.match(uppercasedFilterText) ||
+          this.isProjectActive(element.isActive, true).match(uppercasedFilterText) ||
+          description.match(uppercasedFilterText);
+      });
+    },
   },
   data () {
     return {
@@ -128,6 +147,7 @@ export default {
         description: '',
         isActive: true,
       },
+      filteringText: '',
     };
   },
   methods: {
@@ -179,6 +199,11 @@ export default {
 
       return format(d, 'DD/MM/YYYY');
     },
+    isProjectActive (isActive, toUpper) {
+      const result = isActive ? 'ano' : 'ne';
+
+      return toUpper ? result.toUpperCase() : result.toLowerCase();
+    },
   },
 };
 </script>
@@ -196,4 +221,5 @@ export default {
 .header {
   font-size: 2em !important;
 }
+
 </style>
