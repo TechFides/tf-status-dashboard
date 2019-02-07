@@ -11,10 +11,13 @@ const USER_ROUTES = [
 ];
 
 export default function ({app, store, route, redirect}) {
-  if (ADMIN_ROUTES.includes(route.name) && !app.isAdmin()) {
-    return redirect('/');
+  if (!ADMIN_ROUTES.includes(route.name) && !USER_ROUTES.includes(route.name)) {
+    return;
+  } else if (ADMIN_ROUTES.includes(route.name) && app.isAdmin()) {
+    return;
+  } else if (USER_ROUTES.includes(route.name) && app.isUser()) {
+    return;
   }
-  if (USER_ROUTES.includes(route.name) && !app.isUser()) {
-    return redirect('/');
-  }
+
+  return redirect('/');
 };
