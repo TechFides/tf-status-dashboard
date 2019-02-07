@@ -109,12 +109,5 @@ Route
 Route
   .get('/api/roles', 'RoleController.getRoles');
 
-/**
- * NUXT
- */
-Route
-  .any('/users', 'NuxtController.render')
-  .middleware(['auth', 'is:admin']);
-
 Route
   .any('*', 'NuxtController.render');

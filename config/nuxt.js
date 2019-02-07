@@ -23,6 +23,7 @@ module.exports = {
   },
   plugins: [
     '~/plugins/vuetify.js',
+    '~/plugins/auth-inject.js',
     '~/plugins/auth.js',
   ],
   css: [
@@ -33,7 +34,12 @@ module.exports = {
     '@nuxtjs/auth',
   ],
   auth: {
-    redirect: false,
+    redirect: {
+      login: false,
+      logout: '/',
+      callback: false,
+      home: false,
+    },
     strategies: {
       local: {
         endpoints: {
@@ -43,6 +49,9 @@ module.exports = {
         },
       },
     },
+  },
+  router: {
+    middleware: 'authenticated',
   },
   /*
   ** Customize the progress bar color

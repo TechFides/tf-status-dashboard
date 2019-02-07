@@ -2,8 +2,8 @@
   <div>
     <v-layout row reverse>
 
-      <v-dialog v-model="noteDialog.isOpen" max-width="500px">
-        <v-btn v-if="isAdmin() || isUser()" slot="activator" color="primary" right @click="resetNote">
+      <v-dialog v-if="isAdmin() || isUser()" v-model="noteDialog.isOpen" max-width="500px">
+        <v-btn slot="activator" color="primary" right @click="resetNote">
           Přidat cíl
         </v-btn>
         <v-form @submit.prevent="createNote">

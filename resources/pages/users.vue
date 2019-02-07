@@ -77,6 +77,7 @@
         <template slot='items' slot-scope='props'>
           <td class='text-xs-center element'>{{ getFullName(props.item.firstName, props.item.lastName) }}</td>
           <td class='text-xs-center element'>{{ props.item.username }}</td>
+          <td class='text-xs-center element'>{{ userRoles(props.item) }}</td>
           <td class='text-xs-center element'>{{ props.item.level }}</td>
           <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
           <td class='text-xs-center element'>{{ isProjectActive(props.item.isActive, false) }}</td>
@@ -105,6 +106,11 @@
 <script>
 import { mapState } from 'vuex';
 
+const roleTranslation = {
+  user: 'Uživatel',
+  admin: 'Administrátor',
+};
+
 export default {
   async fetch ({ store, params }) {
     await Promise.all([
@@ -130,6 +136,12 @@ export default {
           align: 'center',
           sortable: true,
           value: 'username',
+        },
+        {
+          text: 'Role',
+          align: 'center',
+          sortable: true,
+          value: 'roles',
         },
         {
           text: 'Level',
@@ -164,13 +176,14 @@ export default {
         return element.username.toUpperCase().match(uppercasedFilterText) ||
           this.getFullName(element.firstName, element.lastName).toUpperCase().match(uppercasedFilterText) ||
           this.isProjectActive(element.isActive, true).match(uppercasedFilterText) ||
+          this.userRoles(element).toUpperCase().match(uppercasedFilterText) ||
           element.level.toString().match(this.filteringText) ||
           element.totalExp.toString().match(this.filteringText);
       });
     },
     roleItems () {
       return this.roles.map(r => ({
-        text: r.name,
+        text: roleTranslation[r.slug],
         value: r.slug,
       }));
     },
@@ -253,6 +266,12 @@ export default {
     },
     getFullName (firstName, lastName) {
       return `${firstName} ${lastName}`;
+    },
+    userRoles(user) {
+      return this.roles
+              .filter(r => user.roles.includes(r.slug))
+              .map(r => roleTranslation[r.slug])
+              .join(', ');
     },
   },
 };

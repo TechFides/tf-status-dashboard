@@ -123,13 +123,6 @@ export default {
     };
   },
   methods: {
-    openLoginDialog () {
-      this.loginDialog = {
-        isOpen: true,
-        password: '',
-        username: '',
-      };
-    },
     closeLoginDialog () {
       this.loginDialog = {
         isOpen: false,
@@ -146,6 +139,7 @@ export default {
       });
     },
     logout () {
+      this.closeLoginDialog();
       this.$auth.logout();
     },
   },
