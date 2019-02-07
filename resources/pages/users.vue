@@ -1,6 +1,9 @@
 <template>
   <v-layout column justify-center align-end>
-    <v-btn @click="createNewUser()" color="primary" dark class="mb-2">Nový uživatel</v-btn>
+    <v-btn @click="createNewUser()" color="primary" dark class="mb-2">
+      <i class="material-icons pad"> person_add</i>
+      Nový uživatel
+    </v-btn>
 
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
@@ -58,12 +61,14 @@
     </v-dialog>
 
     <v-card class='elevation-1 fullscreen'>
-      <v-card-title>
+      <v-layout align-center justify-end>
         <v-flex xs4>
-          <v-text-field v-model="filteringText" append-icon="search" label="Hledej..." single-line hide-details box>
-          </v-text-field>
+          <v-card-title>
+            <v-text-field v-model="filteringText" append-icon="search" label="Hledej..." single-line hide-details>
+            </v-text-field>
+          </v-card-title>
         </v-flex>
-      </v-card-title>
+      </v-layout>
 
       <v-data-table
         :headers='headers'
@@ -277,7 +282,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .fullscreen {
   width: 100%;
   height: 100%;
@@ -289,5 +294,9 @@ export default {
 
 .header {
   font-size: 2em !important;
+}
+
+.pad {
+  padding-right: 5px;
 }
 </style>

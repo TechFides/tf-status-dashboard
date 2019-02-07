@@ -4,6 +4,7 @@
 
       <v-dialog v-if="isAdmin() || isUser()" v-model="noteDialog.isOpen" max-width="500px">
         <v-btn slot="activator" color="primary" right @click="resetNote">
+          <i class="material-icons">add</i>
           Přidat cíl
         </v-btn>
         <v-form @submit.prevent="createNote">
@@ -39,7 +40,10 @@
         </v-form>
       </v-dialog>
 
-      <v-btn v-if="isAdmin()" color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
+      <v-btn v-if="isAdmin()" color="info" right @click="_ => createStandup()">
+        <i class="material-icons">add</i>
+        Přidat standup
+      </v-btn>
 
       <v-flex md1 class="pad">
         <v-dialog
@@ -304,7 +308,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .fullscreen {
   width: 100%;
   height: 100%;
