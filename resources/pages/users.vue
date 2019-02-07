@@ -80,7 +80,7 @@
           <td class='text-xs-center element'>{{ userRoles(props.item) }}</td>
           <td class='text-xs-center element'>{{ props.item.level }}</td>
           <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
-          <td class='text-xs-center element'>{{ isProjectActive(props.item.isActive, false) }}</td>
+          <td class='text-xs-center element'>{{ isUserActive(props.item.isActive, false) }}</td>
           <td class="justify-center layout px-0">
             <v-icon
               small
@@ -175,7 +175,7 @@ export default {
 
         return element.username.toUpperCase().match(uppercasedFilterText) ||
           this.getFullName(element.firstName, element.lastName).toUpperCase().match(uppercasedFilterText) ||
-          this.isProjectActive(element.isActive, true).match(uppercasedFilterText) ||
+          this.isUserActive(element.isActive, true).match(uppercasedFilterText) ||
           this.userRoles(element).toUpperCase().match(uppercasedFilterText) ||
           element.level.toString().match(this.filteringText) ||
           element.totalExp.toString().match(this.filteringText);
@@ -259,7 +259,7 @@ export default {
 
       this.dialog = false;
     },
-    isProjectActive (isActive, toUpper) {
+    isUserActive (isActive, toUpper) {
       const result = isActive ? 'ano' : 'ne';
 
       return toUpper ? result.toUpperCase() : result.toLowerCase();
