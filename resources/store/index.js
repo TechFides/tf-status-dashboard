@@ -153,9 +153,9 @@ export const actions = {
 
     commit('setAllProjects', res);
   },
-  async editRating ({ dispatch }, ratingData) {
+  async editRating ({ commit }, ratingData) {
     await this.$axios.$post('/api/projectRatings', ratingData);
-    dispatch('updateRating', ratingData);
+    commit('updateRating', ratingData);
   },
   async createStandup ({ commit }) {
     await this.$axios.$post('/api/standups');
