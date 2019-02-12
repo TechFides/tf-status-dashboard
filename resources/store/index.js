@@ -134,7 +134,7 @@ export const actions = {
       getProjectParams(),
     );
 
-    commit('setProjects', res.data);
+    commit('setProjects', res);
   },
   async createProject ({ dispatch }, project) {
     await this.$axios.$post('/api/projects', project);
