@@ -211,15 +211,10 @@ export const actions = {
     await this.$axios.$put(`/api/notes/${note.id}`, note);
     dispatch('getNotes');
   },
-  async markNoteCompleted ({ commit }, noteId) {
-    const [_, notes] = await Promise.all(
-      [
-        this.$axios.$post(`/api/notes/${noteId}/completed`),
-        this.$axios.$get(`/api/notes`),
-      ],
-    );
+  async markNoteCompleted ({ dispatch }, noteId) {
+    this.$axios.$post(`/api/notes/${noteId}/completed`);
 
-    commit('setNotes', notes.data);
+    dispatch('getNotes');
   },
   async getProjectStatistics ({ commit }, params) {
     const projectStatistics = await this.$axios.$get(

@@ -175,7 +175,7 @@ export default {
       const confirmed = confirm(`Opravdu chcete smazat projekt ${item.code}?`);
 
       if (confirmed) {
-        await this.$store.dispatch('deleteProject');
+        await this.$store.dispatch('deleteProject', item.id);
         await this.$store.dispatch('getAllProjects');
       }
     },
