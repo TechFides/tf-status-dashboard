@@ -212,8 +212,7 @@ export const actions = {
     dispatch('getNotes');
   },
   async markNoteCompleted ({ dispatch }, noteId) {
-    this.$axios.$post(`/api/notes/${noteId}/completed`);
-
+    await this.$axios.$post(`/api/notes/${noteId}/completed`);
     dispatch('getNotes');
   },
   async getProjectStatistics ({ commit }, params) {
