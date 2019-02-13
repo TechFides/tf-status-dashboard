@@ -1,6 +1,7 @@
 export const state = () => ({
   notes: [],
   projects: [],
+  allProjects: [],
   projectStatistics: [],
   standups: [],
   standupRatings: {},
