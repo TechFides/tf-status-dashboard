@@ -40,10 +40,32 @@
         </v-form>
       </v-dialog>
 
-      <v-btn v-if="isAdmin()" color="info" right @click="_ => createStandup()">
-        <i class="material-icons">add</i>
-        Přidat standup
+      <v-dialog v-if="isAdmin()" v-model="standupDialog.isOpen" max-width="500px">
+        <v-btn slot="activator" color="info" right @click="resetStandup">
+          <i class="material-icons">add</i>
+          Přidat standup
       </v-btn>
+        <v-form @submit.prevent="createStandup">
+          <v-card>
+            <v-card-title>
+              <span class="headline">{{ noteDialogTitle }}</span>
+            </v-card-title>
+            <div class="mx-3">
+              <v-layout column>
+                <v-flex>
+                  <date-picker-field v-model="standupDialog.standupDate" label="Datum standupu">
+                  </date-picker-field>
+                </v-flex>
+              </v-layout>
+            </div>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" flat @click.native="resetStandup">Zavřít</v-btn>
+              <v-btn color="blue darken-1" flat type="submit">Uložit</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-form>
+      </v-dialog>
 
       <v-flex md1 class="pad">
         <v-dialog
@@ -99,7 +121,11 @@
           </tr>
         </template>
         <template slot='items' slot-scope='{ item }'>
-          <td class='text-xs-center element'>{{ formatDate(item.standup.date) }}</td>
+          <td class='text-xs-center element'>
+            <v-btn color="info" @click="editStandup(item.standup)">
+              {{ formatDate(item.standup.date) }}
+            </v-btn>
+          </td>
 
           <td v-for='(i, itemIndex) in item.ratings' :key='itemIndex'>
             <project-status-picker
@@ -109,6 +135,14 @@
               :disabled='!isAdmin() && !isUser()'
               :date="formatDate(item.standup.date)"
             />
+          </td>
+          <td>
+            <v-icon
+              small
+              @click="deleteStandup(item.standup)"
+            >
+              delete
+            </v-icon>
           </td>
         </template>
       </v-data-table>
@@ -155,6 +189,13 @@ export default {
           hasIcon: false,
         },
         ...projects,
+        {
+          text: 'Akce',
+          align: 'left',
+          sortable: false,
+          value: 'Akce',
+          hasIcon: false,
+        },
       ];
     },
     rows () {
@@ -195,6 +236,10 @@ export default {
         project: '',
         note: '',
         deadlineDate: null,
+      },
+      standupDialog: {
+        isOpen: false,
+        standupDate: null,
       },
     };
   },
@@ -252,6 +297,14 @@ export default {
         deadlineDate: date,
       };
     },
+    resetStandup () {
+      const date = new Date();
+
+      this.standupDialog = {
+        isOpen: false,
+        standupDate: date,
+      };
+    },
     isMissingNote (projectCode, hasIcon) {
       const date = format(new Date(), 'YYYY-MM-DD 00:00:00');
       const hasNoteAfterDeadline = this.notes.some(element => {
@@ -296,8 +349,17 @@ export default {
         note: note.text,
       };
     },
+    editStandup (standup) {
+      this.standupDialog = {
+        isOpen: true,
+        standupDate: parse(standup.date),
+      };
+    },
     async createStandup (i) {
       await this.$store.dispatch('createStandup');
+    },
+    async deleteStandup(standup) {
+      const confirmed = confirm(`Opravdu chcete smazat standup ${this.formatDate(standup.date)}?`);
     },
   },
   components: {
