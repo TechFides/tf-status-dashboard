@@ -158,8 +158,15 @@ export const actions = {
     await this.$axios.$post('/api/projectRatings', ratingData);
     commit('updateRating', ratingData);
   },
-  async createStandup ({ commit }) {
-    await this.$axios.$post('/api/standups');
+  async createStandup ({ dispatch }, standupDate) {
+    await this.$axios.$post('/api/standups', standupDate);
+    dispatch('getProjectRating');
+  },
+  async deleteStandup ({ dispatch }, standupId) {
+    await this.$axios.$delete(`/api/standups/${standupId}`);
+    dispatch('getProjectRating');
+  },
+  async getProjectRating ({ commit }) {
     const res = await this.$axios.$get(
       '/api/projectRatings',
       getDateParams(),

@@ -138,7 +138,6 @@
           </td>
           <td>
             <v-icon
-              small
               @click="deleteStandup(item.standup)"
             >
               delete
@@ -356,10 +355,16 @@ export default {
       };
     },
     async createStandup (i) {
-      await this.$store.dispatch('createStandup');
+      await this.$store.dispatch('createStandup', this.standupDialog.standupDate);
+
+      this.resetStandup();
     },
     async deleteStandup(standup) {
       const confirmed = confirm(`Opravdu chcete smazat standup ${this.formatDate(standup.date)}?`);
+
+      if (confirmed) {
+        await this.$store.dispatch('deleteStandup', standup.id);
+      }
     },
   },
   components: {
