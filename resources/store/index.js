@@ -1,6 +1,7 @@
 export const state = () => ({
   notes: [],
   projects: [],
+  allProjects: [],
   projectStatistics: [],
   standups: [],
   standupRatings: {},
@@ -134,7 +135,7 @@ export const actions = {
       getProjectParams(),
     );
 
-    commit('setProjects', res.data);
+    commit('setProjects', res);
   },
   async createProject ({ dispatch }, project) {
     await this.$axios.$post('/api/projects', project);
@@ -211,15 +212,9 @@ export const actions = {
     await this.$axios.$put(`/api/notes/${note.id}`, note);
     dispatch('getNotes');
   },
-  async markNoteCompleted ({ commit }, noteId) {
-    const [_, notes] = await Promise.all(
-      [
-        this.$axios.$post(`/api/notes/${noteId}/completed`),
-        this.$axios.$get(`/api/notes`),
-      ],
-    );
-
-    commit('setNotes', notes.data);
+  async markNoteCompleted ({ dispatch }, noteId) {
+    await this.$axios.$post(`/api/notes/${noteId}/completed`);
+    dispatch('getNotes');
   },
   async getProjectStatistics ({ commit }, params) {
     const projectStatistics = await this.$axios.$get(
