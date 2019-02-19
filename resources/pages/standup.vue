@@ -40,31 +40,31 @@
         </v-form>
       </v-dialog>
 
-      <v-dialog v-if="isAdmin()" v-model="standupDialog.isOpen" max-width="500px">
-        <v-btn slot="activator" color="info" right @click="resetStandup">
-          <i class="material-icons">add</i>
-          Přidat standup
+
+      <v-btn class="margin" v-if="isAdmin()" slot="activator" color="info" @click="createStandup()">
+        <i class="material-icons">add</i>
+        Přidat standup
       </v-btn>
-        <v-form @submit.prevent="createStandup">
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ noteDialogTitle }}</span>
-            </v-card-title>
-            <div class="mx-3">
-              <v-layout column>
-                <v-flex>
-                  <date-picker-field v-model="standupDialog.standupDate" label="Datum standupu">
-                  </date-picker-field>
-                </v-flex>
-              </v-layout>
-            </div>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" flat @click.native="resetStandup">Zavřít</v-btn>
-              <v-btn color="blue darken-1" flat type="submit">Uložit</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-form>
+
+      <v-dialog v-model="standupDialog.isOpen" max-width="500px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">{{ standupDialogTitle }}</span>
+          </v-card-title>
+          <div class="mx-3">
+            <v-layout column>
+              <v-flex>
+                <date-picker-field v-model="standupDialog.date" label="Datum standupu">
+                </date-picker-field>
+              </v-flex>
+            </v-layout>
+          </div>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click.native="resetStandup">Zavřít</v-btn>
+            <v-btn color="blue darken-1" flat @click.native="save">Uložit</v-btn>
+          </v-card-actions>
+        </v-card>
       </v-dialog>
 
       <v-flex md1 class="pad">
@@ -122,9 +122,7 @@
         </template>
         <template slot='items' slot-scope='{ item }'>
           <td class='text-xs-center element'>
-            <v-btn color="info" @click="editStandup(item.standup)">
-              {{ formatDate(item.standup.date) }}
-            </v-btn>
+            {{ formatDate(item.standup.date) }}
           </td>
 
           <td v-for='(i, itemIndex) in item.ratings' :key='itemIndex'>
@@ -136,7 +134,13 @@
               :date="formatDate(item.standup.date)"
             />
           </td>
-          <td>
+          <td class="justify-center layout px-0">
+            <v-icon
+              @click="editStandup(item.standup)"
+              class="mr-2"
+            >
+              edit
+            </v-icon>
             <v-icon
               @click="deleteStandup(item.standup)"
             >
@@ -212,8 +216,11 @@ export default {
         value: p.id,
       }));
     },
-    noteDialogTitle() {
+    noteDialogTitle () {
       return this.noteDialog.id ? 'Upravení cíle' : 'Vytvoření cíle';
+    },
+    standupDialogTitle () {
+      return this.standupDialog.id ? 'Upravení standupu' : 'Přidání standupu';
     },
   },
   data () {
@@ -237,8 +244,9 @@ export default {
         deadlineDate: null,
       },
       standupDialog: {
+        id: null,
         isOpen: false,
-        standupDate: null,
+        date: null,
       },
     };
   },
@@ -301,7 +309,7 @@ export default {
 
       this.standupDialog = {
         isOpen: false,
-        standupDate: date,
+        date: date,
       };
     },
     isMissingNote (projectCode, hasIcon) {
@@ -350,12 +358,27 @@ export default {
     },
     editStandup (standup) {
       this.standupDialog = {
+        id: standup.id,
         isOpen: true,
-        standupDate: parse(standup.date),
+        date: parse(standup.date),
       };
     },
-    async createStandup (i) {
-      await this.$store.dispatch('createStandup', this.standupDialog.standupDate);
+    createStandup () {
+      this.standupDialog = {
+        isOpen: true,
+        date: new Date(),
+      };
+    },
+    async save () {
+      if (!this.standupDialog.date) {
+        return;
+      }
+
+      if (this.standupDialog.id) {
+        await this.$store.dispatch('editStandup', this.standupDialog);
+      } else {
+        await this.$store.dispatch('createStandup', this.standupDialog);
+      }
 
       this.resetStandup();
     },
@@ -387,6 +410,10 @@ export default {
 
 .pad {
   padding-right: 2%;
+}
+
+.margin {
+  margin-right: 2%;
 }
 
 .header {
