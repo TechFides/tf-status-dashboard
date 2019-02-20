@@ -228,7 +228,7 @@ export default {
       modalItem: {
         standupMonth: null,
       },
-      selectedDate: null,
+      selectedDate: new Date(),
       monthPickerIsOpen: false,
       noteDialog: {
         isOpen: false,
@@ -388,9 +388,14 @@ export default {
     },
     async deleteStandup(standup) {
       const confirmed = confirm(`Opravdu chcete smazat standup ${this.formatDate(standup.date)}?`);
+      this.standupDialog = {
+        id: standup.id,
+        date: parse(standup.date),
+        selectedDate: this.selectedDate,
+      };
 
       if (confirmed) {
-        await this.$store.dispatch('deleteStandup', standup.id);
+        await this.$store.dispatch('deleteStandup', this.standupDialog);
       }
     },
   },

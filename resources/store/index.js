@@ -162,9 +162,9 @@ export const actions = {
     await this.$axios.$post('/api/standups', standup);
     dispatch('getProjectRating', standup.selectedDate);
   },
-  async deleteStandup ({ dispatch }, standupId) {
-    await this.$axios.$delete(`/api/standups/${standupId}`);
-    dispatch('getProjectRating');
+  async deleteStandup ({ dispatch }, standup) {
+    await this.$axios.$delete(`/api/standups/${standup.id}`);
+    dispatch('getProjectRating', standup.selectedDate);
   },
   async editStandup ({ dispatch }, standup) {
     await this.$axios.$put(`/api/standups/${standup.id}`, standup);
