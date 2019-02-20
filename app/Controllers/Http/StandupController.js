@@ -45,7 +45,7 @@ class StandupController {
     await StandupModel
       .query()
       .where('id', '=', id)
-      .update({date:date});
+      .update({date: date});
   }
 
   async deleteStandup ({ request, response, params }) {
