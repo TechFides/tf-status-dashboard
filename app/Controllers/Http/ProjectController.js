@@ -1,6 +1,7 @@
 'use strict';
 
 const ProjectModel = use('App/Models/Project');
+const NoteModel = use('App/Models/Note');
 
 class ProjectController {
   static getProjectData (request) {
@@ -56,6 +57,11 @@ class ProjectController {
     const project = await ProjectModel.find(id);
 
     try {
+      await NoteModel
+        .query()
+        .where('project_id', '=', id)
+        .update({is_active: 0});
+
       await project.delete();
       response.send();
     } catch (e) {

@@ -228,6 +228,7 @@ export default {
       modalItem: {
         standupMonth: null,
       },
+      selectedDate: null,
       monthPickerIsOpen: false,
       noteDialog: {
         isOpen: false,
@@ -247,6 +248,7 @@ export default {
         id: null,
         isOpen: false,
         date: null,
+        selectedDate: null,
       },
     };
   },
@@ -274,12 +276,13 @@ export default {
       const selectedDate = new Date();
       const [year, month] = this.modalItem.standupMonth.split('-');
       selectedDate.setFullYear(Number(year), Number(month) - 1);
+      this.selectedDate = selectedDate;
 
       const isSameMonth = (selectedDate.getMonth() === actualDate.getMonth());
       const isSameYear = (selectedDate.getFullYear() === actualDate.getFullYear());
 
       if (isSameMonth && isSameYear) {
-        this.$store.dispatch('getStandupData');
+        this.$store.dispatch('getStandupData', selectedDate);
       } else {
         this.$store.dispatch('getProjectsForMonth', selectedDate);
       }
@@ -361,19 +364,20 @@ export default {
         id: standup.id,
         isOpen: true,
         date: parse(standup.date),
+        selectedDate: this.selectedDate,
       };
     },
     createStandup () {
       this.standupDialog = {
         isOpen: true,
         date: new Date(),
+        selectedDate: this.selectedDate,
       };
     },
     async save () {
       if (!this.standupDialog.date) {
         return;
       }
-
       if (this.standupDialog.id) {
         await this.$store.dispatch('editStandup', this.standupDialog);
       } else {

@@ -160,7 +160,7 @@ export const actions = {
   },
   async createStandup ({ dispatch }, standup) {
     await this.$axios.$post('/api/standups', standup);
-    dispatch('getProjectRating');
+    dispatch('getProjectRating', standup.selectedDate);
   },
   async deleteStandup ({ dispatch }, standupId) {
     await this.$axios.$delete(`/api/standups/${standupId}`);
@@ -168,12 +168,12 @@ export const actions = {
   },
   async editStandup ({ dispatch }, standup) {
     await this.$axios.$put(`/api/standups/${standup.id}`, standup);
-    dispatch('getProjectRating');
+    dispatch('getProjectRating', standup.selectedDate);
   },
-  async getProjectRating ({ commit }) {
+  async getProjectRating ({ commit }, date) {
     const res = await this.$axios.$get(
       '/api/projectRatings',
-      getDateParams(),
+      getDateParams(date),
     );
     commit('setProjectRatings', res);
   },
