@@ -158,14 +158,24 @@ export const actions = {
     await this.$axios.$post('/api/projectRatings', ratingData);
     commit('updateRating', ratingData);
   },
-  async createStandup ({ commit }) {
-    await this.$axios.$post('/api/standups');
+  async createStandup ({ dispatch }, standup) {
+    await this.$axios.$post('/api/standups', standup);
+    dispatch('getProjectRating', standup.selectedDate);
+  },
+  async deleteStandup ({ dispatch }, standup) {
+    await this.$axios.$delete(`/api/standups/${standup.id}`);
+    dispatch('getProjectRating', standup.selectedDate);
+  },
+  async editStandup ({ dispatch }, standup) {
+    await this.$axios.$put(`/api/standups/${standup.id}`, standup);
+    dispatch('getProjectRating', standup.selectedDate);
+  },
+  async getProjectRating ({ commit }, date) {
     const res = await this.$axios.$get(
       '/api/projectRatings',
-      getDateParams(),
+      getDateParams(date),
     );
-
-    commit('setProjectRatings', res.data);
+    commit('setProjectRatings', res);
   },
   async getProjectsForMonth ({ commit }, date) {
     const dateParams = getDateParams(date);

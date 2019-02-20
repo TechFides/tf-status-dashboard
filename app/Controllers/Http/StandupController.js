@@ -1,8 +1,17 @@
 'use strict';
 
 const StandupModel = use('App/Models/Standup');
+const StandupProjectRating = use('App/Models/StandupProjectRating');
 
 class StandupController {
+
+  static getStandupData (request) {
+    const { date } = request.only(['standupDate']);
+
+    return {
+      date,
+    };
+  }
 
   async getStandups ({ request, response, session }) {
     let { month, year } = request.get();
@@ -21,15 +30,22 @@ class StandupController {
   }
 
   async createStandup ({ request, response, params }) {
-    const date = new Date();
-    date.setHours(0, 0, 0, 0);
+    const standup = new StandupModel();
+    const date = request.only(['date']);
 
-    const standup = await StandupModel.findOrCreate(
-      { date },
-      { date },
-    );
+    standup.fill(date);
+    await standup.save();
 
     return standup.toJSON();
+  }
+
+  async editStandup ({ request, response, params }) {
+    const { id } = params;
+    const { date } = request.only(['date']);
+    await StandupModel
+      .query()
+      .where('id', '=', id)
+      .update({date: date});
   }
 
   async deleteStandup ({ request, response, params }) {
@@ -37,6 +53,11 @@ class StandupController {
     const standup = await StandupModel.find(id);
 
     try {
+      await StandupProjectRating
+        .query()
+        .where('standup_id', '=', id)
+        .delete();
+
       await standup.delete();
       response.send();
     } catch (e) {

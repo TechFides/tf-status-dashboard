@@ -40,10 +40,32 @@
         </v-form>
       </v-dialog>
 
-      <v-btn v-if="isAdmin()" color="info" right @click="_ => createStandup()">
+
+      <v-btn class="margin" v-if="isAdmin()" slot="activator" color="info" @click="createStandup()">
         <i class="material-icons">add</i>
         Přidat standup
       </v-btn>
+
+      <v-dialog v-model="standupDialog.isOpen" max-width="500px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">{{ standupDialogTitle }}</span>
+          </v-card-title>
+          <div class="mx-3">
+            <v-layout column>
+              <v-flex>
+                <date-picker-field v-model="standupDialog.date" label="Datum standupu">
+                </date-picker-field>
+              </v-flex>
+            </v-layout>
+          </div>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click.native="resetStandup">Zavřít</v-btn>
+            <v-btn color="blue darken-1" flat @click.native="save">Uložit</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
       <v-flex md1 class="pad">
         <v-dialog
@@ -99,7 +121,9 @@
           </tr>
         </template>
         <template slot='items' slot-scope='{ item }'>
-          <td class='text-xs-center element'>{{ formatDate(item.standup.date) }}</td>
+          <td class='text-xs-center element'>
+            {{ formatDate(item.standup.date) }}
+          </td>
 
           <td v-for='(i, itemIndex) in item.ratings' :key='itemIndex'>
             <project-status-picker
@@ -109,6 +133,19 @@
               :disabled='!isAdmin() && !isUser()'
               :date="formatDate(item.standup.date)"
             />
+          </td>
+          <td class="justify-center layout px-0">
+            <v-icon
+              @click="editStandup(item.standup)"
+              class="mr-2"
+            >
+              edit
+            </v-icon>
+            <v-icon
+              @click="deleteStandup(item.standup)"
+            >
+              delete
+            </v-icon>
           </td>
         </template>
       </v-data-table>
@@ -155,6 +192,13 @@ export default {
           hasIcon: false,
         },
         ...projects,
+        {
+          text: 'Akce',
+          align: 'left',
+          sortable: false,
+          value: 'Akce',
+          hasIcon: false,
+        },
       ];
     },
     rows () {
@@ -172,8 +216,11 @@ export default {
         value: p.id,
       }));
     },
-    noteDialogTitle() {
+    noteDialogTitle () {
       return this.noteDialog.id ? 'Upravení cíle' : 'Vytvoření cíle';
+    },
+    standupDialogTitle () {
+      return this.standupDialog.id ? 'Upravení standupu' : 'Přidání standupu';
     },
   },
   data () {
@@ -181,6 +228,7 @@ export default {
       modalItem: {
         standupMonth: null,
       },
+      selectedDate: new Date(),
       monthPickerIsOpen: false,
       noteDialog: {
         isOpen: false,
@@ -195,6 +243,12 @@ export default {
         project: '',
         note: '',
         deadlineDate: null,
+      },
+      standupDialog: {
+        id: null,
+        isOpen: false,
+        date: null,
+        selectedDate: null,
       },
     };
   },
@@ -222,12 +276,13 @@ export default {
       const selectedDate = new Date();
       const [year, month] = this.modalItem.standupMonth.split('-');
       selectedDate.setFullYear(Number(year), Number(month) - 1);
+      this.selectedDate = selectedDate;
 
       const isSameMonth = (selectedDate.getMonth() === actualDate.getMonth());
       const isSameYear = (selectedDate.getFullYear() === actualDate.getFullYear());
 
       if (isSameMonth && isSameYear) {
-        this.$store.dispatch('getStandupData');
+        this.$store.dispatch('getStandupData', selectedDate);
       } else {
         this.$store.dispatch('getProjectsForMonth', selectedDate);
       }
@@ -250,6 +305,14 @@ export default {
       this.noteDialog = {
         ...this.defaultNoteDialog,
         deadlineDate: date,
+      };
+    },
+    resetStandup () {
+      const date = new Date();
+
+      this.standupDialog = {
+        isOpen: false,
+        date: date,
       };
     },
     isMissingNote (projectCode, hasIcon) {
@@ -296,8 +359,44 @@ export default {
         note: note.text,
       };
     },
-    async createStandup (i) {
-      await this.$store.dispatch('createStandup');
+    editStandup (standup) {
+      this.standupDialog = {
+        id: standup.id,
+        isOpen: true,
+        date: parse(standup.date),
+        selectedDate: this.selectedDate,
+      };
+    },
+    createStandup () {
+      this.standupDialog = {
+        isOpen: true,
+        date: new Date(),
+        selectedDate: this.selectedDate,
+      };
+    },
+    async save () {
+      if (!this.standupDialog.date) {
+        return;
+      }
+      if (this.standupDialog.id) {
+        await this.$store.dispatch('editStandup', this.standupDialog);
+      } else {
+        await this.$store.dispatch('createStandup', this.standupDialog);
+      }
+
+      this.resetStandup();
+    },
+    async deleteStandup(standup) {
+      const confirmed = confirm(`Opravdu chcete smazat standup ${this.formatDate(standup.date)}?`);
+      this.standupDialog = {
+        id: standup.id,
+        date: parse(standup.date),
+        selectedDate: this.selectedDate,
+      };
+
+      if (confirmed) {
+        await this.$store.dispatch('deleteStandup', this.standupDialog);
+      }
     },
   },
   components: {
@@ -320,6 +419,10 @@ export default {
 
 .pad {
   padding-right: 2%;
+}
+
+.margin {
+  margin-right: 2%;
 }
 
 .header {

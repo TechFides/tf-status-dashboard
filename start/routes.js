@@ -75,7 +75,10 @@ Route
   .post('/api/standups', 'StandupController.createStandup')
   .middleware(['auth', 'is:admin']);
 Route
-  .delete('/api/standups', 'StandupController.deleteStandup')
+  .delete('/api/standups/:id', 'StandupController.deleteStandup')
+  .middleware(['auth', 'is:admin']);
+Route
+  .put('/api/standups/:id', 'StandupController.editStandup')
   .middleware(['auth', 'is:admin']);
 
 /**
