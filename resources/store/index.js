@@ -7,6 +7,7 @@ export const state = () => ({
   standupRatings: {},
   users: [],
   roles: [],
+  feedbacks: [{id: 0, name: 'David', values: [1,1,3,2]}, {id: 1, name: 'Petr', values: [3,3,3,2]}, {id: 2, name: 'Tom', values: [2,1,3,4]}],
 });
 
 const sortByProperty = function (property, a, b) {
