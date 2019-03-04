@@ -104,13 +104,13 @@ class UserController {
     month = Number(month);
     year = Number(year);
     const currentMonth = new Date(year, month, 1);
-    const nextMonth = new Date(year, month+1, 1); 
+    const nextMonth = new Date(year, month + 1, 1);
 
     const query = UserModel
       .query()
       .with('feedback', element => {
-        element.where('create_at', '>=', currentMonth)
-        element.where('create_at', '<', nextMonth)
+        element.where('create_at', '>=', currentMonth);
+        element.where('create_at', '<', nextMonth);
       });
 
     const usersFeedbacks = await query.fetch();
