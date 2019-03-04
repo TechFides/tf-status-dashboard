@@ -7,7 +7,7 @@ export const state = () => ({
   standupRatings: {},
   users: [],
   roles: [],
-  feedbacks: [{id: 0, name: 'David', values: [1,1,3,2]}, {id: 1, name: 'Petr', values: [3,3,3,2]}, {id: 2, name: 'Tom', values: [2,1,3,4]}],
+  usersFeedbacks: [],
 });
 
 const sortByProperty = function (property, a, b) {
@@ -127,6 +127,14 @@ export const mutations = {
   },
   setRoles (state, roles) {
     state.roles = roles;
+  },
+  setUsersFeedbacks (state, userFeedbacks) {
+    state.usersFeedbacks = userFeedbacks.map(uf => ({
+      firstName: uf.first_name,
+      lastName: uf.last_name,
+      feedbacks: uf.feedback
+        .sort(sortByProperty.bind(this, 'create_at')),
+    }));
   },
 };
 
@@ -256,5 +264,11 @@ export const actions = {
     const roles = await this.$axios.$get('/api/roles');
 
     commit('setRoles', roles);
+  },
+  async getFeedbacks ({ commit }, date) {
+    const feedbacks = await this.$axios.$get('/api/usersfeedbacks',
+    getDateParams(date));
+
+    commit('setUsersFeedbacks', feedbacks);
   },
 };

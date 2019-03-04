@@ -2,6 +2,7 @@
 
 const UserModel = use('App/Models/User');
 const RoleModel = use('Adonis/Acl/Role');
+const FModel = use('App/Models/Feedback');
 
 class UserController {
   static mapToDbEntity (request) {
@@ -96,6 +97,25 @@ class UserController {
       user.roles().attach(attach),
       user.roles().detach(detach),
     ]);
+  }
+
+  async getUsersFeedbacks ({ request, response, params }) {
+    let { month, year } = request.get();
+    month = Number(month);
+    year = Number(year);
+    const currentMonth = new Date(year, month, 1);
+    const nextMonth = new Date(year, month+1, 1); 
+
+    const query = UserModel
+      .query()
+      .with('feedback', element => {
+        element.where('create_at', '>=', currentMonth)
+        element.where('create_at', '<', nextMonth)
+      });
+
+    const usersFeedbacks = await query.fetch();
+
+    return usersFeedbacks.toJSON();
   }
 }
 

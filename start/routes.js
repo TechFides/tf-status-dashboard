@@ -24,6 +24,12 @@ Route.post('/api/auth/logout', 'AuthController.logout');
 Route.get('/api/auth/me', 'AuthController.me');
 
 /**
+ * FEEDBACKS
+ */
+Route
+  .get('/api/usersfeedbacks', 'UserController.getUsersFeedbacks')
+  .middleware(['auth', 'is:admin']);
+/**
  * NOTES
  */
 Route

@@ -1,7 +1,33 @@
 <template>
   <div> 
-    <v-layout column justify-center align-center>
+    <v-layout row reverse>
+      <v-flex md1 class="pad">
+        <v-dialog
+          ref="dialogMonth"
+          v-model="modalItem.monthPickerIsOpen"
+          :return-value.sync="modalItem.heatMapMonth"
+          persistent
+          lazy
+          full-width
+          width="290px"
+        >
+          <v-text-field
+            slot="activator"
+            v-model="modalItem.heatMapMonth"
+            label="Měsíc"
+            append-icon="event"
+            readonly
+          ></v-text-field>
+          <v-date-picker v-model="modalItem.heatMapMonth" scrollable type="month">
+            <v-spacer></v-spacer>
+            <v-btn flat color="primary" @click="modalItem.monthPickerIsOpen = false">Zrušit</v-btn>
+            <v-btn flat color="primary" @click="getFeedbacksforMonth($refs.dialogMonth)">OK</v-btn>
+          </v-date-picker>
+        </v-dialog>
+      </v-flex>
+    </v-layout>
 
+    <v-layout column justify-center align-center>
       <v-data-table
         :headers='headers'
         :items='rows'
@@ -22,7 +48,7 @@
             {{ item.fullName }}
           </td>
 
-          <td v-for='(i, itemIndex) in item.feedbacks' :key='itemIndex' :class="getClassName(i.value)">
+          <td v-for='(i, itemIndex) in item.feedbacks' :key='itemIndex' :class="getClassName(i.feedback)">
           </td>
         </template>
       </v-data-table>
@@ -34,9 +60,14 @@
 import { mapState } from 'vuex';
 
 export default {
+  fetch ({ store, params }) {
+    return Promise.all([
+      store.dispatch('getFeedbacks'),
+    ]);
+  },
   computed: {
     ...mapState([
-      'feedbacks',
+      'usersFeedbacks',
     ]),
     headers () {
       return [
@@ -73,33 +104,58 @@ export default {
       ];
     },
     rows () {
-      return this.feedbacks.map(element => ({
-        fullName: element.name,
-        feedbacks: element.values.map(element => ({
-          value: element,
+      return this.usersFeedbacks.map(element => ({
+        fullName: `${element.firstName} ${element.lastName}`,
+        feedbacks: element.feedbacks.map(element => ({
+          feedback: element.value,
         })),
       }));
     },
   },
   data () {
     return {
-      entityBackgroudColor: null,
+      modalItem: {
+        heatMapMonth: null,
+        monthPickerIsOpen: false,
+      },
     };
   },
   methods: {
+    getFeedbacksforMonth (monthInput) {
+      if (!this.modalItem.heatMapMonth) {
+        this.modalItem.monthPickerIsOpen = false;
+        return;
+      }
+
+      monthInput.save(this.modalItem.heatMapMonth);
+
+      const actualDate = new Date();
+
+      const selectedDate = new Date();
+      const [year, month] = this.modalItem.heatMapMonth.split('-');
+      selectedDate.setFullYear(Number(year), Number(month) - 1);
+      this.selectedDate = selectedDate;
+
+      const isSameMonth = (selectedDate.getMonth() === actualDate.getMonth());
+      const isSameYear = (selectedDate.getFullYear() === actualDate.getFullYear());
+
+      this.$store.dispatch('getFeedbacks', selectedDate);
+
+      this.modalItem.monthPickerIsOpen = false;
+    },
     getClassName (value) {
       let className = 'text-xs-center element';
       switch (value) {
         case 0:
           return className;
         case 1:
-          return `${className} red`;
+          return `${className} light-green`;
         case 2:
-          return `${className} yellow`;
-        case 3:
-          return `${className} blue`;
-        case 4:
           return `${className} green`;
+        case 3:
+          return `${className} yellow`;
+        case 4:
+          return `${className} red`;
         default:
           return '';
       }
@@ -131,18 +187,18 @@ export default {
 }
 
 .red {
-  background-color: brown;
+  background-color: #FF0000;
 }
 
 .yellow {
-  background-color: yellow;
+  background-color: #FFC000;
 }
 
 .green {
-  background-color: green;
+  background-color: #70AD47;
 }
 
-.blue {
-  background-color: blue;
+.light-green {
+  background-color: #92D050;
 }
 </style>

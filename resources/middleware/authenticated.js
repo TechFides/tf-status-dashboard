@@ -3,6 +3,7 @@ const ADMIN_ROUTES = [
   'project',
   'statistics',
   'users',
+  'heatmap',
 ];
 
 // routes accessibled by role 'user'
