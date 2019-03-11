@@ -48,17 +48,28 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+    <v-snackbar
+      :value="snackbar.isVisible"
+      :color="snackbar.color"
+      :multi-line="true"
+    >
+      {{ snackbar.message }}
+    </v-snackbar>
   </v-app>
 </template>
 
 <script>
 import LoginDialog from '../components/LoginDialog';
+import { mapState } from 'vuex';
 
 export default {
   components: {
     LoginDialog,
   },
   computed: {
+    ...mapState([
+      'snackbar',
+    ]),
     items () {
       const items = [
         {icon: 'apps', title: 'Dashboard', to: '/'},

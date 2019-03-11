@@ -13,6 +13,11 @@ export const state = () => ({
     field: '',
     validation: '',
   },
+  snackbar: {
+    isVisible: false,
+    message: '',
+    color: '',
+  },
 });
 
 const sortByProperty = function (property, a, b) {
@@ -150,6 +155,30 @@ export const mutations = {
       field: '',
     };
   },
+  setNotification (state, notification) {
+    if (timeoutToClear) {
+      clearTimeout(timeoutToClear);
+      this.commit('clearNotification');
+    }
+    let timeoutToClear = null;
+
+    state.snackbar = {
+      isVisible: true,
+      message: notification.message ? notification.message : '',
+      color: notification.color ? notification.color : '',
+    };
+
+    timeoutToClear = setTimeout(() => {
+      this.commit('clearNotification');
+    }, 4000);
+  },
+  clearNotification (state) {
+    state.snackbar = {
+      isVisible: false,
+      message: '',
+      color: '',
+    };
+  },
 };
 
 export const actions = {
@@ -182,9 +211,14 @@ export const actions = {
       }
     }
   },
-  async deleteProject ({ dispatch }, projectId) {
-    await this.$axios.$delete(`/api/projects/${projectId}`);
-    dispatch('getAllProjects');
+  async deleteProject ({ dispatch, commit }, projectId) {
+    try {
+      await this.$axios.$delete(`/api/projects/${projectId}`);
+      dispatch('getAllProjects');
+      commit('clearNotification');
+    } catch (error) {
+      commit('setNotification', {color: 'error', message: 'Smazat projekt se nezdařilo.'});
+    }
   },
   async getAllProjects ({ commit }) {
     const res = await this.$axios.$get('/api/projects');
@@ -206,9 +240,14 @@ export const actions = {
       }
     }
   },
-  async deleteStandup ({ dispatch }, standup) {
-    await this.$axios.$delete(`/api/standups/${standup.id}`);
-    dispatch('getProjectRating', standup.selectedDate);
+  async deleteStandup ({ dispatch, commit }, standup) {
+    try {
+      await this.$axios.$delete(`/api/standups/${standup.id}`);
+      dispatch('getProjectRating', standup.selectedDate);
+      commit('clearNotification');
+    } catch (error) {
+      commit('setNotification', {color: 'error', message: 'Smazat standup se nezdařilo.'});
+    }
   },
   async editStandup ({ dispatch, commit }, standup) {
     try {
@@ -222,11 +261,16 @@ export const actions = {
     }
   },
   async getProjectRating ({ commit }, date) {
-    const res = await this.$axios.$get(
-      '/api/projectRatings',
-      getDateParams(date),
-    );
-    commit('setProjectRatings', res);
+    try {
+      const res = await this.$axios.$get(
+        '/api/projectRatings',
+        getDateParams(date),
+      );
+      commit('setProjectRatings', res);
+      commit('clearNotification');
+    } catch (error) {
+      commit('setNotification', {color: 'error', message: 'Získat hodnotení projektu se nezdařilo.'});
+    }
   },
   async getProjectsForMonth ({ commit }, date) {
     const dateParams = getDateParams(date);
@@ -287,9 +331,16 @@ export const actions = {
       }
     }
   },
-  async markNoteCompleted ({ dispatch }, noteId) {
-    await this.$axios.$post(`/api/notes/${noteId}/completed`);
-    dispatch('getNotes');
+  async markNoteCompleted ({ dispatch, commit }, noteId) {
+    try {
+      await this.$axios.$post(`/api/notes/${noteId}/completed`);
+      dispatch('getNotes');
+      commit('clearNotification');
+    } catch (error) {
+      commit('setNotification', {color: 'error', message: `Označení poznámky za dokončenou se nezdařilo.`});
+    }
+
+    commit('setNotification', {color: 'error', message: `Označení poznámky za dokončenou se nezdařilo.`});
   },
   async getProjectStatistics ({ commit }, params) {
     const projectStatistics = await this.$axios.$get(
@@ -326,10 +377,14 @@ export const actions = {
       }
     }
   },
-  async deleteUser ({ dispatch }, userId) {
-    await this.$axios.$delete(`/api/users/${userId}`);
-
-    dispatch('getUsers');
+  async deleteUser ({ dispatch, commit }, userId) {
+    try {
+      await this.$axios.$delete(`/api/users/${userId}`);
+      dispatch('getUsers');
+      commit('clearNotification');
+    } catch (error) {
+      commit('setNotification', {color: 'error', message: `Uživatela (${userId}) se nepodařilo odstranit.`});
+    }
   },
   async getRoles ({ commit }) {
     const roles = await this.$axios.$get('/api/roles');
