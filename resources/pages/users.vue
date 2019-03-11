@@ -5,7 +5,7 @@
       Nový uživatel
     </v-btn>
 
-    <v-dialog v-model="dialog" max-width="500px">
+    <v-dialog v-model="dialog" max-width="500px" transition="scale-transition">
       <v-card>
         <v-card-title>
           <span class="headline">{{ modalTitle }}</span>
@@ -49,6 +49,15 @@
                 </v-flex>
               </v-layout>
             </v-container>
+
+            <v-alert
+              transition="fade-transition"
+              :value="error.isVisible"
+              type="error"
+            >
+              {{ error.message }}
+            </v-alert>
+
           </v-card-text>
 
           <v-card-actions>
@@ -109,7 +118,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 
 const roleTranslation = {
   user: 'Uživatel',
@@ -127,6 +136,10 @@ export default {
     ...mapState([
       'users',
       'roles',
+      'error',
+    ]),
+    ...mapMutations([
+      'setErrorState',
     ]),
     headers: function () {
       return [
@@ -224,6 +237,19 @@ export default {
     };
   },
   methods: {
+    isUsernameUnique () {
+      const userExist = this.users.find(user => user.username === this.modalItem.username);
+      if (userExist) {
+        this.$store.commit('setErrorState', {
+          isVisible: true,
+          field: 'username',
+          validation: 'unique',
+          message: 'Uživatelské jméno již existuje.',
+        });
+      }
+
+      return !(userExist);
+    },
     createNewUser () {
       this.modalItem = { ...this.defaultModalItem };
       this.modalTitle = 'Nový uživatel';
@@ -254,15 +280,16 @@ export default {
     close () {
       this.dialog = false;
       this.modalItem = { ...this.defaultModalItem };
+      this.$store.commit('clearErrorState');
     },
     async save () {
-      if (this.modalItem.id) {
-        await this.$store.dispatch('editUser', this.modalItem);
-      } else {
-        await this.$store.dispatch('createUser', this.modalItem);
-      }
+      const action = this.modalItem.id ? 'editUser' : 'createUser';
 
-      this.dialog = false;
+      // Known validation only on username (unique value)
+      if (this.isUsernameUnique()) {
+        await this.$store.dispatch(action, this.modalItem);
+        !this.error.isVisible && close();
+      }
     },
     isUserActive (isActive, toUpper) {
       const result = isActive ? 'ano' : 'ne';

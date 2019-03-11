@@ -7,6 +7,12 @@ export const state = () => ({
   standupRatings: {},
   users: [],
   roles: [],
+  error: {
+    isVisible: false,
+    message: '',
+    field: '',
+    validation: '',
+  },
 });
 
 const sortByProperty = function (property, a, b) {
@@ -127,6 +133,23 @@ export const mutations = {
   setRoles (state, roles) {
     state.roles = roles;
   },
+  setErrorState (state, errorObj) {
+    // Check if fields are optional or required
+    state.error = {
+      isVisible: true,
+      message: errorObj.message ? errorObj.message : '',
+      validation: errorObj.validation ? errorObj.validation : '',
+      field: errorObj.field ? errorObj.field : '',
+    };
+  },
+  clearErrorState (state) {
+    state.error = {
+      isVisible: false,
+      message: '',
+      validation: '',
+      field: '',
+    };
+  },
 };
 
 export const actions = {
@@ -239,12 +262,28 @@ export const actions = {
 
     commit('setUsers', users);
   },
-  async createUser ({ dispatch }, user) {
-    await this.$axios.$post('/api/users', user);
+  async createUser ({ dispatch, commit }, user) {
+    try {
+      await this.$axios.$post('/api/users', user);
+      commit('clearErrorState');
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('setErrorState', error.response.data[0]);
+      }
+    }
+
     dispatch('getUsers');
   },
-  async editUser ({ dispatch }, user) {
-    await this.$axios.$put(`/api/users/${user.id}`, user);
+  async editUser ({ dispatch, commit }, user) {
+    try {
+      await this.$axios.$put(`/api/users/${user.id}`, user);
+      commit('clearErrorState');
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('setErrorState', error.response.data[0]);
+      }
+    }
+
     dispatch('getUsers');
   },
   async deleteUser ({ dispatch }, userId) {
