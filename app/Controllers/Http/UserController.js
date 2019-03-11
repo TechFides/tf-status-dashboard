@@ -2,7 +2,6 @@
 
 const UserModel = use('App/Models/User');
 const RoleModel = use('Adonis/Acl/Role');
-const FModel = use('App/Models/Feedback');
 
 class UserController {
   static mapToDbEntity (request) {
@@ -100,7 +99,7 @@ class UserController {
   }
 
   async getUsersFeedbacks ({ request, response, params }) {
-    let { month, year } = request.get();
+    let { month, year, isActive } = request.get();
     month = Number(month);
     year = Number(year);
     const currentMonth = new Date(year, month, 1);
@@ -112,6 +111,11 @@ class UserController {
         element.where('create_at', '>=', currentMonth);
         element.where('create_at', '<', nextMonth);
       });
+
+    if (isActive === 'true') {
+      query
+        .where('is_active', true);
+    }
 
     const usersFeedbacks = await query.fetch();
 

@@ -24,10 +24,13 @@ Route.post('/api/auth/logout', 'AuthController.logout');
 Route.get('/api/auth/me', 'AuthController.me');
 
 /**
- * FEEDBACKS
+ * HEATMAP
  */
 Route
   .get('/api/usersfeedbacks', 'UserController.getUsersFeedbacks')
+  .middleware(['auth', 'is:admin']);
+Route
+  .get('/api/heatmapWeeks', 'HeatmapController.getHeatmapWeeks')
   .middleware(['auth', 'is:admin']);
 /**
  * NOTES

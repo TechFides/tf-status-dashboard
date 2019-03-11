@@ -48,7 +48,7 @@
             {{ item.fullName }}
           </td>
 
-          <td v-for='(i, itemIndex) in item.feedbacks' :key='itemIndex' :class="getClassName(i.feedback)">
+          <td v-for='(i, itemIndex) in item.feedbacks' :key='itemIndex' :class="getClassName(i.value)">
           </td>
         </template>
       </v-data-table>
@@ -58,6 +58,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
 
 export default {
   fetch ({ store, params }) {
@@ -68,8 +69,16 @@ export default {
   computed: {
     ...mapState([
       'usersFeedbacks',
+      'heatmapWeeks',
     ]),
     headers () {
+      const heatmapWeeks = this.heatmapWeeks.map(h => ({
+        text: this.formatDate(h.date),
+        align: 'center',
+        sortable: true,
+        value: h.date,
+      }));
+
       return [
         {
           text: 'Jméno',
@@ -77,38 +86,13 @@ export default {
           sortable: true,
           value: 'firstName',
         },
-        {
-          text: 'Týden 1',
-          align: 'center',
-          sortable: true,
-          value: 'firstWeek',
-        },
-        {
-          text: 'Týden 2',
-          align: 'center',
-          sortable: true,
-          value: 'secondWeek',
-        },
-        {
-          text: 'Týden 3',
-          align: 'center',
-          sortable: true,
-          value: 'thirdWeek',
-        },
-        {
-          text: 'Týden 4',
-          align: 'center',
-          sortable: true,
-          value: 'fourthWeek',
-        },
+        ...heatmapWeeks,
       ];
     },
     rows () {
       return this.usersFeedbacks.map(element => ({
-        fullName: `${element.firstName} ${element.lastName}`,
-        feedbacks: element.feedbacks.map(element => ({
-          feedback: element.value,
-        })),
+        fullName: `${element.first_name} ${element.last_name}`,
+        feedbacks: this.getFeedbacks(element),
       }));
     },
   },
@@ -121,6 +105,18 @@ export default {
     };
   },
   methods: {
+    formatDate (date) {
+      const d = new Date(date);
+
+      return format(d, 'DD/MM/YYYY');
+    },
+    getFeedbacks (userFeedback) {
+      return this.heatmapWeeks.map(w => ({
+        userFeedbackId: userFeedback.id,
+        weekId: w.id,
+        value: userFeedback.feedback[w.id] || 0,
+      }));
+    },
     getFeedbacksforMonth (monthInput) {
       if (!this.modalItem.heatMapMonth) {
         this.modalItem.monthPickerIsOpen = false;
