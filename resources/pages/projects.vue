@@ -27,6 +27,15 @@
                 ></v-checkbox>
               </v-flex>
             </v-layout>
+
+            <v-alert
+              transition="fade-transition"
+              :value="error.isVisible"
+              type="error"
+            >
+              {{ error.message }}
+            </v-alert>
+
           </v-container>
         </v-card-text>
 
@@ -92,6 +101,7 @@ export default {
   computed: {
     ...mapState([
       'allProjects',
+      'error',
     ]),
     headers: function () {
       return [
@@ -184,16 +194,11 @@ export default {
       this.modalItem = { ...this.defaultModalItem };
     },
     async save () {
-      if (this.modalItem.id) {
-        await this.$store.dispatch('editProject', this.modalItem);
-      } else {
-        await this.$store.dispatch('createProject', this.modalItem);
-      }
-
+      const action = this.modalItem.id ? 'editProject' : 'createProject';
+      await this.$store.dispatch(action, this.modalItem);
       await this.$store.dispatch('getProjects');
       await this.$store.dispatch('getAllProjects');
-      this.modalItem = { ...this.defaultModalItem };
-      this.dialog = false;
+      !this.error.isVisible && this.close();
     },
     formatDate (date) {
       if (!date) {

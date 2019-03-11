@@ -30,6 +30,13 @@
                   <v-textarea v-model="noteDialog.note" label="Poznámka" required></v-textarea>
                 </v-flex>
               </v-layout>
+              <v-alert
+                transition="fade-transition"
+                :value="error.isVisible"
+                type="error"
+              >
+                {{ error.message }}
+              </v-alert>
             </div>
             <v-card-actions>
               <v-spacer></v-spacer>
@@ -58,6 +65,13 @@
                 </date-picker-field>
               </v-flex>
             </v-layout>
+            <v-alert
+              transition="fade-transition"
+              :value="error.isVisible"
+              type="error"
+            >
+              {{ error.message }}
+            </v-alert>
           </div>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -158,7 +172,7 @@
 import NoteList from '../components/NoteList';
 import ProjectStatusPicker from '../components/ProjectStatusPicker';
 import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 import DatePickerField from '../components/DatePickerField';
 
 export default {
@@ -173,6 +187,11 @@ export default {
       'notes',
       'projects',
       'standupRatings',
+      'error',
+    ]),
+    ...mapMutations([
+      'clearErrorState',
+      'setErrorState',
     ]),
     headers () {
       const projects = this.projects.map(project => ({
@@ -302,6 +321,8 @@ export default {
       date = addWeeks(date, 1);
       date = setDay(date, 1);
 
+      this.$store.commit('clearErrorState');
+
       this.noteDialog = {
         ...this.defaultNoteDialog,
         deadlineDate: date,
@@ -309,6 +330,8 @@ export default {
     },
     resetStandup () {
       const date = new Date();
+
+      this.$store.commit('clearErrorState');
 
       this.standupDialog = {
         isOpen: false,
@@ -323,17 +346,26 @@ export default {
       return !hasNoteAfterDeadline && hasIcon;
     },
     async createNote () {
-      if (
-        !this.noteDialog.note ||
-        !this.noteDialog.deadlineDate ||
-        !this.noteDialog.selectedProject ||
-        !this.noteDialog.selectedProject.value) {
-        return;
+      let errorMsg = null;
+
+      if (!this.noteDialog.selectedProject || !this.noteDialog.selectedProject.value) {
+        errorMsg = 'Neni zvolen žádný projekt.';
+      } else if (!this.noteDialog.deadlineDate) {
+        errorMsg = 'Koncový termín je povinný.';
+      } else if (!this.noteDialog.note) {
+        errorMsg = 'Poznámka je povinná.';
       }
 
       const currentDate = new Date();
       const { deadlineDate } = this.noteDialog;
       const resultDate = setHours(deadlineDate, getHours(currentDate));
+
+      if (currentDate > deadlineDate) errorMsg = 'Koncový termín je v minulosti.';
+
+      if (errorMsg) {
+        this.$store.commit('setErrorState', {message: errorMsg});
+        return;
+      }
 
       const note = {
         id: this.noteDialog.id,
@@ -375,15 +407,23 @@ export default {
       };
     },
     async save () {
+      const action = this.standupDialog.id ? 'editStandup' : 'createStandup';
+      const currentDateInMiliSec = new Date().getTime();
+      const difference = currentDateInMiliSec - this.standupDialog.date.getTime();
+      const isInPast = difference > 6e7; // 1 hour
+      let errorMsg = null;
+
       if (!this.standupDialog.date) {
-        return;
-      }
-      if (this.standupDialog.id) {
-        await this.$store.dispatch('editStandup', this.standupDialog);
-      } else {
-        await this.$store.dispatch('createStandup', this.standupDialog);
+        errorMsg = 'Chybí datum standupu.';
+      } else if (isInPast) {
+        errorMsg = 'Datum standupu je v minulosti.';
       }
 
+      if (errorMsg) {
+        this.$store.commit('setErrorState', {message: errorMsg});
+        return;
+      }
+      await this.$store.dispatch(action, this.standupDialog);
       this.resetStandup();
     },
     async deleteStandup(standup) {

@@ -286,7 +286,7 @@ export default {
       const action = this.modalItem.id ? 'editUser' : 'createUser';
 
       // Known validation only on username (unique value)
-      if (this.isUsernameUnique()) {
+      if (this.isUsernameUnique() || this.modalItem.id) {
         await this.$store.dispatch(action, this.modalItem);
         !this.error.isVisible && close();
       }
