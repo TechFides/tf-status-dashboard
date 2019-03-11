@@ -49,7 +49,6 @@
                 </v-flex>
               </v-layout>
             </v-container>
-
             <v-alert
               transition="fade-transition"
               :value="error.isVisible"
@@ -57,7 +56,6 @@
             >
               {{ error.message }}
             </v-alert>
-
           </v-card-text>
 
           <v-card-actions>
@@ -237,19 +235,6 @@ export default {
     };
   },
   methods: {
-    isUsernameUnique () {
-      const userExist = this.users.find(user => user.username === this.modalItem.username);
-      if (userExist) {
-        this.$store.commit('setErrorState', {
-          isVisible: true,
-          field: 'username',
-          validation: 'unique',
-          message: 'Uživatelské jméno již existuje.',
-        });
-      }
-
-      return !(userExist);
-    },
     createNewUser () {
       this.modalItem = { ...this.defaultModalItem };
       this.modalTitle = 'Nový uživatel';
@@ -285,11 +270,8 @@ export default {
     async save () {
       const action = this.modalItem.id ? 'editUser' : 'createUser';
 
-      // Known validation only on username (unique value)
-      if (this.isUsernameUnique() || this.modalItem.id) {
-        await this.$store.dispatch(action, this.modalItem);
-        !this.error.isVisible && close();
-      }
+      await this.$store.dispatch(action, this.modalItem);
+      !this.error.isVisible && this.close();
     },
     isUserActive (isActive, toUpper) {
       const result = isActive ? 'ano' : 'ne';

@@ -18,6 +18,7 @@ export const state = () => ({
     message: '',
     color: '',
   },
+  notificationTimeout: null,
 });
 
 const sortByProperty = function (property, a, b) {
@@ -139,28 +140,22 @@ export const mutations = {
     state.roles = roles;
   },
   setErrorState (state, errorObj) {
-    // Check if fields are optional or required
     state.error = {
       isVisible: true,
       message: errorObj.message ? errorObj.message : '',
-      validation: errorObj.validation ? errorObj.validation : '',
-      field: errorObj.field ? errorObj.field : '',
     };
   },
   clearErrorState (state) {
     state.error = {
       isVisible: false,
       message: '',
-      validation: '',
-      field: '',
     };
   },
   setNotification (state, notification) {
-    if (timeoutToClear) {
-      clearTimeout(timeoutToClear);
+    if (state.notificationTimeout) {
+      clearTimeout(state.notificationTimeout);
       this.commit('clearNotification');
     }
-    let timeoutToClear = null;
 
     state.snackbar = {
       isVisible: true,
@@ -168,7 +163,7 @@ export const mutations = {
       color: notification.color ? notification.color : '',
     };
 
-    timeoutToClear = setTimeout(() => {
+    state.notificationTimeout = setTimeout(() => {
       this.commit('clearNotification');
     }, 4000);
   },
