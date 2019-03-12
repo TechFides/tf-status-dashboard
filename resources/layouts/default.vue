@@ -91,7 +91,7 @@ export default {
         {icon: 'laptop_windows', title: 'Projekty', to: '/projects', availableFor: ['admin']},
         {icon: 'bar_chart', title: 'Statistiky', to: '/statistics', availableFor: ['admin', 'user']},
         {icon: 'face', title: 'Uživatelé', to: '/users', availableFor: ['admin']},
-        {icon: 'face', title: 'Heatmap', to: '/heatmap', availableFor: ['admin']},
+        {icon: 'tag_faces', title: 'Heatmap', to: '/heatmap', availableFor: ['admin']},
       ];
 
       return items.filter(item => {

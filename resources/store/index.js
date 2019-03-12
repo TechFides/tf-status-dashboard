@@ -33,11 +33,9 @@ const getProjectParams = () => {
   };
 };
 
-const getHeatmapParams = function (date = new Date()) {
+const getHeatmapParams = function () {
   return {
     params: {
-      month: date.getMonth(),
-      year: date.getFullYear(),
       isActive: true,
     },
   };
@@ -284,7 +282,7 @@ export const actions = {
 
     commit('setRoles', roles);
   },
-  async getFeedbacks ({ commit }, date) {
+  async getFeedbackData ({ commit }, date) {
     const [weeks, feedbacks] = await Promise.all([
       this.$axios.$get(
         '/api/heatmapWeeks',
@@ -292,7 +290,7 @@ export const actions = {
       ),
       this.$axios.$get(
         '/api/usersfeedbacks',
-        getHeatmapParams(date)
+        getHeatmapParams()
       ),
     ]);
 

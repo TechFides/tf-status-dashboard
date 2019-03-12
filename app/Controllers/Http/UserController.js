@@ -99,18 +99,11 @@ class UserController {
   }
 
   async getUsersFeedbacks ({ request, response, params }) {
-    let { month, year, isActive } = request.get();
-    month = Number(month);
-    year = Number(year);
-    const currentMonth = new Date(year, month, 1);
-    const nextMonth = new Date(year, month + 1, 1);
+    let { isActive } = request.get();
 
     const query = UserModel
       .query()
-      .with('feedback', element => {
-        element.where('create_at', '>=', currentMonth);
-        element.where('create_at', '<', nextMonth);
-      });
+      .with('feedback');
 
     if (isActive === 'true') {
       query
