@@ -153,7 +153,6 @@ export const mutations = {
   },
   setNotification (state, notification) {
     if (state.notificationTimeout) {
-      clearTimeout(state.notificationTimeout);
       this.commit('clearNotification');
     }
 
@@ -168,6 +167,7 @@ export const mutations = {
     }, 4000);
   },
   clearNotification (state) {
+    clearTimeout(state.notificationTimeout);
     state.snackbar = {
       isVisible: false,
       message: '',
@@ -378,7 +378,7 @@ export const actions = {
       dispatch('getUsers');
       commit('clearNotification');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: `Uživatela (${userId}) se nepodařilo odstranit.`});
+      commit('setNotification', {color: 'error', message: `Uživatela se nepodařilo odstranit.`});
     }
   },
   async getRoles ({ commit }) {

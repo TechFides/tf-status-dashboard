@@ -54,13 +54,18 @@
       :multi-line="true"
     >
       {{ snackbar.message }}
+      <v-btn
+        dark
+        flat
+        @click="closeNotification"
+      >Close</v-btn>
     </v-snackbar>
   </v-app>
 </template>
 
 <script>
 import LoginDialog from '../components/LoginDialog';
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 
 export default {
   components: {
@@ -69,6 +74,9 @@ export default {
   computed: {
     ...mapState([
       'snackbar',
+    ]),
+    ...mapMutations([
+      'clearNotification',
     ]),
     items () {
       const items = [
@@ -90,6 +98,11 @@ export default {
 
         return false;
       });
+    },
+  },
+  methods: {
+    closeNotification () {
+      this.$store.commit('clearNotification');
     },
   },
   data () {
