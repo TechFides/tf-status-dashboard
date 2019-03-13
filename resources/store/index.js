@@ -33,7 +33,7 @@ const getProjectParams = () => {
   };
 };
 
-const getHeatmapParams = function () {
+const getHeatmapParams = () => {
   return {
     params: {
       isActive: true,
@@ -141,8 +141,8 @@ export const mutations = {
     const newUserFeedbacks = userFeedbacks.sort(sortByProperty.bind(this, 'first_name'));
     for (const [index, { feedback }] of newUserFeedbacks.entries()) {
       const newFeedback = {};
-      for (const { heatmap_week_id, value } of feedback) {
-        newFeedback[heatmap_week_id] = value;
+      for (const { heatmap_week_id, feedback_enum_id } of feedback) {
+        newFeedback[heatmap_week_id] = feedback_enum_id;
       }
 
       newUserFeedbacks[index].feedback = newFeedback;
@@ -150,8 +150,8 @@ export const mutations = {
 
     state.usersFeedbacks = newUserFeedbacks;
   },
-  setHeatmapWeeks (state, weeks) {
-    state.heatmapWeeks = weeks.sort(sortByProperty.bind(this, 'date'));
+  setHeatmapWeeks (state, heatmap) {
+    state.heatmapWeeks = heatmap.sort(sortByProperty.bind(this, 'date'));
   },
 };
 
@@ -231,7 +231,7 @@ export const actions = {
         getDateParams(),
       ),
     ]);
-
+    debugger;
     commit('setProjects', projectData);
     commit('setProjectRatings', ratingsData);
   },
@@ -283,18 +283,18 @@ export const actions = {
     commit('setRoles', roles);
   },
   async getFeedbackData ({ commit }, date) {
-    const [weeks, feedbacks] = await Promise.all([
+    const [heatmap, feedbacks] = await Promise.all([
       this.$axios.$get(
-        '/api/heatmapWeeks',
+        '/api/heatmap',
         getDateParams(date)
       ),
       this.$axios.$get(
-        '/api/usersfeedbacks',
+        '/api/heatmap/feedbacks',
         getHeatmapParams()
       ),
     ]);
-
-    commit('setHeatmapWeeks', weeks);
+    
+    commit('setHeatmapWeeks', heatmap);
     commit('setUsersFeedbacks', feedbacks);
   },
 };

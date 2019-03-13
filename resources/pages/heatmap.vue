@@ -35,9 +35,7 @@ import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
 
 export default {
   fetch ({ store, params }) {
-    return Promise.all([
-      store.dispatch('getFeedbackData'),
-    ]);
+    return store.dispatch('getFeedbackData');
   },
   computed: {
     ...mapState([

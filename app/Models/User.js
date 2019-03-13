@@ -30,6 +30,10 @@ class User extends Model {
   feedback () {
     return this.hasMany('App/Models/Feedback');
   }
+
+  feedbackValue (){
+    return this.hasOne('App/Models/FeedbackEnum');
+  }
 }
 
 module.exports = User;

@@ -27,10 +27,10 @@ Route.get('/api/auth/me', 'AuthController.me');
  * HEATMAP
  */
 Route
-  .get('/api/usersfeedbacks', 'UserController.getUsersFeedbacks')
+  .get('/api/heatmap/feedbacks', 'UserController.getUsersFeedbacks')
   .middleware(['auth', 'is:admin']);
 Route
-  .get('/api/heatmapWeeks', 'HeatmapController.getHeatmapWeeks')
+  .get('/api/heatmap', 'HeatmapController.getHeatmapWeeks')
   .middleware(['auth', 'is:admin']);
 /**
  * NOTES

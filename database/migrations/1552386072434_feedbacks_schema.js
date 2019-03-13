@@ -11,7 +11,8 @@ class FeedbacksSchema extends Schema {
       table.foreign('user_id').references('users');
       table.integer('heatmap_week_id').unsigned().notNullable();
       table.foreign('heatmap_week_id').references('heatmap_weeks');
-      table.integer('value').notNullable();
+      table.integer('feedback_enum_id').unsigned().notNullable();
+      table.foreign('feedback_enum_id').references('feedback_enums');
       table.timestamps();
     })
   }
