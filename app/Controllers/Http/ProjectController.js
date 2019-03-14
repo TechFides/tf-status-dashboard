@@ -9,12 +9,14 @@ class ProjectController {
       code,
       description,
       isActive,
-    } = request.only(['code', 'description', 'isActive']);
+      meetingTimeId,
+    } = request.only(['code', 'description', 'isActive', 'meetingTimeId']);
 
     return {
       code,
       description,
       is_active: isActive,
+      meeting_time_id: meetingTimeId,
     };
   }
 
