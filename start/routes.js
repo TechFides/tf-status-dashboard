@@ -29,17 +29,17 @@ Route.get('/api/auth/me', 'AuthController.me');
  * MEETING TIMES
  */
 Route
-  .get('/api/meetingTimes', 'MeetingTimeController.getMeetingTimes');
+  .get('/api/meeting-times', 'MeetingTimeController.getMeetingTimes');
 Route
-  .post('/api/meetingTimes', 'MeetingTimeController.createMeetingTime')
+  .post('/api/meeting-times', 'MeetingTimeController.createMeetingTime')
   .validator('StoreMeetingTimeValidator')
   .middleware(ADMIN);
 Route
-  .put('/api/meetingTimes/:id', 'MeetingTimeController.editMeetingTime')
+  .put('/api/meeting-times/:id', 'MeetingTimeController.editMeetingTime')
   .validator('StoreMeetingTimeValidator')
   .middleware(ADMIN);
 Route
-  .delete('/api/meetingTimes/:id', 'MeetingTimeController.deleteMeetingTime')
+  .delete('/api/meeting-times/:id', 'MeetingTimeController.deleteMeetingTime')
   .middleware(ADMIN);
 
 /**
