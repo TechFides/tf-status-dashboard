@@ -22,7 +22,8 @@ class ProjectController {
     const { isActive } = request.get();
     const projectsQuery = ProjectModel
       .query()
-      .with('notes');
+      .with('notes')
+      .with('meetingTime');
 
     if (isActive === 'true') {
       projectsQuery

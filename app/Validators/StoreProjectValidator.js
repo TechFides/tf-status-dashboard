@@ -9,6 +9,7 @@ class StoreProjectValidator {
       description: 'max:255',
       project_start_at: 'date',
       project_end_at: 'date',
+      meeting_time_id: 'number',
     };
   }
 }
