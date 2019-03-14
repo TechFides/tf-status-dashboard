@@ -16,6 +16,7 @@ const StandupProjectRatingEnumModel = use('App/Models/StandupProjectRatingEnum')
 const StandupProjectRatingModel = use('App/Models/StandupProjectRating');
 const StandupModel = use('App/Models/Standup');
 const UserModel = use('App/Models/User');
+const MeetingTimeModel = use('App/Models/MeetingTime');
 
 class TruncateSeeder {
   async run () {
@@ -25,6 +26,7 @@ class TruncateSeeder {
     await ProjectModel.query().delete();
     await StandupModel.query().delete();
     await StandupProjectRatingEnumModel.query().delete();
+    await MeetingTimeModel.query().delete();
   }
 }
 
