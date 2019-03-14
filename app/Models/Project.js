@@ -11,7 +11,7 @@ class Project extends Model {
     return this.hasMany('App/Models/Note');
   }
   meetingTime () {
-    return this.belongsTo('App/Models/MeetingTime')
+    return this.belongsTo('App/Models/MeetingTime');
   }
 }
 
