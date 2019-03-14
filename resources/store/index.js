@@ -19,6 +19,7 @@ export const state = () => ({
     color: '',
   },
   notificationTimeout: null,
+  meetingTimes: [],
 });
 
 const sortByProperty = function (property, a, b) {
@@ -139,6 +140,9 @@ export const mutations = {
   setRoles (state, roles) {
     state.roles = roles;
   },
+  setMeetingTimes (state, meetingTimes) {
+    state.meetingTimes = meetingTimes;
+  },
   setErrorState (state, errorObj) {
     state.error = {
       isVisible: true,
@@ -177,6 +181,22 @@ export const mutations = {
 };
 
 export const actions = {
+  async getMeetingTimes ({ commit }) {
+    const meetingTimes = await this.$axios.$get('/api/meeting-times');
+    commit('setMeetingTimes', meetingTimes);
+  },
+  async createMeetingTime ({ dispatch }, meetingTime) {
+    await this.$axios.$post('/api/meeting-times', meetingTime);
+    dispatch('getMeetingTimes');
+  },
+  async editMeetingTime ({ dispatch }, meetingTime) {
+    await this.$axios.$put(`/api/meeting-times/${meetingTime.id}`, meetingTime);
+    dispatch('getMeetingTimes');
+  },
+  async deleteMeetingTime ({ dispatch }, meetingTimeId) {
+    await this.$axios.$delete(`/api/users/${meetingTimeId}`);
+    dispatch('getMeetingTimes');
+  },
   async getProjects ({ commit }) {
     const res = await this.$axios.$get('/api/projects',
       getProjectParams(),
