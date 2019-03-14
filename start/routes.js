@@ -14,6 +14,8 @@
 */
 
 const Route = use('Route');
+const AUTH = 'auth';
+const ADMIN = [AUTH, 'is:admin'];
 
 /**
  * AUTH
@@ -24,6 +26,23 @@ Route.post('/api/auth/logout', 'AuthController.logout');
 Route.get('/api/auth/me', 'AuthController.me');
 
 /**
+ * MEETING TIMES
+ */
+Route
+  .get('/api/meetingTimes', 'MeetingTimeController.getMeetingTimes');
+Route
+  .post('/api/meetingTimes', 'MeetingTimeController.createMeetingTime')
+  .validator('StoreMeetingTimeValidator')
+  .middleware(ADMIN);
+Route
+  .put('/api/meetingTimes/:id', 'MeetingTimeController.editMeetingTime')
+  .validator('StoreMeetingTimeValidator')
+  .middleware(ADMIN);
+Route
+  .delete('/api/meetingTimes/:id', 'MeetingTimeController.deleteMeetingTime')
+  .middleware(ADMIN);
+
+/**
  * NOTES
  */
 Route
@@ -31,14 +50,14 @@ Route
 Route
   .post('/api/notes', 'NoteController.createNote')
   .validator('StoreNoteValidator')
-  .middleware('auth');
+  .middleware(AUTH);
 Route
   .put('/api/notes/:id', 'NoteController.editNote')
   .validator('StoreNoteValidator')
-  .middleware('auth');
+  .middleware(AUTH);
 Route
   .post('/api/notes/:id/completed', 'NoteController.markCompleted')
-  .middleware('auth');
+  .middleware(AUTH);
 
 /**
  * PROJECTS
@@ -48,14 +67,14 @@ Route
 Route
   .post('/api/projects', 'ProjectController.createProject')
   .validator('StoreProjectValidator')
-  .middleware(['auth', 'is:admin']);
+  .middleware(ADMIN);
 Route
   .put('/api/projects/:id', 'ProjectController.editProject')
   .validator('StoreProjectValidator')
-  .middleware(['auth', 'is:admin']);
+  .middleware(ADMIN);
 Route
   .delete('/api/projects/:id', 'ProjectController.deleteProject')
-  .middleware(['auth', 'is:admin']);
+  .middleware(ADMIN);
 
 /**
  * PROJECT RATINGS
@@ -64,7 +83,7 @@ Route
   .get('/api/projectRatings', 'ProjectRatingController.getProjectRatings');
 Route
   .post('/api/projectRatings', 'ProjectRatingController.setProjectRating')
-  .middleware('auth');
+  .middleware(AUTH);
 
 /**
  * STANDUPS
@@ -73,38 +92,38 @@ Route
   .get('/api/standups', 'StandupController.getStandups');
 Route
   .post('/api/standups', 'StandupController.createStandup')
-  .middleware(['auth', 'is:admin']);
+  .middleware(ADMIN);
 Route
   .delete('/api/standups/:id', 'StandupController.deleteStandup')
-  .middleware(['auth', 'is:admin']);
+  .middleware(ADMIN);
 Route
   .put('/api/standups/:id', 'StandupController.editStandup')
-  .middleware(['auth', 'is:admin']);
+  .middleware(ADMIN);
 
 /**
  * STATISTICS
  */
 Route
   .get('/api/statistics/projects', 'StatisticsController.getProjectStatistics')
-  .middleware('auth');
+  .middleware(AUTH);
 
 /**
  * USERS
  */
 Route
   .get('/api/users', 'UserController.getUsers')
-  .middleware(['auth', 'is:admin']);
+  .middleware(ADMIN);
 Route
   .post('/api/users', 'UserController.createUser')
   .validator('StoreUserValidator')
-  .middleware(['auth', 'is:admin']);
+  .middleware(ADMIN);
 Route
   .put('/api/users/:id', 'UserController.editUser')
   .validator('StoreUserValidator')
-  .middleware(['auth', 'is:admin']);
+  .middleware(ADMIN);
 Route
   .delete('/api/users/:id', 'UserController.deleteUser')
-  .middleware(['auth', 'is:admin']);
+  .middleware(ADMIN);
 
 /**
  * ROLES
