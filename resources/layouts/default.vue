@@ -85,7 +85,7 @@ export default {
         {icon: 'laptop_windows', title: 'Projekty', to: '/projects', availableFor: ['admin']},
         {icon: 'bar_chart', title: 'Statistiky', to: '/statistics', availableFor: ['admin', 'user']},
         {icon: 'face', title: 'Uživatelé', to: '/users', availableFor: ['admin']},
-        {icon: 'schedule', title: 'Porady', to: '/meeting-times', availableFor: ['admin']},
+        {icon: 'schedule', title: 'Časy konání sitdownu', to: '/meeting-times', availableFor: ['admin']},
       ];
 
       return items.filter(item => {
