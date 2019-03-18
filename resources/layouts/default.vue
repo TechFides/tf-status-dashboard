@@ -28,37 +28,7 @@
       <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <div v-if="$auth.$state.loggedIn">
-        Přihlášen jako {{ $auth.user.first_name }} {{ $auth.user.last_name}}
-        <v-btn @click="logout">Odhlásit</v-btn>
-      </div>
-      <v-dialog v-else v-model="loginDialog.isOpen" @keydown.enter="login" @keydown.esc="closeLoginDialog"
-                max-width="600px">
-        <v-btn slot="activator">Přihlásit</v-btn>
-        <v-card>
-          <v-card-title>
-            <span class="headline">Přihlásit</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container grid-list-md>
-              <v-layout wrap>
-                <v-flex xs12>
-                  <v-text-field autofocus v-model="loginDialog.username" label="Přihlašovací jméno"
-                                required></v-text-field>
-                </v-flex>
-                <v-flex xs12>
-                  <v-text-field v-model="loginDialog.password" label="Heslo" type="password" required></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click="closeLoginDialog">Zavřít</v-btn>
-            <v-btn color="blue darken-1" flat @click="login">Přihlásit</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <login-dialog></login-dialog>
     </v-toolbar>
     <v-content>
       <nuxt/>
@@ -78,12 +48,36 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+    <v-snackbar
+      :value="snackbar.isVisible"
+      :color="snackbar.color"
+      :multi-line="true"
+    >
+      {{ snackbar.message }}
+      <v-btn
+        dark
+        flat
+        @click="closeNotification"
+      >Close</v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 
 <script>
+import LoginDialog from '../components/LoginDialog';
+import { mapState, mapMutations } from 'vuex';
+
 export default {
+  components: {
+    LoginDialog,
+  },
   computed: {
+    ...mapState([
+      'snackbar',
+    ]),
+    ...mapMutations([
+      'clearNotification',
+    ]),
     items () {
       const items = [
         {icon: 'apps', title: 'Dashboard', to: '/'},
@@ -106,6 +100,11 @@ export default {
       });
     },
   },
+  methods: {
+    closeNotification () {
+      this.$store.commit('clearNotification');
+    },
+  },
   data () {
     return {
       clipped: true,
@@ -115,33 +114,7 @@ export default {
       right: true,
       rightDrawer: false,
       title: 'From zero to hero!',
-      loginDialog: {
-        isOpen: false,
-        password: '',
-        username: '',
-      },
     };
-  },
-  methods: {
-    closeLoginDialog () {
-      this.loginDialog = {
-        isOpen: false,
-        password: '',
-        username: '',
-      };
-    },
-    login () {
-      this.$auth.loginWith('local', {
-        data: {
-          username: this.loginDialog.username,
-          password: this.loginDialog.password,
-        },
-      });
-    },
-    logout () {
-      this.closeLoginDialog();
-      this.$auth.logout();
-    },
   },
 };
 </script>
