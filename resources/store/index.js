@@ -141,7 +141,12 @@ export const mutations = {
     state.roles = roles;
   },
   setMeetingTimes (state, meetingTimes) {
-    state.meetingTimes = meetingTimes;
+    state.meetingTimes = meetingTimes.map(meetingTime => {
+      const projectsCodes = meetingTime.projects.map(project => project.code);
+      meetingTime.projects = projectsCodes.join(', ');
+
+      return meetingTime;
+    });
   },
   setErrorState (state, errorObj) {
     state.error = {
