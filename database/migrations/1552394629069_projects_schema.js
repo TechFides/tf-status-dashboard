@@ -6,8 +6,7 @@ const Schema = use('Schema')
 class ProjectsSchema extends Schema {
   up () {
     this.alter('projects', (table) => {
-      table.integer('meeting_time_id').index();
-      table.foreign('meeting_time_id').references('id').inTable('meeting_times');
+      table.integer('meeting_time_id').unsigned().references('id').inTable('meeting_times').onDelete('CASCADE').index();
     })
   }
 
