@@ -141,12 +141,11 @@ export const mutations = {
     state.roles = roles;
   },
   setMeetingTimes (state, meetingTimes) {
-    state.meetingTimes = meetingTimes.map(meetingTime => {
-      const projectsCodes = meetingTime.projects.map(project => project.code);
-      meetingTime.projects = projectsCodes.join(', ');
-
-      return meetingTime;
-    });
+    state.meetingTimes = meetingTimes.map(
+      meetingTime => Object.assign({}, meetingTime, {
+        projects: meetingTime.projects.map(({code}) => code).join(', '),
+      })
+    );
   },
   setErrorState (state, errorObj) {
     state.error = {

@@ -12,7 +12,7 @@
               <v-text-field
                 :rules="[]"
                 v-bind:value="dialogData.name"
-                v-on:input="$emit('nameChange', $event)"
+                v-on:input="$emit('name:change', $event)"
                 label="Name"
               ></v-text-field>
             </v-flex>
@@ -20,7 +20,7 @@
               <v-select
                 :items="weekDays"
                 v-bind:value="dialogData.weekDay"
-                v-on:input="$emit('weekDayChange', $event)"
+                v-on:input="$emit('weekday:change', $event)"
                 label="Select week day"
               >
               </v-select>
@@ -29,7 +29,7 @@
               <v-time-picker
                 landscape
                 v-bind:value="dialogData.hour"
-                v-on:input="$emit('hourChange', $event)"
+                v-on:input="$emit('hour:change', $event)"
               ></v-time-picker>
             </v-flex>
           </v-layout>

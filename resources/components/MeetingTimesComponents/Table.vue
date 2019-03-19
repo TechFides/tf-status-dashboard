@@ -8,7 +8,7 @@
     class='elevation-1 fullscreen'
   >
     <template slot='items' slot-scope='{ item }'>
-      <td class='text-xs-center element'>{{ item.id }}</td>
+      <td class='text-xs-center element'>{{ item.name }}</td>
       <td class='text-xs-center element'>{{ item.hour }}</td>
       <td class='text-xs-center element'>{{ item.week_day }}</td>
       <td class='text-xs-center element'>{{ item.projects }}</td>

@@ -11,9 +11,9 @@
       :close="closeDialog"
       :submit="submit"
       :dialogData="dialogData"
-      @:nameChange="updateName"
-      @:weekDayChange="updateWeekDay"
-      @:hourChange="updateHour"
+      v-on:name:change="updateName"
+      v-on:weekday:change="updateWeekDay"
+      v-on:hour:change="updateHour"
     ></CreateEditDialog>
 
     <MeetingTimesTable
@@ -68,7 +68,7 @@
         this.dialogData.hour = value;
       },
       updateName (value) {
-        this.dialogData.hour = value;
+        this.dialogData.name = value;
       },
       getTitle (sitDownMeetingTime) {
         return `${sitDownMeetingTime ? 'Upravit' : 'Novy'} cas konani sitdownu`;
@@ -104,19 +104,19 @@
           this.dialogData = {
             weekDay: sitDownMeetingTime.week_day,
             hour: sitDownMeetingTime.hour,
-            // name: sitDownMeetingTime.name,
+            name: sitDownMeetingTime.name,
           };
           this.editId = sitDownMeetingTime.id;
         }
       },
-      createSitDownMeetingTime () {
-        this.$store.dispatch('createMeetingTime', this.dialogData);
+      async createSitDownMeetingTime () {
+        await this.$store.dispatch('createMeetingTime', this.dialogData);
       },
-      editSitDownMeetingTime () {
-        this.$store.dispatch('editMeetingTime', {...this.dialogData, ...{id: this.editId}});
+      async editSitDownMeetingTime () {
+        await this.$store.dispatch('editMeetingTime', {...this.dialogData, ...{id: this.editId}});
       },
-      deleteSitDownMeetingTime (id) {
-        this.$store.dispatch('deleteMeetingTime', id);
+      async deleteSitDownMeetingTime (id) {
+        await this.$store.dispatch('deleteMeetingTime', id);
       },
     },
   };
