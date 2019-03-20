@@ -293,7 +293,7 @@ export const actions = {
         getHeatmapParams()
       ),
     ]);
-    
+
     commit('setHeatmapWeeks', heatmap);
     commit('setUsersFeedbacks', feedbacks);
   },

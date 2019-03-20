@@ -31,7 +31,7 @@ class User extends Model {
     return this.hasMany('App/Models/Feedback');
   }
 
-  feedbackValue (){
+  feedbackValue () {
     return this.hasOne('App/Models/FeedbackEnum');
   }
 }
