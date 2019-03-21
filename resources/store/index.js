@@ -142,6 +142,7 @@ export const mutations = {
     for (const [index, { feedback }] of newUserFeedbacks.entries()) {
       const newFeedback = {};
       for (const { heatmap_week_id, feedback_enum_id } of feedback) {
+        // eslint-disable-next-line camelcase
         newFeedback[heatmap_week_id] = feedback_enum_id;
       }
 
