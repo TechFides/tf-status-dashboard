@@ -7,11 +7,13 @@ class MeetingTimeController {
     const {
       weekDay,
       hour,
-    } = request.only(['weekDay', 'hour']);
+      name,
+    } = request.only(['weekDay', 'hour', 'name']);
 
     return {
       week_day: weekDay,
       hour,
+      name,
     };
   }
 

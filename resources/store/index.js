@@ -72,6 +72,22 @@ const getStandupIndex = (state, standupId) => {
   throw new Error('Invalid standup id');
 };
 
+const formatMeetingTimeForSelect = (state, meetingTimeId) => {
+  const selectedMeetingTime = state.meetingTimes.find(meetingTime => meetingTime.id === meetingTimeId);
+
+  if (selectedMeetingTime) {
+    return {
+      text: `${selectedMeetingTime.name} (den: ${selectedMeetingTime.week_day}, hodina: ${selectedMeetingTime.hour})`,
+      value: selectedMeetingTime.id,
+    };
+  }
+
+  return {
+    text: '',
+    value: null,
+  };
+};
+
 export const mutations = {
   updateRating (state, { projectId, ratingValueId, standupId }) {
     const standupIndex = getStandupIndex(state, standupId);
@@ -96,6 +112,7 @@ export const mutations = {
       code: p.code,
       description: p.description,
       isActive: p.is_active === 1,
+      meetingTime: formatMeetingTimeForSelect(state, p.meeting_time_id),
     })).sort(sortByProperty.bind(this, 'code'));
   },
   setProjectRatings (state, standupRatings) {

@@ -50,7 +50,7 @@
     },
     data () {
       return {
-        title: 'Novy cas konani sitdownu',
+        title: 'Novy sitdown',
         isDialogOpen: false,
         editId: null,
         dialogData: {
@@ -71,7 +71,7 @@
         this.dialogData.name = value;
       },
       getTitle (sitDownMeetingTime) {
-        return `${sitDownMeetingTime ? 'Upravit' : 'Novy'} cas konani sitdownu`;
+        return `${sitDownMeetingTime ? 'Upravit' : 'Novy'} sitdown`;
       },
       openDialog (sitDownMeetingTime) {
         this.setDataForEdit(sitDownMeetingTime);

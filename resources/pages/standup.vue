@@ -47,7 +47,6 @@
         </v-form>
       </v-dialog>
 
-
       <v-btn class="margin" v-if="isAdmin()" slot="activator" color="info" @click="createStandup()">
         <i class="material-icons">add</i>
         Přidat standup
