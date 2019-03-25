@@ -198,7 +198,7 @@ export const actions = {
     dispatch('getMeetingTimes');
   },
   async deleteMeetingTime ({ dispatch }, meetingTimeId) {
-    await this.$axios.$delete(`/api/users/${meetingTimeId}`);
+    await this.$axios.$delete(`/api/meeting-times/${meetingTimeId}`);
     dispatch('getMeetingTimes');
   },
   async getProjects ({ commit }) {
