@@ -105,6 +105,12 @@
         </v-dialog>
       </v-flex>
 
+      <v-select
+        class="margin select-wrapper"
+        :items="formattedMeetingTimesForSelect"
+        v-model="meetingTimeId"
+      ></v-select>
+
     </v-layout>
 
     <v-layout column justify-center align-center>
@@ -130,6 +136,11 @@
                   <span>Chybí cíl na další standup</span>
                 </v-tooltip>
               </nav>
+            </th>
+          </tr>
+          <tr class="table__row-bottom-border">
+            <th class="element" v-for="h in props.headers">
+              {{ h.meetingTime ? h.meetingTime.time : '' }}
             </th>
           </tr>
         </template>
@@ -179,6 +190,8 @@ export default {
     return Promise.all([
       store.dispatch('getStandupData'),
       store.dispatch('getNotes'),
+      store.dispatch('getMeetingTimes'),
+      store.dispatch('getProjects'),
     ]);
   },
   computed: {
@@ -187,18 +200,21 @@ export default {
       'projects',
       'standupRatings',
       'error',
+      'meetingTimes',
     ]),
     ...mapMutations([
       'clearErrorState',
       'setErrorState',
     ]),
     headers () {
-      const projects = this.projects.map(project => ({
+      const sortedProjects = this.sortProjectsByMeetingTime();
+      const formattedProjectsForTable = sortedProjects.map(project => ({
         text: project.code,
         align: 'center',
         sortable: false,
         value: project.code,
         hasIcon: true,
+        meetingTime: project.meetingTime,
       }));
 
       return [
@@ -209,7 +225,7 @@ export default {
           value: 'Datum',
           hasIcon: false,
         },
-        ...projects,
+        ...formattedProjectsForTable,
         {
           text: 'Akce',
           align: 'left',
@@ -240,9 +256,19 @@ export default {
     standupDialogTitle () {
       return this.standupDialog.id ? 'Upravení standupu' : 'Přidání standupu';
     },
+    formattedMeetingTimesForSelect () {
+      return [
+        {text: 'Zvolte sitdown', value: null},
+        ...this.meetingTimes.map(meetingTime => ({
+          text: `${meetingTime.name} (${meetingTime.week_day} ${meetingTime.hour})`,
+          value: meetingTime.id,
+        })),
+      ];
+    },
   },
   data () {
     return {
+      meetingTimeId: null,
       modalItem: {
         standupMonth: null,
       },
@@ -271,6 +297,23 @@ export default {
     };
   },
   methods: {
+    sortProjectsByMeetingTime () {
+      const projectsWithoutMeetingTime = this.projects.filter(project => project.meetingTime.time === null);
+      const sortedProjectsWithMeetingTime = this.projects
+        .filter(project => project.meetingTime.time !== null)
+        .sort((a, b) => this.getTimeInMinutesFromProjectMeetingTime(a) - this.getTimeInMinutesFromProjectMeetingTime(b));
+      const allProjects = [...sortedProjectsWithMeetingTime, ...projectsWithoutMeetingTime];
+
+      return this.getFilteredProjectsBySelectedMeetingTime(allProjects);
+    },
+    getFilteredProjectsBySelectedMeetingTime (allProjects) {
+      return this.meetingTimeId !== null
+        ? allProjects.filter(project => project.meetingTime.id === this.meetingTimeId)
+        : allProjects;
+    },
+    getTimeInMinutesFromProjectMeetingTime (project) {
+      return parseInt(project.meetingTime.time.substring(0, 2) * 60, 10) + parseInt(project.meetingTime.time.substring(3, 4), 10);
+    },
     formatDate (date) {
       const d = new Date(date);
 
@@ -477,4 +520,11 @@ export default {
   display: inline-block;
 }
 
+.select-wrapper {
+  max-width: 350px;
+}
+
+.table__row-bottom-border {
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+}
 </style>

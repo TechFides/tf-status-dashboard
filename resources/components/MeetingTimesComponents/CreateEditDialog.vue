@@ -28,6 +28,7 @@
             <v-flex xs12 sm6 md4 class="time-picker">
               <v-time-picker
                 landscape
+                format="24hr"
                 v-bind:value="dialogData.hour"
                 v-on:input="$emit('hour:change', $event)"
               ></v-time-picker>

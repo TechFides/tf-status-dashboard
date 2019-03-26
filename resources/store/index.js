@@ -72,20 +72,17 @@ const getStandupIndex = (state, standupId) => {
   throw new Error('Invalid standup id');
 };
 
-const formatMeetingTimeForSelect = (state, meetingTimeId) => {
+const findAndFormatMeetingTimeTextForSelect = (state, meetingTimeId) => {
   const selectedMeetingTime = state.meetingTimes.find(meetingTime => meetingTime.id === meetingTimeId);
 
-  if (selectedMeetingTime) {
-    return {
-      text: `${selectedMeetingTime.name} (den: ${selectedMeetingTime.week_day}, hodina: ${selectedMeetingTime.hour})`,
-      value: selectedMeetingTime.id,
-    };
-  }
+  return selectedMeetingTime
+      ? `${selectedMeetingTime.name} (${selectedMeetingTime.week_day} ${selectedMeetingTime.hour})`
+      : '';
+};
 
-  return {
-    text: '',
-    value: null,
-  };
+const findMeetingTimeHourById = (state, meetingTimeId) => {
+  const selectedMeetingTime = state.meetingTimes.find(meetingTime => meetingTime.id === meetingTimeId);
+  return selectedMeetingTime && selectedMeetingTime.hour ? selectedMeetingTime.hour : null;
 };
 
 export const mutations = {
@@ -104,7 +101,11 @@ export const mutations = {
       code: p.code,
       description: p.description,
       isActive: p.is_active === 1,
-    })).sort(sortByProperty.bind(this, 'code'));
+      meetingTime: {
+        time: findMeetingTimeHourById(state, p.meeting_time_id),
+        id: p.meeting_time_id,
+      },
+    }));
   },
   setAllProjects (state, projects) {
     state.allProjects = projects.map(p => ({
@@ -112,7 +113,10 @@ export const mutations = {
       code: p.code,
       description: p.description,
       isActive: p.is_active === 1,
-      meetingTime: formatMeetingTimeForSelect(state, p.meeting_time_id),
+      meetingTime: {
+        text: findAndFormatMeetingTimeTextForSelect(state, p.meeting_time_id),
+        value: p.meeting_time_id,
+      },
     })).sort(sortByProperty.bind(this, 'code'));
   },
   setProjectRatings (state, standupRatings) {
@@ -161,6 +165,7 @@ export const mutations = {
     state.meetingTimes = meetingTimes.map(
       meetingTime => Object.assign({}, meetingTime, {
         projects: meetingTime.projects.map(({code}) => code).join(', '),
+        hour: meetingTime.hour.substring(0, 5),
       })
     );
   },
