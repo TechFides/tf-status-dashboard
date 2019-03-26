@@ -208,7 +208,8 @@ export default {
     ]),
     headers () {
       const sortedProjects = this.sortProjectsByMeetingTime();
-      const formattedProjectsForTable = sortedProjects.map(project => ({
+      this.filteredProjectsBySelectedMeetingTime = this.getFilteredProjectsBySelectedMeetingTime(sortedProjects);
+      const formattedProjectsForTable = this.filteredProjectsBySelectedMeetingTime.map(project => ({
         text: project.code,
         align: 'center',
         sortable: false,
@@ -268,6 +269,7 @@ export default {
   },
   data () {
     return {
+      filteredProjectsBySelectedMeetingTime: this.projects,
       meetingTimeId: null,
       modalItem: {
         standupMonth: null,
@@ -302,9 +304,8 @@ export default {
       const sortedProjectsWithMeetingTime = this.projects
         .filter(project => project.meetingTime.time !== null)
         .sort((a, b) => this.getTimeInMinutesFromProjectMeetingTime(a) - this.getTimeInMinutesFromProjectMeetingTime(b));
-      const allProjects = [...sortedProjectsWithMeetingTime, ...projectsWithoutMeetingTime];
 
-      return this.getFilteredProjectsBySelectedMeetingTime(allProjects);
+      return [...sortedProjectsWithMeetingTime, ...projectsWithoutMeetingTime];
     },
     getFilteredProjectsBySelectedMeetingTime (allProjects) {
       return this.meetingTimeId !== null
@@ -351,7 +352,7 @@ export default {
       this.monthPickerIsOpen = false;
     },
     getRatings (standup) {
-      return this.projects.map(p => ({
+      return this.filteredProjectsBySelectedMeetingTime.map(p => ({
         standupId: standup.id,
         projectId: p.id,
         rating: standup.standupProjectRating[p.id] || 0,
