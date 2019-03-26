@@ -140,7 +140,7 @@
           </tr>
           <tr class="table__row-bottom-border">
             <th class="element" v-for="h in props.headers">
-              {{ h.meetingTime ? h.meetingTime.time : '' }}
+              {{ h.meetingTime ? h.meetingTime.dayAndTime : '' }}
             </th>
           </tr>
         </template>

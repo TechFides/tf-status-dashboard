@@ -82,11 +82,6 @@ const findAndFormatMeetingTimeTextForSelect = (state, meetingTimeId) => {
       : '';
 };
 
-const findMeetingTimeHourById = (state, meetingTimeId) => {
-  const selectedMeetingTime = state.meetingTimes.find(meetingTime => meetingTime.id === meetingTimeId);
-  return selectedMeetingTime && selectedMeetingTime.hour ? selectedMeetingTime.hour : null;
-};
-
 export const mutations = {
   updateRating (state, { projectId, ratingValueId, standupId }) {
     const standupIndex = getStandupIndex(state, standupId);
@@ -98,16 +93,29 @@ export const mutations = {
     state.standupRatings = newStandupRatings;
   },
   setProjects (state, projects) {
-    state.projects = projects.map(p => ({
-      id: p.id,
-      code: p.code,
-      description: p.description,
-      isActive: p.is_active === 1,
-      meetingTime: {
-        time: findMeetingTimeHourById(state, p.meeting_time_id),
-        id: p.meeting_time_id,
-      },
-    }));
+    state.projects = projects.map(p => {
+      const meetingTime = state.meetingTimes.find(meetingTime => meetingTime.id === p.meeting_time_id);
+      let dayAndTime = null;
+      let time = null;
+
+      if (meetingTime !== undefined) {
+        const fullWeekDayIndex = WEEK_DAYS.indexOf(meetingTime.week_day);
+        time = meetingTime.hour;
+        dayAndTime = `${WEEK_DAYS_SHORTHAND[fullWeekDayIndex]} ${time}`;
+      }
+
+      return {
+        id: p.id,
+        code: p.code,
+        description: p.description,
+        isActive: p.is_active === 1,
+        meetingTime: {
+          id: p.meeting_time_id,
+          dayAndTime,
+          time,
+        },
+      };
+    });
   },
   setAllProjects (state, projects) {
     state.allProjects = projects.map(p => ({
