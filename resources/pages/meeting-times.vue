@@ -126,7 +126,11 @@
         await this.$store.dispatch('editMeetingTime', {...this.getDialogData(), id: this.editId});
       },
       async deleteSitDownMeetingTime (id) {
-        await this.$store.dispatch('deleteMeetingTime', id);
+        const confirmed = confirm(`Opravdu chcete smazat sitdown (id: ${id})?`);
+
+        if (confirmed) {
+          await this.$store.dispatch('deleteMeetingTime', id);
+        }
       },
     },
   };
