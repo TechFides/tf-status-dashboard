@@ -6,3 +6,6 @@ export const ICONS = {
   ABOVE_AVERAGE: Symbol('ABOVE_AVERAGE'),
   GREAT: Symbol('GREAT'),
 };
+
+export const WEEK_DAYS = ['Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota', 'Neděle'];
+export const WEEK_DAYS_SHORTHAND = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];

@@ -3,7 +3,7 @@
 class StoreMeetingTimeValidator {
   get rules () {
     return {
-      weekDay: 'required|min:1', // Enum
+      weekDay: 'required|number',
       hour: 'required',
       name: 'required',
     };

@@ -29,6 +29,7 @@
   import { mapState, mapMutations } from 'vuex';
   import MeetingTimesTable from '../components/MeetingTimesComponents/Table';
   import CreateEditDialog from '../components/MeetingTimesComponents/CreateEditDialog';
+  import { WEEK_DAYS } from '../constants';
 
   export default {
     async fetch ({ store }) {
@@ -74,7 +75,9 @@
         return `${sitDownMeetingTime ? 'Upravit' : 'Novy'} sitdown`;
       },
       openDialog (sitDownMeetingTime) {
-        this.setDataForEdit(sitDownMeetingTime);
+        if (sitDownMeetingTime !== undefined) {
+          this.setDataForEdit(sitDownMeetingTime);
+        }
         this.title = this.getTitle(sitDownMeetingTime);
         this.isDialogOpen = true;
       },
@@ -100,20 +103,27 @@
         };
       },
       setDataForEdit (sitDownMeetingTime) {
-        if (sitDownMeetingTime) {
-          this.dialogData = {
-            weekDay: sitDownMeetingTime.week_day,
-            hour: sitDownMeetingTime.hour,
-            name: sitDownMeetingTime.name,
-          };
-          this.editId = sitDownMeetingTime.id;
-        }
+        this.dialogData = {
+          weekDay: sitDownMeetingTime.week_day,
+          hour: sitDownMeetingTime.hour,
+          name: sitDownMeetingTime.name,
+        };
+        this.editId = sitDownMeetingTime.id;
+      },
+      getWeekDayIndex () {
+        return WEEK_DAYS.indexOf(this.dialogData.weekDay);
+      },
+      getDialogData () {
+        return {
+          ...this.dialogData,
+          weekDay: this.getWeekDayIndex(),
+        };
       },
       async createSitDownMeetingTime () {
-        await this.$store.dispatch('createMeetingTime', this.dialogData);
+        await this.$store.dispatch('createMeetingTime', this.getDialogData());
       },
       async editSitDownMeetingTime () {
-        await this.$store.dispatch('editMeetingTime', {...this.dialogData, ...{id: this.editId}});
+        await this.$store.dispatch('editMeetingTime', {...this.getDialogData(), id: this.editId});
       },
       async deleteSitDownMeetingTime (id) {
         await this.$store.dispatch('deleteMeetingTime', id);

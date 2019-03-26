@@ -1,3 +1,5 @@
+import { WEEK_DAYS, WEEK_DAYS_SHORTHAND } from '../constants';
+
 export const state = () => ({
   notes: [],
   projects: [],
@@ -166,6 +168,7 @@ export const mutations = {
       meetingTime => Object.assign({}, meetingTime, {
         projects: meetingTime.projects.map(({code}) => code).join(', '),
         hour: meetingTime.hour.substring(0, 5),
+        week_day: WEEK_DAYS[meetingTime.week_day],
       })
     );
   },

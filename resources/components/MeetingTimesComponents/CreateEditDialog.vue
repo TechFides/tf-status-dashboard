@@ -47,12 +47,14 @@
 </template>
 
 <script>
+  import {WEEK_DAYS} from '../../constants/index';
+
   export default {
     name: 'CreateEditDialog',
     props: ['isOpen', 'close', 'submit', 'dialogData', 'title'],
     data () {
       return {
-        weekDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        weekDays: WEEK_DAYS,
       };
     },
   };
