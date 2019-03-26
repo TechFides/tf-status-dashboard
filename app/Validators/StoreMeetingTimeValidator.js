@@ -4,7 +4,7 @@ class StoreMeetingTimeValidator {
   get rules () {
     return {
       weekDay: 'required|number',
-      hour: 'required',
+      time: 'required',
       name: 'required',
     };
   }

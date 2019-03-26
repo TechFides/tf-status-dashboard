@@ -13,7 +13,7 @@
       :dialogData="dialogData"
       v-on:name:change="updateName"
       v-on:weekday:change="updateWeekDay"
-      v-on:hour:change="updateHour"
+      v-on:time:change="updateTime"
     ></CreateEditDialog>
 
     <MeetingTimesTable
@@ -57,7 +57,7 @@
         dialogData: {
           name: '',
           weekDay: '',
-          hour: '',
+          time: '',
         },
       };
     },
@@ -65,8 +65,8 @@
       updateWeekDay (value) {
         this.dialogData.weekDay = value;
       },
-      updateHour (value) {
-        this.dialogData.hour = value;
+      updateTime (value) {
+        this.dialogData.time = value;
       },
       updateName (value) {
         this.dialogData.name = value;
@@ -99,13 +99,13 @@
         this.dialogData = {
           name: '',
           weekDay: '',
-          hour: '',
+          time: '',
         };
       },
       setDataForEdit (sitDownMeetingTime) {
         this.dialogData = {
           weekDay: sitDownMeetingTime.week_day,
-          hour: sitDownMeetingTime.hour,
+          time: sitDownMeetingTime.time,
           name: sitDownMeetingTime.name,
         };
         this.editId = sitDownMeetingTime.id;

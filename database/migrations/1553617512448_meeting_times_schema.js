@@ -6,15 +6,15 @@ const Schema = use('Schema')
 class MeetingTimesSchema extends Schema {
   up () {
     this.alter('meeting_times', (table) => {
-      table.dropColumn('weekDay')
-      table.integer('weekDay').unsigned()
+      table.string('name')
+      table.time('time')
     })
   }
 
   down () {
     this.alter('meeting_times', (table) => {
-      table.dropColumn('weekDay')
-      table.string('weekDay')
+      table.dropColumn('name')
+      table.dropColumn('time')
     })
   }
 }

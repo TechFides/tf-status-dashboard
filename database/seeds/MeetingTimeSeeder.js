@@ -22,15 +22,18 @@ class MeetinTimeSeeder {
     return [
       {
         week_day: 'Monday',
-        hour: '14:00',
+        time: '14:00',
+        name: 'Test1',
       },
       {
         week_day: 'Tuesday',
-        hour: '15:00',
+        time: '15:00',
+        name: 'Test2',
       },
       {
         week_day: 'Wednesday',
-        hour: '16:00',
+        time: '16:00',
+        name: 'Test3',
       },
     ];
   }

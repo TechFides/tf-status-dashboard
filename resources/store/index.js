@@ -78,7 +78,7 @@ const findAndFormatMeetingTimeTextForSelect = (state, meetingTimeId) => {
   const selectedMeetingTime = state.meetingTimes.find(meetingTime => meetingTime.id === meetingTimeId);
 
   return selectedMeetingTime
-      ? `${selectedMeetingTime.name} (${selectedMeetingTime.week_day} ${selectedMeetingTime.hour})`
+      ? `${selectedMeetingTime.name} (${selectedMeetingTime.week_day} ${selectedMeetingTime.time})`
       : '';
 };
 
@@ -100,7 +100,7 @@ export const mutations = {
 
       if (meetingTime !== undefined) {
         const fullWeekDayIndex = WEEK_DAYS.indexOf(meetingTime.week_day);
-        time = meetingTime.hour;
+        time = meetingTime.time;
         dayAndTime = `${WEEK_DAYS_SHORTHAND[fullWeekDayIndex]} ${time}`;
       }
 
@@ -175,7 +175,7 @@ export const mutations = {
     state.meetingTimes = meetingTimes.map(
       meetingTime => Object.assign({}, meetingTime, {
         projects: meetingTime.projects.map(({code}) => code).join(', '),
-        hour: meetingTime.hour.substring(0, 5),
+        time: meetingTime.time.substring(0, 5),
         week_day: WEEK_DAYS[meetingTime.week_day],
       })
     );

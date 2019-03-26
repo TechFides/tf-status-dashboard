@@ -29,8 +29,8 @@
               <v-time-picker
                 landscape
                 format="24hr"
-                v-bind:value="dialogData.hour"
-                v-on:input="$emit('hour:change', $event)"
+                v-bind:value="dialogData.time"
+                v-on:input="$emit('time:change', $event)"
               ></v-time-picker>
             </v-flex>
           </v-layout>

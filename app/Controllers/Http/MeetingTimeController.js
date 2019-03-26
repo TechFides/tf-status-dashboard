@@ -6,13 +6,13 @@ class MeetingTimeController {
   static mapToDbEntity (request) {
     const {
       weekDay,
-      hour,
+      time,
       name,
-    } = request.only(['weekDay', 'hour', 'name']);
+    } = request.only(['weekDay', 'time', 'name']);
 
     return {
       week_day: weekDay,
-      hour,
+      time,
       name,
     };
   }
