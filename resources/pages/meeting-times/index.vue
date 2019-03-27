@@ -33,6 +33,7 @@
     computed: {
       ...mapState([
         'meetingTimes',
+        'error',
       ]),
       ...mapMutations([
         'createMeetingTime',
@@ -54,7 +55,7 @@
         return `${isEdit ? 'Upravit' : 'Nový'} čas konání sitdownu`;
       },
       closeDialog () {
-        this.dialog.isOpen = false;
+        if (!this.error.isVisible) this.dialog.isOpen = false;
       },
       toggleDialogVisibility (dataForEdit) {
         const isEdit = dataForEdit !== undefined;

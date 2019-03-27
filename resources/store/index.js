@@ -218,17 +218,36 @@ export const actions = {
     const meetingTimes = await this.$axios.$get('/api/meeting-times');
     commit('setMeetingTimes', meetingTimes);
   },
-  async createMeetingTime ({ dispatch }, meetingTime) {
-    await this.$axios.$post('/api/meeting-times', meetingTime);
-    dispatch('getMeetingTimes');
+  async createMeetingTime ({ dispatch, commit }, meetingTime) {
+    try {
+      await this.$axios.$post('/api/meeting-times', meetingTime);
+      commit('clearErrorState');
+      dispatch('getMeetingTimes');
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('setErrorState', error.response.data[0]);
+      }
+    }
   },
-  async editMeetingTime ({ dispatch }, id, meetingTime) {
-    await this.$axios.$put(`/api/meeting-times/${id}`, meetingTime);
-    dispatch('getMeetingTimes');
+  async editMeetingTime ({ dispatch, commit }, id, meetingTime) {
+    try {
+      await this.$axios.$put(`/api/meeting-times/${id}`, meetingTime);
+      commit('clearErrorState');
+      dispatch('getMeetingTimes');
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('setErrorState', error.response.data[0]);
+      }
+    }
   },
-  async deleteMeetingTime ({ dispatch }, meetingTimeId) {
-    await this.$axios.$delete(`/api/meeting-times/${meetingTimeId}`);
-    dispatch('getMeetingTimes');
+  async deleteMeetingTime ({ dispatch, commit }, meetingTimeId) {
+    try {
+      await this.$axios.$delete(`/api/meeting-times/${meetingTimeId}`);
+      commit('clearNotification');
+      dispatch('getMeetingTimes');
+    } catch (error) {
+      commit('setNotification', {color: 'error', message: 'Smazat projekt se nezdařilo.'});
+    }
   },
   async getProjects ({ commit }) {
     const res = await this.$axios.$get('/api/projects',
@@ -310,10 +329,7 @@ export const actions = {
   },
   async getProjectRating ({ commit }, date) {
     try {
-      const res = await this.$axios.$get(
-        '/api/projectRatings',
-        getDateParams(date),
-      );
+      const res = await this.$axios.$get('/api/projectRatings', getDateParams(date));
       commit('setProjectRatings', res);
       commit('clearNotification');
     } catch (error) {
@@ -323,13 +339,8 @@ export const actions = {
   async getProjectsForMonth ({ commit }, date) {
     const dateParams = getDateParams(date);
     const [projectData, ratingsData] = await Promise.all([
-      this.$axios.$get(
-        '/api/projects',
-      ),
-      this.$axios.$get(
-        '/api/projectRatings',
-        dateParams,
-      ),
+      this.$axios.$get('/api/projects'),
+      this.$axios.$get('/api/projectRatings', dateParams),
     ]);
 
     const projects = filterProjectsByRatings(projectData, ratingsData);
@@ -339,14 +350,8 @@ export const actions = {
   },
   async getStandupData ({ commit }) {
     const [projectData, ratingsData] = await Promise.all([
-      this.$axios.$get(
-        '/api/projects',
-        getProjectParams(),
-      ),
-      this.$axios.$get(
-        '/api/projectRatings',
-        getDateParams(),
-      ),
+      this.$axios.$get('/api/projects', getProjectParams()),
+      this.$axios.$get('/api/projectRatings', getDateParams()),
     ]);
 
     commit('setProjects', projectData);

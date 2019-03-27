@@ -39,6 +39,15 @@
                 ></v-time-picker>
               </v-flex>
             </v-layout>
+
+            <v-alert
+              transition="fade-transition"
+              :value="error.isVisible"
+              type="error"
+            >
+              {{ error.message }}
+            </v-alert>
+
           </v-container>
         </v-card-text>
 
@@ -53,11 +62,18 @@
 </template>
 
 <script>
-  import {WEEK_DAYS} from '../../constants';
+  import { WEEK_DAYS } from '../../constants';
+  import { mapState } from 'vuex';
 
   export default {
     name: 'CreateEditDialog',
     props: ['dialog'],
+    computed: {
+      ...mapState([
+        'meetingTimes',
+        'error',
+      ]),
+    },
     data () {
       return {
         weekDays: WEEK_DAYS,
@@ -87,5 +103,6 @@
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    margin-bottom: 20px;
   }
 </style>
