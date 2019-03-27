@@ -163,7 +163,7 @@ export default {
       return [
         {text: 'Zvolte sitdown', value: null},
         ...this.meetingTimes.map(meetingTime => ({
-          text: `${meetingTime.name} (${meetingTime.week_day} ${meetingTime.time})`,
+          text: `${meetingTime.name} (${meetingTime.dayAndTime})`,
           value: meetingTime.id,
         })),
       ];

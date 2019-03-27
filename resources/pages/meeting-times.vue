@@ -104,7 +104,7 @@
       },
       setDataForEdit (sitDownMeetingTime) {
         this.dialogData = {
-          weekDay: sitDownMeetingTime.week_day,
+          weekDay: sitDownMeetingTime.weekDay,
           time: sitDownMeetingTime.time,
           name: sitDownMeetingTime.name,
         };

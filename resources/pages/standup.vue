@@ -108,7 +108,7 @@
       <v-select
         class="margin select-wrapper"
         :items="formattedMeetingTimesForSelect"
-        v-model="meetingTimeId"
+        v-model="selectedMeetingTimeId"
       ></v-select>
 
     </v-layout>
@@ -184,6 +184,7 @@ import ProjectStatusPicker from '../components/ProjectStatusPicker';
 import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
 import { mapState, mapMutations } from 'vuex';
 import DatePickerField from '../components/DatePickerField';
+import { WEEK_DAYS_SHORTHAND } from '../constants';
 
 export default {
   fetch ({ store, params }) {
@@ -270,7 +271,7 @@ export default {
   data () {
     return {
       filteredProjectsBySelectedMeetingTime: this.projects,
-      meetingTimeId: null,
+      selectedMeetingTimeId: null,
       modalItem: {
         standupMonth: null,
       },
@@ -303,17 +304,25 @@ export default {
       const projectsWithoutMeetingTime = this.projects.filter(project => project.meetingTime.time === null);
       const sortedProjectsWithMeetingTime = this.projects
         .filter(project => project.meetingTime.time !== null)
-        .sort((a, b) => this.getTimeInMinutesFromProjectMeetingTime(a) - this.getTimeInMinutesFromProjectMeetingTime(b));
+        .sort((a, b) => this.sortByDayAndTime(a.meetingTime.dayAndTime, b.meetingTime.dayAndTime));
 
       return [...sortedProjectsWithMeetingTime, ...projectsWithoutMeetingTime];
     },
+    sortByDayAndTime (dayAndTimeA, dayAndTimeB) {
+      const dayAOrderIndex = WEEK_DAYS_SHORTHAND.indexOf(dayAndTimeA.substring(0, 2));
+      const dayBOrderIndex = WEEK_DAYS_SHORTHAND.indexOf(dayAndTimeB.substring(0, 2));
+
+      return (dayAOrderIndex - dayBOrderIndex) === 0
+        ? this.getTimeInMinutes(dayAndTimeA) - this.getTimeInMinutes(dayAndTimeB)
+        : dayAOrderIndex - dayBOrderIndex;
+    },
     getFilteredProjectsBySelectedMeetingTime (allProjects) {
-      return this.meetingTimeId !== null
-        ? allProjects.filter(project => project.meetingTime.id === this.meetingTimeId)
+      return this.selectedMeetingTimeId !== null
+        ? allProjects.filter(project => project.meetingTime.id === this.selectedMeetingTimeId)
         : allProjects;
     },
-    getTimeInMinutesFromProjectMeetingTime (project) {
-      return parseInt(project.meetingTime.time.substring(0, 2) * 60, 10) + parseInt(project.meetingTime.time.substring(3, 4), 10);
+    getTimeInMinutes (time) {
+      return parseInt(time.substring(0, 2), 10) * 60 + parseInt(time.substring(3, 4), 10);
     },
     formatDate (date) {
       const d = new Date(date);

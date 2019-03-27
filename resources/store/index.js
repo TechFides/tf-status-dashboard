@@ -78,7 +78,7 @@ const findAndFormatMeetingTimeTextForSelect = (state, meetingTimeId) => {
   const selectedMeetingTime = state.meetingTimes.find(meetingTime => meetingTime.id === meetingTimeId);
 
   return selectedMeetingTime
-      ? `${selectedMeetingTime.name} (${selectedMeetingTime.week_day} ${selectedMeetingTime.time})`
+      ? `${selectedMeetingTime.name} (${selectedMeetingTime.dayAndTime})`
       : '';
 };
 
@@ -95,14 +95,6 @@ export const mutations = {
   setProjects (state, projects) {
     state.projects = projects.map(p => {
       const meetingTime = state.meetingTimes.find(meetingTime => meetingTime.id === p.meeting_time_id);
-      let dayAndTime = null;
-      let time = null;
-
-      if (meetingTime !== undefined) {
-        const fullWeekDayIndex = WEEK_DAYS.indexOf(meetingTime.week_day);
-        time = meetingTime.time;
-        dayAndTime = `${WEEK_DAYS_SHORTHAND[fullWeekDayIndex]} ${time}`;
-      }
 
       return {
         id: p.id,
@@ -111,8 +103,8 @@ export const mutations = {
         isActive: p.is_active === 1,
         meetingTime: {
           id: p.meeting_time_id,
-          dayAndTime,
-          time,
+          dayAndTime: meetingTime && meetingTime.dayAndTime ? meetingTime.dayAndTime : null,
+          time: meetingTime && meetingTime.time ? meetingTime.time : null,
         },
       };
     });
@@ -173,12 +165,18 @@ export const mutations = {
   },
   setMeetingTimes (state, meetingTimes) {
     state.meetingTimes = meetingTimes.map(
-      meetingTime => Object.assign({}, meetingTime, {
-        projects: meetingTime.projects.map(({code}) => code).join(', '),
-        time: meetingTime.time.substring(0, 5),
-        week_day: WEEK_DAYS[meetingTime.week_day],
-      })
-    );
+      meetingTime => {
+        const timeWithoutSeconds = meetingTime.time.substring(0, 5);
+
+        return {
+          id: meetingTime.id,
+          name: meetingTime.name,
+          projects: meetingTime.projects.map(({ code }) => code).join(', '),
+          time: timeWithoutSeconds,
+          weekDay: WEEK_DAYS[meetingTime.week_day],
+          dayAndTime: `${WEEK_DAYS_SHORTHAND[meetingTime.week_day]} ${timeWithoutSeconds}`,
+        };
+      });
   },
   setErrorState (state, errorObj) {
     state.error = {
