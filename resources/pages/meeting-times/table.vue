@@ -16,13 +16,13 @@
         <v-icon
           small
           class="mr-2"
-          @click="openEditDialog(item)"
+          @click="$emit('toggle-dialog-visibility', item)"
         >
           edit
         </v-icon>
         <v-icon
           small
-          @click="deleteItem(item.id)"
+          @click="$emit('delete', item.id)"
         >
           delete
         </v-icon>
@@ -35,7 +35,7 @@
 <script>
   export default {
     name: 'MeetingTimesTable',
-    props: ['meetingTimes', 'deleteItem', 'openEditDialog'],
+    props: ['meetingTimes'],
     computed: {
       headers: function () {
         return [

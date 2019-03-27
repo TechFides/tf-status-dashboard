@@ -222,8 +222,8 @@ export const actions = {
     await this.$axios.$post('/api/meeting-times', meetingTime);
     dispatch('getMeetingTimes');
   },
-  async editMeetingTime ({ dispatch }, meetingTime) {
-    await this.$axios.$put(`/api/meeting-times/${meetingTime.id}`, meetingTime);
+  async editMeetingTime ({ dispatch }, id, meetingTime) {
+    await this.$axios.$put(`/api/meeting-times/${id}`, meetingTime);
     dispatch('getMeetingTimes');
   },
   async deleteMeetingTime ({ dispatch }, meetingTimeId) {

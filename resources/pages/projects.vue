@@ -30,6 +30,7 @@
                 <v-select
                   :items="formattedMeetingTimesForSelect"
                   v-model="modalItem.meetingTimeId"
+                  label="Vyberte čas konání sitdownu"
                 ></v-select>
               </v-flex>
             </v-layout>
@@ -160,7 +161,7 @@ export default {
     },
     formattedMeetingTimesForSelect () {
       return [
-        {text: 'Vyberte čas konání sitdownu', value: null},
+        {text: 'Žádný', value: null},
         ...this.meetingTimes.map(meetingTime => ({
           text: meetingTime.dayAndTime,
           value: meetingTime.id,

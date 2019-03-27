@@ -109,6 +109,7 @@
         class="margin select-wrapper"
         :items="formattedMeetingTimesForSelect"
         v-model="selectedMeetingTimeId"
+        label="Vyberte čas konání sitdownu"
       ></v-select>
 
     </v-layout>
@@ -260,7 +261,7 @@ export default {
     },
     formattedMeetingTimesForSelect () {
       return [
-        {text: 'Vyberte čas konání sitdownu', value: null},
+        {text: 'Žádný', value: null},
         ...this.meetingTimes.map(meetingTime => ({
           text: meetingTime.dayAndTime,
           value: meetingTime.id,
