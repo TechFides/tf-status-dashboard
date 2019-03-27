@@ -260,9 +260,9 @@ export default {
     },
     formattedMeetingTimesForSelect () {
       return [
-        {text: 'Zvolte sitdown', value: null},
+        {text: 'Vyberte čas konání sitdownu', value: null},
         ...this.meetingTimes.map(meetingTime => ({
-          text: `${meetingTime.name} (${meetingTime.week_day} ${meetingTime.time})`,
+          text: meetingTime.dayAndTime,
           value: meetingTime.id,
         })),
       ];

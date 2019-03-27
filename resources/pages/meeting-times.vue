@@ -51,7 +51,7 @@
     },
     data () {
       return {
-        title: 'Novy sitdown',
+        title: '',
         isDialogOpen: false,
         editId: null,
         dialogData: {
@@ -72,7 +72,7 @@
         this.dialogData.name = value;
       },
       getTitle (sitDownMeetingTime) {
-        return `${sitDownMeetingTime ? 'Upravit' : 'Novy'} sitdown`;
+        return `${sitDownMeetingTime ? 'Upravit' : 'Nový'} čas konání sitdownu`;
       },
       openDialog (sitDownMeetingTime) {
         if (sitDownMeetingTime !== undefined) {

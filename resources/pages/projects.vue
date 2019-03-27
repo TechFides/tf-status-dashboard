@@ -30,7 +30,6 @@
                 <v-select
                   :items="formattedMeetingTimesForSelect"
                   v-model="modalItem.meetingTimeId"
-                  label="Select meeting time"
                 ></v-select>
               </v-flex>
             </v-layout>
@@ -75,7 +74,7 @@
           <td class='text-xs-center element'>{{ props.item.code }}</td>
           <td class='text-xs-center element'>{{ props.item.description }}</td>
           <td class='text-xs-center element'>{{ isProjectActive(props.item.isActive, false) }}</td>
-          <td class="text-xs-right">{{ props.item.meetingTime.text }}</td>
+          <td class="text-xs-center">{{ props.item.meetingTime.text }}</td>
           <td class="justify-center layout px-0">
             <v-icon
               small
@@ -136,7 +135,7 @@ export default {
           value: 'isActive',
         },
         {
-          text: 'Sitdown',
+          text: 'Čas konání sitdownu',
           align: 'center',
           sortable: false,
           value: 'meetingTimeId',
@@ -161,9 +160,9 @@ export default {
     },
     formattedMeetingTimesForSelect () {
       return [
-        {text: 'Zvolte sitdown', value: null},
+        {text: 'Vyberte čas konání sitdownu', value: null},
         ...this.meetingTimes.map(meetingTime => ({
-          text: `${meetingTime.name} (${meetingTime.dayAndTime})`,
+          text: meetingTime.dayAndTime,
           value: meetingTime.id,
         })),
       ];

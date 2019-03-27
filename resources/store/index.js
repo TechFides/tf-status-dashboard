@@ -77,9 +77,7 @@ const getStandupIndex = (state, standupId) => {
 const findAndFormatMeetingTimeTextForSelect = (state, meetingTimeId) => {
   const selectedMeetingTime = state.meetingTimes.find(meetingTime => meetingTime.id === meetingTimeId);
 
-  return selectedMeetingTime
-      ? `${selectedMeetingTime.name} (${selectedMeetingTime.dayAndTime})`
-      : '';
+  return selectedMeetingTime ? selectedMeetingTime.dayAndTime : '';
 };
 
 export const mutations = {

@@ -13,7 +13,7 @@
                 :rules="[]"
                 v-bind:value="dialogData.name"
                 v-on:input="$emit('name:change', $event)"
-                label="Name"
+                label="Název"
               ></v-text-field>
             </v-flex>
             <v-flex xs12 sm6 md4>
@@ -21,7 +21,7 @@
                 :items="weekDays"
                 v-bind:value="dialogData.weekDay"
                 v-on:input="$emit('weekday:change', $event)"
-                label="Select week day"
+                label="Den v týdnu"
               >
               </v-select>
             </v-flex>
