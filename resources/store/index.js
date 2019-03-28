@@ -1,3 +1,5 @@
+import { WEEK_DAYS, WEEK_DAYS_SHORTHAND } from '../constants';
+
 export const state = () => ({
   notes: [],
   projects: [],
@@ -21,6 +23,7 @@ export const state = () => ({
     color: '',
   },
   notificationTimeout: null,
+  meetingTimes: [],
 });
 
 const sortByProperty = function (property, a, b) {
@@ -81,6 +84,12 @@ const getStandupIndex = (state, standupId) => {
   throw new Error('Invalid standup id');
 };
 
+const findAndFormatMeetingTimeTextForSelect = (state, meetingTimeId) => {
+  const selectedMeetingTime = state.meetingTimes.find(meetingTime => meetingTime.id === meetingTimeId);
+
+  return selectedMeetingTime ? selectedMeetingTime.dayAndTime : '';
+};
+
 export const mutations = {
   updateRating (state, { projectId, ratingValueId, standupId }) {
     const standupIndex = getStandupIndex(state, standupId);
@@ -92,12 +101,21 @@ export const mutations = {
     state.standupRatings = newStandupRatings;
   },
   setProjects (state, projects) {
-    state.projects = projects.map(p => ({
-      id: p.id,
-      code: p.code,
-      description: p.description,
-      isActive: p.is_active === 1,
-    })).sort(sortByProperty.bind(this, 'code'));
+    state.projects = projects.map(p => {
+      const meetingTime = state.meetingTimes.find(meetingTime => meetingTime.id === p.meeting_time_id);
+
+      return {
+        id: p.id,
+        code: p.code,
+        description: p.description,
+        isActive: p.is_active === 1,
+        meetingTime: {
+          id: p.meeting_time_id,
+          dayAndTime: meetingTime && meetingTime.dayAndTime ? meetingTime.dayAndTime : null,
+          time: meetingTime && meetingTime.time ? meetingTime.time : null,
+        },
+      };
+    });
   },
   setAllProjects (state, projects) {
     state.allProjects = projects.map(p => ({
@@ -105,6 +123,10 @@ export const mutations = {
       code: p.code,
       description: p.description,
       isActive: p.is_active === 1,
+      meetingTime: {
+        text: findAndFormatMeetingTimeTextForSelect(state, p.meeting_time_id),
+        value: p.meeting_time_id,
+      },
     })).sort(sortByProperty.bind(this, 'code'));
   },
   setProjectRatings (state, standupRatings) {
@@ -166,6 +188,21 @@ export const mutations = {
   setHeatmapWeeks (state, heatmap) {
     state.heatmapWeeks = heatmap.sort(sortByProperty.bind(this, 'date'));
   },
+  setMeetingTimes (state, meetingTimes) {
+    state.meetingTimes = meetingTimes.map(
+      meetingTime => {
+        const timeWithoutSeconds = meetingTime.time.substring(0, 5);
+
+        return {
+          id: meetingTime.id,
+          name: meetingTime.name,
+          projects: meetingTime.projects.map(({ code }) => code).join(', '),
+          time: timeWithoutSeconds,
+          weekDay: WEEK_DAYS[meetingTime.week_day],
+          dayAndTime: `${WEEK_DAYS_SHORTHAND[meetingTime.week_day]} ${timeWithoutSeconds}`,
+        };
+      });
+  },
   setErrorState (state, errorObj) {
     state.error = {
       isVisible: true,
@@ -204,6 +241,41 @@ export const mutations = {
 };
 
 export const actions = {
+  async getMeetingTimes ({ commit }) {
+    const meetingTimes = await this.$axios.$get('/api/meeting-times');
+    commit('setMeetingTimes', meetingTimes);
+  },
+  async createMeetingTime ({ dispatch, commit }, meetingTime) {
+    try {
+      await this.$axios.$post('/api/meeting-times', meetingTime);
+      commit('clearErrorState');
+      dispatch('getMeetingTimes');
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('setErrorState', error.response.data[0]);
+      }
+    }
+  },
+  async editMeetingTime ({ dispatch, commit }, id, meetingTime) {
+    try {
+      await this.$axios.$put(`/api/meeting-times/${id}`, meetingTime);
+      commit('clearErrorState');
+      dispatch('getMeetingTimes');
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('setErrorState', error.response.data[0]);
+      }
+    }
+  },
+  async deleteMeetingTime ({ dispatch, commit }, meetingTimeId) {
+    try {
+      await this.$axios.$delete(`/api/meeting-times/${meetingTimeId}`);
+      commit('clearNotification');
+      dispatch('getMeetingTimes');
+    } catch (error) {
+      commit('setNotification', {color: 'error', message: 'Smazat projekt se nezdařilo.'});
+    }
+  },
   async getProjects ({ commit }) {
     const res = await this.$axios.$get('/api/projects',
       getProjectParams(),
@@ -284,10 +356,7 @@ export const actions = {
   },
   async getProjectRating ({ commit }, date) {
     try {
-      const res = await this.$axios.$get(
-        '/api/projectRatings',
-        getDateParams(date),
-      );
+      const res = await this.$axios.$get('/api/projectRatings', getDateParams(date));
       commit('setProjectRatings', res);
       commit('clearNotification');
     } catch (error) {
@@ -297,13 +366,8 @@ export const actions = {
   async getProjectsForMonth ({ commit }, date) {
     const dateParams = getDateParams(date);
     const [projectData, ratingsData] = await Promise.all([
-      this.$axios.$get(
-        '/api/projects',
-      ),
-      this.$axios.$get(
-        '/api/projectRatings',
-        dateParams,
-      ),
+      this.$axios.$get('/api/projects'),
+      this.$axios.$get('/api/projectRatings', dateParams),
     ]);
 
     const projects = filterProjectsByRatings(projectData, ratingsData);
@@ -313,14 +377,8 @@ export const actions = {
   },
   async getStandupData ({ commit }) {
     const [projectData, ratingsData] = await Promise.all([
-      this.$axios.$get(
-        '/api/projects',
-        getProjectParams(),
-      ),
-      this.$axios.$get(
-        '/api/projectRatings',
-        getDateParams(),
-      ),
+      this.$axios.$get('/api/projects', getProjectParams()),
+      this.$axios.$get('/api/projectRatings', getDateParams()),
     ]);
     commit('setProjects', projectData);
     commit('setProjectRatings', ratingsData);

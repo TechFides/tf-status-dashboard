@@ -9,12 +9,14 @@ class ProjectController {
       code,
       description,
       isActive,
-    } = request.only(['code', 'description', 'isActive']);
+      meetingTimeId,
+    } = request.only(['code', 'description', 'isActive', 'meetingTimeId']);
 
     return {
       code,
       description,
       is_active: isActive,
+      meeting_time_id: meetingTimeId,
     };
   }
 
@@ -22,7 +24,8 @@ class ProjectController {
     const { isActive } = request.get();
     const projectsQuery = ProjectModel
       .query()
-      .with('notes');
+      .with('notes')
+      .with('meetingTime');
 
     if (isActive === 'true') {
       projectsQuery

@@ -14,3 +14,6 @@ export const FEEDBACKS = {
   BAD: 3,
   HORIBLE: 3,
 };
+
+export const WEEK_DAYS = ['Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota', 'Neděle'];
+export const WEEK_DAYS_SHORTHAND = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];

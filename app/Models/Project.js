@@ -10,6 +10,9 @@ class Project extends Model {
   notes () {
     return this.hasMany('App/Models/Note');
   }
+  meetingTime () {
+    return this.belongsTo('App/Models/MeetingTime');
+  }
 }
 
 module.exports = Project;
