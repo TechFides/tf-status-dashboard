@@ -32,6 +32,7 @@
 <script>
 import { mapState } from 'vuex';
 import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
+import {FEEDBACKS} from '../constants';
 
 export default {
   fetch ({ store, params }) {
@@ -83,15 +84,15 @@ export default {
     getClassName (value) {
       let className = 'text-xs-center element';
       switch (value) {
-        case 0:
+        case FEEDBACKS.NEUTRAL:
           return className;
-        case 1:
+        case FEEDBACKS.AMAZING:
           return `${className} light-green`;
-        case 2:
+        case FEEDBACKS.GOOD:
           return `${className} green`;
-        case 3:
+        case FEEDBACKS.BAD:
           return `${className} yellow`;
-        case 4:
+        case FEEDBACKS.HORIBLE:
           return `${className} red`;
         default:
           return '';

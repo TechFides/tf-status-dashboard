@@ -9,7 +9,6 @@
 | make use of Lucid models directly.
 |
 */
-
 const Database = use('Database');
 
 class FeedbackEnumSeeder {
@@ -22,7 +21,7 @@ class FeedbackEnumSeeder {
     return [
       {
         id: 1,
-        description: 'AMAZING',
+        description: 'FEEDBACKS',
       },
       {
         id: 2,

@@ -6,3 +6,11 @@ export const ICONS = {
   ABOVE_AVERAGE: Symbol('ABOVE_AVERAGE'),
   GREAT: Symbol('GREAT'),
 };
+
+export const FEEDBACKS = {
+  NEUTRAL: 0,
+  AMAZING: 1,
+  GOOD: 2,
+  BAD: 3,
+  HORIBLE: 3,
+};

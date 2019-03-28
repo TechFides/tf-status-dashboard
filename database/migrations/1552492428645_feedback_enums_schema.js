@@ -7,7 +7,7 @@ class FeedbackEnumsSchema extends Schema {
   up () {
     this.create('feedback_enums', (table) => {
       table.increments();
-      table.integer('value').notNullable();
+      table.string('description').notNullable();
       table.timestamps();
     })
   }
