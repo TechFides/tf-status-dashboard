@@ -47,7 +47,6 @@
         </v-form>
       </v-dialog>
 
-
       <v-btn class="margin" v-if="isAdmin()" slot="activator" color="info" @click="createStandup()">
         <i class="material-icons">add</i>
         Přidat standup
@@ -106,6 +105,13 @@
         </v-dialog>
       </v-flex>
 
+      <v-select
+        class="margin select-wrapper"
+        :items="formattedMeetingTimesForSelect"
+        v-model="selectedMeetingTimeId"
+        label="Vyberte čas konání sitdownu"
+      ></v-select>
+
     </v-layout>
 
     <v-layout column justify-center align-center>
@@ -131,6 +137,11 @@
                   <span>Chybí cíl na další standup</span>
                 </v-tooltip>
               </nav>
+            </th>
+          </tr>
+          <tr class="table__row-bottom-border">
+            <th class="element" v-for="h in props.headers">
+              {{ h.meetingTime ? h.meetingTime.dayAndTime : '' }}
             </th>
           </tr>
         </template>
@@ -174,12 +185,15 @@ import ProjectStatusPicker from '../components/ProjectStatusPicker';
 import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
 import { mapState, mapMutations } from 'vuex';
 import DatePickerField from '../components/DatePickerField';
+import { WEEK_DAYS_SHORTHAND } from '../constants';
 
 export default {
   fetch ({ store, params }) {
     return Promise.all([
       store.dispatch('getStandupData'),
       store.dispatch('getNotes'),
+      store.dispatch('getMeetingTimes'),
+      store.dispatch('getProjects'),
     ]);
   },
   computed: {
@@ -188,18 +202,22 @@ export default {
       'projects',
       'standupRatings',
       'error',
+      'meetingTimes',
     ]),
     ...mapMutations([
       'clearErrorState',
       'setErrorState',
     ]),
     headers () {
-      const projects = this.projects.map(project => ({
+      const sortedProjects = this.sortProjectsByMeetingTime();
+      this.filteredProjectsBySelectedMeetingTime = this.getFilteredProjectsBySelectedMeetingTime(sortedProjects);
+      const formattedProjectsForTable = this.filteredProjectsBySelectedMeetingTime.map(project => ({
         text: project.code,
         align: 'center',
         sortable: false,
         value: project.code,
         hasIcon: true,
+        meetingTime: project.meetingTime,
       }));
 
       return [
@@ -210,7 +228,7 @@ export default {
           value: 'Datum',
           hasIcon: false,
         },
-        ...projects,
+        ...formattedProjectsForTable,
         {
           text: 'Akce',
           align: 'left',
@@ -241,9 +259,20 @@ export default {
     standupDialogTitle () {
       return this.standupDialog.id ? 'Upravení standupu' : 'Přidání standupu';
     },
+    formattedMeetingTimesForSelect () {
+      return [
+        {text: 'Žádný', value: null},
+        ...this.meetingTimes.map(meetingTime => ({
+          text: meetingTime.dayAndTime,
+          value: meetingTime.id,
+        })),
+      ];
+    },
   },
   data () {
     return {
+      filteredProjectsBySelectedMeetingTime: this.projects,
+      selectedMeetingTimeId: null,
       modalItem: {
         standupMonth: null,
       },
@@ -272,6 +301,30 @@ export default {
     };
   },
   methods: {
+    sortProjectsByMeetingTime () {
+      const projectsWithoutMeetingTime = this.projects.filter(project => project.meetingTime.time === null);
+      const sortedProjectsWithMeetingTime = this.projects
+        .filter(project => project.meetingTime.time !== null)
+        .sort((a, b) => this.sortByDayAndTime(a.meetingTime.dayAndTime, b.meetingTime.dayAndTime));
+
+      return [...sortedProjectsWithMeetingTime, ...projectsWithoutMeetingTime];
+    },
+    sortByDayAndTime (dayAndTimeA, dayAndTimeB) {
+      const dayAOrderIndex = WEEK_DAYS_SHORTHAND.indexOf(dayAndTimeA.substring(0, 2));
+      const dayBOrderIndex = WEEK_DAYS_SHORTHAND.indexOf(dayAndTimeB.substring(0, 2));
+
+      return (dayAOrderIndex - dayBOrderIndex) === 0
+        ? this.getTimeInMinutes(dayAndTimeA) - this.getTimeInMinutes(dayAndTimeB)
+        : dayAOrderIndex - dayBOrderIndex;
+    },
+    getFilteredProjectsBySelectedMeetingTime (allProjects) {
+      return this.selectedMeetingTimeId !== null
+        ? allProjects.filter(project => project.meetingTime.id === this.selectedMeetingTimeId)
+        : allProjects;
+    },
+    getTimeInMinutes (time) {
+      return parseInt(time.substring(0, 2), 10) * 60 + parseInt(time.substring(3, 4), 10);
+    },
     formatDate (date) {
       const d = new Date(date);
 
@@ -309,7 +362,7 @@ export default {
       this.monthPickerIsOpen = false;
     },
     getRatings (standup) {
-      return this.projects.map(p => ({
+      return this.filteredProjectsBySelectedMeetingTime.map(p => ({
         standupId: standup.id,
         projectId: p.id,
         rating: standup.standupProjectRating[p.id] || 0,
@@ -478,4 +531,11 @@ export default {
   display: inline-block;
 }
 
+.select-wrapper {
+  max-width: 350px;
+}
+
+.table__row-bottom-border {
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+}
 </style>

@@ -26,6 +26,13 @@
                   v-model="modalItem.isActive"
                 ></v-checkbox>
               </v-flex>
+              <v-flex xs12 sm6 md4>
+                <v-select
+                  :items="formattedMeetingTimesForSelect"
+                  v-model="modalItem.meetingTimeId"
+                  label="Vyberte čas konání sitdownu"
+                ></v-select>
+              </v-flex>
             </v-layout>
 
             <v-alert
@@ -68,6 +75,7 @@
           <td class='text-xs-center element'>{{ props.item.code }}</td>
           <td class='text-xs-center element'>{{ props.item.description }}</td>
           <td class='text-xs-center element'>{{ isProjectActive(props.item.isActive, false) }}</td>
+          <td class="text-xs-center">{{ props.item.meetingTime.text }}</td>
           <td class="justify-center layout px-0">
             <v-icon
               small
@@ -96,12 +104,16 @@ import format from 'date-fns/format';
 
 export default {
   async fetch ({ store, params }) {
-    await store.dispatch('getAllProjects');
+    await Promise.all([
+      store.dispatch('getMeetingTimes'),
+      store.dispatch('getAllProjects'),
+    ]);
   },
   computed: {
     ...mapState([
       'allProjects',
       'error',
+      'meetingTimes',
     ]),
     headers: function () {
       return [
@@ -124,6 +136,12 @@ export default {
           value: 'isActive',
         },
         {
+          text: 'Čas konání sitdownu',
+          align: 'center',
+          sortable: false,
+          value: 'meetingTimeId',
+        },
+        {
           text: 'Akce',
           align: 'center',
           sortable: false,
@@ -141,6 +159,15 @@ export default {
           description.match(uppercasedFilterText);
       });
     },
+    formattedMeetingTimesForSelect () {
+      return [
+        {text: 'Žádný', value: null},
+        ...this.meetingTimes.map(meetingTime => ({
+          text: meetingTime.dayAndTime,
+          value: meetingTime.id,
+        })),
+      ];
+    },
   },
   data () {
     return {
@@ -155,12 +182,14 @@ export default {
         code: '',
         description: '',
         isActive: true,
+        meetingTimeId: null,
       },
       defaultModalItem: {
         id: null,
         code: '',
         description: '',
         isActive: true,
+        meetingTimeId: null,
       },
       filteringText: '',
     };
@@ -176,6 +205,7 @@ export default {
         code: item.code,
         description: item.description,
         isActive: item.isActive,
+        meetingTimeId: item.meetingTime.value,
       };
 
       this.modalTitle = 'Upravit projekt';
