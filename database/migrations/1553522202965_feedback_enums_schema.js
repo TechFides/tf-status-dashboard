@@ -7,7 +7,7 @@ class FeedbackEnumsSchema extends Schema {
     const enumData = [
       {
         id: 1,
-        description: 'FEEDBACKS',
+        description: 'AMAZING',
       },
       {
         id: 2,
