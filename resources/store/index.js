@@ -9,6 +9,8 @@ export const state = () => ({
   standupRatings: {},
   users: [],
   roles: [],
+  usersFeedbacks: [],
+  heatmapWeeks: [],
   error: {
     isVisible: false,
     message: '',
@@ -39,6 +41,14 @@ const getDateParams = function (date = new Date()) {
 };
 
 const getProjectParams = () => {
+  return {
+    params: {
+      isActive: true,
+    },
+  };
+};
+
+const getHeatmapParams = () => {
   return {
     params: {
       isActive: true,
@@ -160,6 +170,23 @@ export const mutations = {
   },
   setRoles (state, roles) {
     state.roles = roles;
+  },
+  setUsersFeedbacks (state, userFeedbacks) {
+    const newUserFeedbacks = userFeedbacks.sort(sortByProperty.bind(this, 'first_name'));
+    for (const [index, { feedback }] of newUserFeedbacks.entries()) {
+      const newFeedback = {};
+      for (const { heatmap_week_id, feedback_enum_id } of feedback) {
+        // eslint-disable-next-line camelcase
+        newFeedback[heatmap_week_id] = feedback_enum_id;
+      }
+
+      newUserFeedbacks[index].feedback = newFeedback;
+    }
+
+    state.usersFeedbacks = newUserFeedbacks;
+  },
+  setHeatmapWeeks (state, heatmap) {
+    state.heatmapWeeks = heatmap.sort(sortByProperty.bind(this, 'date'));
   },
   setMeetingTimes (state, meetingTimes) {
     state.meetingTimes = meetingTimes.map(
@@ -353,7 +380,6 @@ export const actions = {
       this.$axios.$get('/api/projects', getProjectParams()),
       this.$axios.$get('/api/projectRatings', getDateParams()),
     ]);
-
     commit('setProjects', projectData);
     commit('setProjectRatings', ratingsData);
   },
@@ -443,5 +469,20 @@ export const actions = {
     const roles = await this.$axios.$get('/api/roles');
 
     commit('setRoles', roles);
+  },
+  async getFeedbackData ({ commit }, date) {
+    const [heatmap, feedbacks] = await Promise.all([
+      this.$axios.$get(
+        '/api/heatmap',
+        getDateParams(date)
+      ),
+      this.$axios.$get(
+        '/api/heatmap/feedbacks',
+        getHeatmapParams()
+      ),
+    ]);
+
+    commit('setHeatmapWeeks', heatmap);
+    commit('setUsersFeedbacks', feedbacks);
   },
 };

@@ -97,6 +97,23 @@ class UserController {
       user.roles().detach(detach),
     ]);
   }
+
+  async getUsersFeedbacks ({ request, response, params }) {
+    let { isActive } = request.get();
+
+    const query = UserModel
+      .query()
+      .with('feedback');
+
+    if (isActive === 'true') {
+      query
+        .where('is_active', true);
+    }
+
+    const usersFeedbacks = await query.fetch();
+
+    return usersFeedbacks.toJSON();
+  }
 }
 
 module.exports = UserController;

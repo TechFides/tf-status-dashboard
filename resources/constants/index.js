@@ -7,5 +7,13 @@ export const ICONS = {
   GREAT: Symbol('GREAT'),
 };
 
+export const FEEDBACKS = {
+  NEUTRAL: 0,
+  AMAZING: 1,
+  GOOD: 2,
+  BAD: 3,
+  HORIBLE: 3,
+};
+
 export const WEEK_DAYS = ['Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota', 'Neděle'];
 export const WEEK_DAYS_SHORTHAND = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
