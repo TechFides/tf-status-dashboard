@@ -67,25 +67,25 @@
       resetData () {
         const dialog = this.$children.find(child => child._name === '<CreateEditDialog>');
 
-        if (dialog) {
-          dialog.dataForSubmit = {
+        if (dialog && dialog.hasOwnProperty('_data')) {
+          dialog._data.dataForSubmit = {
             name: '',
             weekDay: '',
             time: '',
           };
         }
+        this.editId = null;
       },
       setDataForEdit (dataForEdit) {
         const dialog = this.$children.find(child => child._name === '<CreateEditDialog>');
 
-        if (dialog) {
-          dialog.dataForSubmit = {
+        if (dialog && dialog.hasOwnProperty('_data')) {
+          dialog._data.dataForSubmit = {
             name: dataForEdit.name,
             weekDay: dataForEdit.weekDay,
             time: dataForEdit.time,
           };
         }
-
         this.editId = dataForEdit.id;
       },
       submit (data) {
@@ -94,18 +94,20 @@
           : this.createSitDownMeetingTime(data);
       },
       getTransformedDataForRequest (data) {
-        return {
+        const dataForRequest = {
           weekDay: WEEK_DAYS.indexOf(data.weekDay),
           name: data.name,
           time: data.time,
         };
+
+        return this.editId ? Object.assign(dataForRequest, {id: this.editId}) : dataForRequest;
       },
       async createSitDownMeetingTime (data) {
         await this.$store.dispatch('createMeetingTime', this.getTransformedDataForRequest(data));
         this.closeDialog();
       },
       async editSitDownMeetingTime (data) {
-        await this.$store.dispatch('editMeetingTime', this.editId, this.getTransformedDataForRequest(data));
+        await this.$store.dispatch('editMeetingTime', this.getTransformedDataForRequest(data));
         this.closeDialog();
       },
       async deleteSitDownMeetingTime (id) {
