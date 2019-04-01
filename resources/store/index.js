@@ -256,9 +256,9 @@ export const actions = {
       }
     }
   },
-  async editMeetingTime ({ dispatch, commit }, id, meetingTime) {
+  async editMeetingTime ({ dispatch, commit }, meetingTime) {
     try {
-      await this.$axios.$put(`/api/meeting-times/${id}`, meetingTime);
+      await this.$axios.$put(`/api/meeting-times/${meetingTime.id}`, meetingTime);
       commit('clearErrorState');
       dispatch('getMeetingTimes');
     } catch (error) {
