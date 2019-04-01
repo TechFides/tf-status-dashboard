@@ -66,19 +66,25 @@
       },
       resetData () {
         const dialog = this.$children.find(child => child._name === '<CreateEditDialog>');
-        dialog.dataForSubmit = {
-          name: '',
-          weekDay: '',
-          time: '',
-        };
+
+        if (dialog) {
+          dialog.dataForSubmit = {
+            name: '',
+            weekDay: '',
+            time: '',
+          };
+        }
       },
       setDataForEdit (dataForEdit) {
         const dialog = this.$children.find(child => child._name === '<CreateEditDialog>');
-        dialog.dataForSubmit = {
-          name: dataForEdit.name,
-          weekDay: dataForEdit.weekDay,
-          time: dataForEdit.time,
-        };
+
+        if (dialog) {
+          dialog.dataForSubmit = {
+            name: dataForEdit.name,
+            weekDay: dataForEdit.weekDay,
+            time: dataForEdit.time,
+          };
+        }
 
         this.editId = dataForEdit.id;
       },
