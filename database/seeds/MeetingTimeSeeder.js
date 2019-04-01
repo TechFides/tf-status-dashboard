@@ -21,17 +21,17 @@ class MeetinTimeSeeder {
   static getInitialData () {
     return [
       {
-        week_day: 'Monday',
+        week_day: '1',
         time: '14:00',
         name: 'Test1',
       },
       {
-        week_day: 'Tuesday',
+        week_day: '2',
         time: '15:00',
         name: 'Test2',
       },
       {
-        week_day: 'Wednesday',
+        week_day: '3',
         time: '16:00',
         name: 'Test3',
       },
