@@ -1,9 +1,20 @@
 <template>
   <div>
-    <v-layout row reverse>
-
-      <v-dialog v-if="isAdmin() || isUser()" v-model="noteDialog.isOpen" max-width="500px">
-        <v-btn slot="activator" color="primary" right @click="resetNote">
+    <v-layout
+      row
+      reverse
+    >
+      <v-dialog
+        v-if="isAdmin() || isUser()"
+        v-model="noteDialog.isOpen"
+        max-width="500px"
+      >
+        <v-btn
+          slot="activator"
+          color="primary"
+          right
+          @click="resetNote"
+        >
           <i class="material-icons">add</i>
           Přidat cíl
         </v-btn>
@@ -20,14 +31,20 @@
                     :items="projectNames"
                     required
                     label="Projekt"
-                  ></v-combobox>
+                  />
                 </v-flex>
                 <v-flex>
-                  <date-picker-field v-model="noteDialog.deadlineDate" label="Deadline">
-                  </date-picker-field>
+                  <date-picker-field
+                    v-model="noteDialog.deadlineDate"
+                    label="Deadline"
+                  />
                 </v-flex>
                 <v-flex>
-                  <v-textarea v-model="noteDialog.note" label="Poznámka" required></v-textarea>
+                  <v-textarea
+                    v-model="noteDialog.note"
+                    label="Poznámka"
+                    required
+                  />
                 </v-flex>
               </v-layout>
               <v-alert
@@ -39,20 +56,41 @@
               </v-alert>
             </div>
             <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" flat @click.native="resetNote">Zavřít</v-btn>
-              <v-btn color="blue darken-1" flat type="submit">Uložit</v-btn>
+              <v-spacer/>
+              <v-btn
+                color="blue darken-1"
+                flat
+                @click.native="resetNote"
+              >
+                Zavřít
+              </v-btn>
+              <v-btn
+                color="blue darken-1"
+                flat
+                type="submit"
+              >
+                Uložit
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-form>
       </v-dialog>
 
-      <v-btn class="margin" v-if="isAdmin()" slot="activator" color="info" @click="createStandup()">
+      <v-btn
+        v-if="isAdmin()"
+        slot="activator"
+        class="margin"
+        color="info"
+        @click="createStandup()"
+      >
         <i class="material-icons">add</i>
         Přidat standup
       </v-btn>
 
-      <v-dialog v-model="standupDialog.isOpen" max-width="500px">
+      <v-dialog
+        v-model="standupDialog.isOpen"
+        max-width="500px"
+      >
         <v-card>
           <v-card-title>
             <span class="headline">{{ standupDialogTitle }}</span>
@@ -60,8 +98,10 @@
           <div class="mx-3">
             <v-layout column>
               <v-flex>
-                <date-picker-field v-model="standupDialog.date" label="Datum standupu">
-                </date-picker-field>
+                <date-picker-field
+                  v-model="standupDialog.date"
+                  label="Datum standupu"
+                />
               </v-flex>
             </v-layout>
             <v-alert
@@ -73,14 +113,29 @@
             </v-alert>
           </div>
           <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="resetStandup">Zavřít</v-btn>
-            <v-btn color="blue darken-1" flat @click.native="save">Uložit</v-btn>
+            <v-spacer/>
+            <v-btn
+              color="blue darken-1"
+              flat
+              @click.native="resetStandup"
+            >
+              Zavřít
+            </v-btn>
+            <v-btn
+              color="blue darken-1"
+              flat
+              @click.native="save"
+            >
+              Uložit
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
 
-      <v-flex md1 class="pad">
+      <v-flex
+        md1
+        class="pad"
+      >
         <v-dialog
           ref="dialogMonth"
           v-model="monthPickerIsOpen"
@@ -96,42 +151,71 @@
             label="Měsíc"
             append-icon="event"
             readonly
-          ></v-text-field>
-          <v-date-picker v-model="modalItem.standupMonth" scrollable type="month">
-            <v-spacer></v-spacer>
-            <v-btn flat color="primary" @click="monthPickerIsOpen = false">Zrušit</v-btn>
-            <v-btn flat color="primary" @click="updateStandup($refs.dialogMonth)">OK</v-btn>
+          />
+          <v-date-picker
+            v-model="modalItem.standupMonth"
+            scrollable
+            type="month"
+          >
+            <v-spacer/>
+            <v-btn
+              flat
+              color="primary"
+              @click="monthPickerIsOpen = false"
+            >
+              Zrušit
+            </v-btn>
+            <v-btn
+              flat
+              color="primary"
+              @click="updateStandup($refs.dialogMonth)"
+            >
+              OK
+            </v-btn>
           </v-date-picker>
         </v-dialog>
       </v-flex>
 
       <v-select
+        v-model="selectedMeetingTimeId"
         class="margin select-wrapper"
         :items="formattedMeetingTimesForSelect"
-        v-model="selectedMeetingTimeId"
         label="Vyberte čas konání sitdownu"
-      ></v-select>
-
+      />
     </v-layout>
 
-    <v-layout column justify-center align-center>
-
+    <v-layout
+      column
+      justify-center
+      align-center
+    >
       <v-data-table
-        :headers='headers'
-        :items='rows'
+        :headers="headers"
+        :items="rows"
         hide-actions
         fill-height
         no-data-text="Žádná data"
-        class='elevation-1 fullscreen'
+        class="elevation-1 fullscreen"
       >
-        <template slot="headers" slot-scope="props">
+        <template
+          slot="headers"
+          slot-scope="props"
+        >
           <tr>
-            <th v-for="h in props.headers">
+            <th
+              v-for="h in props.headers"
+              :key="h.text"
+            >
               <nav>
-                <div class="text-xs-center header align-project">{{ h.text }}</div>
+                <div class="text-xs-center header align-project">
+                  {{ h.text }}
+                </div>
                 <v-tooltip bottom>
-                  <i slot="activator" class="material-icons alert-icon" 
-                    v-if="isMissingNote(h.text, h.hasIcon)">
+                  <i
+                    v-if="isMissingNote(h.text, h.hasIcon)"
+                    slot="activator"
+                    class="material-icons alert-icon"
+                  >
                     report_problem
                   </i>
                   <span>Chybí cíl na další standup</span>
@@ -140,29 +224,39 @@
             </th>
           </tr>
           <tr class="table__row-bottom-border">
-            <th class="element" v-for="h in props.headers">
+            <th
+              v-for="h in props.headers"
+              :key="h.text"
+              class="element"
+            >
               {{ h.meetingTime ? h.meetingTime.dayAndTime : '' }}
             </th>
           </tr>
         </template>
-        <template slot='items' slot-scope='{ item }'>
-          <td class='text-xs-center element'>
+        <template
+          slot="items"
+          slot-scope="{ item }"
+        >
+          <td class="text-xs-center element">
             {{ formatDate(item.standup.date) }}
           </td>
 
-          <td v-for='(i, itemIndex) in item.ratings' :key='itemIndex'>
+          <td
+            v-for="(i, itemIndex) in item.ratings"
+            :key="itemIndex"
+          >
             <project-status-picker
-              :project-rating='i.rating'
-              :project-id='i.projectId'
-              :standup-id='i.standupId'
-              :disabled='!isAdmin() && !isUser()'
+              :project-rating="i.rating"
+              :project-id="i.projectId"
+              :standup-id="i.standupId"
+              :disabled="!isAdmin() && !isUser()"
               :date="formatDate(item.standup.date)"
             />
           </td>
           <td class="justify-center layout px-0">
             <v-icon
-              @click="editStandup(item.standup)"
               class="mr-2"
+              @click="editStandup(item.standup)"
             >
               edit
             </v-icon>
@@ -175,7 +269,10 @@
         </template>
       </v-data-table>
     </v-layout>
-    <note-list @edit="editNote" :editable="isAdmin() || isUser()"></note-list>
+    <note-list
+      :editable="isAdmin() || isUser()"
+      @edit="editNote"
+    />
   </div>
 </template>
 
@@ -188,13 +285,41 @@ import DatePickerField from '../components/DatePickerField';
 import { WEEK_DAYS_SHORTHAND } from '../constants';
 
 export default {
-  fetch ({ store, params }) {
-    return Promise.all([
-      store.dispatch('getStandupData'),
-      store.dispatch('getNotes'),
-      store.dispatch('getMeetingTimes'),
-      store.dispatch('getProjects'),
-    ]);
+  components: {
+    DatePickerField,
+    ProjectStatusPicker,
+    NoteList,
+  },
+  data () {
+    return {
+      filteredProjectsBySelectedMeetingTime: this.projects,
+      selectedMeetingTimeId: null,
+      modalItem: {
+        standupMonth: null,
+      },
+      selectedDate: new Date(),
+      monthPickerIsOpen: false,
+      noteDialog: {
+        isOpen: false,
+        id: null,
+        selectedProject: null,
+        deadlineDate: null,
+        note: '',
+      },
+      defaultNoteDialog: {
+        isOpen: false,
+        id: null,
+        project: '',
+        note: '',
+        deadlineDate: null,
+      },
+      standupDialog: {
+        id: null,
+        isOpen: false,
+        date: null,
+        selectedDate: null,
+      },
+    };
   },
   computed: {
     ...mapState([
@@ -210,8 +335,8 @@ export default {
     ]),
     headers () {
       const sortedProjects = this.sortProjectsByMeetingTime();
-      this.filteredProjectsBySelectedMeetingTime = this.getFilteredProjectsBySelectedMeetingTime(sortedProjects);
-      const formattedProjectsForTable = this.filteredProjectsBySelectedMeetingTime.map(project => ({
+      const filteredProjects = this.getFilteredProjectsBySelectedMeetingTime(sortedProjects);
+      const formattedProjectsForTable = filteredProjects.map(project => ({
         text: project.code,
         align: 'center',
         sortable: false,
@@ -269,36 +394,13 @@ export default {
       ];
     },
   },
-  data () {
-    return {
-      filteredProjectsBySelectedMeetingTime: this.projects,
-      selectedMeetingTimeId: null,
-      modalItem: {
-        standupMonth: null,
-      },
-      selectedDate: new Date(),
-      monthPickerIsOpen: false,
-      noteDialog: {
-        isOpen: false,
-        id: null,
-        selectedProject: null,
-        deadlineDate: null,
-        note: '',
-      },
-      defaultNoteDialog: {
-        isOpen: false,
-        id: null,
-        project: '',
-        note: '',
-        deadlineDate: null,
-      },
-      standupDialog: {
-        id: null,
-        isOpen: false,
-        date: null,
-        selectedDate: null,
-      },
-    };
+  fetch ({ store, params }) {
+    return Promise.all([
+      store.dispatch('getStandupData'),
+      store.dispatch('getNotes'),
+      store.dispatch('getMeetingTimes'),
+      store.dispatch('getProjects'),
+    ]);
   },
   methods: {
     sortProjectsByMeetingTime () {
@@ -362,7 +464,7 @@ export default {
       this.monthPickerIsOpen = false;
     },
     getRatings (standup) {
-      return this.filteredProjectsBySelectedMeetingTime.map(p => ({
+      return this.getFilteredProjectsBySelectedMeetingTime(this.sortProjectsByMeetingTime()).map(p => ({
         standupId: standup.id,
         projectId: p.id,
         rating: standup.standupProjectRating[p.id] || 0,
@@ -491,11 +593,6 @@ export default {
         await this.$store.dispatch('deleteStandup', this.standupDialog);
       }
     },
-  },
-  components: {
-    DatePickerField,
-    ProjectStatusPicker,
-    NoteList,
   },
 };
 </script>

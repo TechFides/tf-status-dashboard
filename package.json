@@ -12,7 +12,7 @@
     "build": "node ./ace nuxtbuild",
     "start": "nodemon --inspect --watch app --watch bootstrap --watch config --watch .env -x node server.js",
     "precommit": "npm run lint",
-    "lint": "eslint --ext .js,.vue resources/ app/"
+    "lint": "eslint --max-warnings --ext .js,.vue resources/ app/  0"
   },
   "dependencies": {
     "@adonisjs/ace": "^5.0.8",
@@ -52,10 +52,7 @@
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-loader": "^2.1.2",
-    "eslint-plugin-html": "^5.0.3",
     "eslint-plugin-node": "^8.0.1",
-    "eslint-plugin-promise": "^4.1.1",
-    "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^5.2.2",
     "nodemon": "^1.18.11",
     "standard": "^12.0.1",

@@ -1,7 +1,13 @@
 <template>
   <div>
-    <v-layout row reverse>
-      <v-flex md1 class="pad">
+    <v-layout
+      row
+      reverse
+    >
+      <v-flex
+        md1
+        class="pad"
+      >
         <v-dialog
           ref="dialogMonth"
           v-model="statisticsMonthDialog.isOpen"
@@ -17,29 +23,56 @@
             label="Měsíc"
             append-icon="event"
             readonly
-          ></v-text-field>
-          <v-date-picker v-model="statisticsMonthDialog.month" scrollable type="month">
-            <v-spacer></v-spacer>
-            <v-btn flat color="primary" @click="statisticsMonthDialog.isOpen = false">Zrušit</v-btn>
-            <v-btn flat color="primary" @click="updateMonth($refs.dialogMonth)">OK</v-btn>
+          />
+          <v-date-picker
+            v-model="statisticsMonthDialog.month"
+            scrollable
+            type="month"
+          >
+            <v-spacer/>
+            <v-btn
+              flat
+              color="primary"
+              @click="statisticsMonthDialog.isOpen = false"
+            >
+              Zrušit
+            </v-btn>
+            <v-btn
+              flat
+              color="primary"
+              @click="updateMonth($refs.dialogMonth)"
+            >
+              OK
+            </v-btn>
           </v-date-picker>
         </v-dialog>
       </v-flex>
     </v-layout>
 
-    <v-layout column justify-center align-end>
+    <v-layout
+      column
+      justify-center
+      align-end
+    >
       <v-data-table
-        :headers='headers'
-        :items='projectStatistics'
+        :headers="headers"
+        :items="projectStatistics"
         item-key="projectId"
         hide-actions
         fill-height
         must-sort
-        class='elevation-1 fullscreen'
+        class="elevation-1 fullscreen"
       >
-        <template slot='items' slot-scope='props'>
-          <td class='text-xs-center element'>{{ props.item.projectCode }}</td>
-          <td class='text-xs-center element'>{{ props.item.exps }}</td>
+        <template
+          slot="items"
+          slot-scope="props"
+        >
+          <td class="text-xs-center element">
+            {{ props.item.projectCode }}
+          </td>
+          <td class="text-xs-center element">
+            {{ props.item.exps }}
+          </td>
         </template>
       </v-data-table>
     </v-layout>

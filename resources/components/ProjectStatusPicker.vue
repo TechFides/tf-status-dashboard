@@ -1,7 +1,8 @@
 <template>
   <div class="text-xs-center">
-    <v-dialog :disabled="disabled"
+    <v-dialog
       v-model="dialog"
+      :disabled="disabled"
       width="1080"
     >
       <div
@@ -19,9 +20,9 @@
           <div class="flex-container">
             {{ `${date} - Vyberte hodnocení: ${projectName}` }}
             <v-icon
-              @click="dialog = false"
               x-large
               class="material-icons"
+              @click="dialog = false"
             >
               remove
             </v-icon>

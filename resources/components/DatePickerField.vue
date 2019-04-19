@@ -1,11 +1,11 @@
 <template>
   <v-menu
+    v-model="menuDate"
     :close-on-content-click="false"
     transition="scale-transition"
     offset-y
     full-width
     min-width="290px"
-    v-model="menuDate"
   >
     <v-text-field
       slot="activator"
@@ -16,15 +16,13 @@
       clearable
       :value="dateFormatted"
       @input="datePicked"
-    >
-    </v-text-field>
+    />
     <v-date-picker
-      :first-day-of-week="1"
       v-model="modelDate"
-      @input="datePicked"
+      :first-day-of-week="1"
       no-title
-    >
-    </v-date-picker>
+      @input="datePicked"
+    />
   </v-menu>
 </template>
 
@@ -49,13 +47,18 @@ export default {
       menuDate: false,
     };
   },
-  created() {
-    this.modelDate = this.value ? format(this.value, 'YYYY-MM-DD') : null;
-  },
   computed: {
     dateFormatted() {
       return this.modelDate ? format(this.modelDate, 'D. M. YYYY') : '';
     },
+  },
+  watch: {
+    value (v) {
+      this.modelDate = v ? format(v, 'YYYY-MM-DD') : null;
+    },
+  },
+  created () {
+    this.modelDate = this.value ? format(this.value, 'YYYY-MM-DD') : null;
   },
   methods: {
     datePicked(date) {
@@ -72,11 +75,6 @@ export default {
       const resultDate = setHours(parsedDate, getHours(currentDate));
 
       this.$emit('input', resultDate);
-    },
-  },
-  watch: {
-    value(v) {
-      this.modelDate = v ? format(v, 'YYYY-MM-DD') : null;
     },
   },
 };
