@@ -110,7 +110,7 @@ export default {
 
 <style scoped>
 .note-text {
-  white-space: pre-wrap;
+  white-space: pre-line;
 }
 .note-columns {
   column-count: 5;
