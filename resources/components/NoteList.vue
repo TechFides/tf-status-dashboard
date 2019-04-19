@@ -1,21 +1,54 @@
 <template>
   <div class="note-columns mx-3">
-    <v-card v-for="item in notes" :key="item.id" color="brown lighten-5" class="note-card mt-3">
+    <v-card
+      v-for="item in notes"
+      :key="item.id"
+      color="brown lighten-5"
+      class="note-card mt-3"
+    >
       <div class="pa-2">
-        <v-layout row nowrap>
+        <v-layout
+          row
+          nowrap
+        >
           <h2>{{ item.projectCode }}</h2>
-          <v-spacer></v-spacer>
-          <v-icon v-if="editable" class="mr-1" size="20" @click="$emit('edit', item)">edit</v-icon>
-          <v-icon v-if="editable" size="20" @click="markNoteCompleted(item)" color="green">done</v-icon>
+          <v-spacer />
+          <v-icon
+            v-if="editable"
+            class="mr-1"
+            size="20"
+            @click="$emit('edit', item)"
+          >
+            edit
+          </v-icon>
+          <v-icon
+            v-if="editable"
+            size="20"
+            color="green"
+            @click="markNoteCompleted(item)"
+          >
+            done
+          </v-icon>
         </v-layout>
-        <div class="note-text mb-2">{{ item.text }}</div>
-        <v-divider></v-divider>
-        <v-layout class="mt-1" row nowrap>
+        <div class="note-text mb-2">
+          {{ item.text }}
+        </div>
+        <v-divider />
+        <v-layout
+          class="mt-1"
+          row
+          nowrap
+        >
           <v-flex>
             {{ formatDate(item.created) }}
           </v-flex>
           <v-flex :class="getNoteDeadlineClass(item)">
-            <v-icon :color="getNoteDeadlineIconColor(item)" size="16">schedule</v-icon>
+            <v-icon
+              :color="getNoteDeadlineIconColor(item)"
+              size="16"
+            >
+              schedule
+            </v-icon>
             {{ formatDate(item.deadlineDate) }}
           </v-flex>
         </v-layout>
@@ -29,8 +62,10 @@ import { format, parse, isPast, isToday } from 'date-fns';
 import { mapState } from 'vuex';
 
 export default {
-  name: 'note-list',
-  props: ['editable'],
+  name: 'NoteList',
+  props: {
+    editable: Boolean,
+  },
   data () {
     return {};
   },

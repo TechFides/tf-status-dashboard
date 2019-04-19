@@ -1,15 +1,15 @@
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
   env: {
     browser: true,
     node: true,
   },
-  extends: 'standard',
-  // required to lint *.vue files
-  plugins: [
-    'html',
+  extends: [
+    'plugin:vue/recommended',
   ],
+  parserOptions: {
+    parser: 'babel-eslint',
+  },
   // add your custom rules here
   rules: {
     // allow paren-less arrow functions

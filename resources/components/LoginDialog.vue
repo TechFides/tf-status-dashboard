@@ -1,17 +1,21 @@
 <template>
   <div v-if="$auth.$state.loggedIn">
-    Přihlášen jako {{ $auth.user.first_name }} {{ $auth.user.last_name}}
-    <v-btn @click="logout">Odhlásit</v-btn>
+    Přihlášen jako {{ $auth.user.first_name }} {{ $auth.user.last_name }}
+    <v-btn @click="logout">
+      Odhlásit
+    </v-btn>
   </div>
   <v-dialog
-    transition="scale-transition"
     v-else
     v-model="isOpen"
+    transition="scale-transition"
+    max-width="600px"
     @keydown.enter="login"
     @keydown.esc="close"
-    max-width="600px"
   >
-    <v-btn slot="activator">Přihlásit</v-btn>
+    <v-btn slot="activator">
+      Přihlásit
+    </v-btn>
     <v-card ref="form">
       <v-card-title>
         <span class="headline">Přihlásit</span>
@@ -22,11 +26,11 @@
             <v-flex xs12>
               <v-text-field
                 ref="username"
-                autofocus
                 v-model="data.username"
+                autofocus
                 label="Přihlašovací jméno"
                 :rules="[rules.usernameRequired]"
-              ></v-text-field>
+              />
             </v-flex>
             <v-flex xs12>
               <v-text-field
@@ -36,7 +40,7 @@
                 type="password"
                 :rules="[rules.passwordRequired]"
                 required
-              ></v-text-field>
+              />
             </v-flex>
           </v-layout>
           <v-alert
@@ -50,9 +54,21 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" flat @click="close">Zavřít</v-btn>
-        <v-btn color="blue darken-1" flat @click="submit">Přihlásit</v-btn>
+        <v-spacer />
+        <v-btn
+          color="blue darken-1"
+          flat
+          @click="close"
+        >
+          Zavřít
+        </v-btn>
+        <v-btn
+          color="blue darken-1"
+          flat
+          @click="submit"
+        >
+          Přihlásit
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -60,7 +76,7 @@
 
 <script>
   export default {
-    name: 'login-dialog',
+    name: 'LoginDialog',
     data () {
       return {
         isOpen: false,

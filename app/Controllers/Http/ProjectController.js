@@ -63,7 +63,7 @@ class ProjectController {
       await NoteModel
         .query()
         .where('project_id', '=', id)
-        .update({is_active: 0});
+        .update({ is_active: 0 });
 
       await project.delete();
       response.send();

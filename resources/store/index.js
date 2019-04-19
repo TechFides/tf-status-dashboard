@@ -1,5 +1,7 @@
 import { WEEK_DAYS, WEEK_DAYS_SHORTHAND } from '../constants';
 
+const NOTIFICATION_TIMEOUT = 4000;
+
 export const state = () => ({
   notes: [],
   projects: [],
@@ -66,8 +68,8 @@ const calculateLevel = (totalExp) => {
 const filterProjectsByRatings = (projects, ratings) => {
   const allowedProjectIds = {};
   for (const { standupProjectRating } of ratings) {
-    for (const { project_id } of standupProjectRating) {
-      allowedProjectIds[project_id] = true;
+    for (const { project_id: projectId } of standupProjectRating) {
+      allowedProjectIds[projectId] = true;
     }
   }
 
@@ -133,9 +135,8 @@ export const mutations = {
     const newStandupRatings = standupRatings.sort(sortByProperty.bind(this, 'date'));
     for (const [index, { standupProjectRating }] of newStandupRatings.entries()) {
       const newRatings = {};
-      for (const { project_id, standup_project_rating_enum_id } of standupProjectRating) {
-        // eslint-disable-next-line camelcase
-        newRatings[project_id] = standup_project_rating_enum_id;
+      for (const { project_id: projectId, standup_project_rating_enum_id: standupId } of standupProjectRating) {
+        newRatings[projectId] = standupId;
       }
 
       newStandupRatings[index].standupProjectRating = newRatings;
@@ -175,9 +176,8 @@ export const mutations = {
     const newUserFeedbacks = userFeedbacks.sort(sortByProperty.bind(this, 'first_name'));
     for (const [index, { feedback }] of newUserFeedbacks.entries()) {
       const newFeedback = {};
-      for (const { heatmap_week_id, feedback_enum_id } of feedback) {
-        // eslint-disable-next-line camelcase
-        newFeedback[heatmap_week_id] = feedback_enum_id;
+      for (const { heatmap_week_id: heatMapId, feedback_enum_id: feedbackId } of feedback) {
+        newFeedback[heatMapId] = feedbackId;
       }
 
       newUserFeedbacks[index].feedback = newFeedback;
@@ -228,10 +228,14 @@ export const mutations = {
 
     state.notificationTimeout = setTimeout(() => {
       this.commit('clearNotification');
-    }, 4000);
+    }, NOTIFICATION_TIMEOUT);
   },
   clearNotification (state) {
-    clearTimeout(state.notificationTimeout);
+    if (state.notificationTimeout) {
+      clearTimeout(state.notificationTimeout);
+      state.notificationTimeout = null;
+    }
+
     state.snackbar = {
       isVisible: false,
       message: '',
@@ -273,7 +277,7 @@ export const actions = {
       commit('clearNotification');
       dispatch('getMeetingTimes');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: 'Smazat projekt se nezdařilo.'});
+      commit('setNotification', { color: 'error', message: 'Smazat projekt se nezdařilo.' });
     }
   },
   async getProjects ({ commit }) {
@@ -311,7 +315,7 @@ export const actions = {
       dispatch('getAllProjects');
       commit('clearNotification');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: 'Smazat projekt se nezdařilo.'});
+      commit('setNotification', { color: 'error', message: 'Smazat projekt se nezdařilo.' });
     }
   },
   async getAllProjects ({ commit }) {
@@ -340,7 +344,7 @@ export const actions = {
       dispatch('getProjectRating', standup.selectedDate);
       commit('clearNotification');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: 'Smazat standup se nezdařilo.'});
+      commit('setNotification', { color: 'error', message: 'Smazat standup se nezdařilo.' });
     }
   },
   async editStandup ({ dispatch, commit }, standup) {
@@ -360,7 +364,7 @@ export const actions = {
       commit('setProjectRatings', res);
       commit('clearNotification');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: 'Získat hodnotení projektu se nezdařilo.'});
+      commit('setNotification', { color: 'error', message: 'Získat hodnocení projektu se nezdařilo.' });
     }
   },
   async getProjectsForMonth ({ commit }, date) {
@@ -385,7 +389,6 @@ export const actions = {
   },
   async getNotes ({ commit }) {
     const notes = await this.$axios.$get('/api/notes');
-
     commit('setNotes', notes);
   },
   async createNote ({ dispatch, commit }, note) {
@@ -416,10 +419,8 @@ export const actions = {
       dispatch('getNotes');
       commit('clearNotification');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: `Označení poznámky za dokončenou se nezdařilo.`});
+      commit('setNotification', { color: 'error', message: `Označení poznámky za dokončenou se nezdařilo.` });
     }
-
-    commit('setNotification', {color: 'error', message: `Označení poznámky za dokončenou se nezdařilo.`});
   },
   async getProjectStatistics ({ commit }, params) {
     const projectStatistics = await this.$axios.$get(
@@ -462,7 +463,7 @@ export const actions = {
       dispatch('getUsers');
       commit('clearNotification');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: `Uživatela se nepodařilo odstranit.`});
+      commit('setNotification', { color: 'error', message: `Uživatela se nepodařilo odstranit.` });
     }
   },
   async getRoles ({ commit }) {
@@ -474,11 +475,11 @@ export const actions = {
     const [heatmap, feedbacks] = await Promise.all([
       this.$axios.$get(
         '/api/heatmap',
-        getDateParams(date)
+        getDateParams(date),
       ),
       this.$axios.$get(
         '/api/heatmap/feedbacks',
-        getHeatmapParams()
+        getHeatmapParams(),
       ),
     ]);
 
