@@ -82,7 +82,28 @@
 import { mapState } from 'vuex';
 
 export default {
-  props: ['date', 'projectId', 'standupId', 'projectRating', 'disabled'],
+  props: {
+    date: {
+      type: String,
+      required: true,
+    },
+    projectId: {
+      type: Number,
+      required: true,
+    },
+    standupId: {
+      type: Number,
+      required: true,
+    },
+    projectRating: {
+      type: Number,
+      required: true,
+    },
+    disabled: {
+      type: Boolean,
+      required: true,
+    },
+  },
   data () {
     return {
       dialog: false,

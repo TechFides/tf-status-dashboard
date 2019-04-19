@@ -16,10 +16,10 @@
           exact
         >
           <v-list-tile-action>
-            <v-icon v-html="item.icon"/>
+            <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"/>
+            <v-list-tile-title v-text="item.title" />
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
@@ -29,13 +29,13 @@
       app
       :clipped-left="clipped"
     >
-      <v-toolbar-side-icon @click="drawer = !drawer"/>
-      <v-toolbar-title v-text="title"/>
-      <v-spacer/>
-      <login-dialog/>
+      <v-toolbar-side-icon @click="drawer = !drawer" />
+      <v-toolbar-title v-text="title" />
+      <v-spacer />
+      <login-dialog />
     </v-toolbar>
     <v-content>
-      <nuxt/>
+      <nuxt />
     </v-content>
     <v-navigation-drawer
       v-model="rightDrawer"
@@ -79,6 +79,17 @@ export default {
   components: {
     LoginDialog,
   },
+  data () {
+    return {
+      clipped: true,
+      drawer: false,
+      fixed: false,
+      miniVariant: false,
+      right: true,
+      rightDrawer: false,
+      title: 'From zero to hero!',
+    };
+  },
   computed: {
     ...mapState([
       'snackbar',
@@ -114,17 +125,6 @@ export default {
     closeNotification () {
       this.$store.commit('clearNotification');
     },
-  },
-  data () {
-    return {
-      clipped: true,
-      drawer: false,
-      fixed: false,
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'From zero to hero!',
-    };
   },
 };
 </script>

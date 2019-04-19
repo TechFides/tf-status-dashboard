@@ -10,7 +10,7 @@
       md6
       class="halfwidth"
     >
-      <v-img src="/intro.png"/>
+      <v-img src="/intro.png" />
     </v-flex>
   </v-layout>
 </template>

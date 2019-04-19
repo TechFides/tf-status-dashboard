@@ -18,7 +18,10 @@
           slot-scope="props"
         >
           <tr>
-            <th v-for="h in props.headers" :key="h.text">
+            <th
+              v-for="h in props.headers"
+              :key="h.text"
+            >
               <div class="text-xs-center header align-project">
                 {{ h.text }}
               </div>
@@ -50,9 +53,6 @@ import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
 import {FEEDBACKS} from '../constants';
 
 export default {
-  fetch ({ store, params }) {
-    return store.dispatch('getFeedbackData');
-  },
   computed: {
     ...mapState([
       'usersFeedbacks',
@@ -82,6 +82,9 @@ export default {
         feedbacks: this.getFeedbacks(element),
       }));
     },
+  },
+  fetch ({ store, params }) {
+    return store.dispatch('getFeedbackData');
   },
   methods: {
     formatDate (date) {

@@ -83,7 +83,7 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer/>
+          <v-spacer />
           <v-btn
             color="blue darken-1"
             flat
@@ -169,11 +169,30 @@ import { mapState } from 'vuex';
 import format from 'date-fns/format';
 
 export default {
-  async fetch ({ store, params }) {
-    await Promise.all([
-      store.dispatch('getMeetingTimes'),
-      store.dispatch('getAllProjects'),
-    ]);
+  data () {
+    return {
+      pagination: { sortBy: 'code' },
+      dialog: false,
+      modalTitle: '',
+      rules: {
+        required: value => !!value || 'Povinné.',
+      },
+      modalItem: {
+        id: null,
+        code: '',
+        description: '',
+        isActive: true,
+        meetingTimeId: null,
+      },
+      defaultModalItem: {
+        id: null,
+        code: '',
+        description: '',
+        isActive: true,
+        meetingTimeId: null,
+      },
+      filteringText: '',
+    };
   },
   computed: {
     ...mapState([
@@ -235,30 +254,11 @@ export default {
       ];
     },
   },
-  data () {
-    return {
-      pagination: { sortBy: 'code' },
-      dialog: false,
-      modalTitle: '',
-      rules: {
-        required: value => !!value || 'Povinné.',
-      },
-      modalItem: {
-        id: null,
-        code: '',
-        description: '',
-        isActive: true,
-        meetingTimeId: null,
-      },
-      defaultModalItem: {
-        id: null,
-        code: '',
-        description: '',
-        isActive: true,
-        meetingTimeId: null,
-      },
-      filteringText: '',
-    };
+  async fetch ({ store, params }) {
+    await Promise.all([
+      store.dispatch('getMeetingTimes'),
+      store.dispatch('getAllProjects'),
+    ]);
   },
   methods: {
     createNewProject () {

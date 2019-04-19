@@ -56,7 +56,7 @@
               </v-alert>
             </div>
             <v-card-actions>
-              <v-spacer/>
+              <v-spacer />
               <v-btn
                 color="blue darken-1"
                 flat
@@ -113,7 +113,7 @@
             </v-alert>
           </div>
           <v-card-actions>
-            <v-spacer/>
+            <v-spacer />
             <v-btn
               color="blue darken-1"
               flat
@@ -157,7 +157,7 @@
             scrollable
             type="month"
           >
-            <v-spacer/>
+            <v-spacer />
             <v-btn
               flat
               color="primary"

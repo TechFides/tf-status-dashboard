@@ -12,7 +12,7 @@
           nowrap
         >
           <h2>{{ item.projectCode }}</h2>
-          <v-spacer/>
+          <v-spacer />
           <v-icon
             v-if="editable"
             class="mr-1"
@@ -33,7 +33,7 @@
         <div class="note-text mb-2">
           {{ item.text }}
         </div>
-        <v-divider/>
+        <v-divider />
         <v-layout
           class="mt-1"
           row
@@ -63,7 +63,9 @@ import { mapState } from 'vuex';
 
 export default {
   name: 'NoteList',
-  props: ['editable'],
+  props: {
+    editable: Boolean,
+  },
   data () {
     return {};
   },

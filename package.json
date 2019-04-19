@@ -12,7 +12,8 @@
     "build": "node ./ace nuxtbuild",
     "start": "nodemon --inspect --watch app --watch bootstrap --watch config --watch .env -x node server.js",
     "precommit": "npm run lint",
-    "lint": "eslint --max-warnings --ext .js,.vue resources/ app/  0"
+    "lint": "eslint --max-warnings 0 --ext .js,.vue resources/ app/",
+    "lint:fix": "eslint --fix --max-warnings 0 --ext .js,.vue resources/ app/"
   },
   "dependencies": {
     "@adonisjs/ace": "^5.0.8",

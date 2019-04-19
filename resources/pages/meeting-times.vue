@@ -77,7 +77,7 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer/>
+          <v-spacer />
           <v-btn
             color="blue darken-1"
             flat
@@ -145,8 +145,20 @@
   import { WEEK_DAYS } from '../constants';
 
   export default {
-    async fetch ({ store }) {
-      await store.dispatch('getMeetingTimes');
+    data () {
+      return {
+        weekDays: WEEK_DAYS,
+        editId: null,
+        dialog: {
+          isOpen: false,
+          title: '',
+        },
+        formData: {
+          name: '',
+          weekDay: '',
+          time: '',
+        },
+      };
     },
     computed: {
       ...mapState([
@@ -188,20 +200,8 @@
         ];
       },
     },
-    data () {
-      return {
-        weekDays: WEEK_DAYS,
-        editId: null,
-        dialog: {
-          isOpen: false,
-          title: '',
-        },
-        formData: {
-          name: '',
-          weekDay: '',
-          time: '',
-        },
-      };
+    async fetch ({ store }) {
+      await store.dispatch('getMeetingTimes');
     },
     methods: {
       updateName (value) {

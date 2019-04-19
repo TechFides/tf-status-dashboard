@@ -29,7 +29,7 @@
             scrollable
             type="month"
           >
-            <v-spacer/>
+            <v-spacer />
             <v-btn
               flat
               color="primary"
@@ -83,14 +83,13 @@
 import { mapState } from 'vuex';
 
 export default {
-  async fetch ({ store }) {
-    const now = new Date();
-    const params = {
-      month: now.getMonth(),
-      year: now.getFullYear(),
+  data () {
+    return {
+      statisticsMonthDialog: {
+        isOpen: false,
+        month: null,
+      },
     };
-
-    await store.dispatch('getProjectStatistics', params);
   },
   computed: {
     ...mapState([
@@ -113,13 +112,14 @@ export default {
       ];
     },
   },
-  data () {
-    return {
-      statisticsMonthDialog: {
-        isOpen: false,
-        month: null,
-      },
+  async fetch ({ store }) {
+    const now = new Date();
+    const params = {
+      month: now.getMonth(),
+      year: now.getFullYear(),
     };
+
+    await store.dispatch('getProjectStatistics', params);
   },
   methods: {
     updateMonth (monthInput) {

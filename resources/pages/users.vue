@@ -120,7 +120,7 @@
           </v-card-text>
 
           <v-card-actions>
-            <v-spacer/>
+            <v-spacer />
             <v-btn
               color="blue darken-1"
               flat
@@ -219,11 +219,35 @@ const roleTranslation = {
 };
 
 export default {
-  async fetch ({ store, params }) {
-    await Promise.all([
-      store.dispatch('getUsers'),
-      store.dispatch('getRoles'),
-    ]);
+  data () {
+    return {
+      dialog: false,
+      modalTitle: '',
+      rules: {
+        required: value => !!value || 'Povinné.',
+      },
+      modalItem: {
+        id: null,
+        firstName: '',
+        lastName: '',
+        password: '',
+        totalExp: 0,
+        isActive: true,
+        username: '',
+        roles: ['user'],
+      },
+      defaultModalItem: {
+        id: null,
+        firstName: '',
+        lastName: '',
+        password: '',
+        totalExp: 0,
+        isActive: true,
+        username: '',
+        roles: ['user'],
+      },
+      filteringText: '',
+    };
   },
   computed: {
     ...mapState([
@@ -299,35 +323,11 @@ export default {
       }));
     },
   },
-  data () {
-    return {
-      dialog: false,
-      modalTitle: '',
-      rules: {
-        required: value => !!value || 'Povinné.',
-      },
-      modalItem: {
-        id: null,
-        firstName: '',
-        lastName: '',
-        password: '',
-        totalExp: 0,
-        isActive: true,
-        username: '',
-        roles: ['user'],
-      },
-      defaultModalItem: {
-        id: null,
-        firstName: '',
-        lastName: '',
-        password: '',
-        totalExp: 0,
-        isActive: true,
-        username: '',
-        roles: ['user'],
-      },
-      filteringText: '',
-    };
+  async fetch ({ store, params }) {
+    await Promise.all([
+      store.dispatch('getUsers'),
+      store.dispatch('getRoles'),
+    ]);
   },
   methods: {
     createNewUser () {
