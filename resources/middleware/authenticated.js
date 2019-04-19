@@ -11,7 +11,7 @@ const USER_ROUTES = [
   'statistics',
 ];
 
-export default function ({app, store, route, redirect}) {
+export default function ({ app, store, route, redirect }) {
   if (!ADMIN_ROUTES.includes(route.name) && !USER_ROUTES.includes(route.name)) {
     return;
   } else if (ADMIN_ROUTES.includes(route.name) && app.isAdmin()) {
