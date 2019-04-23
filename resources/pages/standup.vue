@@ -76,21 +76,20 @@
         </v-form>
       </v-dialog>
 
-      <v-btn
-        v-if="isAdmin()"
-        slot="activator"
-        class="margin"
-        color="info"
-        @click="createStandup()"
-      >
-        <i class="material-icons">add</i>
-        Přidat standup
-      </v-btn>
-
       <v-dialog
         v-model="standupDialog.isOpen"
         max-width="500px"
       >
+        <v-btn
+          v-if="isAdmin()"
+          slot="activator"
+          class="standup-button"
+          color="info"
+          @click="createStandup()"
+        >
+          <i class="material-icons">add</i>
+          Přidat standup
+        </v-btn>
         <v-card>
           <v-card-title>
             <span class="headline">{{ standupDialogTitle }}</span>
@@ -601,6 +600,10 @@ export default {
 .fullscreen {
   width: 100%;
   height: 100%;
+}
+
+.standup-button {
+  margin-right: 30px;
 }
 
 .element {
