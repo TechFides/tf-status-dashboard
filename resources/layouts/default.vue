@@ -35,7 +35,9 @@
       <login-dialog />
     </v-toolbar>
     <v-content>
-      <nuxt />
+      <no-ssr>
+        <nuxt />
+      </no-ssr>
     </v-content>
     <v-snackbar
       :value="snackbar.isVisible"
