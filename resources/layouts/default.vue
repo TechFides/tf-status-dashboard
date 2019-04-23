@@ -37,23 +37,6 @@
     <v-content>
       <nuxt />
     </v-content>
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      temporary
-      :right="right"
-      fixed
-    >
-      <v-list>
-        <v-list-tile @click.native="right = !right">
-          <v-list-tile-action>
-            <v-icon light>
-              compare_arrows
-            </v-icon>
-          </v-list-tile-action>
-          <v-list-tile-title>Switch drawer (click me)</v-list-tile-title>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
     <v-snackbar
       :value="snackbar.isVisible"
       :color="snackbar.color"
