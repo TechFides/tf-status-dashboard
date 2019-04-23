@@ -5,7 +5,7 @@
       reverse
     >
       <v-dialog
-        v-if="isAdmin() || isUser()"
+        v-show="isAdmin() || isUser()"
         v-model="noteDialog.isOpen"
         max-width="500px"
       >
@@ -81,7 +81,7 @@
         max-width="500px"
       >
         <v-btn
-          v-if="isAdmin()"
+          v-show="isAdmin()"
           slot="activator"
           class="standup-button"
           color="info"
@@ -211,7 +211,7 @@
                 </div>
                 <v-tooltip bottom>
                   <i
-                    v-if="isMissingNote(h.text, h.hasIcon)"
+                    v-show="isMissingNote(h.text, h.hasIcon)"
                     slot="activator"
                     class="material-icons alert-icon"
                   >
