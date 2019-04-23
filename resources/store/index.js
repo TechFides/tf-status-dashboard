@@ -115,6 +115,7 @@ export const mutations = {
           id: p.meeting_time_id,
           dayAndTime: meetingTime && meetingTime.dayAndTime ? meetingTime.dayAndTime : null,
           time: meetingTime && meetingTime.time ? meetingTime.time : null,
+          weekDayId: meetingTime && meetingTime.weekDayId,
         },
       };
     });
@@ -198,6 +199,7 @@ export const mutations = {
           name: meetingTime.name,
           projects: meetingTime.projects.map(({ code }) => code).join(', '),
           time: timeWithoutSeconds,
+          weekDayId: Number(meetingTime.week_day),
           weekDay: WEEK_DAYS[meetingTime.week_day],
           dayAndTime: `${WEEK_DAYS_SHORTHAND[meetingTime.week_day]} ${timeWithoutSeconds}`,
         };

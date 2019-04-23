@@ -406,17 +406,20 @@ export default {
       const projectsWithoutMeetingTime = this.projects.filter(project => project.meetingTime.time === null);
       const sortedProjectsWithMeetingTime = this.projects
         .filter(project => project.meetingTime.time !== null)
-        .sort((a, b) => this.sortByDayAndTime(a.meetingTime.dayAndTime, b.meetingTime.dayAndTime));
+        .sort((a, b) => this.sortByDayAndTime(a.meetingTime, b.meetingTime));
 
       return [...sortedProjectsWithMeetingTime, ...projectsWithoutMeetingTime];
     },
-    sortByDayAndTime (dayAndTimeA, dayAndTimeB) {
-      const dayAOrderIndex = WEEK_DAYS_SHORTHAND.indexOf(dayAndTimeA.substring(0, 2));
-      const dayBOrderIndex = WEEK_DAYS_SHORTHAND.indexOf(dayAndTimeB.substring(0, 2));
+    sortByDayAndTime (timeA, timeB) {
+      if (timeA.weekDayId !== timeB.weekDayId) {
+        return timeA.weekDayId - timeB.weekDayId;
+      }
 
-      return (dayAOrderIndex - dayBOrderIndex) === 0
-        ? this.getTimeInMinutes(dayAndTimeA) - this.getTimeInMinutes(dayAndTimeB)
-        : dayAOrderIndex - dayBOrderIndex;
+      if  (timeA.time !== timeB.time) {
+        return timeA.time > timeB.time ? 1 : -1;
+      }
+
+      return 0;
     },
     getFilteredProjectsBySelectedMeetingTime (allProjects) {
       return this.selectedMeetingTimeId !== null
