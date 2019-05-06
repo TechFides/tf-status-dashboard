@@ -76,20 +76,19 @@
         </v-form>
       </v-dialog>
 
+      <v-btn
+        v-show="isAdmin()"
+        class="standup-button"
+        color="info"
+        @click="createStandup()"
+      >
+        <i class="material-icons">add</i>
+        Přidat standup
+      </v-btn>
       <v-dialog
         v-model="standupDialog.isOpen"
         max-width="500px"
       >
-        <v-btn
-          v-show="isAdmin()"
-          slot="activator"
-          class="standup-button"
-          color="info"
-          @click="createStandup()"
-        >
-          <i class="material-icons">add</i>
-          Přidat standup
-        </v-btn>
         <v-card>
           <v-card-title>
             <span class="headline">{{ standupDialogTitle }}</span>
