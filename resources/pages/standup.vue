@@ -516,8 +516,6 @@ export default {
       const { deadlineDate } = this.noteDialog;
       const resultDate = setHours(deadlineDate, getHours(currentDate));
 
-      if (currentDate > deadlineDate) errorMsg = 'Koncový termín je v minulosti.';
-
       if (errorMsg) {
         this.$store.commit('setErrorState', {message: errorMsg});
         return;
