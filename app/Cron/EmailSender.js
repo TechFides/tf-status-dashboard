@@ -4,7 +4,7 @@ AWS.config.update({region: 'eu-west-1'})
 
 let params = {};
 let templateData = {};
-templateData.userName='David';
+templateData.userName = 'David';
 let destination = {
   'ToAddresses': ['david.smejkal@techfides.cz']
 };
