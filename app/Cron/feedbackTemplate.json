@@ -1,8 +1,0 @@
-{
-  "Template": {
-    "TemplateName": "feedbackTemplate",
-    "SubjectPart": "Hodnoceni tydne pro {{userName}}",
-    "TextPart": "Proste nejaka zprava",
-    "HtmlPart": "<html>\r\n\r\n<head>\r\n    <title>Feedback<\/title>\r\n<\/head>\r\n\r\n<body>\r\n    <h1>Jaky byl tvuj tyden {{userName}}<\/h1>\r\n    <button type=\"button\">AMAZING<\/button>\r\n    <button type=\"button\">GOOD<\/button>\r\n    <button type=\"button\">BAD<\/button>\r\n    <button type=\"button\">HORIBLE<\/button>\r\n<\/body>\r\n\r\n<\/html>"
-  }
-}
