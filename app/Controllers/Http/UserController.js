@@ -98,21 +98,17 @@ class UserController {
     ]);
   }
 
-  async getUsersFeedbacks ({ request, response, params }) {
-    let { isActive } = request.get();
-
-    const query = UserModel
-      .query()
-      .with('feedback');
+  async getUsersFeedbacks ({ request }) {
+    const { isActive } = request.get();
+    const query = UserModel.query().with('feedback');
 
     if (isActive === 'true') {
-      query
-        .where('is_active', true);
+      query.where('is_active', true);
     }
 
-    const usersFeedbacks = await query.fetch();
+    const feedbacks = await query.fetch();
 
-    return usersFeedbacks.toJSON();
+    return feedbacks.toJSON();
   }
 }
 
