@@ -1,5 +1,5 @@
 <template>
-  <div> 
+  <div>
     <v-layout column justify-center align-center>
       <v-data-table
         :headers='headers'
@@ -84,15 +84,13 @@ export default {
     getClassName (value) {
       let className = 'text-xs-center element';
       switch (value) {
-        case FEEDBACKS.NEUTRAL:
-          return className;
         case FEEDBACKS.AMAZING:
           return `${className} light-green`;
         case FEEDBACKS.GOOD:
           return `${className} green`;
         case FEEDBACKS.BAD:
           return `${className} yellow`;
-        case FEEDBACKS.HORIBLE:
+        case FEEDBACKS.HORRIBLE:
           return `${className} red`;
         default:
           return '';
