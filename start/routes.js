@@ -29,13 +29,18 @@ Route.get('/api/auth/me', 'AuthController.me');
  * HEATMAP
  */
 Route
+  .post('/api/feedback', 'FeedbackController.createFeedback')
+  .middleware([AUTH]);
+
+Route
   .get('/api/heatmap/feedbacks', 'UserController.getUsersFeedbacks')
   .middleware(['auth', 'is:admin']);
+
 Route
   .get('/api/heatmap', 'HeatmapController.getHeatmapWeeks')
   .middleware(['auth', 'is:admin']);
 
-/** 
+/**
  * MEETING TIMES
  */
 Route

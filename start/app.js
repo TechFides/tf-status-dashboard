@@ -51,6 +51,8 @@ const aceProviders = [
 */
 const aliases = {
   Role: 'Adonis/Acl/Role',
+  FeedbackSchedulerService: 'App/Services/FeedbackScheduler',
+  EmailService: 'App/Services/Email',
 };
 
 /*

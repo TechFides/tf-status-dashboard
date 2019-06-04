@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /*
 |--------------------------------------------------------------------------
@@ -17,15 +17,19 @@
 |     Make sure to pass relative path from the project root.
 */
 
-const { Ignitor } = require('@adonisjs/ignitor')
+const { Ignitor } = require('@adonisjs/ignitor');
 
 new Ignitor(require('@adonisjs/fold'))
   .appRoot(__dirname)
   .fireHttpServer()
   .then(() => {
-    return use('App/Services/Nuxt').build()
+    // TODO: change === with !== before merging
+    if (use('Env').get('NODE_ENV') !== 'development') {
+      use('App/Services/FeedbackScheduler').schedule();
+    }
+    return use('App/Services/Nuxt').build();
   })
   .then(() => {
-    use('Logger').info('Nuxt is ready to handle requests')
+    use('Logger').info('Nuxt is ready to handle requests');
   })
-  .catch(console.error)
+  .catch(console.error);
