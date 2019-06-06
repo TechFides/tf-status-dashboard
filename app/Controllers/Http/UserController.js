@@ -108,9 +108,7 @@ class UserController {
       query.where('is_active', true);
     }
 
-    const feedbacks = await query.fetch();
-
-    return feedbacks.toJSON();
+    return (await query.fetch()).toJSON();
   }
 }
 

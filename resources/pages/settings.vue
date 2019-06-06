@@ -6,6 +6,7 @@
     <v-form
       v-model="valid"
       class="settings-form"
+      @submit.prevent="saveSettings"
     >
       <v-container>
         <h3 class="section-header">
@@ -60,7 +61,8 @@
         >
           <v-btn
             color="info"
-            @click="saveSettings"
+            type="submit"
+            :loading="loading"
           >
             Uložit nastavení
           </v-btn>
@@ -87,6 +89,7 @@ export default {
   data () {
     return {
       valid: false,
+      loading: false,
       form: {
         feedbackCrontab: {
           weekday: null,
@@ -119,13 +122,18 @@ export default {
   methods: {
     async saveSettings () {
       try {
+        this.loading = true;
+
         const { weekday, time } = this.form.feedbackCrontab;
         const settings = {
           feedbackCrontab: toCrontab(weekday, time),
         };
+
         await this.$axios.$post('/api/configuration', settings);
       } catch (e) {
         console.error(e);
+      } finally {
+        this.loading = false;
       }
     },
   },

@@ -2,10 +2,10 @@
 
 const AWS = require('aws-sdk');
 const Env = use('Env');
+const Logger = use('Logger');
 
 class EmailService {
   constructor () {
-    this.logger = use('Logger');
     AWS.config.update({ region: 'us-west-2' });
   }
 
@@ -25,7 +25,7 @@ class EmailService {
     try {
       await new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
     } catch (err) {
-      this.logger.error(err.toString());
+      Logger.error(err.toString());
     }
   }
 }

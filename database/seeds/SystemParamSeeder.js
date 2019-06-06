@@ -17,7 +17,7 @@ class SystemParamSeeder {
     return [
       {
         key: 'feedbackCrontab',
-        value: '30 9 * * 1',
+        value: '30 9 * * 5', // FRIDAY at 9:30
         type: 1,
       },
     ];

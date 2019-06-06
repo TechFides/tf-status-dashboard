@@ -25,8 +25,11 @@ Route.post('/api/auth/login', 'AuthController.login')
 Route.post('/api/auth/logout', 'AuthController.logout');
 Route.get('/api/auth/me', 'AuthController.me');
 
-Route.get('/api/configuration', 'SystemParamsController.getSystemParams');
-Route.post('/api/configuration', 'SystemParamsController.setSystemParams');
+/**
+ * CONFIGURATION
+ */
+Route.get('/api/configuration', 'SystemParamsController.getSystemParams').middleware(ADMIN);
+Route.post('/api/configuration', 'SystemParamsController.setSystemParams').middleware(ADMIN);
 
 /**
  * HEATMAP

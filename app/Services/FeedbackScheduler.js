@@ -7,6 +7,8 @@ const Schedule = require('node-schedule');
 const format = require('date-fns/format');
 
 const Env = use('Env');
+const Logger = use('Logger');
+const EmailService = use('App/Services/Email');
 const UserModel = use('App/Models/User');
 const HeatmapWeekModel = use('App/Models/HeatmapWeek');
 const SystemParamModel = use('App/Models/SystemParam');
@@ -28,7 +30,7 @@ class FeedbackSchedulerService {
   }
 
   static loadEmailTemplate () {
-    const html = fs.readFileSync(path.resolve(__dirname, '../../assets/feedback-email-template.html'), 'utf-8');
+    const html = fs.readFileSync(path.resolve(__dirname, '../../assets/email-templates/feedback.html'), 'utf-8');
     return Handlebars.compile(html);
   }
 
@@ -40,7 +42,7 @@ class FeedbackSchedulerService {
   static async getFeedbackCrontab () {
     const feedbackCrontab = await SystemParamModel.findOrCreate(
       { key: 'feedbackCrontab' },
-      { key: 'feedbackCrontab', value: '30 9 * * 1', type: 1 }, // default feedback crontab: every MONDAY at 9:30
+      { key: 'feedbackCrontab', value: '30 9 * * 5', type: 1 }, // default feedback crontab: every FRIDAY at 9:30
     );
     return feedbackCrontab.value;
   }
@@ -48,7 +50,7 @@ class FeedbackSchedulerService {
   static getCurrentWeekBoundaries () {
     const now = new Date();
     const start = now.getDate() - now.getDay() + 1;
-    const end = start + 7;
+    const end = start + 6;
     const monday = new Date(now.setDate(start));
     const sunday = new Date(now.setDate(end));
 
@@ -60,19 +62,17 @@ class FeedbackSchedulerService {
 
   constructor () {
     this.job = null;
-    this.logger = use('Logger');
-    this.emailService = use('App/Services/Email');
     this.template = FeedbackSchedulerService.loadEmailTemplate();
   }
 
   async schedule () {
     this.cancel();
 
-    const rule = await FeedbackSchedulerService.getFeedbackCrontab();
+    const crontab = await FeedbackSchedulerService.getFeedbackCrontab();
 
     this.job = Schedule.scheduleJob(
       'feedback_email_job',
-      rule,
+      crontab,
       async () => {
         const toAddresses = await FeedbackSchedulerService.getUserEmailAddresses();
 
@@ -90,22 +90,22 @@ class FeedbackSchedulerService {
           week: { number: heatmapWeek.id, from: format(week[0], 'DD/MM/YYYY'), to: format(week[1], 'DD/MM/YYYY') },
         };
 
-        this.emailService.sendEmail({
+        EmailService.sendEmail({
           toAddresses,
           html: this.template(data),
           text: `Týdenní zpětná vazba #${data.week.number}`,
           subject: `Týdenní zpětná vazba #${data.week.number}`,
         });
-        this.logger.debug('Feedback scheduler: feedback email has been sent to every employee');
+        Logger.debug('FeedbackScheduler: feedback email has been sent to every employee');
       },
     );
-    this.logger.debug('FeedbackScheduler: new feedback job has been scheduled');
+    Logger.debug('FeedbackScheduler: new feedback job has been scheduled');
   }
 
   cancel () {
     if (this.job) {
       this.job.cancel();
-      this.logger.debug('Feedback scheduler: scheduled feedback job has been canceled');
+      Logger.debug('FeedbackScheduler: scheduled feedback job has been canceled');
     }
   }
 }

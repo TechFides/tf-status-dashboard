@@ -1,6 +1,7 @@
 'use strict';
 
 const SystemParamModel = use('App/Models/SystemParam');
+const FeedbackSchedulerService = use('App/Services/FeedbackScheduler');
 
 const FEEDBACK_CRONTAB_REGEX = new RegExp('(^[0-5]?[0-9]|\\*) ([0-1]?[0-9]|[2][0-3]|\\*) ([0-2]?[0-9]|[3][0-1]|\\*) ([0]?[1-9]|[1][0-2]|\\*) ([0-7]|\\*)$');
 
@@ -32,7 +33,7 @@ class SystemParamsController {
       if (key === 'feedbackCrontab') {
         const valid = FEEDBACK_CRONTAB_REGEX.test(body[key]);
         if (!valid) {
-          return [...errors, 'Invalid feedbackCrontab'];
+          return [...errors, 'Invalid feedbackCrontab. Feedback crontab must have the following format: "minutes" "hours" "day of month" "month" "day of week"'];
         }
       }
       return errors;
@@ -58,7 +59,7 @@ class SystemParamsController {
       await instance.save();
 
       if (systemParam.key === 'feedbackCrontab') {
-        use('App/Services/FeedbackScheduler').schedule();
+        FeedbackSchedulerService.schedule();
       }
     });
     return response.send();
