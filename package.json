@@ -60,7 +60,7 @@
     "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-vue": "^5.2.2",
     "nodemon": "^1.18.11",
-    "standard": "^12.0.1",
+    "standard": "^8.6.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2"
   }
