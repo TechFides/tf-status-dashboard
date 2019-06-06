@@ -1,53 +1,44 @@
 <template>
   <v-app light>
     <v-navigation-drawer
+      v-model="drawer"
       :mini-variant.sync="miniVariant"
       :clipped="clipped"
-      v-model="drawer"
       fixed
       app
     >
       <v-list>
         <v-list-tile
+          v-for="(item, i) in items"
+          :key="i"
           router
           :to="item.to"
-          :key="i"
-          v-for="(item, i) in items"
           exact
         >
           <v-list-tile-action>
-            <v-icon v-html="item.icon"></v-icon>
+            <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
+            <v-list-tile-title v-text="item.title" />
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar fixed app :clipped-left="clipped">
-      <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title v-text="title"></v-toolbar-title>
-      <v-spacer></v-spacer>
-      <login-dialog></login-dialog>
+    <v-toolbar
+      fixed
+      app
+      :clipped-left="clipped"
+    >
+      <v-toolbar-side-icon @click="drawer = !drawer" />
+      <v-toolbar-title v-text="title" />
+      <v-spacer />
+      <login-dialog />
     </v-toolbar>
     <v-content>
-      <nuxt />
+      <no-ssr>
+        <nuxt />
+      </no-ssr>
     </v-content>
-    <v-navigation-drawer
-      temporary
-      :right="right"
-      v-model="rightDrawer"
-      fixed
-    >
-      <v-list>
-        <v-list-tile @click.native="right = !right">
-          <v-list-tile-action>
-            <v-icon light>compare_arrows</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-title>Switch drawer (click me)</v-list-tile-title>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
     <v-snackbar
       :value="snackbar.isVisible"
       :color="snackbar.color"
@@ -58,7 +49,8 @@
         dark
         flat
         @click="closeNotification"
-      >Close
+      >
+        Close
       </v-btn>
     </v-snackbar>
   </v-app>
@@ -71,6 +63,17 @@ import { mapState, mapMutations } from 'vuex';
 export default {
   components: {
     LoginDialog,
+  },
+  data () {
+    return {
+      clipped: true,
+      drawer: false,
+      fixed: false,
+      miniVariant: false,
+      right: true,
+      rightDrawer: false,
+      title: 'From zero to hero!',
+    };
   },
   computed: {
     ...mapState([
@@ -108,17 +111,6 @@ export default {
     closeNotification () {
       this.$store.commit('clearNotification');
     },
-  },
-  data () {
-    return {
-      clipped: true,
-      drawer: false,
-      fixed: false,
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'From zero to hero!',
-    };
   },
 };
 </script>

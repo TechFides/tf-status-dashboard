@@ -1,11 +1,22 @@
 <template>
-  <v-layout column justify-center align-end>
-    <v-btn @click="createNewProject()" color="primary" dark>
+  <v-layout
+    column
+    justify-center
+    align-end
+  >
+    <v-btn
+      color="primary"
+      dark
+      @click="createNewProject()"
+    >
       <i class="material-icons">add</i>
       Nový projekt
     </v-btn>
 
-    <v-dialog v-model="dialog" max-width="500px">
+    <v-dialog
+      v-model="dialog"
+      max-width="500px"
+    >
       <v-card>
         <v-card-title>
           <span class="headline">{{ modalTitle }}</span>
@@ -13,25 +24,51 @@
 
         <v-card-text>
           <v-container grid-list-md>
-            <v-layout wrap column>
-              <v-flex xs12 sm6 md4>
-                <v-text-field :rules="[rules.required]" v-model="modalItem.code" label="Projekt"></v-text-field>
+            <v-layout
+              wrap
+              column
+            >
+              <v-flex
+                xs12
+                sm6
+                md4
+              >
+                <v-text-field
+                  v-model="modalItem.code"
+                  :rules="[rules.required]"
+                  label="Projekt"
+                />
               </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="modalItem.description" label="Popis"></v-text-field>
+              <v-flex
+                xs12
+                sm6
+                md4
+              >
+                <v-text-field
+                  v-model="modalItem.description"
+                  label="Popis"
+                />
               </v-flex>
-              <v-flex xs12 sm6 md4>
+              <v-flex
+                xs12
+                sm6
+                md4
+              >
                 <v-checkbox
-                  label="Aktivní"
                   v-model="modalItem.isActive"
-                ></v-checkbox>
+                  label="Aktivní"
+                />
               </v-flex>
-              <v-flex xs12 sm6 md4>
+              <v-flex
+                xs12
+                sm6
+                md4
+              >
                 <v-select
-                  :items="formattedMeetingTimesForSelect"
                   v-model="modalItem.meetingTimeId"
+                  :items="formattedMeetingTimesForSelect"
                   label="Vyberte čas konání sitdownu"
-                ></v-select>
+                />
               </v-flex>
             </v-layout>
 
@@ -42,40 +79,70 @@
             >
               {{ error.message }}
             </v-alert>
-
           </v-container>
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click.native="close">Zrušit</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="save">Uložit</v-btn>
+          <v-spacer />
+          <v-btn
+            color="blue darken-1"
+            flat
+            @click.native="close"
+          >
+            Zrušit
+          </v-btn>
+          <v-btn
+            color="blue darken-1"
+            flat
+            @click.native="save"
+          >
+            Uložit
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-    <v-card class='elevation-1 fullscreen'>
-      <v-layout align-center justify-end>
+    <v-card class="elevation-1 fullscreen">
+      <v-layout
+        align-center
+        justify-end
+      >
         <v-flex xs4>
           <v-card-title>
-            <v-text-field v-model="filteringText" append-icon="search" label="Hledej..." single-line hide-details>
-            </v-text-field>
+            <v-text-field
+              v-model="filteringText"
+              append-icon="search"
+              label="Hledej..."
+              single-line
+              hide-details
+            />
           </v-card-title>
         </v-flex>
       </v-layout>
 
       <v-data-table
-        :headers='headers'
-        :items='filteredProject'
+        :headers="headers"
+        :items="filteredProject"
         item-key="code"
         hide-actions
         fill-height
       >
-        <template slot='items' slot-scope='props'>
-          <td class='text-xs-center element'>{{ props.item.code }}</td>
-          <td class='text-xs-center element'>{{ props.item.description }}</td>
-          <td class='text-xs-center element'>{{ isProjectActive(props.item.isActive, false) }}</td>
-          <td class="text-xs-center">{{ props.item.meetingTime.text }}</td>
+        <template
+          slot="items"
+          slot-scope="props"
+        >
+          <td class="text-xs-center element">
+            {{ props.item.code }}
+          </td>
+          <td class="text-xs-center element">
+            {{ props.item.description }}
+          </td>
+          <td class="text-xs-center element">
+            {{ isProjectActive(props.item.isActive, false) }}
+          </td>
+          <td class="text-xs-center">
+            {{ props.item.meetingTime.text }}
+          </td>
           <td class="justify-center layout px-0">
             <v-icon
               small
@@ -91,7 +158,6 @@
               delete
             </v-icon>
           </td>
-          
         </template>
       </v-data-table>
     </v-card>
@@ -103,11 +169,30 @@ import { mapState } from 'vuex';
 import format from 'date-fns/format';
 
 export default {
-  async fetch ({ store, params }) {
-    await Promise.all([
-      store.dispatch('getMeetingTimes'),
-      store.dispatch('getAllProjects'),
-    ]);
+  data () {
+    return {
+      pagination: { sortBy: 'code' },
+      dialog: false,
+      modalTitle: '',
+      rules: {
+        required: value => !!value || 'Povinné.',
+      },
+      modalItem: {
+        id: null,
+        code: '',
+        description: '',
+        isActive: true,
+        meetingTimeId: null,
+      },
+      defaultModalItem: {
+        id: null,
+        code: '',
+        description: '',
+        isActive: true,
+        meetingTimeId: null,
+      },
+      filteringText: '',
+    };
   },
   computed: {
     ...mapState([
@@ -169,30 +254,11 @@ export default {
       ];
     },
   },
-  data () {
-    return {
-      pagination: { sortBy: 'code' },
-      dialog: false,
-      modalTitle: '',
-      rules: {
-        required: value => !!value || 'Povinné.',
-      },
-      modalItem: {
-        id: null,
-        code: '',
-        description: '',
-        isActive: true,
-        meetingTimeId: null,
-      },
-      defaultModalItem: {
-        id: null,
-        code: '',
-        description: '',
-        isActive: true,
-        meetingTimeId: null,
-      },
-      filteringText: '',
-    };
+  async fetch ({ store, params }) {
+    await Promise.all([
+      store.dispatch('getMeetingTimes'),
+      store.dispatch('getAllProjects'),
+    ]);
   },
   methods: {
     createNewProject () {

@@ -1,28 +1,46 @@
 <template>
   <div>
-    <v-layout column justify-center align-center>
+    <v-layout
+      column
+      justify-center
+      align-center
+    >
       <v-data-table
-        :headers='headers'
-        :items='rows'
+        :headers="headers"
+        :items="rows"
         hide-actions
         fill-height
         no-data-text="Žádná data"
-        class='elevation-1 fullscreen'
+        class="elevation-1 fullscreen"
       >
-        <template slot="headers" slot-scope="props">
+        <template
+          slot="headers"
+          slot-scope="props"
+        >
           <tr>
-            <th v-for="h in props.headers">
-              <div class="text-xs-center header align-project">{{ h.text }}</div>
+            <th
+              v-for="h in props.headers"
+              :key="h.text"
+            >
+              <div class="text-xs-center header align-project">
+                {{ h.text }}
+              </div>
             </th>
           </tr>
         </template>
-        <template slot='items' slot-scope='{ item }'>
-          <td class='text-xs-center element'>
+        <template
+          slot="items"
+          slot-scope="{ item }"
+        >
+          <td class="text-xs-center element">
             {{ item.fullName }}
           </td>
 
-          <td v-for='(i, itemIndex) in item.feedbacks' :key='itemIndex' :class="getClassName(i.value)">
-          </td>
+          <td
+            v-for="(i, itemIndex) in item.feedbacks"
+            :key="itemIndex"
+            :class="getClassName(i.value)"
+          />
         </template>
       </v-data-table>
     </v-layout>
@@ -35,9 +53,6 @@ import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
 import {FEEDBACKS} from '../constants';
 
 export default {
-  fetch ({ store, params }) {
-    return store.dispatch('getFeedbackData');
-  },
   computed: {
     ...mapState([
       'usersFeedbacks',
@@ -67,6 +82,9 @@ export default {
         feedbacks: this.getFeedbacks(element),
       }));
     },
+  },
+  fetch ({ store, params }) {
+    return store.dispatch('getFeedbackData');
   },
   methods: {
     formatDate (date) {

@@ -1,11 +1,21 @@
 <template>
-  <v-layout column align-start>
-    <v-form class="settings-form" v-model="valid">
+  <v-layout
+    column
+    align-start
+  >
+    <v-form
+      v-model="valid"
+      class="settings-form"
+    >
       <v-container>
         <h3 class="section-header">
           E-mail pro zpětnou vazbu
         </h3>
-        <v-layout row wrap justify-between>
+        <v-layout
+          row
+          wrap
+          justify-between
+        >
           <v-flex>
             <v-select
               v-model="form.feedbackCrontab.weekday"
@@ -44,8 +54,14 @@
             </v-menu>
           </v-flex>
         </v-layout>
-        <v-layout row justify-end>
-          <v-btn color="info" @click="saveSettings">
+        <v-layout
+          row
+          justify-end
+        >
+          <v-btn
+            color="info"
+            @click="saveSettings"
+          >
             Uložit nastavení
           </v-btn>
         </v-layout>
@@ -68,18 +84,6 @@ const toCrontab = (weekday, time) => {
 };
 
 export default {
-  async asyncData ({ $axios }) {
-    try {
-      const response = await $axios.$get('/api/configuration');
-      const form = {};
-      if (response.feedbackCrontab) {
-        form.feedbackCrontab = fromCrontab(response.feedbackCrontab);
-      }
-      return { form };
-    } catch (err) {
-      return null;
-    }
-  },
   data () {
     return {
       valid: false,
@@ -99,6 +103,18 @@ export default {
         value: index + 1,
       }));
     },
+  },
+  async asyncData ({ $axios }) {
+    try {
+      const response = await $axios.$get('/api/configuration');
+      const form = {};
+      if (response.feedbackCrontab) {
+        form.feedbackCrontab = fromCrontab(response.feedbackCrontab);
+      }
+      return { form };
+    } catch (err) {
+      return null;
+    }
   },
   methods: {
     async saveSettings () {

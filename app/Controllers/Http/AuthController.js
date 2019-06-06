@@ -10,7 +10,7 @@ class AuthController {
       const user = await UserModel
         .query()
         .with('roles')
-        .where({username: username, is_active: true})
+        .where({ username: username, is_active: true })
         .first();
 
       return {

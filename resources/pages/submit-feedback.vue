@@ -1,9 +1,17 @@
 <template>
-  <v-layout column justify-center align-center>
+  <v-layout
+    column
+    justify-center
+    align-center
+  >
     <div class="submit-feedback__message">
       <h2>{{ message }}</h2>
-      <div v-if="redirect">Budete přesměrováni na hlavní stránku</div>
-      <div v-if="!loading && !authenticated">Po přihlášení se pokusíme odeslat zpětnou vazbu znovu</div>
+      <div v-if="redirect">
+        Budete přesměrováni na hlavní stránku
+      </div>
+      <div v-if="!loading && !authenticated">
+        Po přihlášení se pokusíme odeslat zpětnou vazbu znovu
+      </div>
     </div>
   </v-layout>
 </template>
@@ -40,21 +48,13 @@ export default {
     }
     return true;
   },
-  async asyncData ({ route, store, redirect, $axios }) {
-    const authenticated = store.state.auth && store.state.auth.loggedIn;
-    if (!authenticated) {
-      return { loading: false, submitted: false };
-    }
-
-    try {
-      await $axios.post('/api/feedback', {
-        heatmapWeekId: route.query.heatmapWeekId,
-        feedbackEnumId: route.query.feedbackEnumId,
-      });
-      return { loading: false, submitted: true, redirect: true };
-    } catch (error) {
-      return handleFeedbackError(error);
-    }
+  data () {
+    return {
+      loading: true,
+      submitted: false,
+      redirect: false,
+      error: null,
+    };
   },
   computed: {
     authenticated () {
@@ -72,6 +72,8 @@ export default {
       if (!this.loading && this.submitted) {
         return 'Děkujeme vám za vaš feedback';
       }
+
+      return null;
     },
   },
   watch: {
@@ -98,13 +100,21 @@ export default {
       }
     },
   },
-  data () {
-    return {
-      loading: true,
-      submitted: false,
-      redirect: false,
-      error: null,
-    };
+  async asyncData ({ route, store, redirect, $axios }) {
+    const authenticated = store.state.auth && store.state.auth.loggedIn;
+    if (!authenticated) {
+      return { loading: false, submitted: false };
+    }
+
+    try {
+      await $axios.post('/api/feedback', {
+        heatmapWeekId: route.query.heatmapWeekId,
+        feedbackEnumId: route.query.feedbackEnumId,
+      });
+      return { loading: false, submitted: true, redirect: true };
+    } catch (error) {
+      return handleFeedbackError(error);
+    }
   },
   beforeDestroy () {
     if (this.timeout) {

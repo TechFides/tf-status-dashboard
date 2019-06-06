@@ -4,7 +4,6 @@ const StandupModel = use('App/Models/Standup');
 const StandupProjectRating = use('App/Models/StandupProjectRating');
 
 class StandupController {
-
   static getStandupData (request) {
     const { date } = request.only(['standupDate']);
 
@@ -45,7 +44,7 @@ class StandupController {
     await StandupModel
       .query()
       .where('id', '=', id)
-      .update({date: date});
+      .update({ date: date });
   }
 
   async deleteStandup ({ request, response, params }) {

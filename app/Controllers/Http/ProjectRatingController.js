@@ -5,7 +5,6 @@ const StandupProjectRatingEnumModel = use('App/Models/StandupProjectRatingEnum')
 const StandupProjectRating = use('App/Models/StandupProjectRating');
 
 class ProjectRatingController {
-
   async setProjectRating ({ request, response, session }) {
     const { projectId, standupId, ratingValueId } = request.body;
 

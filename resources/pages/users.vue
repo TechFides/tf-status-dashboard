@@ -1,11 +1,24 @@
 <template>
-  <v-layout column justify-center align-end>
-    <v-btn @click="createNewUser()" color="primary" dark class="mb-2">
+  <v-layout
+    column
+    justify-center
+    align-end
+  >
+    <v-btn
+      color="primary"
+      dark
+      class="mb-2"
+      @click="createNewUser()"
+    >
       <i class="material-icons pad"> person_add</i>
       Nový uživatel
     </v-btn>
 
-    <v-dialog v-model="dialog" max-width="500px" transition="scale-transition">
+    <v-dialog
+      v-model="dialog"
+      max-width="500px"
+      transition="scale-transition"
+    >
       <v-card>
         <v-card-title>
           <span class="headline">{{ modalTitle }}</span>
@@ -14,42 +27,98 @@
         <v-form ref="form">
           <v-card-text>
             <v-container grid-list-md>
-              <v-layout wrap column>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field :rules="[rules.required]" v-model="modalItem.username"
-                                label="Přihlašovací jméno"></v-text-field>
+              <v-layout
+                wrap
+                column
+              >
+                <v-flex
+                  xs12
+                  sm6
+                  md4
+                >
+                  <v-text-field
+                    v-model="modalItem.username"
+                    :rules="[rules.required]"
+                    label="Přihlašovací jméno"
+                  />
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field type="password" v-model="modalItem.password"
-                                label="Heslo"></v-text-field>
+                <v-flex
+                  xs12
+                  sm6
+                  md4
+                >
+                  <v-text-field
+                    v-model="modalItem.password"
+                    type="password"
+                    label="Heslo"
+                  />
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field :rules="[rules.required]" v-model="modalItem.firstName" label="Jméno"></v-text-field>
+                <v-flex
+                  xs12
+                  sm6
+                  md4
+                >
+                  <v-text-field
+                    v-model="modalItem.firstName"
+                    :rules="[rules.required]"
+                    label="Jméno"
+                  />
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field :rules="[rules.required]" v-model="modalItem.lastName" label="Příjmení"></v-text-field>
+                <v-flex
+                  xs12
+                  sm6
+                  md4
+                >
+                  <v-text-field
+                    v-model="modalItem.lastName"
+                    :rules="[rules.required]"
+                    label="Příjmení"
+                  />
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="modalItem.email" :rules="[rules.required, rules.email]" type="email"
-                                label="E-mail"></v-text-field>
+                <v-flex
+                  xs12
+                  sm6
+                  md4
+                >
+                  <v-text-field
+                    v-model="modalItem.email"
+                    :rules="[rules.required, rules.email]"
+                    type="email"
+                    label="E-mail"
+                  />
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field type="number" v-model="modalItem.totalExp"
-                                label="Expy"></v-text-field>
+                <v-flex
+                  xs12
+                  sm6
+                  md4
+                >
+                  <v-text-field
+                    v-model="modalItem.totalExp"
+                    type="number"
+                    label="Expy"
+                  />
                 </v-flex>
-                <v-flex xs12 sm6 md4>
+                <v-flex
+                  xs12
+                  sm6
+                  md4
+                >
                   <v-select
+                    v-model="modalItem.roles"
                     label="Role"
                     :items="roleItems"
                     multiple
-                    v-model="modalItem.roles">
-                  </v-select>
+                  />
                 </v-flex>
-                <v-flex xs12 sm6 md4>
+                <v-flex
+                  xs12
+                  sm6
+                  md4
+                >
                   <v-checkbox
-                    label="Aktivní"
                     v-model="modalItem.isActive"
-                  ></v-checkbox>
+                    label="Aktivní"
+                  />
                 </v-flex>
               </v-layout>
             </v-container>
@@ -63,41 +132,78 @@
           </v-card-text>
 
           <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="close">Zrušit</v-btn>
-            <v-btn color="blue darken-1" flat @click.native="save">Uložit</v-btn>
+            <v-spacer />
+            <v-btn
+              color="blue darken-1"
+              flat
+              @click.native="close"
+            >
+              Zrušit
+            </v-btn>
+            <v-btn
+              color="blue darken-1"
+              flat
+              @click.native="save"
+            >
+              Uložit
+            </v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
     </v-dialog>
 
-    <v-card class='elevation-1 fullscreen'>
-      <v-layout align-center justify-end>
+    <v-card class="elevation-1 fullscreen">
+      <v-layout
+        align-center
+        justify-end
+      >
         <v-flex xs4>
           <v-card-title>
-            <v-text-field v-model="filteringText" append-icon="search" label="Hledej..." single-line hide-details>
-            </v-text-field>
+            <v-text-field
+              v-model="filteringText"
+              append-icon="search"
+              label="Hledej..."
+              single-line
+              hide-details
+            />
           </v-card-title>
         </v-flex>
       </v-layout>
 
       <v-data-table
-        :headers='headers'
-        :items='filteredUsers'
+        :headers="headers"
+        :items="filteredUsers"
         item-key="id"
         hide-actions
         fill-height
         must-sort
-        class='elevation-1 fullscreen'
+        class="elevation-1 fullscreen"
       >
-        <template slot='items' slot-scope='props'>
-          <td class='text-xs-center element'>{{ getFullName(props.item.firstName, props.item.lastName) }}</td>
-          <td class='text-xs-center element'>{{ props.item.username }}</td>
-          <td class='text-xs-center element'>{{ props.item.email }}</td>
-          <td class='text-xs-center element'>{{ userRoles(props.item) }}</td>
-          <td class='text-xs-center element'>{{ props.item.level }}</td>
-          <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
-          <td class='text-xs-center element'>{{ isUserActive(props.item.isActive, false) }}</td>
+        <template
+          slot="items"
+          slot-scope="props"
+        >
+          <td class="text-xs-center element">
+            {{ getFullName(props.item.firstName, props.item.lastName) }}
+          </td>
+          <td class="text-xs-center element">
+            {{ props.item.username }}
+          </td>
+          <td class="text-xs-center element">
+            {{ props.item.email }}
+          </td>
+          <td class="text-xs-center element">
+            {{ userRoles(props.item) }}
+          </td>
+          <td class="text-xs-center element">
+            {{ props.item.level }}
+          </td>
+          <td class="text-xs-center element">
+            {{ props.item.totalExp }}
+          </td>
+          <td class="text-xs-center element">
+            {{ isUserActive(props.item.isActive, false) }}
+          </td>
           <td class="justify-center layout px-0">
             <v-icon
               small
@@ -113,7 +219,6 @@
               delete
             </v-icon>
           </td>
-
         </template>
       </v-data-table>
     </v-card>
@@ -130,11 +235,36 @@ const roleTranslation = {
 };
 
 export default {
-  async fetch ({ store }) {
-    await Promise.all([
-      store.dispatch('getUsers'),
-      store.dispatch('getRoles'),
-    ]);
+  data () {
+    return {
+      dialog: false,
+      modalTitle: '',
+      rules: {
+        required: value => !!value || 'Povinné.',
+        email: value => EMAIL_REGEX.test(value) || 'Neplatný e-mail.',
+      },
+      modalItem: {
+        id: null,
+        firstName: '',
+        lastName: '',
+        password: '',
+        totalExp: 0,
+        isActive: true,
+        username: '',
+        roles: ['user'],
+      },
+      defaultModalItem: {
+        id: null,
+        firstName: '',
+        lastName: '',
+        password: '',
+        totalExp: 0,
+        isActive: true,
+        username: '',
+        roles: ['user'],
+      },
+      filteringText: '',
+    };
   },
   computed: {
     ...mapState([
@@ -216,39 +346,11 @@ export default {
       }));
     },
   },
-  data () {
-    return {
-      dialog: false,
-      modalTitle: '',
-      rules: {
-        required: value => !!value || 'Povinné.',
-        email: value => {
-          const pattern = EMAIL_REGEX;
-          return pattern.test(value) || 'Neplatný e-mail.';
-        },
-      },
-      modalItem: {
-        id: null,
-        firstName: '',
-        lastName: '',
-        password: '',
-        totalExp: 0,
-        isActive: true,
-        username: '',
-        roles: ['user'],
-      },
-      defaultModalItem: {
-        id: null,
-        firstName: '',
-        lastName: '',
-        password: '',
-        totalExp: 0,
-        isActive: true,
-        username: '',
-        roles: ['user'],
-      },
-      filteringText: '',
-    };
+  async fetch ({ store }) {
+    await Promise.all([
+      store.dispatch('getUsers'),
+      store.dispatch('getRoles'),
+    ]);
   },
   methods: {
     createNewUser () {

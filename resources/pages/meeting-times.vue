@@ -1,12 +1,22 @@
 <template>
-  <v-layout column justify-center align-end>
-
-    <v-btn @click="toggleDialogVisibility" color="primary" dark>
+  <v-layout
+    column
+    justify-center
+    align-end
+  >
+    <v-btn
+      color="primary"
+      dark
+      @click="toggleDialogVisibility"
+    >
       <i class="material-icons">add</i>
       NOVÝ ČAS KONÁNÍ SITDOWNU
     </v-btn>
 
-    <v-dialog v-model="dialog.isOpen" max-width="550px">
+    <v-dialog
+      v-model="dialog.isOpen"
+      max-width="550px"
+    >
       <v-card>
         <v-card-title>
           <span class="headline">{{ dialog.title }}</span>
@@ -14,30 +24,45 @@
 
         <v-card-text>
           <v-container grid-list-md>
-            <v-layout wrap column>
-              <v-flex xs12 sm6 md4>
+            <v-layout
+              wrap
+              column
+            >
+              <v-flex
+                xs12
+                sm6
+                md4
+              >
                 <v-text-field
-                  v-bind:value="formData.name"
-                  v-on:input="updateName"
+                  :value="formData.name"
                   label="Název"
-                ></v-text-field>
+                  @input="updateName"
+                />
               </v-flex>
-              <v-flex xs12 sm6 md4>
+              <v-flex
+                xs12
+                sm6
+                md4
+              >
                 <v-select
                   :items="weekDays"
-                  v-bind:value="formData.weekDay"
-                  v-on:input="updateWeekDay"
+                  :value="formData.weekDay"
                   label="Den v týdnu"
-                >
-                </v-select>
+                  @input="updateWeekDay"
+                />
               </v-flex>
-              <v-flex xs12 sm6 md4 class="time-picker">
+              <v-flex
+                xs12
+                sm6
+                md4
+                class="time-picker"
+              >
                 <v-time-picker
                   landscape
                   format="24hr"
-                  v-bind:value="formData.time"
-                  v-on:input="updateTime"
-                ></v-time-picker>
+                  :value="formData.time"
+                  @input="updateTime"
+                />
               </v-flex>
             </v-layout>
 
@@ -48,31 +73,53 @@
             >
               {{ error.message }}
             </v-alert>
-
           </v-container>
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="toggleDialogVisibility">Zrušit</v-btn>
-          <v-btn color="blue darken-1" flat @click="submit">Uložit</v-btn>
+          <v-spacer />
+          <v-btn
+            color="blue darken-1"
+            flat
+            @click="toggleDialogVisibility"
+          >
+            Zrušit
+          </v-btn>
+          <v-btn
+            color="blue darken-1"
+            flat
+            @click="submit"
+          >
+            Uložit
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <v-data-table
-      :headers='headers'
-      :items='meetingTimes'
+      :headers="headers"
+      :items="meetingTimes"
       item-key="id"
       hide-actions
       fill-height
-      class='elevation-1 fullscreen'
+      class="elevation-1 fullscreen"
     >
-      <template slot='items' slot-scope='{ item }'>
-        <td class='text-xs-center element'>{{ item.name }}</td>
-        <td class='text-xs-center element'>{{ item.time }}</td>
-        <td class='text-xs-center element'>{{ item.weekDay }}</td>
-        <td class='text-xs-center element'>{{ item.projects }}</td>
+      <template
+        slot="items"
+        slot-scope="{ item }"
+      >
+        <td class="text-xs-center element">
+          {{ item.name }}
+        </td>
+        <td class="text-xs-center element">
+          {{ item.time }}
+        </td>
+        <td class="text-xs-center element">
+          {{ item.weekDay }}
+        </td>
+        <td class="text-xs-center element">
+          {{ item.projects }}
+        </td>
         <td class="justify-center layout px-0">
           <v-icon
             small
@@ -88,10 +135,8 @@
             delete
           </v-icon>
         </td>
-
       </template>
     </v-data-table>
-
   </v-layout>
 </template>
 
@@ -100,8 +145,20 @@
   import { WEEK_DAYS } from '../constants';
 
   export default {
-    async fetch ({ store }) {
-      await store.dispatch('getMeetingTimes');
+    data () {
+      return {
+        weekDays: WEEK_DAYS,
+        editId: null,
+        dialog: {
+          isOpen: false,
+          title: '',
+        },
+        formData: {
+          name: '',
+          weekDay: '',
+          time: '',
+        },
+      };
     },
     computed: {
       ...mapState([
@@ -143,20 +200,8 @@
         ];
       },
     },
-    data () {
-      return {
-        weekDays: WEEK_DAYS,
-        editId: null,
-        dialog: {
-          isOpen: false,
-          title: '',
-        },
-        formData: {
-          name: '',
-          weekDay: '',
-          time: '',
-        },
-      };
+    async fetch ({ store }) {
+      await store.dispatch('getMeetingTimes');
     },
     methods: {
       updateName (value) {
