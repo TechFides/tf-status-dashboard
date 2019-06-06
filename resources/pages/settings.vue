@@ -131,7 +131,7 @@ export default {
 
         await this.$axios.$post('/api/configuration', settings);
       } catch (e) {
-        console.error(e);
+        this.$store.commit('setNotification', { color: 'error', message: 'Aktualizace nastavení se nezdařila.' });
       } finally {
         this.loading = false;
       }
