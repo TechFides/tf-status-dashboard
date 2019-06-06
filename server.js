@@ -29,9 +29,8 @@ new Ignitor(require('@adonisjs/fold'))
     if (Env.get('NODE_ENV') === 'development') {
       Logger.level = 'debug';
     }
-
-    // TODO: change === with !== before merging
-    if (Env.get('NODE_ENV') === 'development') {
+    
+    if (Env.get('NODE_ENV') !== 'development') {
       use('App/Services/FeedbackScheduler').schedule();
     }
 
