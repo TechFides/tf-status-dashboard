@@ -30,15 +30,19 @@
                   <v-text-field :rules="[rules.required]" v-model="modalItem.lastName" label="Příjmení"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
+                  <v-text-field v-model="modalItem.email" :rules="[rules.required, rules.email]" type="email"
+                                label="E-mail"></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm6 md4>
                   <v-text-field type="number" v-model="modalItem.totalExp"
                                 label="Expy"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
                   <v-select
-                          label="Role"
-                          :items="roleItems"
-                          multiple
-                          v-model="modalItem.roles">
+                    label="Role"
+                    :items="roleItems"
+                    multiple
+                    v-model="modalItem.roles">
                   </v-select>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
@@ -89,6 +93,7 @@
         <template slot='items' slot-scope='props'>
           <td class='text-xs-center element'>{{ getFullName(props.item.firstName, props.item.lastName) }}</td>
           <td class='text-xs-center element'>{{ props.item.username }}</td>
+          <td class='text-xs-center element'>{{ props.item.email }}</td>
           <td class='text-xs-center element'>{{ userRoles(props.item) }}</td>
           <td class='text-xs-center element'>{{ props.item.level }}</td>
           <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
@@ -117,6 +122,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
+import { EMAIL_REGEX } from '../constants';
 
 const roleTranslation = {
   user: 'Uživatel',
@@ -124,7 +130,7 @@ const roleTranslation = {
 };
 
 export default {
-  async fetch ({ store, params }) {
+  async fetch ({ store }) {
     await Promise.all([
       store.dispatch('getUsers'),
       store.dispatch('getRoles'),
@@ -152,6 +158,12 @@ export default {
           align: 'center',
           sortable: true,
           value: 'username',
+        },
+        {
+          text: 'E-mail',
+          align: 'center',
+          sortable: true,
+          value: 'email',
         },
         {
           text: 'Role',
@@ -210,6 +222,10 @@ export default {
       modalTitle: '',
       rules: {
         required: value => !!value || 'Povinné.',
+        email: value => {
+          const pattern = EMAIL_REGEX;
+          return pattern.test(value) || 'Neplatný e-mail.';
+        },
       },
       modalItem: {
         id: null,
@@ -281,11 +297,11 @@ export default {
     getFullName (firstName, lastName) {
       return `${firstName} ${lastName}`;
     },
-    userRoles(user) {
+    userRoles (user) {
       return this.roles
-              .filter(r => user.roles.includes(r.slug))
-              .map(r => roleTranslation[r.slug])
-              .join(', ');
+        .filter(r => user.roles.includes(r.slug))
+        .map(r => roleTranslation[r.slug])
+        .join(', ');
     },
   },
 };

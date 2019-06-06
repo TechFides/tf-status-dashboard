@@ -165,6 +165,7 @@ export const mutations = {
       level: calculateLevel(u.total_exp),
       totalExp: u.total_exp,
       username: u.username,
+      email: u.email,
       roles: u.roles.map(r => r.slug),
     }));
   },
@@ -273,7 +274,7 @@ export const actions = {
       commit('clearNotification');
       dispatch('getMeetingTimes');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: 'Smazat projekt se nezdařilo.'});
+      commit('setNotification', { color: 'error', message: 'Smazat projekt se nezdařilo.' });
     }
   },
   async getProjects ({ commit }) {
@@ -311,7 +312,7 @@ export const actions = {
       dispatch('getAllProjects');
       commit('clearNotification');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: 'Smazat projekt se nezdařilo.'});
+      commit('setNotification', { color: 'error', message: 'Smazat projekt se nezdařilo.' });
     }
   },
   async getAllProjects ({ commit }) {
@@ -340,7 +341,7 @@ export const actions = {
       dispatch('getProjectRating', standup.selectedDate);
       commit('clearNotification');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: 'Smazat standup se nezdařilo.'});
+      commit('setNotification', { color: 'error', message: 'Smazat standup se nezdařilo.' });
     }
   },
   async editStandup ({ dispatch, commit }, standup) {
@@ -360,7 +361,7 @@ export const actions = {
       commit('setProjectRatings', res);
       commit('clearNotification');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: 'Získat hodnotení projektu se nezdařilo.'});
+      commit('setNotification', { color: 'error', message: 'Získat hodnotení projektu se nezdařilo.' });
     }
   },
   async getProjectsForMonth ({ commit }, date) {
@@ -416,10 +417,10 @@ export const actions = {
       dispatch('getNotes');
       commit('clearNotification');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: `Označení poznámky za dokončenou se nezdařilo.`});
+      commit('setNotification', { color: 'error', message: `Označení poznámky za dokončenou se nezdařilo.` });
     }
 
-    commit('setNotification', {color: 'error', message: `Označení poznámky za dokončenou se nezdařilo.`});
+    commit('setNotification', { color: 'error', message: `Označení poznámky za dokončenou se nezdařilo.` });
   },
   async getProjectStatistics ({ commit }, params) {
     const projectStatistics = await this.$axios.$get(
@@ -462,7 +463,7 @@ export const actions = {
       dispatch('getUsers');
       commit('clearNotification');
     } catch (error) {
-      commit('setNotification', {color: 'error', message: `Uživatela se nepodařilo odstranit.`});
+      commit('setNotification', { color: 'error', message: `Uživatela se nepodařilo odstranit.` });
     }
   },
   async getRoles ({ commit }) {
@@ -474,11 +475,11 @@ export const actions = {
     const [heatmap, feedbacks] = await Promise.all([
       this.$axios.$get(
         '/api/heatmap',
-        getDateParams(date)
+        getDateParams(date),
       ),
       this.$axios.$get(
         '/api/heatmap/feedbacks',
-        getHeatmapParams()
+        getHeatmapParams(),
       ),
     ]);
 

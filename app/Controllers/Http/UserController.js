@@ -11,10 +11,12 @@ class UserController {
       isActive,
       totalExp,
       username,
-    } = request.only(['firstName', 'lastName', 'isActive', 'totalExp', 'username']);
+      email,
+    } = request.only(['firstName', 'lastName', 'isActive', 'totalExp', 'username', 'email']);
 
     return {
       username,
+      email,
       first_name: firstName,
       last_name: lastName,
       is_active: isActive,
@@ -22,7 +24,7 @@ class UserController {
     };
   }
 
-  async getUsers ({ request, response, params }) {
+  async getUsers () {
     const users = await UserModel
       .query()
       .with('roles')
@@ -31,7 +33,7 @@ class UserController {
     return users.toJSON();
   }
 
-  async createUser ({ request, response, params }) {
+  async createUser ({ request, response }) {
     const user = new UserModel();
     user.fill(UserController.mapToDbEntity(request));
 
@@ -75,7 +77,7 @@ class UserController {
     }
   }
 
-  async _setRoles(user, roles) {
+  async _setRoles (user, roles) {
     const attachedRoles = await user.getRoles();
 
     const toAttach = roles
