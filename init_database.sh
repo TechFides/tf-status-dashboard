@@ -10,6 +10,7 @@ npx adonis seed --files='StandupProjectRatingEnumSeeder.js' --force
 npx adonis seed --files='StandupSeeder.js' --force
 npx adonis seed --files='RoleSeeder.js' --force
 npx adonis seed --files='UserSeeder.js' --force
+npx adonis seed --files='SystemParamSeeder.js' --force
 
 npx adonis seed --files='StandupProjectRatingSeeder.js' --force
 npx adonis seed --files='MeetingTimeSeeder.js' --force

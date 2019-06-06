@@ -24,7 +24,7 @@ const handleFeedbackError = ({ response }) => {
     case 409:
       return {
         ...data,
-        error: 'Zdá se, že jste tento týden již odeslali svůj feedback',
+        error: 'Zdá se, že jste tento týden již odeslal(a) svůj feedback',
       };
     default:
       return data;

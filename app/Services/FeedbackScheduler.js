@@ -1,87 +1,111 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
 const Handlebars = require('handlebars');
 const Schedule = require('node-schedule');
+const format = require('date-fns/format');
 
-const FEEDBACK_EMAIL_HTML = `
-<html>
-  <head>
-    <title>Týdenní zpětná vazba #{{ week.number }}</title>
-  </head>
-  <body>
-    <h1>Týdenní zpětná vazba #{{ week.number }}: {{ week.from }} - {{ week.to }}</h1>
-    <section>
-      <h2>Jaky byl tvuj tyden, kamaráde?</h2>
-      <ul>
-        {{#each feedbackOptions}}
-          <li class="options-list__item">
-            <a href="{{feedbackUrl}}">{{text}}</a>
-          </li>
-        {{/each}}
-      </ul>
-    </section>
-  </body>
-</html>
-`;
+const Env = use('Env');
+const UserModel = use('App/Models/User');
+const HeatmapWeekModel = use('App/Models/HeatmapWeek');
+const SystemParamModel = use('App/Models/SystemParam');
 
 class FeedbackSchedulerService {
   static getFeedbackOptions (heatmapWeekId) {
     const feedbackOptions = [
-      { text: 'AMAZING', id: 1 },
-      { text: 'GOOD', id: 2 },
-      { text: 'BAD', id: 3 },
-      { text: 'HORRIBLE', id: 4 },
+      { text: 'ÚŽASNÝ', type: 'amazing', id: 1 },
+      { text: 'DOBRÝ', type: 'good', id: 2 },
+      { text: 'ŠPATNÝ', type: 'bad', id: 3 },
+      { text: 'HROZNÝ', type: 'horrible', id: 4 },
     ];
     return feedbackOptions.map(option => ({
       ...option,
-      feedbackUrl: `http://localhost:3333/submit-feedback?heatmapWeekId=${heatmapWeekId}&feedbackEnumId=${option.id}`,
+      feedbackUrl: Env.get('NODE_ENV') === 'development'
+        ? `http://localhost:3333/submit-feedback?heatmapWeekId=${heatmapWeekId}&feedbackEnumId=${option.id}`
+        : `https://projects.status.techfides.cz/submit-feedback?heatmapWeekId=${heatmapWeekId}&feedbackEnumId=${option.id}`,
     }));
   }
 
-  static getReccurrenceRule () {
-    return '*/2 * * * *';
-    // TODO: implement custom schedule using app settings from DB
-    // return new Schedule.RecurrenceRule(null, null, null, 1, 9, 30, null);
+  static loadEmailTemplate () {
+    const html = fs.readFileSync(path.resolve(__dirname, '../../assets/feedback-email-template.html'), 'utf-8');
+    return Handlebars.compile(html);
+  }
+
+  static async getUserEmailAddresses () {
+    const users = await UserModel.query().select('email').whereNotNull('email').fetch();
+    return users.toJSON().map(item => item.email);
+  }
+
+  static async getFeedbackCrontab () {
+    const feedbackCrontab = await SystemParamModel.findOrCreate(
+      { key: 'feedbackCrontab' },
+      { key: 'feedbackCrontab', value: '30 9 * * 1', type: 1 }, // default feedback crontab: every MONDAY at 9:30
+    );
+    return feedbackCrontab.value;
+  }
+
+  static getCurrentWeekBoundaries () {
+    const now = new Date();
+    const start = now.getDate() - now.getDay() + 1;
+    const end = start + 7;
+    const monday = new Date(now.setDate(start));
+    const sunday = new Date(now.setDate(end));
+
+    monday.setHours(0, 0, 0, 0);
+    sunday.setHours(23, 59, 59, 0);
+
+    return [monday, sunday];
   }
 
   constructor () {
     this.job = null;
     this.logger = use('Logger');
     this.emailService = use('App/Services/Email');
-    this.template = Handlebars.compile(FEEDBACK_EMAIL_HTML);
+    this.template = FeedbackSchedulerService.loadEmailTemplate();
   }
 
-  schedule () {
+  async schedule () {
     this.cancel();
 
+    const rule = await FeedbackSchedulerService.getFeedbackCrontab();
+
     this.job = Schedule.scheduleJob(
-      FeedbackSchedulerService.getReccurrenceRule(),
-      () => {
-        // TODO: create new heatmap for the last week
+      'feedback_email_job',
+      rule,
+      async () => {
+        const toAddresses = await FeedbackSchedulerService.getUserEmailAddresses();
+
+        const week = FeedbackSchedulerService.getCurrentWeekBoundaries();
+        const heatmapWeek = await HeatmapWeekModel.findOrCreate(
+          function () {
+            this.where('date', '>=', week[0]);
+            this.where('date', '<=', week[1]);
+          },
+          { date: week[0] },
+        );
 
         const data = {
-          feedbackOptions: FeedbackSchedulerService.getFeedbackOptions(1),
-          week: { number: 1, from: '2019-06-03', to: '2019-06-09' },
+          feedbackOptions: FeedbackSchedulerService.getFeedbackOptions(heatmapWeek.id),
+          week: { number: heatmapWeek.id, from: format(week[0], 'DD/MM/YYYY'), to: format(week[1], 'DD/MM/YYYY') },
         };
 
         this.emailService.sendEmail({
-          toAddresses: ['vladislav.bulyukhin@techfides.cz'],
+          toAddresses,
           html: this.template(data),
-          text: `Týdenní zpětná vazba #${data.week.number}. Jaky byl tvuj tyden, kamaráde?`,
+          text: `Týdenní zpětná vazba #${data.week.number}`,
           subject: `Týdenní zpětná vazba #${data.week.number}`,
         });
-
-        this.logger.info('feedback email has been sent to every employee');
+        this.logger.debug('Feedback scheduler: feedback email has been sent to every employee');
       },
     );
-
-    this.logger.info('new feedback job has been scheduled');
+    this.logger.debug('FeedbackScheduler: new feedback job has been scheduled');
   }
 
   cancel () {
     if (this.job) {
       this.job.cancel();
-      this.logger.info('scheduled feedback job has been canceled');
+      this.logger.debug('Feedback scheduler: scheduled feedback job has been canceled');
     }
   }
 }
