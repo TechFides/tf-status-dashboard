@@ -7,16 +7,18 @@
     <div class="submit-feedback__message">
       <h2>{{ message }}</h2>
       <div v-if="redirect">
-        Budete přesměrováni na hlavní stránku
+        Budete přesměrováni na hlavní stránku.
       </div>
       <div v-if="!loading && !authenticated">
-        Po přihlášení se pokusíme odeslat zpětnou vazbu znovu
+        Po přihlášení se pokusíme odeslat zpětnou vazbu znovu.
       </div>
     </div>
   </v-layout>
 </template>
 
 <script>
+import { FEEDBACKS } from '../constants';
+
 const REDIRECT_TIMEOUT = 4000;
 
 const handleFeedbackError = ({ response }) => {
@@ -25,14 +27,14 @@ const handleFeedbackError = ({ response }) => {
     loading: false,
     submitted: false,
     redirect: true,
-    error: 'Jejda! Něco se pokazilo',
+    error: 'Jejda! Něco se pokazilo.',
   };
 
   switch (status) {
     case 409:
       return {
         ...data,
-        error: 'Zdá se, že jste tento týden již odeslal(a) svůj feedback',
+        error: 'Zdá se, že jste tento týden již odeslal(a) svůj feedback.',
       };
     default:
       return data;
@@ -62,7 +64,7 @@ export default {
     },
     message () {
       if (!this.authenticated) {
-        return 'Chcete-li odeslat zpětnou vazbu, musíte být přihlášeni';
+        return 'Chcete-li odeslat zpětnou vazbu, musíte být přihlášeni.';
       }
 
       if (this.error) {
@@ -70,7 +72,21 @@ export default {
       }
 
       if (!this.loading && this.submitted) {
-        return 'Děkujeme vám za vaš feedback';
+        const { feedbackEnumId } = this.$route.query;
+        const message = 'Děkujeme vám za vaš feedback.';
+
+        switch (feedbackEnumId) {
+          case FEEDBACKS.AMAZING:
+            return `${message} Jsme opravdu rádi, že váš týden byl úžasný.`;
+          case FEEDBACKS.GOOD:
+            return `${message} Jsme rádi, že váš týden byl dobrý.`;
+          case FEEDBACKS.BAD:
+            return `${message} Je nám líto, že váš týden byl špatný.`;
+          case FEEDBACKS.HORRIBLE:
+            return `${message} Je nám líto, že váš týden byl hrozný.`;
+          default:
+            return message;
+        }
       }
 
       return null;

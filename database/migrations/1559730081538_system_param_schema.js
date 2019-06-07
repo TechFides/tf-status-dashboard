@@ -6,10 +6,9 @@ const Schema = use('Schema');
 class SystemParamSchema extends Schema {
   up () {
     this.create('system_params', (table) => {
-      table.string('key');
+      table.string('key').primary();
       table.string('value');
       table.integer('type').defaultTo(1);
-      table.primary('key');
       table.timestamps();
     });
   }

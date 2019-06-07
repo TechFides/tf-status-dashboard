@@ -6,7 +6,7 @@ const Logger = use('Logger');
 
 class EmailService {
   constructor () {
-    AWS.config.update({ region: 'us-west-2' });
+    AWS.config.update({ region: Env.get('AWS_SES_REGION') });
   }
 
   async sendEmail ({ toAddresses, html, text, subject }) {

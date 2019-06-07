@@ -23,9 +23,7 @@ class FeedbackSchedulerService {
     ];
     return feedbackOptions.map(option => ({
       ...option,
-      feedbackUrl: Env.get('NODE_ENV') === 'development'
-        ? `http://localhost:3333/submit-feedback?heatmapWeekId=${heatmapWeekId}&feedbackEnumId=${option.id}`
-        : `https://projects.status.techfides.cz/submit-feedback?heatmapWeekId=${heatmapWeekId}&feedbackEnumId=${option.id}`,
+      feedbackUrl: `${Env.get('VUE_APP_URL')}/submit-feedback?heatmapWeekId=${heatmapWeekId}&feedbackEnumId=${option.id}`,
     }));
   }
 
@@ -40,10 +38,7 @@ class FeedbackSchedulerService {
   }
 
   static async getFeedbackCrontab () {
-    const feedbackCrontab = await SystemParamModel.findOrCreate(
-      { key: 'feedbackCrontab' },
-      { key: 'feedbackCrontab', value: '30 9 * * 5', type: 1 }, // default feedback crontab: every FRIDAY at 9:30
-    );
+    const feedbackCrontab = await SystemParamModel.find('feedbackCrontab');
     return feedbackCrontab.value;
   }
 

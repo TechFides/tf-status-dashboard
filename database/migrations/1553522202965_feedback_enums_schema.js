@@ -19,7 +19,7 @@ class FeedbackEnumsSchema extends Schema {
       },
       {
         id: 4,
-        description: 'HORRIBLE',
+        description: 'HORIBLE',
       },
     ];
 
