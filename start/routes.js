@@ -34,9 +34,7 @@ Route.post('/api/configuration', 'SystemParamsController.setSystemParams').middl
 /**
  * HEATMAP
  */
-Route
-  .post('/api/feedback', 'FeedbackController.createFeedback')
-  .middleware([AUTH]);
+Route.post('/api/feedback', 'FeedbackController.createFeedback');
 
 Route
   .get('/api/heatmap/feedbacks', 'UserController.getUsersFeedbacks')

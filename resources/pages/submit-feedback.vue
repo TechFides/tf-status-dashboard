@@ -5,12 +5,17 @@
     align-center
   >
     <div class="submit-feedback__message">
-      <h2>{{ message }}</h2>
-      <div v-if="redirect">
+      <h2>
+        {{ message }}
+      </h2>
+      <h3 v-if="additionalMessage">
+        {{ additionalMessage }}
+      </h3>
+      <div
+        v-if="redirect"
+        class="redirect-message"
+      >
         Budete přesměrováni na hlavní stránku.
-      </div>
-      <div v-if="!loading && !authenticated">
-        Po přihlášení se pokusíme odeslat zpětnou vazbu znovu.
       </div>
     </div>
   </v-layout>
@@ -27,24 +32,25 @@ const handleFeedbackError = ({ response }) => {
     loading: false,
     submitted: false,
     redirect: true,
-    error: 'Jejda! Něco se pokazilo.',
+    error: `Jejda! Něco se pokazilo.`,
   };
 
   switch (status) {
     case 409:
-      return {
-        ...data,
-        error: 'Zdá se, že jste tento týden již odeslal(a) svůj feedback.',
-      };
-    default:
-      return data;
+      data.error = 'Zdá se, že jste tento týden již odeslal(a) svůj feedback.';
+      break;
+    case 403:
+      data.error = 'Doba platnosti tokenu již vypršela.';
+      break;
   }
+
+  return data;
 };
 
 export default {
   validate ({ route, redirect }) {
-    const { heatmapWeekId, feedbackEnumId } = route.query;
-    if (!heatmapWeekId || !feedbackEnumId) {
+    const { token, feedbackEnumId } = route.query;
+    if (!token || !feedbackEnumId) {
       redirect('/');
       return false;
     }
@@ -59,36 +65,31 @@ export default {
     };
   },
   computed: {
-    authenticated () {
-      return this.$store.state.auth.loggedIn;
-    },
     message () {
-      if (!this.authenticated) {
-        return 'Chcete-li odeslat zpětnou vazbu, musíte být přihlášeni.';
-      }
-
       if (this.error) {
         return this.error;
       }
 
       if (!this.loading && this.submitted) {
-        const { feedbackEnumId } = this.$route.query;
-        const message = 'Děkujeme vám za vaš feedback.';
-
-        switch (feedbackEnumId) {
-          case FEEDBACKS.AMAZING:
-            return `${message} Jsme opravdu rádi, že váš týden byl úžasný.`;
-          case FEEDBACKS.GOOD:
-            return `${message} Jsme rádi, že váš týden byl dobrý.`;
-          case FEEDBACKS.BAD:
-            return `${message} Je nám líto, že váš týden byl špatný.`;
-          case FEEDBACKS.HORRIBLE:
-            return `${message} Je nám líto, že váš týden byl hrozný.`;
-          default:
-            return message;
-        }
+        return 'Děkujeme vám za vaš feedback.';
       }
 
+      return null;
+    },
+    additionalMessage () {
+      if (!this.loading && this.submitted) {
+        const { feedbackEnumId } = this.$route.query;
+        switch (parseInt(feedbackEnumId, 10)) {
+          case FEEDBACKS.AMAZING:
+            return 'Jsme rádi, že váš týden byl úžasný.';
+          case FEEDBACKS.GOOD:
+            return 'Jsme rádi, že váš týden byl dobrý.';
+          case FEEDBACKS.BAD:
+            return 'Je nám líto, že váš týden byl špatný.';
+          case FEEDBACKS.HORRIBLE:
+            return 'Je nám líto, že váš týden byl hrozný.';
+        }
+      }
       return null;
     },
   },
@@ -101,30 +102,11 @@ export default {
         }
       },
     },
-    async authenticated (val, oldVal) {
-      if (val && !oldVal) {
-        try {
-          await this.$axios.post('/api/feedback', {
-            heatmapWeekId: this.$route.query.heatmapWeekId,
-            feedbackEnumId: this.$route.query.feedbackEnumId,
-          });
-
-          this.setData({ loading: false, submitted: true, redirect: true, error: null });
-        } catch (err) {
-          this.setData(handleFeedbackError(err));
-        }
-      }
-    },
   },
   async asyncData ({ route, store, redirect, $axios }) {
-    const authenticated = store.state.auth && store.state.auth.loggedIn;
-    if (!authenticated) {
-      return { loading: false, submitted: false };
-    }
-
     try {
       await $axios.post('/api/feedback', {
-        heatmapWeekId: route.query.heatmapWeekId,
+        token: route.query.token,
         feedbackEnumId: route.query.feedbackEnumId,
       });
       return { loading: false, submitted: true, redirect: true };
@@ -137,14 +119,6 @@ export default {
       clearTimeout(this.timeout);
     }
   },
-  methods: {
-    setData ({ loading, submitted, redirect, error }) {
-      this.loading = loading;
-      this.submitted = submitted;
-      this.redirect = redirect;
-      this.error = error;
-    },
-  },
 };
 </script>
 
@@ -153,5 +127,9 @@ export default {
   box-sizing: border-box;
   text-align: center;
   margin-top: 15%;
+}
+
+.redirect-message {
+  margin-top: 5px;
 }
 </style>

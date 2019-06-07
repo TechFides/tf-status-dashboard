@@ -1,5 +1,7 @@
 'use strict';
 
+const { SYSTEM_PARAMS } = require('../../../constants');
+
 const SystemParamModel = use('App/Models/SystemParam');
 const FeedbackSchedulerService = use('App/Services/FeedbackScheduler');
 
@@ -30,7 +32,7 @@ class SystemParamsController {
   static validateSystemParams (request) {
     const body = request.post();
     return Object.keys(body).reduce((errors, key) => {
-      if (key === 'feedbackCrontab') {
+      if (key === SYSTEM_PARAMS.FEEDBACK_CRONTAB) {
         const valid = FEEDBACK_CRONTAB_REGEX.test(body[key]);
         if (!valid) {
           return [...errors, 'Invalid feedbackCrontab. Feedback crontab must have the following format: "minutes" "hours" "day of month" "month" "day of week"'];
@@ -58,7 +60,7 @@ class SystemParamsController {
       instance.merge(systemParam);
       await instance.save();
 
-      if (systemParam.key === 'feedbackCrontab') {
+      if (systemParam.key === SYSTEM_PARAMS.FEEDBACK_CRONTAB) {
         FeedbackSchedulerService.schedule();
       }
     });

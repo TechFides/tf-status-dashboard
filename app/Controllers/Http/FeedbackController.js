@@ -1,28 +1,25 @@
 'use strict';
 
 const FeedbackModel = use('App/Models/Feedback');
-const HeatmapWeekModel = use('App/Models/HeatmapWeek');
 const FeedbackEnumModel = use('App/Models/FeedbackEnum');
+const FeedbackTokenModel = use('App/Models/FeedbackToken');
 
 class FeedbackController {
-  async createFeedback ({ request, response, auth }) {
-    let user;
-    try {
-      user = await auth.getUser();
-    } catch (e) {
-      return response.status(401).send({ message: 'Invalid credentials' });
+  async createFeedback ({ request, response }) {
+    const { token, feedbackEnumId } = request.only(['token', 'feedbackEnumId']);
+
+    if (!token || !feedbackEnumId) {
+      return response.status(400).send({ message: 'Bad request: token and feedbackEnumId are required' });
     }
 
-    const { heatmapWeekId, feedbackEnumId } = request.only(['heatmapWeekId', 'feedbackEnumId']);
+    const feedbackToken = await FeedbackTokenModel.query().where('token', token).with('user').with('heatmapWeek').first();
 
-    if (!heatmapWeekId || !feedbackEnumId) {
-      return response.status(400).send({ message: 'Bad request: heatmapId and feedbackEnumId are required' });
+    if (!feedbackToken) {
+      return response.status(404).send({ message: 'Not found: token is invalid' });
     }
 
-    const heatmapWeek = await HeatmapWeekModel.query().where('id', heatmapWeekId).first();
-
-    if (!heatmapWeek) {
-      return response.status(404).send({ message: 'Not found: heatmap week with this ID does not exist' });
+    if (feedbackToken.expired) {
+      return response.status(403).send({ message: 'Forbidden: token has expired' });
     }
 
     const feedbackEnum = await FeedbackEnumModel.query().where('id', feedbackEnumId).first();
@@ -31,19 +28,21 @@ class FeedbackController {
       return response.status(404).send({ message: 'Not found: feedback enum with this ID does not exist' });
     }
 
-    const exists = await FeedbackModel
-      .query()
-      .where('heatmap_week_id', heatmapWeekId)
-      .where('user_id', user.id)
-      .first();
+    const user = await feedbackToken.user().fetch();
+    const heatmapWeek = await feedbackToken.heatmapWeek().fetch();
 
-    if (exists) {
-      return response.status(409).send({ message: 'Conflict: feedback already exists' });
-    }
+    const feedback = await FeedbackModel.findOrNew(function () {
+      this.where('heatmap_week_id', heatmapWeek.id);
+      this.where('user_id', user.id);
+    });
 
-    const feedback = new FeedbackModel();
-    feedback.fill({ heatmap_week_id: heatmapWeekId, feedback_enum_id: feedbackEnumId });
-    feedback.user().associate(user);
+    feedback.merge({
+      heatmap_week_id: heatmapWeek.id,
+      feedback_enum_id: feedbackEnumId,
+      user_id: user.id,
+    });
+
+    await feedback.save();
 
     return response.send();
   }

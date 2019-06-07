@@ -30,7 +30,7 @@
       vertical-align: top;
     }
 
-    .body {
+    .layout {
       background-color: #f6f6f6;
       width: 100%;
     }
@@ -303,7 +303,7 @@
   </head>
   <body>
     <span class="preheader">Týdenní zpětná vazba Techfides #{{ week.number }}: {{ week.from }} - {{ week.to }}</span>
-    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="body">
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="layout">
       <tr>
         <td>&nbsp;</td>
         <td class="container">
@@ -315,7 +315,7 @@
                     <tr>
                       <td>
                         <p>Ahoj</p>
-                        <p>Jaký byl tvůj týden ({{week.from}}-{{week.to}}) v TechFides?</p>
+                        <p>Jaký byl tvůj týden ({{week.from}}-{{week.to}}) v TechFides ?</p>
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="feedback">
                           <tr>
                             {{#each feedbackOptions}}
