@@ -26,16 +26,25 @@ Route.post('/api/auth/logout', 'AuthController.logout');
 Route.get('/api/auth/me', 'AuthController.me');
 
 /**
+ * CONFIGURATION
+ */
+Route.get('/api/configuration', 'SystemParamsController.getSystemParams').middleware(ADMIN);
+Route.post('/api/configuration', 'SystemParamsController.setSystemParams').middleware(ADMIN);
+
+/**
  * HEATMAP
  */
+Route.post('/api/feedback', 'FeedbackController.createFeedback');
+
 Route
   .get('/api/heatmap/feedbacks', 'UserController.getUsersFeedbacks')
   .middleware(['auth', 'is:admin']);
+
 Route
   .get('/api/heatmap', 'HeatmapController.getHeatmapWeeks')
   .middleware(['auth', 'is:admin']);
 
-/** 
+/**
  * MEETING TIMES
  */
 Route

@@ -1,6 +1,6 @@
-'use strict'
+'use strict';
 /** @type {import('@adonisjs/lucid/src/Schema')} */
-const Schema = use('Schema')
+const Schema = use('Schema');
 
 class FeedbackEnumsSchema extends Schema {
   async up () {
@@ -31,4 +31,4 @@ class FeedbackEnumsSchema extends Schema {
   }
 }
 
-module.exports = FeedbackEnumsSchema
+module.exports = FeedbackEnumsSchema;

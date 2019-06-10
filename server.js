@@ -23,6 +23,17 @@ new Ignitor(require('@adonisjs/fold'))
   .appRoot(__dirname)
   .fireHttpServer()
   .then(() => {
+    const Env = use('Env');
+    const Logger = use('Logger');
+
+    if (Env.get('NODE_ENV') === 'development') {
+      Logger.level = 'debug';
+    }
+    
+    if (Env.get('NODE_ENV') !== 'development') {
+      use('App/Services/FeedbackScheduler').schedule();
+    }
+
     return use('App/Services/Nuxt').build();
   })
   .then(() => {

@@ -81,6 +81,18 @@
                   md4
                 >
                   <v-text-field
+                    v-model="modalItem.email"
+                    :rules="[rules.required, rules.email]"
+                    type="email"
+                    label="E-mail"
+                  />
+                </v-flex>
+                <v-flex
+                  xs12
+                  sm6
+                  md4
+                >
+                  <v-text-field
                     v-model="modalItem.totalExp"
                     type="number"
                     label="Expy"
@@ -178,6 +190,9 @@
             {{ props.item.username }}
           </td>
           <td class="text-xs-center element">
+            {{ props.item.email }}
+          </td>
+          <td class="text-xs-center element">
             {{ userRoles(props.item) }}
           </td>
           <td class="text-xs-center element">
@@ -212,6 +227,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
+import { EMAIL_REGEX } from '../constants';
 
 const roleTranslation = {
   user: 'Uživatel',
@@ -225,6 +241,7 @@ export default {
       modalTitle: '',
       rules: {
         required: value => !!value || 'Povinné.',
+        email: value => EMAIL_REGEX.test(value) || 'Neplatný e-mail.',
       },
       modalItem: {
         id: null,
@@ -271,6 +288,12 @@ export default {
           align: 'center',
           sortable: true,
           value: 'username',
+        },
+        {
+          text: 'E-mail',
+          align: 'center',
+          sortable: true,
+          value: 'email',
         },
         {
           text: 'Role',
@@ -323,7 +346,7 @@ export default {
       }));
     },
   },
-  async fetch ({ store, params }) {
+  async fetch ({ store }) {
     await Promise.all([
       store.dispatch('getUsers'),
       store.dispatch('getRoles'),
@@ -376,11 +399,11 @@ export default {
     getFullName (firstName, lastName) {
       return `${firstName} ${lastName}`;
     },
-    userRoles(user) {
+    userRoles (user) {
       return this.roles
-              .filter(r => user.roles.includes(r.slug))
-              .map(r => roleTranslation[r.slug])
-              .join(', ');
+        .filter(r => user.roles.includes(r.slug))
+        .map(r => roleTranslation[r.slug])
+        .join(', ');
     },
   },
 };

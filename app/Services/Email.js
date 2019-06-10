@@ -1,0 +1,33 @@
+'use strict';
+
+const AWS = require('aws-sdk');
+const Env = use('Env');
+const Logger = use('Logger');
+
+class EmailService {
+  constructor () {
+    AWS.config.update({ region: Env.get('AWS_SES_REGION') });
+  }
+
+  async sendEmail ({ toAddresses, html, text, subject }) {
+    const params = {
+      Source: Env.get('EMAIL_ADDRESS'),
+      Destination: { ToAddresses: toAddresses },
+      Message: {
+        Subject: { Charset: 'UTF-8', Data: subject },
+        Body: {
+          Text: { Charset: 'UTF-8', Data: text },
+          Html: { Charset: 'UTF-8', Data: html },
+        },
+      },
+    };
+
+    try {
+      await new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+    } catch (err) {
+      Logger.error(err.toString());
+    }
+  }
+}
+
+module.exports = new EmailService();

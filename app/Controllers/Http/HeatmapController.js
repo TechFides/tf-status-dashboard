@@ -3,7 +3,7 @@
 const HeatmapModel = use('App/Models/HeatmapWeek');
 
 class HeatmapController {
-  async getHeatmapWeeks ({ request, response, session }) {
+  async getHeatmapWeeks ({ request }) {
     let { month, year } = request.get();
     month = Number(month);
     year = Number(year);

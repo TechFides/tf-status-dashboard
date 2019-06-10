@@ -84,13 +84,14 @@ export default {
     ]),
     items () {
       const items = [
-        {icon: 'apps', title: 'Dashboard', to: '/'},
-        {icon: 'radio_button_unchecked', title: 'Standup', to: '/standup'},
-        {icon: 'laptop_windows', title: 'Projekty', to: '/projects', availableFor: ['admin']},
-        {icon: 'bar_chart', title: 'Statistiky', to: '/statistics', availableFor: ['admin', 'user']},
-        {icon: 'face', title: 'Uživatelé', to: '/users', availableFor: ['admin']},
-        {icon: 'tag_faces', title: 'Heatmap', to: '/heatmap', availableFor: ['admin']},
-        {icon: 'schedule', title: 'Časy konání sitdownu', to: '/meeting-times', availableFor: ['admin']},
+        { icon: 'apps', title: 'Dashboard', to: '/' },
+        { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup' },
+        { icon: 'laptop_windows', title: 'Projekty', to: '/projects', availableFor: ['admin'] },
+        { icon: 'bar_chart', title: 'Statistiky', to: '/statistics', availableFor: ['admin', 'user'] },
+        { icon: 'face', title: 'Uživatelé', to: '/users', availableFor: ['admin'] },
+        { icon: 'tag_faces', title: 'Heatmap', to: '/heatmap', availableFor: ['admin'] },
+        { icon: 'schedule', title: 'Časy konání sitdownu', to: '/meeting-times', availableFor: ['admin'] },
+        { icon: 'settings', title: 'Nastavení', to: '/settings', availableFor: ['admin'] },
       ];
 
       return items.filter(item => {

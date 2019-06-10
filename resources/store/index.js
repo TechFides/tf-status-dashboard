@@ -167,6 +167,7 @@ export const mutations = {
       level: calculateLevel(u.total_exp),
       totalExp: u.total_exp,
       username: u.username,
+      email: u.email,
       roles: u.roles.map(r => r.slug),
     }));
   },
