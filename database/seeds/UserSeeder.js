@@ -12,6 +12,11 @@
 
 const Factory = use('Factory');
 
+const USER_ROLES = {
+  USER: 1,
+  ADMIN: 2,
+};
+
 class UserSeeder {
   async run () {
     const user = await Factory.model('App/Models/User').create({
@@ -22,7 +27,7 @@ class UserSeeder {
       is_active: 1,
     });
 
-    await user.roles().attach([1, 2]);
+    await user.roles().attach([USER_ROLES.USER, USER_ROLES.ADMIN]);
   }
 }
 
