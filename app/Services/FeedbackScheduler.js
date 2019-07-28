@@ -24,9 +24,11 @@ class FeedbackSchedulerService {
       { text: 'ŠPATNÝ', type: 'bad', id: 3 },
       { text: 'HROZNÝ', type: 'horrible', id: 4 },
     ];
+    const vueAppUrl = Env.get('VUE_APP_URL');
     return feedbackOptions.map(option => ({
       ...option,
-      feedbackUrl: `${Env.get('VUE_APP_URL')}/submit-feedback?token=${token}&feedbackEnumId=${option.id}`,
+      feedbackUrl: `${vueAppUrl}/submit-feedback?token=${token}&feedbackEnumId=${option.id}`,
+      feedbackImageUrl: `${vueAppUrl}/rating-${option.type}.png`,
     }));
   }
 
