@@ -1,29 +1,25 @@
 'use strict';
 
-const AWS = require('aws-sdk');
+const sgMail = require('@sendgrid/mail');
 const Env = use('Env');
 const Logger = use('Logger');
 
 class EmailService {
   constructor () {
-    AWS.config.update({ region: Env.get('AWS_SES_REGION') });
+    sgMail.setApiKey(Env.get('SENDGRID_API_KEY'));
   }
 
   async sendEmail ({ toAddresses, html, text, subject }) {
-    const params = {
-      Source: Env.get('EMAIL_ADDRESS'),
-      Destination: { ToAddresses: toAddresses },
-      Message: {
-        Subject: { Charset: 'UTF-8', Data: subject },
-        Body: {
-          Text: { Charset: 'UTF-8', Data: text },
-          Html: { Charset: 'UTF-8', Data: html },
-        },
-      },
+    const msg = {
+      to: toAddresses,
+      from: Env.get('EMAIL_ADDRESS'),
+      subject,
+      text,
+      html,
     };
 
     try {
-      await new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+      await sgMail.send(msg);
     } catch (err) {
       Logger.error(err.toString());
     }

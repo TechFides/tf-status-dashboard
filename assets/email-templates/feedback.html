@@ -126,10 +126,14 @@
       color: #3498db;
       text-decoration: underline;
     }
-
+    img.rating{
+      width: 114px;
+      margin: 3px;
+    }
     .btn {
+      margin: 3px;
       background-color: #ffffff;
-      border: solid 1px #3498db;
+      border: solid 3px #3498db;
       border-radius: 5px;
       box-sizing: border-box;
       color: #3498db;
@@ -137,50 +141,49 @@
       display: inline-block;
       font-size: 14px;
       font-weight: bold;
-      margin: 0;
       padding: 12px 25px;
       text-decoration: none;
       text-transform: capitalize;
     }
 
     .btn.btn-good {
-      color: #548235;
-      border-color: #548235;
+      color: #17af72;
+      border-color: #17af72;
     }
 
     .btn.btn-good:hover {
       color: #fff;
-      background-color: #548235;
+      background-color: #66c6a0;
     }
 
     .btn.btn-amazing {
-      color: #92D050;
-      border-color: #92D050;
+      color: #0177fd;
+      border-color: #0177fd;
     }
 
     .btn.btn-amazing:hover {
       color: #fff;
-      background-color: #92D050;
+      background-color: #51a2fe;
     }
 
     .btn.btn-bad {
-      color: #C55A11;
-      border-color: #C55A11;
+      color: #e99a00;
+      border-color: #e99a00;
     }
 
     .btn.btn-bad:hover {
       color: #fff;
-      background-color: #C55A11;
+      background-color: #f2be1a;
     }
 
     .btn.btn-horrible {
-      color: #CC0000;
-      border-color: #CC0000;
+      color: #c00f05;
+      border-color: #c00f05;
     }
 
     .btn.btn-horrible:hover {
       color: #fff;
-      background-color: #CC0000;
+      background-color: #ea281f;
     }
 
     .preheader {
@@ -320,6 +323,7 @@
                           <tr>
                             {{#each feedbackOptions}}
                             <td>
+                              <img class="rating" src="{{feedbackImageUrl}}" title="{{type}}"/><br>
                               <a class="btn btn-{{type}}" href="{{feedbackUrl}}">{{text}}</a>
                             </td>
                             {{/each}}
