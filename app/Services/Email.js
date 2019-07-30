@@ -16,6 +16,7 @@ class EmailService {
       subject,
       text,
       html,
+      category: 'TF_FEEDBACK',
     };
 
     try {

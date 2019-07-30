@@ -163,6 +163,7 @@ export const mutations = {
       firstName: u.first_name,
       id: u.id,
       isActive: u.is_active,
+      sendFeedback: u.send_feedback,
       lastName: u.last_name,
       level: calculateLevel(u.total_exp),
       totalExp: u.total_exp,
