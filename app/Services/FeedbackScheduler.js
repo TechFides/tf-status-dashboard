@@ -28,7 +28,7 @@ class FeedbackSchedulerService {
     return feedbackOptions.map(option => ({
       ...option,
       feedbackUrl: `${vueAppUrl}/submit-feedback?token=${token}&feedbackEnumId=${option.id}`,
-      feedbackImageUrl: `${vueAppUrl}/rating-${option.type}.png`,
+      feedbackImageUrl: `${vueAppUrl}/images/rating-${option.type}.png`,
     }));
   }
 
