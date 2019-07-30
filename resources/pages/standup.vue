@@ -8,6 +8,7 @@
         v-show="isAdmin() || isUser()"
         v-model="noteDialog.isOpen"
         max-width="500px"
+        :persistent="true"
       >
         <v-btn
           slot="activator"
@@ -88,6 +89,7 @@
       <v-dialog
         v-model="standupDialog.isOpen"
         max-width="500px"
+        :persistent="true"
       >
         <v-card>
           <v-card-title>

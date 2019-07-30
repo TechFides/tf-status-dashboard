@@ -16,8 +16,9 @@
 
     <v-dialog
       v-model="dialog"
-      max-width="500px"
+      max-width="750px"
       transition="scale-transition"
+      :persistent="true"
     >
       <v-card>
         <v-card-title>
@@ -29,12 +30,9 @@
             <v-container grid-list-md>
               <v-layout
                 wrap
-                column
               >
                 <v-flex
-                  xs12
-                  sm6
-                  md4
+                  xs6
                 >
                   <v-text-field
                     v-model="modalItem.username"
@@ -43,9 +41,7 @@
                   />
                 </v-flex>
                 <v-flex
-                  xs12
-                  sm6
-                  md4
+                  xs6
                 >
                   <v-text-field
                     v-model="modalItem.password"
@@ -54,9 +50,7 @@
                   />
                 </v-flex>
                 <v-flex
-                  xs12
-                  sm6
-                  md4
+                  xs6
                 >
                   <v-text-field
                     v-model="modalItem.firstName"
@@ -65,9 +59,7 @@
                   />
                 </v-flex>
                 <v-flex
-                  xs12
-                  sm6
-                  md4
+                  xs6
                 >
                   <v-text-field
                     v-model="modalItem.lastName"
@@ -76,9 +68,7 @@
                   />
                 </v-flex>
                 <v-flex
-                  xs12
-                  sm6
-                  md4
+                  xs6
                 >
                   <v-text-field
                     v-model="modalItem.email"
@@ -88,9 +78,7 @@
                   />
                 </v-flex>
                 <v-flex
-                  xs12
-                  sm6
-                  md4
+                  xs6
                 >
                   <v-text-field
                     v-model="modalItem.totalExp"
@@ -100,8 +88,6 @@
                 </v-flex>
                 <v-flex
                   xs12
-                  sm6
-                  md4
                 >
                   <v-select
                     v-model="modalItem.roles"
@@ -111,9 +97,7 @@
                   />
                 </v-flex>
                 <v-flex
-                  xs12
-                  sm6
-                  md4
+                  xs6
                 >
                   <v-checkbox
                     v-model="modalItem.isActive"
@@ -121,9 +105,7 @@
                   />
                 </v-flex>
                 <v-flex
-                  xs12
-                  sm6
-                  md4
+                  xs6
                 >
                   <v-checkbox
                     v-model="modalItem.sendFeedback"
@@ -248,6 +230,7 @@ export default {
   data () {
     return {
       dialog: false,
+      persistent: true,
       modalTitle: '',
       rules: {
         required: value => !!value || 'Povinné.',
