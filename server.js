@@ -29,10 +29,8 @@ new Ignitor(require('@adonisjs/fold'))
     if (Env.get('NODE_ENV') === 'development') {
       Logger.level = 'debug';
     }
-    
-    if (Env.get('NODE_ENV') !== 'development') {
-      use('App/Services/FeedbackScheduler').schedule();
-    }
+
+    use('App/Services/FeedbackScheduler').schedule();
 
     return use('App/Services/Nuxt').build();
   })

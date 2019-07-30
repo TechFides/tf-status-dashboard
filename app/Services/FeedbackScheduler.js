@@ -102,20 +102,22 @@ class FeedbackSchedulerService {
         };
 
         users.forEach(async (user) => {
-          const token = await FeedbackTokenModel.create({
-            user_id: user.id,
-            heatmap_week_id: heatmapWeek.id,
-            token: crypto.randomBytes(16).toString('hex'),
-          });
+          if(user.send_feedback){
+            const token = await FeedbackTokenModel.create({
+              user_id: user.id,
+              heatmap_week_id: heatmapWeek.id,
+              token: crypto.randomBytes(16).toString('hex'),
+            });
 
-          EmailService.sendEmail({
-            ...commonEmailData,
-            toAddresses: [user.email],
-            html: this.template({
-              week: weekData,
-              feedbackOptions: FeedbackSchedulerService.getFeedbackOptions(token.token),
-            }),
-          });
+            EmailService.sendEmail({
+              ...commonEmailData,
+              toAddresses: [user.email],
+              html: this.template({
+                week: weekData,
+                feedbackOptions: FeedbackSchedulerService.getFeedbackOptions(token.token),
+              }),
+            });
+          }
         });
 
         Logger.debug('FeedbackScheduler: feedback email has been sent to every employee');

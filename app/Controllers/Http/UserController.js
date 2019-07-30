@@ -12,7 +12,8 @@ class UserController {
       totalExp,
       username,
       email,
-    } = request.only(['firstName', 'lastName', 'isActive', 'totalExp', 'username', 'email']);
+      sendFeedback,
+    } = request.only(['firstName', 'lastName', 'isActive', 'totalExp', 'username', 'email', 'sendFeedback']);
 
     return {
       username,
@@ -21,6 +22,7 @@ class UserController {
       last_name: lastName,
       is_active: isActive,
       total_exp: totalExp,
+      send_feedback: sendFeedback,
     };
   }
 

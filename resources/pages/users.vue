@@ -120,6 +120,16 @@
                     label="Aktivní"
                   />
                 </v-flex>
+                <v-flex
+                  xs12
+                  sm6
+                  md4
+                >
+                  <v-checkbox
+                    v-model="modalItem.sendFeedback"
+                    label="Posílat feedback"
+                  />
+                </v-flex>
               </v-layout>
             </v-container>
             <v-alert
@@ -183,16 +193,16 @@
           slot="items"
           slot-scope="props"
         >
-          <td class="text-xs-center element">
+          <td class="text-xs-left element">
             {{ getFullName(props.item.firstName, props.item.lastName) }}
           </td>
-          <td class="text-xs-center element">
+          <td class="text-xs-left element">
             {{ props.item.username }}
           </td>
-          <td class="text-xs-center element">
+          <td class="text-xs-left element">
             {{ props.item.email }}
           </td>
-          <td class="text-xs-center element">
+          <td class="text-xs-left element">
             {{ userRoles(props.item) }}
           </td>
           <td class="text-xs-center element">
@@ -250,6 +260,7 @@ export default {
         password: '',
         totalExp: 0,
         isActive: true,
+        sendFeedback: true,
         username: '',
         roles: ['user'],
       },
@@ -260,6 +271,7 @@ export default {
         password: '',
         totalExp: 0,
         isActive: true,
+        sendFeedback: true,
         username: '',
         roles: ['user'],
       },
@@ -279,25 +291,25 @@ export default {
       return [
         {
           text: 'Jméno',
-          align: 'center',
+          align: 'left',
           sortable: true,
           value: 'firstName',
         },
         {
           text: 'Přihlašovací jméno',
-          align: 'center',
+          align: 'left',
           sortable: true,
           value: 'username',
         },
         {
           text: 'E-mail',
-          align: 'center',
+          align: 'left',
           sortable: true,
           value: 'email',
         },
         {
           text: 'Role',
-          align: 'center',
+          align: 'left',
           sortable: true,
           value: 'roles',
         },
@@ -361,10 +373,12 @@ export default {
     editItem (item) {
       this.modalItem = {
         id: item.id,
+        email: item.email,
         firstName: item.firstName,
         lastName: item.lastName,
         totalExp: item.totalExp,
         isActive: item.isActive === 1,
+        sendFeedback: item.sendFeedback === 1,
         username: item.username,
         roles: item.roles,
       };

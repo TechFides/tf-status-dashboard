@@ -13,7 +13,7 @@ class FeedbackEnumsSchema extends Schema {
 
   async down () {
     const feedbackEnum = await FeedbackEnumModel.find(4);
-    feedbackEnum.description = 'HORIBLE';
+    feedbackEnum.description = 'HORRIBLE';
     await feedbackEnum.save();
   }
 }
