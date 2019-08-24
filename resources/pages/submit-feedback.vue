@@ -1,30 +1,49 @@
+
 <template>
   <v-layout
     column
     justify-center
     align-center
   >
-    <div class="submit-feedback__message">
-      <h2>
-        {{ message }}
-      </h2>
-      <h3 v-if="additionalMessage">
-        {{ additionalMessage }}
-      </h3>
+    <v-flex>
+      <div
+        v-if="submitted"
+        class="submit-feedback__message"
+      >
+        <v-img
+          class="thumb-up"
+          src="/thumbs_up.gif"
+          max-height="125"
+          max-width="125"
+        />
+        <h2>
+          <strong>Díky moc za zpětnou vazbu!</strong>
+        </h2>
+        <div>
+          Pomůže nám tvořit takové prostředí, které tě bude bavit, a ve kterém budeš rád. <br> Btw. pokud chceš být konkrétnější,
+          neváhej se kdykoliv obrátit přímo na Matouše nebo Vaška <br> - spokojenost lidí v TechFides je a bude vždy naší důležitou prioritou.
+        </div>
+      </div>
+      <div
+        v-if="error"
+        class="redirect-message"
+      >
+        <br>
+        <br>
+        {{ error }}
+      </div>
       <div
         v-if="redirect"
         class="redirect-message"
       >
         Budete přesměrováni na hlavní stránku.
       </div>
-    </div>
+    </v-flex>
   </v-layout>
 </template>
-
 <script>
-import { FEEDBACKS } from '../constants';
 
-const REDIRECT_TIMEOUT = 4000;
+const REDIRECT_TIMEOUT = 10000;
 
 const handleFeedbackError = ({ response }) => {
   const status = response.status;
@@ -40,8 +59,11 @@ const handleFeedbackError = ({ response }) => {
       data.error = 'Zdá se, že jste tento týden již odeslal(a) svůj feedback.';
       break;
     case 403:
-      data.error = 'Doba platnosti tokenu již vypršela.';
-      break;
+          data.error = 'Doba platnosti tokenu již vypršela.';
+          break;
+    case 404:
+        data.error = 'Token neexistuje :(';
+        break;
   }
 
   return data;
@@ -76,22 +98,6 @@ export default {
 
       return null;
     },
-    additionalMessage () {
-      if (!this.loading && this.submitted) {
-        const { feedbackEnumId } = this.$route.query;
-        switch (parseInt(feedbackEnumId, 10)) {
-          case FEEDBACKS.AMAZING:
-            return 'Jsme rádi, že váš týden byl úžasný.';
-          case FEEDBACKS.GOOD:
-            return 'Jsme rádi, že váš týden byl dobrý.';
-          case FEEDBACKS.BAD:
-            return 'Je nám líto, že váš týden byl špatný.';
-          case FEEDBACKS.HORRIBLE:
-            return 'Je nám líto, že váš týden byl hrozný.';
-        }
-      }
-      return null;
-    },
   },
   watch: {
     redirect: {
@@ -123,10 +129,14 @@ export default {
 </script>
 
 <style scoped>
+
+.thumb-up{
+  margin: 0 auto;
+  margin-top: 100px;
+}
 .submit-feedback__message {
-  box-sizing: border-box;
   text-align: center;
-  margin-top: 15%;
+  font-size: 150%;
 }
 
 .redirect-message {

@@ -97,8 +97,8 @@ class FeedbackSchedulerService {
         };
 
         const commonEmailData = {
-          text: `Týdenní zpětná vazba #${weekData.number}`,
-          subject: `Týdenní zpětná vazba #${weekData.number}`,
+          text: `Jaký jsi měl tento týden v práci?`,
+          subject: `Jaký jsi měl tento týden v práci?`,
         };
 
         users.forEach(async (user) => {
