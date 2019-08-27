@@ -32,12 +32,6 @@
         <br>
         {{ error }}
       </div>
-      <div
-        v-if="redirect"
-        class="redirect-message"
-      >
-        Budete přesměrováni na hlavní stránku.
-      </div>
     </v-flex>
   </v-layout>
 </template>
@@ -50,7 +44,6 @@ const handleFeedbackError = ({ response }) => {
   const data = {
     loading: false,
     submitted: false,
-    redirect: true,
     error: `Jejda! Něco se pokazilo.`,
   };
 
@@ -85,19 +78,6 @@ export default {
       redirect: false,
       error: null,
     };
-  },
-  computed: {
-    message () {
-      if (this.error) {
-        return this.error;
-      }
-
-      if (!this.loading && this.submitted) {
-        return 'Děkujeme vám za vaš feedback.';
-      }
-
-      return null;
-    },
   },
   watch: {
     redirect: {

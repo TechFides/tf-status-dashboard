@@ -19,10 +19,9 @@ const FeedbackTokenModel = use('App/Models/FeedbackToken');
 class FeedbackSchedulerService {
   static getFeedbackOptions (token) {
     const feedbackOptions = [
-      { text: 'ÚŽASNÝ', type: 'amazing', id: 1 },
-      { text: 'DOBRÝ', type: 'good', id: 2 },
-      { text: 'ŠPATNÝ', type: 'bad', id: 3 },
-      { text: 'HROZNÝ', type: 'horrible', id: 4 },
+      { text: 'Pohodička', type: 'good', id: 1 },
+      { text: 'OK', type: 'ok', id: 2 },
+      { text: 'Nic extra', type: 'bad', id: 3 },
     ];
     const vueAppUrl = Env.get('VUE_APP_URL');
     return feedbackOptions.map(option => ({

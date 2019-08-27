@@ -8,10 +8,9 @@ export const ICONS = {
 };
 
 export const FEEDBACKS = {
-  AMAZING: 1,
-  GOOD: 2,
+  GOOD: 1,
+  OK: 2,
   BAD: 3,
-  HORRIBLE: 4,
 };
 
 export const WEEK_DAYS = ['Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek', 'Sobota', 'Neděle'];
