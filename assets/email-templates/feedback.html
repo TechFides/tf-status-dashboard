@@ -113,6 +113,7 @@
       font-weight: normal;
       margin: 0;
       margin-bottom: 15px;
+      text-align: justify;
     }
 
     p li,
@@ -127,7 +128,7 @@
       text-decoration: underline;
     }
     img.rating{
-      width: 114px;
+      width: 165px;
       margin: 3px;
     }
     .btn {
@@ -139,53 +140,47 @@
       color: #3498db;
       cursor: pointer;
       display: inline-block;
-      font-size: 14px;
+      font-size: 18px;
       font-weight: bold;
       padding: 12px 25px;
       text-decoration: none;
       text-transform: capitalize;
-      width: 114px;
+      width: 165px;
+      text-align: center;
+      transition: 0.1s;
     }
 
     .btn.btn-good {
-      color: #17af72;
-      border-color: #17af72;
+      color: #0dd145;
+      border-color: #0dd145;
     }
 
     .btn.btn-good:hover {
       color: #fff;
-      background-color: #66c6a0;
+      background-color: #0dd145;
     }
 
-    .btn.btn-amazing {
-      color: #0177fd;
-      border-color: #0177fd;
+    .btn.btn-ok {
+      color: #3598db;
+      border-color: #3598db;
     }
 
-    .btn.btn-amazing:hover {
+    .btn.btn-ok:hover {
       color: #fff;
-      background-color: #51a2fe;
+      background-color: #3598db;
     }
 
     .btn.btn-bad {
-      color: #e99a00;
-      border-color: #e99a00;
+      color: #ff7f27;
+      border-color: #ff7f27;
     }
 
     .btn.btn-bad:hover {
       color: #fff;
-      background-color: #f2be1a;
+      background-color: #ff7f27;
     }
 
-    .btn.btn-horrible {
-      color: #c00f05;
-      border-color: #c00f05;
-    }
 
-    .btn.btn-horrible:hover {
-      color: #fff;
-      background-color: #ea281f;
-    }
 
     .preheader {
       color: transparent;
@@ -319,7 +314,10 @@
                     <tr>
                       <td>
                         <p>Ahoj</p>
-                        <p>Jaký byl tvůj týden ({{week.from}}-{{week.to}}) v TechFides ?</p>
+                        <p>pevně věříme, že kvalitní prostředí je základem spokojenosti každého z nás. Dáváme si záležet, abychom byli pro ostatní společnosti a týmy vzorem, a rádi bychom touto cestou od tebe dostali zpětnou vazbu. </p>
+                        <p>Dej nám vědět, jaký jsi měl týden v práci. Nemusíš klikat pokaždé, není to nic poviného. Je to prostě příležitost dát najevo tvou spokojenost 😊.</p>
+                        <p>Tato zpětná vazba nám pomáhá reagovat na potřeby členů týmu. Vidíme, kdo a jak reagoval. Pokud s něčím nesouhlasíš, rozzlobil tě klient či práce na projektu, nebo naopak jsi spokojený, tvá práce tě baví či chceš ocenit maličkosti jako je třeba povedený teambuilding apod., neboj se nám to dát vědět. Alespoň touto formou. Uděláme maximum pro to, aby členové týmu byli ti nejspokojenější ✌.</p>
+                        <br>
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="feedback">
                           <tr>
                             {{#each feedbackOptions}}
@@ -330,6 +328,9 @@
                             {{/each}}
                           </tr>
                         </table>
+                        <br>
+                        <p>Měj krásný víkend,</p>
+                        <p>Matouš a Vašek</p>
                       </td>
                     </tr>
                   </table>

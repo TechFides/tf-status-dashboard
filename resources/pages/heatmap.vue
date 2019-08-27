@@ -102,14 +102,12 @@ export default {
     getClassName (value) {
       let className = 'text-xs-center element';
       switch (value) {
-        case FEEDBACKS.AMAZING:
-          return `${className} light-green`;
         case FEEDBACKS.GOOD:
-          return `${className} green`;
+          return `${className} good`;
+        case FEEDBACKS.OK:
+          return `${className} ok`;
         case FEEDBACKS.BAD:
-          return `${className} yellow`;
-        case FEEDBACKS.HORRIBLE:
-          return `${className} red`;
+          return `${className} bad`;
         default:
           return '';
       }
@@ -140,16 +138,16 @@ export default {
   font-size: 2em !important;
 }
 
-.red {
-  background-color: #FF0000;
+.good {
+  background-color: #0dd145;
 }
 
-.yellow {
-  background-color: #FFC000;
+.ok {
+  background-color: #3598db;
 }
 
-.green {
-  background-color: #70AD47;
+.bad {
+  background-color: #ff7f27;
 }
 
 .light-green {

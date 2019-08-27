@@ -1,7 +1,6 @@
 stages:
   - install
   - lint
-  - audit
   - cleanup
 
 install:
@@ -24,18 +23,6 @@ lint:
     policy: pull
   script:
     - npm run lint
-  tags:
-    - nodejs-8
-
-audit:
-  stage: audit
-  cache:
-    key: "$CI_BUILD_REF_NAME-$CI_PIPELINE_ID"
-    paths:
-      - node_modules/
-    policy: pull
-  script:
-    - npm audit
   tags:
     - nodejs-8
 
