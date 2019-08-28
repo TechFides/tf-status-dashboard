@@ -34,12 +34,11 @@ Route.post('/api/configuration', 'SystemParamsController.setSystemParams').middl
 /**
  * HEATMAP
  */
-Route.post('/api/feedback', 'FeedbackController.createFeedback');
-
+Route
+  .post('/api/feedback', 'FeedbackController.createFeedback');
 Route
   .get('/api/heatmap/feedbacks', 'UserController.getUsersFeedbacks')
   .middleware(['auth', 'is:admin']);
-
 Route
   .get('/api/heatmap', 'HeatmapController.getHeatmapWeeks')
   .middleware(['auth', 'is:admin']);
@@ -65,7 +64,8 @@ Route
  * NOTES
  */
 Route
-  .get('/api/notes', 'NoteController.getNotes');
+  .get('/api/notes', 'NoteController.getNotes')
+  .middleware(AUTH);
 Route
   .post('/api/notes', 'NoteController.createNote')
   .validator('StoreNoteValidator')
@@ -82,7 +82,8 @@ Route
  * PROJECTS
  */
 Route
-  .get('/api/projects', 'ProjectController.getProjects');
+  .get('/api/projects', 'ProjectController.getProjects')
+  .middleware(AUTH);
 Route
   .post('/api/projects', 'ProjectController.createProject')
   .validator('StoreProjectValidator')
@@ -99,7 +100,8 @@ Route
  * PROJECT RATINGS
  */
 Route
-  .get('/api/projectRatings', 'ProjectRatingController.getProjectRatings');
+  .get('/api/projectRatings', 'ProjectRatingController.getProjectRatings')
+  .middleware(AUTH);
 Route
   .post('/api/projectRatings', 'ProjectRatingController.setProjectRating')
   .middleware(AUTH);
@@ -108,7 +110,8 @@ Route
  * STANDUPS
  */
 Route
-  .get('/api/standups', 'StandupController.getStandups');
+  .get('/api/standups', 'StandupController.getStandups')
+  .middleware(AUTH);
 Route
   .post('/api/standups', 'StandupController.createStandup')
   .middleware(ADMIN);
