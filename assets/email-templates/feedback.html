@@ -123,6 +123,9 @@
       margin-left: 5px;
     }
 
+    .td-rating{
+      cursor: pointer;
+    }
     a {
       color: #3498db;
       text-decoration: underline;
@@ -155,7 +158,7 @@
       border-color: #0dd145;
     }
 
-    .btn.btn-good:hover {
+    .td-rating:hover .btn.btn-good{
       color: #fff;
       background-color: #0dd145;
     }
@@ -165,7 +168,7 @@
       border-color: #3598db;
     }
 
-    .btn.btn-ok:hover {
+    .td-rating:hover .btn.btn-ok{
       color: #fff;
       background-color: #3598db;
     }
@@ -175,7 +178,7 @@
       border-color: #ff7f27;
     }
 
-    .btn.btn-bad:hover {
+    .td-rating:hover .btn.btn-bad{
       color: #fff;
       background-color: #ff7f27;
     }
@@ -301,7 +304,6 @@
     </style>
   </head>
   <body>
-    <span class="preheader">Týdenní zpětná vazba Techfides #{{ week.number }}: {{ week.from }} - {{ week.to }}</span>
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="layout">
       <tr>
         <td>&nbsp;</td>
@@ -321,9 +323,11 @@
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="feedback">
                           <tr>
                             {{#each feedbackOptions}}
-                            <td>
-                              <img class="rating" src="{{feedbackImageUrl}}" title="{{type}}"/><br>
-                              <a class="btn btn-{{type}}" href="{{feedbackUrl}}">{{text}}</a>
+                            <td class="td-rating">
+                              <a href="{{feedbackUrl}}">
+                                <img class="rating" src="{{feedbackImageUrl}}" title="{{type}}"/><br>
+                                <div class="btn btn-{{type}}">{{text}}</div>
+                              </a>
                             </td>
                             {{/each}}
                           </tr>

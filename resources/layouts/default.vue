@@ -86,7 +86,7 @@ export default {
     items () {
       const items = [
         { icon: 'apps', title: 'Dashboard', to: '/' },
-        { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup' },
+        { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup', availableFor: ['admin', 'user']  },
         { icon: 'laptop_windows', title: 'Projekty', to: '/projects', availableFor: ['admin'] },
         { icon: 'bar_chart', title: 'Statistiky', to: '/statistics', availableFor: ['admin', 'user'] },
         { icon: 'face', title: 'Uživatelé', to: '/users', availableFor: ['admin'] },

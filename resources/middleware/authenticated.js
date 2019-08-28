@@ -9,6 +9,7 @@ const ADMIN_ROUTES = [
 // routes accessibled by role 'user'
 const USER_ROUTES = [
   'statistics',
+  'standup',
 ];
 
 export default function ({ app, store, route, redirect }) {
