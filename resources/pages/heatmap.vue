@@ -147,7 +147,7 @@ export default {
 }
 
 .bad {
-  background-color: #ff7f27;
+  background-color: #ffb327;
 }
 
 .light-green {
