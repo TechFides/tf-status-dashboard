@@ -5,13 +5,15 @@
       :disabled="disabled"
       width="1080"
     >
-      <div
-        slot="activator"
-        color="red lighten-2"
-      >
-        <i :class="getClassName()">{{ icon }}</i>
-      </div>
-
+      <template v-slot:activator="{ on, attrs }">
+        <div
+          color="red lighten-2"
+          v-bind="attrs"
+          v-on="on"
+        >
+          <i :class="getClassName()">{{ icon }}</i>
+        </div>
+      </template>
       <v-card>
         <v-card-title
           class="headline grey lighten-2"
@@ -223,6 +225,7 @@ export default {
 
 .material-icons.custom-font-size {
   font-size: 500% !important;
+  cursor: pointer;
 }
 
 .material-icons.red800 {

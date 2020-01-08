@@ -26,6 +26,14 @@ Route.post('/api/auth/logout', 'AuthController.logout');
 Route.get('/api/auth/me', 'AuthController.me');
 
 /**
+ * ALLY
+ */
+Route
+  .get('/auth/google', 'GoogleLoginController.redirect');
+Route
+  .get('/authenticated/google', 'GoogleLoginController.callback');
+
+/**
  * CONFIGURATION
  */
 Route.get('/api/configuration', 'SystemParamsController.getSystemParams').middleware(ADMIN);
@@ -41,7 +49,7 @@ Route
   .middleware(['auth', 'is:admin']);
 Route
   .get('/api/heatmap', 'HeatmapController.getHeatmapWeeks')
-  .middleware(['auth', 'is:admin']);
+  .middleware(ADMIN);
 
 /**
  * MEETING TIMES

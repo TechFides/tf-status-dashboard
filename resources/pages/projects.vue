@@ -5,8 +5,9 @@
     align-end
   >
     <v-btn
-      color="primary"
+      color="blue darken-2"
       dark
+      class="button"
       @click="createNewProject()"
     >
       <i class="material-icons">add</i>
@@ -76,6 +77,7 @@
               transition="fade-transition"
               :value="error.isVisible"
               type="error"
+              color="red darken-2"
             >
               {{ error.message }}
             </v-alert>
@@ -86,14 +88,14 @@
           <v-spacer />
           <v-btn
             color="blue darken-1"
-            flat
+            text
             @click.native="close"
           >
             Zrušit
           </v-btn>
           <v-btn
             color="blue darken-1"
-            flat
+            text
             @click.native="save"
           >
             Uložit
@@ -124,40 +126,41 @@
         :headers="headers"
         :items="filteredProject"
         item-key="code"
-        hide-actions
+        hide-default-footer
         fill-height
       >
         <template
-          slot="items"
-          slot-scope="props"
+          v-slot:item="props"
         >
-          <td class="text-xs-center element">
-            {{ props.item.code }}
-          </td>
-          <td class="text-xs-center element">
-            {{ props.item.description }}
-          </td>
-          <td class="text-xs-center element">
-            {{ isProjectActive(props.item.isActive, false) }}
-          </td>
-          <td class="text-xs-center">
-            {{ props.item.meetingTime.text }}
-          </td>
-          <td class="justify-center layout px-0">
-            <v-icon
-              small
-              class="mr-2"
-              @click="editItem(props.item)"
-            >
-              edit
-            </v-icon>
-            <v-icon
-              small
-              @click="deleteItem(props.item)"
-            >
-              delete
-            </v-icon>
-          </td>
+          <tr>
+            <td class="text-center element">
+              {{ props.item.code }}
+            </td>
+            <td class="text-center element">
+              {{ props.item.description }}
+            </td>
+            <td class="text-center element">
+              {{ isProjectActive(props.item.isActive, false) }}
+            </td>
+            <td class="text-center">
+              {{ props.item.meetingTime.text }}
+            </td>
+            <td class="justify-center layout px-0">
+              <v-icon
+                small
+                class="mr-2"
+                @click="editItem(props.item)"
+              >
+                edit
+              </v-icon>
+              <v-icon
+                small
+                @click="deleteItem(props.item)"
+              >
+                delete
+              </v-icon>
+            </td>
+          </tr>
         </template>
       </v-data-table>
     </v-card>
@@ -315,17 +318,20 @@ export default {
 </script>
 
 <style scoped>
-.fullscreen {
-  width: 100%;
-  height: 100%;
-}
+  .fullscreen {
+    width: 100%;
+    height: 100%;
+  }
 
-.element {
-  font-size: 1.5em !important;
-}
+  .element {
+    font-size: 1.3em !important;
+  }
 
-.header {
-  font-size: 2em !important;
-}
+  .button {
+    margin: 6px 8px;
+  }
 
+  .header {
+    font-size: 2em !important;
+  }
 </style>

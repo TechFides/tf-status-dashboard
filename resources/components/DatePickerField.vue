@@ -4,19 +4,22 @@
     :close-on-content-click="false"
     transition="scale-transition"
     offset-y
-    full-width
     min-width="290px"
   >
-    <v-text-field
-      slot="activator"
-      type="text"
-      :label="label"
-      append-icon="event"
-      readonly
-      clearable
-      :value="dateFormatted"
-      @input="datePicked"
-    />
+    <template v-slot:activator="{ on, attrs }">
+      <v-text-field
+        slot="activator"
+        type="text"
+        :label="label"
+        append-icon="event"
+        readonly
+        clearable
+        :value="dateFormatted"
+        v-bind="attrs"
+        v-on="on"
+        @input="datePicked"
+      />
+    </template>
     <v-date-picker
       v-model="modelDate"
       :first-day-of-week="1"

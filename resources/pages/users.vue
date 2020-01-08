@@ -5,9 +5,9 @@
     align-end
   >
     <v-btn
-      color="primary"
+      color="blue darken-2"
       dark
-      class="mb-2"
+      class="mb-2 button"
       @click="createNewUser()"
     >
       <i class="material-icons pad"> person_add</i>
@@ -118,6 +118,7 @@
               transition="fade-transition"
               :value="error.isVisible"
               type="error"
+              color="red darken-2"
             >
               {{ error.message }}
             </v-alert>
@@ -127,14 +128,14 @@
             <v-spacer />
             <v-btn
               color="blue darken-1"
-              flat
+              text
               @click.native="close"
             >
               Zrušit
             </v-btn>
             <v-btn
               color="blue darken-1"
-              flat
+              text
               @click.native="save"
             >
               Uložit
@@ -166,51 +167,52 @@
         :headers="headers"
         :items="filteredUsers"
         item-key="id"
-        hide-actions
+        hide-default-footer
         fill-height
         must-sort
         class="elevation-1 fullscreen"
       >
         <template
-          slot="items"
-          slot-scope="props"
+          v-slot:item="props"
         >
-          <td class="text-xs-left element">
-            {{ getFullName(props.item.firstName, props.item.lastName) }}
-          </td>
-          <td class="text-xs-left element">
-            {{ props.item.username }}
-          </td>
-          <td class="text-xs-left element">
-            {{ props.item.email }}
-          </td>
-          <td class="text-xs-left element">
-            {{ userRoles(props.item) }}
-          </td>
-          <td class="text-xs-center element">
-            {{ props.item.level }}
-          </td>
-          <td class="text-xs-center element">
-            {{ props.item.totalExp }}
-          </td>
-          <td class="text-xs-center element">
-            {{ isUserActive(props.item.isActive, false) }}
-          </td>
-          <td class="justify-center layout px-0">
-            <v-icon
-              small
-              class="mr-2"
-              @click="editItem(props.item)"
-            >
-              edit
-            </v-icon>
-            <v-icon
-              small
-              @click="deleteItem(props.item)"
-            >
-              delete
-            </v-icon>
-          </td>
+          <tr>
+            <td class="text-left element">
+              {{ getFullName(props.item.firstName, props.item.lastName) }}
+            </td>
+            <td class="text-left element">
+              {{ props.item.username }}
+            </td>
+            <td class="text-left element">
+              {{ props.item.email }}
+            </td>
+            <td class="text-left element">
+              {{ userRoles(props.item) }}
+            </td>
+            <td class="text-center element">
+              {{ props.item.level }}
+            </td>
+            <td class="text-center element">
+              {{ props.item.totalExp }}
+            </td>
+            <td class="text-center element">
+              {{ isUserActive(props.item.isActive, false) }}
+            </td>
+            <td class="justify-center layout px-0">
+              <v-icon
+                small
+                class="mr-2"
+                @click="editItem(props.item)"
+              >
+                edit
+              </v-icon>
+              <v-icon
+                small
+                @click="deleteItem(props.item)"
+              >
+                delete
+              </v-icon>
+            </td>
+          </tr>
         </template>
       </v-data-table>
     </v-card>
@@ -413,11 +415,11 @@ export default {
 }
 
 .element {
-  font-size: 1.5em !important;
+  font-size: 1.3em !important;
 }
 
-.header {
-  font-size: 2em !important;
+.button {
+  margin: 6px 8px;
 }
 
 .pad {

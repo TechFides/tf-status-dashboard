@@ -26,9 +26,6 @@ module.exports = {
     '~/plugins/auth-inject.js',
     '~/plugins/auth.js',
   ],
-  css: [
-    '~/assets/style/app.styl',
-  ],
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/auth',
@@ -43,7 +40,7 @@ module.exports = {
     strategies: {
       local: {
         endpoints: {
-          login: { url: '/api/auth/login', method: 'post', propertyName: 'token' },
+          login: { url: '/api/auth/login', method: 'post', propertyName: 'newToken' },
           logout: { url: '/api/auth/logout', method: 'post' },
           user: { url: '/api/auth/me', method: 'get', propertyName: 'data' },
         },

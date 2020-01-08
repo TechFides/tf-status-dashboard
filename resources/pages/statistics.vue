@@ -3,6 +3,7 @@
     <v-layout
       row
       reverse
+      align-end
     >
       <v-flex
         md1
@@ -13,32 +14,37 @@
           v-model="statisticsMonthDialog.isOpen"
           :return-value.sync="statisticsMonthDialog.month"
           persistent
-          lazy
-          full-width
           width="290px"
         >
-          <v-text-field
-            slot="activator"
-            v-model="statisticsMonthDialog.month"
-            label="Měsíc"
-            append-icon="event"
-            readonly
-          />
+          <template v-slot:activator="{ on, attrs }">
+            <div class="month-picker">
+              <v-text-field
+                v-model="statisticsMonthDialog.month"
+                label="Měsíc"
+                append-icon="event"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              />
+            </div>
+          </template>
           <v-date-picker
             v-model="statisticsMonthDialog.month"
             scrollable
             type="month"
+            header-color="blue darken-2"
+            color="blue darken-2"
           >
             <v-spacer />
             <v-btn
-              flat
+              text
               color="primary"
               @click="statisticsMonthDialog.isOpen = false"
             >
               Zrušit
             </v-btn>
             <v-btn
-              flat
+              text
               color="primary"
               @click="updateMonth($refs.dialogMonth)"
             >
@@ -58,21 +64,22 @@
         :headers="headers"
         :items="projectStatistics"
         item-key="projectId"
-        hide-actions
+        hide-default-footer
         fill-height
         must-sort
         class="elevation-1 fullscreen"
       >
         <template
-          slot="items"
-          slot-scope="props"
+          v-slot:item="props"
         >
-          <td class="text-xs-center element">
-            {{ props.item.projectCode }}
-          </td>
-          <td class="text-xs-center element">
-            {{ props.item.exps }}
-          </td>
+          <tr>
+            <td class="text-center element">
+              {{ props.item.projectCode }}
+            </td>
+            <td class="text-center element">
+              {{ props.item.exps }}
+            </td>
+          </tr>
         </template>
       </v-data-table>
     </v-layout>
@@ -150,7 +157,11 @@ export default {
 }
 
 .element {
-  font-size: 1.5em !important;
+  font-size: 1.3em !important;
+}
+
+.month-picker {
+  margin-right: 20px;
 }
 
 .header {
