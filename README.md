@@ -22,3 +22,17 @@ using SystemParam entity with the `feedbackCrontab` key in the database. Emails 
 the `node-schedule` library. The value of the feedback's crontab can be changed by admin on the settings page of the application.
 * Email template is located in the `./assets/email-templates` folder and is written using Handlebars syntax.
 * Here you can read more about [node-schedule](https://www.npmjs.com/package/node-schedule).
+
+## Deployment
+* Login to the application is possible via google accounts. For this is necessary several steps.
+* At first create project in your [google cloud console](https://console.cloud.google.com/cloud-resource-manager)
+and configure it.
+* In addition, in the newly created project set your authorized Javascript origin and authorized redirect URI.
+* For example: 
+    - localhost:3333
+    - localhost:3333/authenticated/google  
+* Finally set SECRET and CLIENT_ID keys to env file. This keys can be find in google console too. 
+* Example of this keys:
+    - GOOGLE_CLIENT_ID=53044...apps.googleusercontent.com
+    - GOOGLE_CLIENT_SECRET=w6Xac...
+* More detailed guide can be find [here](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
