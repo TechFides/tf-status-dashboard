@@ -13,9 +13,14 @@
     @keydown.enter="login"
     @keydown.esc="close"
   >
-    <v-btn slot="activator">
-      Přihlásit
-    </v-btn>
+    <template v-slot:activator="{ on, attrs }">
+      <v-btn
+        v-bind="attrs"
+        v-on="on"
+      >
+        Přihlásit
+      </v-btn>
+    </template>
     <v-card ref="form">
       <v-card-title>
         <span class="headline">Přihlásit</span>
@@ -42,11 +47,27 @@
                 required
               />
             </v-flex>
+            <v-flex xs12>
+              <div>
+                Přihlásit se přes
+              </div>
+              <v-btn
+                href="/auth/google"
+                class="google-button"
+              >
+                <v-icon
+                  left
+                >
+                  mdi-google
+                </v-icon> Google
+              </v-btn>
+            </v-flex>
           </v-layout>
           <v-alert
             transition="fade-transition"
             :value="error.isVisible"
             type="error"
+            color="red darken-2"
           >
             {{ error.message }}
           </v-alert>
@@ -57,14 +78,14 @@
         <v-spacer />
         <v-btn
           color="blue darken-1"
-          flat
+          text
           @click="close"
         >
           Zavřít
         </v-btn>
         <v-btn
           color="blue darken-1"
-          flat
+          text
           @click="submit"
         >
           Přihlásit
@@ -134,4 +155,8 @@
 </script>
 
 <style scoped>
+  .google-button {
+    margin: 0.5rem 0 0 0;
+  }
+
 </style>

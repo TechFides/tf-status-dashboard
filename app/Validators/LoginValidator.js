@@ -3,8 +3,9 @@
 class LoginValidator {
   get rules () {
     return {
-      username: `required|max:255|min:1`,
-      password: 'required|max:255|min:1',
+      username: `max:255|min:1`,
+      password: 'max:255|min:1',
+      token: 'min:1',
     };
   }
 }

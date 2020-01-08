@@ -9,9 +9,14 @@
       @submit.prevent="saveSettings"
     >
       <v-container>
-        <h3 class="section-header">
-          E-mail pro zpětnou vazbu
-        </h3>
+        <v-layout
+          row
+          justify-start
+        >
+          <h3 class="section-header">
+            E-mail pro zpětnou vazbu
+          </h3>
+        </v-layout>
         <v-layout
           row
           wrap
@@ -35,20 +40,24 @@
               transition="scale-transition"
               max-width="290px"
               min-width="290px"
-              full-width
               offset-y
-              lazy
             >
-              <v-text-field
-                slot="activator"
-                v-model="form.feedbackCrontab.time"
-                label="Čas"
-                prepend-icon="access_time"
-                readonly
-              />
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  slot="activator"
+                  v-model="form.feedbackCrontab.time"
+                  label="Čas"
+                  prepend-icon="access_time"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                />
+              </template>
               <v-time-picker
                 v-model="form.feedbackCrontab.time"
                 format="24hr"
+                header-color="blue darken-2"
+                color="blue darken-2"
                 full-width
                 @change="$refs.menu.save(form.feedbackCrontab.time)"
               />
@@ -60,7 +69,8 @@
           justify-end
         >
           <v-btn
-            color="info"
+            color="blue darken-2"
+            dark
             type="submit"
             :loading="loading"
           >

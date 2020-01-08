@@ -7,10 +7,7 @@
       class="note-card mt-3"
     >
       <div class="pa-2">
-        <v-layout
-          row
-          nowrap
-        >
+        <div class="note-text-alignment">
           <h2>{{ item.projectCode }}</h2>
           <v-spacer />
           <v-icon
@@ -29,16 +26,12 @@
           >
             done
           </v-icon>
-        </v-layout>
+        </div>
         <div class="note-text mb-2">
           {{ item.text }}
         </div>
         <v-divider />
-        <v-layout
-          class="mt-1"
-          row
-          nowrap
-        >
+        <div class="note-text-alignment">
           <v-flex>
             {{ formatDate(item.created) }}
           </v-flex>
@@ -51,7 +44,7 @@
             </v-icon>
             {{ formatDate(item.deadlineDate) }}
           </v-flex>
-        </v-layout>
+        </div>
       </div>
     </v-card>
   </div>
@@ -109,16 +102,23 @@ export default {
 </script>
 
 <style scoped>
-.note-text {
-  white-space: pre-line;
-}
-.note-columns {
-  column-count: 5;
-  column-gap: 20px;
-  column-fill: balance;
-}
-.note-card {
-  display: inline-block;
-  width: 100%;
-}
+  .note-text {
+    white-space: pre-line;
+  }
+
+  .note-columns {
+    column-count: 5;
+    column-gap: 20px;
+    column-fill: balance;
+  }
+
+  .note-card {
+    display: inline-block;
+    width: 100%;
+  }
+
+  .note-text-alignment {
+      display: flex;
+      flex-direction: row;
+    }
 </style>

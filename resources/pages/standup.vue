@@ -10,15 +10,20 @@
         max-width="500px"
         :persistent="true"
       >
-        <v-btn
-          slot="activator"
-          color="primary"
-          right
-          @click="resetNote"
-        >
-          <i class="material-icons">add</i>
-          Přidat cíl
-        </v-btn>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            color="blue darken-2"
+            dark
+            right
+            class="margin button"
+            v-bind="attrs"
+            v-on="on"
+            @click="resetNote"
+          >
+            <i class="material-icons">add</i>
+            Přidat cíl
+          </v-btn>
+        </template>
         <v-form @submit.prevent="createNote">
           <v-card>
             <v-card-title>
@@ -52,6 +57,7 @@
                 transition="fade-transition"
                 :value="error.isVisible"
                 type="error"
+                color="red darken-2"
               >
                 {{ error.message }}
               </v-alert>
@@ -60,14 +66,14 @@
               <v-spacer />
               <v-btn
                 color="blue darken-1"
-                flat
+                text
                 @click.native="resetNote"
               >
                 Zavřít
               </v-btn>
               <v-btn
                 color="blue darken-1"
-                flat
+                text
                 type="submit"
               >
                 Uložit
@@ -80,7 +86,8 @@
       <v-btn
         v-show="isAdmin()"
         class="standup-button"
-        color="info"
+        color="light-blue accent-4"
+        dark
         @click="createStandup()"
       >
         <i class="material-icons">add</i>
@@ -108,6 +115,7 @@
               transition="fade-transition"
               :value="error.isVisible"
               type="error"
+              color="red darken-2"
             >
               {{ error.message }}
             </v-alert>
@@ -116,14 +124,14 @@
             <v-spacer />
             <v-btn
               color="blue darken-1"
-              flat
+              text
               @click.native="resetStandup"
             >
               Zavřít
             </v-btn>
             <v-btn
               color="blue darken-1"
-              flat
+              text
               @click.native="save"
             >
               Uložit
@@ -141,32 +149,36 @@
           v-model="monthPickerIsOpen"
           :return-value.sync="modalItem.standupMonth"
           persistent
-          lazy
-          full-width
           width="290px"
+          light
         >
-          <v-text-field
-            slot="activator"
-            v-model="modalItem.standupMonth"
-            label="Měsíc"
-            append-icon="event"
-            readonly
-          />
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="modalItem.standupMonth"
+              label="Měsíc"
+              append-icon="event"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+            />
+          </template>
           <v-date-picker
             v-model="modalItem.standupMonth"
             scrollable
             type="month"
+            header-color="blue darken-2"
+            color="blue darken-2"
           >
             <v-spacer />
             <v-btn
-              flat
+              text
               color="primary"
               @click="monthPickerIsOpen = false"
             >
               Zrušit
             </v-btn>
             <v-btn
-              flat
+              text
               color="primary"
               @click="updateStandup($refs.dialogMonth)"
             >
@@ -192,80 +204,90 @@
       <v-data-table
         :headers="headers"
         :items="rows"
-        hide-actions
+        hide-default-header
+        hide-default-footer
         fill-height
         no-data-text="Žádná data"
         class="elevation-1 fullscreen"
       >
         <template
-          slot="headers"
-          slot-scope="props"
+          v-slot:header="{ props }"
         >
-          <tr>
-            <th
-              v-for="h in props.headers"
-              :key="h.text"
-            >
-              <nav>
-                <div class="text-xs-center header align-project">
-                  {{ h.text }}
-                </div>
-                <v-tooltip bottom>
-                  <i
-                    v-show="isMissingNote(h.text, h.hasIcon)"
-                    slot="activator"
-                    class="material-icons alert-icon"
-                  >
-                    report_problem
-                  </i>
-                  <span>Chybí cíl na další standup</span>
-                </v-tooltip>
-              </nav>
-            </th>
-          </tr>
-          <tr class="table__row-bottom-border">
-            <th
-              v-for="h in props.headers"
-              :key="h.text"
-              class="element"
-            >
-              {{ h.meetingTime ? h.meetingTime.dayAndTime : '' }}
-            </th>
-          </tr>
+          <thead>
+            <tr>
+              <th
+                v-for="h in props.headers"
+                :key="h.text"
+                class="text-center header-text"
+              >
+                <nav>
+                  <div class="text-xs-center header align-project">
+                    {{ h.text }}
+                  </div>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <i
+                        v-show="isMissingNote(h.text, h.hasIcon)"
+                        class="material-icons alert-icon"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        report_problem
+                      </i>
+                    </template>
+                    <span>Chybí cíl na další standup</span>
+                  </v-tooltip>
+                </nav>
+              </th>
+            </tr>
+          </thead>
+          <thead>
+            <tr>
+              <th
+                v-for="h in props.headers"
+                :key="h.text"
+                class="text-center header-text"
+              >
+                {{ h.meetingTime ? h.meetingTime.dayAndTime : '' }}
+              </th>
+            </tr>
+          </thead>
         </template>
         <template
-          slot="items"
-          slot-scope="{ item }"
+          v-slot:item="props"
         >
-          <td class="text-xs-center element">
-            {{ formatDate(item.standup.date) }}
-          </td>
+          <tr>
+            <td class="text-center element">
+              {{ formatDate(props.item.standup.date) }}
+            </td>
 
-          <td
-            v-for="(i, itemIndex) in item.ratings"
-            :key="itemIndex"
-          >
-            <project-status-picker
-              :project-rating="i.rating"
-              :project-id="i.projectId"
-              :standup-id="i.standupId"
-              :disabled="!isAdmin() && !isUser()"
-              :date="formatDate(item.standup.date)"
-            />
-          </td>
-          <td class="justify-center layout px-0">
-            <v-icon
-              class="mr-2"
-              @click="editStandup(item.standup)"
+            <td
+              v-for="(i, itemIndex) in props.item.ratings"
+              :key="itemIndex"
+              class="text-center"
             >
-              edit
-            </v-icon>
-            <v-icon
-              @click="deleteStandup(item.standup)"
-            >
-              delete
-            </v-icon>
-          </td>
+              <project-status-picker
+                :project-rating="i.rating"
+                :project-id="i.projectId"
+                :standup-id="i.standupId"
+                :disabled="!isAdmin() && !isUser()"
+                :date="formatDate(props.item.standup.date)"
+              />
+            </td>
+            <td class="text-center px-0">
+              <v-icon
+                class="mr-2"
+                @click="editStandup(props.item.standup)"
+              >
+                edit
+              </v-icon>
+              <v-icon
+                @click="deleteStandup(props.item.standup)"
+              >
+                delete
+              </v-icon>
+            </td>
+          </tr>
         </template>
       </v-data-table>
     </v-layout>
@@ -350,7 +372,7 @@ export default {
           text: 'Datum',
           align: 'left',
           sortable: false,
-          value: 'Datum',
+          value: 'date',
           hasIcon: false,
         },
         ...formattedProjectsForTable,
@@ -358,7 +380,7 @@ export default {
           text: 'Akce',
           align: 'left',
           sortable: false,
-          value: 'Akce',
+          value: 'action',
           hasIcon: false,
         },
       ];
@@ -599,45 +621,54 @@ export default {
 </script>
 
 <style scoped>
-.fullscreen {
-  width: 100%;
-  height: 100%;
-}
+  .fullscreen {
+    width: 100%;
+    height: 100%;
+  }
 
-.standup-button {
-  margin-right: 30px;
-}
+  .standup-button {
+    margin-right: 20px;
+    margin-top: 6px;
+  }
 
-.element {
-  font-size: 1.5em !important;
-}
+  .element {
+    font-size: 1.5em !important;
+  }
 
-.pad {
-  padding-right: 2%;
-}
+  .pad {
+    padding-right: 2%;
+  }
 
-.margin {
-  margin-right: 2%;
-}
+  .margin {
+    margin-right: 2%;
+  }
 
-.header {
-  font-size: 3em !important;
-}
+  .header {
+    font-size: 2em !important;
+  }
 
-.material-icons.alert-icon {
-  color:#c62828;
-  vertical-align: top;
-}
+  .material-icons.alert-icon {
+    color:#c62828;
+    vertical-align: top;
+  }
 
-.align-project {
-  display: inline-block;
-}
+  .align-project {
+    display: inline-block;
+  }
 
-.select-wrapper {
-  max-width: 350px;
-}
+  .select-wrapper {
+    max-width: 350px;
+  }
 
-.table__row-bottom-border {
-  border-bottom: 1px solid rgba(0,0,0,0.12);
-}
+  .header-text {
+    color: rgba(0,0,0,.54) !important;
+    font-weight: 500 !important;
+    font-size: 1.2em !important;
+    padding: 0;
+    min-width: 150px;
+  }
+
+  .button {
+    margin-top: 6px;
+  }
 </style>

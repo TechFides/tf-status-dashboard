@@ -5,8 +5,9 @@
     align-end
   >
     <v-btn
-      color="primary"
+      color="blue darken-2"
       dark
+      class="button"
       @click="toggleDialogVisibility"
     >
       <i class="material-icons">add</i>
@@ -70,6 +71,7 @@
               transition="fade-transition"
               :value="error.isVisible"
               type="error"
+              color="red darken-2"
             >
               {{ error.message }}
             </v-alert>
@@ -80,14 +82,14 @@
           <v-spacer />
           <v-btn
             color="blue darken-1"
-            flat
+            text
             @click="toggleDialogVisibility"
           >
             Zrušit
           </v-btn>
           <v-btn
             color="blue darken-1"
-            flat
+            text
             @click="submit"
           >
             Uložit
@@ -100,41 +102,42 @@
       :headers="headers"
       :items="meetingTimes"
       item-key="id"
-      hide-actions
+      hide-default-footer
       fill-height
       class="elevation-1 fullscreen"
     >
       <template
-        slot="items"
-        slot-scope="{ item }"
+        v-slot:item="props"
       >
-        <td class="text-xs-center element">
-          {{ item.name }}
-        </td>
-        <td class="text-xs-center element">
-          {{ item.time }}
-        </td>
-        <td class="text-xs-center element">
-          {{ item.weekDay }}
-        </td>
-        <td class="text-xs-center element">
-          {{ item.projects }}
-        </td>
-        <td class="justify-center layout px-0">
-          <v-icon
-            small
-            class="mr-2"
-            @click="toggleDialogVisibility(item)"
-          >
-            edit
-          </v-icon>
-          <v-icon
-            small
-            @click="deleteSitDownMeetingTime(item.id)"
-          >
-            delete
-          </v-icon>
-        </td>
+        <tr>
+          <td class="text-center element">
+            {{ props.item.name }}
+          </td>
+          <td class="text-center element">
+            {{ props.item.time }}
+          </td>
+          <td class="text-center element">
+            {{ props.item.weekDay }}
+          </td>
+          <td class="text-center element">
+            {{ props.item.projects }}
+          </td>
+          <td class="justify-center layout px-0">
+            <v-icon
+              small
+              class="mr-2"
+              @click="toggleDialogVisibility(item)"
+            >
+              edit
+            </v-icon>
+            <v-icon
+              small
+              @click="deleteSitDownMeetingTime(item.id)"
+            >
+              delete
+            </v-icon>
+          </td>
+        </tr>
       </template>
     </v-data-table>
   </v-layout>
@@ -285,5 +288,13 @@
     justify-content: center;
     margin-top: 20px;
     margin-bottom: 20px;
+  }
+
+  .element {
+    font-size: 1.3em !important;
+  }
+
+  .button {
+    margin: 6px 8px;
   }
 </style>

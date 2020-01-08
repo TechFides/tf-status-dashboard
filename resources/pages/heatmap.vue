@@ -8,39 +8,39 @@
       <v-data-table
         :headers="headers"
         :items="rows"
-        hide-actions
+        hide-default-footer
         fill-height
         no-data-text="Žádná data"
         class="elevation-1 fullscreen"
       >
         <template
-          slot="headers"
-          slot-scope="props"
+          v-slot:item="props"
         >
           <tr>
             <th
               v-for="h in props.headers"
               :key="h.text"
             >
-              <div class="text-xs-center header align-project">
+              <div class="text-center header align-project">
                 {{ h.text }}
               </div>
             </th>
           </tr>
         </template>
         <template
-          slot="items"
-          slot-scope="{ item }"
+          v-slot:item="props"
         >
-          <td class="text-xs-center element">
-            {{ item.fullName }}
-          </td>
+          <tr>
+            <td class="text-center element">
+              {{ props.item.fullName }}
+            </td>
 
-          <td
-            v-for="(i, itemIndex) in item.feedbacks"
-            :key="itemIndex"
-            :class="getClassName(i.value)"
-          />
+            <td
+              v-for="(i, itemIndex) in props.item.feedbacks"
+              :key="itemIndex"
+              :class="getClassName(i.value)"
+            />
+          </tr>
         </template>
       </v-data-table>
     </v-layout>
@@ -117,40 +117,40 @@ export default {
 </script>
 
 <style scoped>
-.fullscreen {
-  width: 100%;
-  height: 100%;
-}
+  .fullscreen {
+    width: 100%;
+    height: 100%;
+  }
 
-.element {
-  font-size: 1.5em !important;
-}
+  .element {
+    font-size: 1.3em !important;
+  }
 
-.pad {
-  padding-right: 2%;
-}
+  .pad {
+    padding-right: 2%;
+  }
 
-.margin {
-  margin-right: 2%;
-}
+  .margin {
+    margin-right: 2%;
+  }
 
-.header {
-  font-size: 2em !important;
-}
+  .header {
+    font-size: 2em !important;
+  }
 
-.good {
-  background-color: #0dd145;
-}
+  .good {
+    background-color: #0dd145;
+  }
 
-.ok {
-  background-color: #3598db;
-}
+  .ok {
+    background-color: #3598db;
+  }
 
-.bad {
-  background-color: #ffb327;
-}
+  .bad {
+    background-color: #ffb327;
+  }
 
-.light-green {
-  background-color: #92D050;
-}
+  .light-green {
+    background-color: #92D050;
+  }
 </style>
