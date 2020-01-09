@@ -125,6 +125,7 @@
       <v-data-table
         :headers="headers"
         :items="filteredProject"
+        :items-per-page="999"
         item-key="code"
         hide-default-footer
         fill-height
