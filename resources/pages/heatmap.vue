@@ -8,6 +8,7 @@
       <v-data-table
         :headers="headers"
         :items="rows"
+        :items-per-page="999"
         hide-default-footer
         fill-height
         no-data-text="Žádná data"

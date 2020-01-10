@@ -63,6 +63,7 @@
       <v-data-table
         :headers="headers"
         :items="projectStatistics"
+        :items-per-page="999"
         item-key="projectId"
         hide-default-footer
         fill-height

@@ -9,7 +9,7 @@
     v-else
     v-model="isOpen"
     transition="scale-transition"
-    max-width="600px"
+    max-width="350px"
     @keydown.enter="login"
     @keydown.esc="close"
   >
@@ -54,6 +54,7 @@
               <v-btn
                 href="/auth/google"
                 class="google-button"
+                color="light-blue lighten-1"
               >
                 <v-icon
                   left
@@ -157,6 +158,9 @@
 <style scoped>
   .google-button {
     margin: 0.5rem 0 0 0;
+    width: 100%;
+    min-height: 45px;
+    color: white;
   }
 
 </style>

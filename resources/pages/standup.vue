@@ -204,6 +204,7 @@
       <v-data-table
         :headers="headers"
         :items="rows"
+        :items-per-page="999"
         hide-default-header
         hide-default-footer
         fill-height

@@ -2,6 +2,7 @@
   <v-layout
     column
     align-start
+    class="padding-content"
   >
     <v-form
       v-model="valid"
@@ -151,11 +152,15 @@ export default {
 </script>
 
 <style scoped>
-.settings-form {
-  width: 100%;
-}
+  .settings-form {
+    width: 100%;
+  }
 
-.section-header {
-  margin-bottom: 5px;
-}
+  .section-header {
+    margin-bottom: 5px;
+  }
+
+  .padding-content {
+    padding: 1rem;
+  }
 </style>

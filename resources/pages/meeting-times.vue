@@ -101,6 +101,7 @@
     <v-data-table
       :headers="headers"
       :items="meetingTimes"
+      :items-per-page="999"
       item-key="id"
       hide-default-footer
       fill-height
