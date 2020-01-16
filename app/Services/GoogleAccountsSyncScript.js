@@ -34,13 +34,13 @@ async function isUserExists(email) {
 function fetchUsersEmail () {
   return new Promise(function(resolve, reject) {
     connection.query('SELECT email FROM users', (err, data) => (err ? reject(err) : resolve(data)));
-  })
+  });
 }
 
 function deleteUser (email) {
   return new Promise(function(resolve, reject) {
     connection.query(`DELETE FROM users WHERE email = "${email}" or email IS NULL`, (err, data) => (err ? reject(err) : resolve(data)));
-  })
+  });
 }
 
 async function synchronizeAccounts () {
