@@ -37,7 +37,7 @@ and configure it.
     - GOOGLE_CLIENT_SECRET=w6Xac...
 * More detailed guide can be find [here](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
 
-- Accounts in Dashboard can be synchronize with Gsuite via script `GoogleAccountsSyncScript.js`. This script
+- Accounts in Dashboard can be synchronize with Gsuite via script `app/Services/GoogleAccountsSyncScript.js`. This script
 use G Suite Domain-Wide Delegation of Authority and for this is needed create service account and credentials. It is possible from [here](https://console.cloud.google.com/iam-admin/serviceaccounts).
 - Next is necessary to delegate domain-wide authority to newly created service account. In the `One or More API Scopes` field set this scope `https://www.googleapis.com/auth/admin.directory.user.readonly`.
  More information about this can be find [here](https://developers.google.com/admin-sdk/directory/v1/guides/delegation).
