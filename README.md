@@ -41,4 +41,4 @@ and configure it.
 use G Suite Domain-Wide Delegation of Authority and for this is needed create service account and credentials. It is possible from [here](https://console.cloud.google.com/iam-admin/serviceaccounts).
 - Next is necessary to delegate domain-wide authority to newly created service account. In the `One or More API Scopes` field set this scope `https://www.googleapis.com/auth/admin.directory.user.readonly`.
  More information about this can be find [here](https://developers.google.com/admin-sdk/directory/v1/guides/delegation).
-- Finally set variables in your env file from credential file. You need to set GOOGLE_SERVICE_EMAIL, GOOGLE_ADMIN_EMAIL (it is email of person who has admin privileges in your domain) and GOOGLE_PRIVATE_KEY.
+- Finally set variables in your env file from credential file. You need to set GOOGLE_SERVICE_EMAIL, ADMIN_EMAIL (it is email of person who has admin privileges in your domain) and GOOGLE_PRIVATE_KEY.
