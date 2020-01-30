@@ -146,7 +146,19 @@ export const mutations = {
     state.standupRatings = newStandupRatings;
   },
   setProjectStatistics (state, projectStatistics) {
-    state.projectStatistics = projectStatistics;
+    state.projectStatistics = projectStatistics.map(s => ({
+      id: s.id,
+      userName: `${s.first_name} ${s.last_name}`,
+      project: s.projectParticipations.map(p => ({
+        code: p.project.code,
+        timeSpent: p.time_spent,
+        projectRating: p.project.standupProjectRating.map(r => ({
+          id: r.projectRating.id,
+          value: r.projectRating.value,
+          date: r.standup.date,
+        })),
+      })),
+    })).sort(sortByProperty.bind(this, 'projectCode'));
   },
   setNotes (state, notes) {
     state.notes = notes.map(n => ({

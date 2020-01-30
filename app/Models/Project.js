@@ -10,6 +10,15 @@ class Project extends Model {
   notes () {
     return this.hasMany('App/Models/Note');
   }
+
+  projectParticipations () {
+    return this.hasMany('App/Models/UserProjectParticipation');
+  }
+
+  standupProjectRating () {
+    return this.hasMany('App/Models/StandupProjectRating');
+  }
+
   meetingTime () {
     return this.belongsTo('App/Models/MeetingTime');
   }

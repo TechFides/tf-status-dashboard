@@ -31,7 +31,8 @@ async function getUserFromJira (email) {
 }
 
 async function getProjectIssuesFromJira () {
-  const actualDate = format(new Date(), 'YYYY-MM-DD');
+  //const actualDate = format(new Date(), 'YYYY-MM-DD');
+  const actualDate = '2019-12-01'
   const MAX_RESULT = 1000;
   let startAt = 0;
   let allIssues = [];
@@ -66,8 +67,10 @@ async function getAllWorklogsFromJira (issues, jiraUserId) {
       }
     }
     if (timeSpentSum > 0) {
+      let projectId = await fetchProjectFromDB(getProjectNameFromKey(issue.key));
       const worklogObj = {
         userId: userMap.get(jiraUserId),
+        projectId: projectId[0] ? projectId[0].id : 999,
         timeSpent: timeSpentSum + isEmpty(worklogMap.get(getProjectNameFromKey(issue.key))),
       };
       worklogMap.set(getProjectNameFromKey(issue.key), worklogObj);
@@ -76,7 +79,7 @@ async function getAllWorklogsFromJira (issues, jiraUserId) {
   }
 
   for (const [key, value] of worklogMap.entries()) {
-    await insertWorklogToDB(value.userId, key, value.timeSpent);
+    await insertWorklogToDB(value.userId, value.projectId, value.timeSpent);
   }
 
   worklogMap.clear();
@@ -89,11 +92,21 @@ function fetchUsersFromDB () {
   });
 }
 
-function insertWorklogToDB (userId, projectName, timeSpent) {
-  const worklog = {user_id: userId, project_name: projectName, time_spent: timeSpent};
+function fetchProjectFromDB (projectKey) {
+  const project = {code: projectKey}
 
   return new Promise(function(resolve, reject) {
-    connection.query('INSERT INTO worklogs SET ?', worklog, (err, data) => (err ? reject(err) : resolve(data)));
+    connection.query('SELECT id FROM projects WHERE ?', project, (err, data) => (err ? reject(err) : resolve(data)));
+  });
+}
+
+function insertWorklogToDB (userId, projectId, timeSpent) {
+  // TODO actualMonth is just temp variable, it would be better set date from UI
+  const actualMonth = new Date();
+  const worklog = {user_id: userId, project_id: projectId, time_spent: timeSpent, date: actualMonth};
+
+  return new Promise(function(resolve, reject) {
+    connection.query('INSERT INTO user_project_participations SET ?', worklog, (err, data) => (err ? reject(err) : resolve(data)));
   });
 }
 
@@ -114,11 +127,11 @@ isEmpty = (worklog) => {
 };
 
 isDateInThisMonth = (dateToCompare) => {
-  let date = new Date();
-  date.setDate(1);
-  const createDayToCompare = new Date(dateToCompare);
+  let date = new Date(2019, 11, 2);
+  //date.setDate(1);
+  const formattedDayToCompare = new Date(dateToCompare);
 
-  return createDayToCompare >= date;
+  return formattedDayToCompare >= date;
 };
 
 getProjectNameFromKey = (projectKey) => {

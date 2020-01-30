@@ -63,24 +63,76 @@
       <v-data-table
         :headers="headers"
         :items="projectStatistics"
+        :expanded.sync="expanded"
         :items-per-page="999"
-        item-key="projectId"
+        item-key="id"
         hide-default-footer
         fill-height
+        single-expand
         must-sort
         class="elevation-1 fullscreen"
       >
         <template
-          v-slot:item="props"
+          v-slot:item="{item, expand, isExpanded}"
         >
           <tr>
             <td class="text-center element">
-              {{ props.item.projectCode }}
+              {{ item.userName }}
             </td>
             <td class="text-center element">
-              {{ props.item.exps }}
+              {{ item.userName }}
+            </td>
+            <td class="text-center element">
+              {{ item.userName }}
+            </td>
+            <td class="text-center element">
+              {{ item.userName }}
+            </td>
+            <td class="text-center element">
+              {{ item.userName }}
+            </td>
+            <td class="text-center element">
+              {{ item.userName }}
+            </td>
+            <td class="text-center px-0">
+              <v-icon
+                class="mr-2"
+                @click="getProjectsStandupDates()"
+              >
+                mdi-plus
+              </v-icon>
+            </td>
+            <td class="text-left px-0">
+              <v-icon
+                class="mr-2"
+                @click="expand(!isExpanded)"
+              >
+                {{isExpanded ? "mdi-chevron-up" : "mdi-chevron-down"}}
+              </v-icon>
             </td>
           </tr>
+        </template>
+        <template
+          v-slot:expanded-item="{ headers}"
+        >
+          <td
+            :colspan="headers.length"
+          >
+            <v-data-table
+              :headers="expandedHeaders"
+              :items="projectStatistics"
+              item-key="id"
+              hide-default-footer
+              fill-height
+              must-sort
+              class="elevation-1 fullscreen"
+            >
+              <template
+                v-slot:item="{item}"
+              >
+              </template>
+            </v-data-table>
+          </td>
         </template>
       </v-data-table>
     </v-layout>
@@ -93,6 +145,7 @@ import { mapState } from 'vuex';
 export default {
   data () {
     return {
+      expanded: [],
       statisticsMonthDialog: {
         isOpen: false,
         month: null,
@@ -106,16 +159,89 @@ export default {
     headers: function () {
       return [
         {
-          text: 'Projekt',
+          text: 'Jméno',
           align: 'center',
           sortable: true,
           value: 'projectCode',
         },
         {
-          text: 'Expy za měsíc',
+          text: 'Extra XP',
           align: 'center',
           sortable: true,
           value: 'exps',
+        },
+        {
+          text: 'XP za měsíc',
+          align: 'center',
+          sortable: true,
+          value: 'exps',
+        },
+        {
+          text: 'Celkem XP',
+          align: 'center',
+          sortable: true,
+          value: 'exps',
+        },
+        {
+          text: 'Stávající level',
+          align: 'center',
+          sortable: true,
+          value: 'exps',
+        },
+        {
+          text: 'Nový level',
+          align: 'center',
+          sortable: true,
+          value: 'exps',
+        },
+        {
+          text: 'Přidat extra XP',
+          align: 'center',
+          sortable: false,
+          value: 'actions',
+        },
+        {
+          text: '',
+          align: 'center',
+          sortable: false,
+          value: 'expand',
+        },
+      ];
+    },
+    expandedHeaders () {
+      const projectsStandupDates = this.getProjectsStandupDates();
+      const standupDate = projectsStandupDates.map(p => ({
+        text: p.date,
+        align: 'center',
+        sortable: false,
+        value: p.week,
+      }));
+
+      return [
+        {
+          text: 'Projekty',
+          align: 'center',
+          sortable: true,
+          value: 'projectCode',
+        },
+        {
+          text: 'Hodiny',
+          align: 'center',
+          sortable: true,
+          value: 'timeSpent',
+        },
+        {
+          text: 'koeficient',
+          align: 'center',
+          sortable: true,
+          value: 'timeSpent',
+        },
+        ...standupDate,
+        {
+          text: 'XP za projekty',
+          align: 'center',
+          sortable: true,
+          value: 'projectsXp',
         },
       ];
     },
@@ -130,6 +256,19 @@ export default {
     await store.dispatch('getProjectStatistics', params);
   },
   methods: {
+    addExp() {
+      console.log(this.expanded);
+    },
+
+    getProjectsStandupDates() {
+      const filteredUserStatistics = this.projectStatistics.filter(userStat => userStat.id === this.expanded[0].id);
+      const standupDates = filteredUserStatistics[0].project[0].projectRating.map(p => ({
+        date: p.date,
+      }));
+
+      return standupDates;
+    },
+
     updateMonth (monthInput) {
       if (!this.statisticsMonthDialog.month) {
         this.statisticsMonthDialog.isOpen = false;
@@ -152,20 +291,20 @@ export default {
 </script>
 
 <style scoped>
-.fullscreen {
-  width: 100%;
-  height: 100%;
-}
+  .fullscreen {
+    width: 100%;
+    height: 100%;
+  }
 
-.element {
-  font-size: 1.3em !important;
-}
+  .element {
+    font-size: 1.3em !important;
+  }
 
-.month-picker {
-  margin-right: 20px;
-}
+  .month-picker {
+    margin-right: 20px;
+  }
 
-.header {
-  font-size: 2em !important;
-}
+  .header {
+    font-size: 2em !important;
+  }
 </style>
