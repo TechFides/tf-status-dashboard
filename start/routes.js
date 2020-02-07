@@ -136,6 +136,9 @@ Route
 Route
   .get('/api/statistics/projects', 'StatisticsController.getProjectStatistics')
   .middleware(AUTH);
+Route
+  .post('/api/statistics/user', 'StatisticsController.addUserBonusXp')
+  .middleware(ADMIN);
 
 /**
  * USERS

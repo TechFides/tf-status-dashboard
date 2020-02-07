@@ -78,15 +78,6 @@
                   />
                 </v-flex>
                 <v-flex
-                  xs6
-                >
-                  <v-text-field
-                    v-model="modalItem.totalExp"
-                    type="number"
-                    label="Expy"
-                  />
-                </v-flex>
-                <v-flex
                   xs12
                 >
                   <v-select
@@ -190,12 +181,6 @@
               {{ userRoles(props.item) }}
             </td>
             <td class="text-center element">
-              {{ props.item.level }}
-            </td>
-            <td class="text-center element">
-              {{ props.item.totalExp }}
-            </td>
-            <td class="text-center element">
               {{ isUserActive(props.item.isActive, false) }}
             </td>
             <td class="justify-center layout px-0">
@@ -244,7 +229,6 @@ export default {
         firstName: '',
         lastName: '',
         password: '',
-        totalExp: 0,
         isActive: true,
         sendFeedback: true,
         username: '',
@@ -255,7 +239,6 @@ export default {
         firstName: '',
         lastName: '',
         password: '',
-        totalExp: 0,
         isActive: true,
         sendFeedback: true,
         username: '',
@@ -300,18 +283,6 @@ export default {
           value: 'roles',
         },
         {
-          text: 'Level',
-          align: 'center',
-          sortable: true,
-          value: 'level',
-        },
-        {
-          text: 'Expy',
-          align: 'center',
-          sortable: true,
-          value: 'totalExp',
-        },
-        {
           text: 'Aktivní',
           align: 'center',
           sortable: true,
@@ -332,9 +303,7 @@ export default {
         return element.username.toUpperCase().match(uppercasedFilterText) ||
           this.getFullName(element.firstName, element.lastName).toUpperCase().match(uppercasedFilterText) ||
           this.isUserActive(element.isActive, true).match(uppercasedFilterText) ||
-          this.userRoles(element).toUpperCase().match(uppercasedFilterText) ||
-          element.level.toString().match(this.filteringText) ||
-          element.totalExp.toString().match(this.filteringText);
+          this.userRoles(element).toUpperCase().match(uppercasedFilterText);
       });
     },
     roleItems () {
@@ -362,7 +331,6 @@ export default {
         email: item.email,
         firstName: item.firstName,
         lastName: item.lastName,
-        totalExp: item.totalExp,
         isActive: item.isActive === 1,
         sendFeedback: item.sendFeedback === 1,
         username: item.username,

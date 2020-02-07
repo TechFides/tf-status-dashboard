@@ -5,6 +5,65 @@
       reverse
       align-end
     >
+      <v-dialog
+        v-model="dialog"
+        max-width="450px"
+        transition="scale-transition"
+        :persistent="true"
+      >
+        <v-card>
+          <v-card-title>
+            <span class="headline">Přidat bonus XP</span>
+          </v-card-title>
+
+          <v-form ref="form">
+            <v-card-text>
+              <v-container grid-list-md>
+                <v-layout
+                  wrap
+                >
+                  <v-flex
+                    xs12
+                  >
+                    <v-text-field
+                      v-model="userInfo.bonusXp"
+                      type="number"
+                      label="Bonus Xp"
+                    />
+                  </v-flex>
+
+                </v-layout>
+              </v-container>
+              <v-alert
+                transition="fade-transition"
+                :value="error.isVisible"
+                type="error"
+                color="red darken-2"
+              >
+                {{ error.message }}
+              </v-alert>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                color="blue darken-1"
+                text
+                @click.native="close"
+              >
+                Zrušit
+              </v-btn>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click.native="save"
+              >
+                Uložit
+              </v-btn>
+            </v-card-actions>
+          </v-form>
+        </v-card>
+      </v-dialog>
       <v-flex
         md1
         class="pad"
@@ -62,8 +121,8 @@
     >
       <v-data-table
         :headers="headers"
-        :items="projectStatistics"
-        :expanded.sync="expanded"
+        :items="projectStatistics.userStatistics"
+        @item-expanded="getRowId"
         :items-per-page="999"
         item-key="id"
         hide-default-footer
@@ -80,24 +139,33 @@
               {{ item.userName }}
             </td>
             <td class="text-center element">
-              {{ item.userName }}
+              {{ item.bonusXp }}
             </td>
             <td class="text-center element">
-              {{ item.userName }}
+              {{ item.sumXpProjects }}
             </td>
             <td class="text-center element">
-              {{ item.userName }}
+              {{ item.sumHoursWorked }}
             </td>
             <td class="text-center element">
-              {{ item.userName }}
+              {{ item.XpPerMonth }}
             </td>
             <td class="text-center element">
-              {{ item.userName }}
+              {{ item.totalXp }}
             </td>
-            <td class="text-center px-0">
+            <td class="text-center element">
+              {{ item.currentLevel }}
+            </td>
+            <td class="text-center element">
+              {{ item.newLevel }}
+            </td>
+            <td
+              class="text-center px-0"
+              v-if="isAdmin()"
+            >
               <v-icon
                 class="mr-2"
-                @click="getProjectsStandupDates()"
+                @click="addExp(item)"
               >
                 mdi-plus
               </v-icon>
@@ -113,14 +181,14 @@
           </tr>
         </template>
         <template
-          v-slot:expanded-item="{ headers}"
+          v-slot:expanded-item="{ headers }"
         >
           <td
             :colspan="headers.length"
           >
             <v-data-table
               :headers="expandedHeaders"
-              :items="projectStatistics"
+              :items="userDetailItems"
               item-key="id"
               hide-default-footer
               fill-height
@@ -130,6 +198,27 @@
               <template
                 v-slot:item="{item}"
               >
+                <tr>
+                  <td class="text-center">
+                    {{ item.code }}
+                  </td>
+                  <td class="text-center">
+                    {{ item.timeSpent }}
+                  </td>
+                  <td class="text-center">
+                    {{ item.coefficient }}%
+                  </td>
+                  <td
+                    v-for="(i, itemIndex) in item.projectRatings"
+                    :key="itemIndex"
+                    class="text-center"
+                  >
+                    {{ i.rating }}
+                  </td>
+                  <td class="text-center">
+                    {{ item.projectsXp }}
+                  </td>
+                </tr>
               </template>
             </v-data-table>
           </td>
@@ -141,20 +230,27 @@
 
 <script>
 import { mapState } from 'vuex';
+import { format } from 'date-fns';
 
 export default {
   data () {
     return {
-      expanded: [],
       statisticsMonthDialog: {
         isOpen: false,
         month: null,
       },
+      userInfo: {
+        id: null,
+        currentXp: null,
+        bonusXp: null,
+      },
+      dialog: false,
     };
   },
   computed: {
     ...mapState([
       'projectStatistics',
+      'error',
     ]),
     headers: function () {
       return [
@@ -162,49 +258,61 @@ export default {
           text: 'Jméno',
           align: 'center',
           sortable: true,
-          value: 'projectCode',
+          value: 'userName',
         },
         {
-          text: 'Extra XP',
+          text: 'Bonus XP',
           align: 'center',
           sortable: true,
-          value: 'exps',
+          value: 'bonusXp',
+        },
+        {
+          text: 'Celkem XP za projekty',
+          align: 'center',
+          sortable: true,
+          value: 'projectsXp',
+        },
+        {
+          text: 'Odpracované hodiny',
+          align: 'center',
+          sortable: true,
+          value: 'projectsHours',
         },
         {
           text: 'XP za měsíc',
           align: 'center',
           sortable: true,
-          value: 'exps',
+          value: 'xPPerMonth',
         },
         {
           text: 'Celkem XP',
           align: 'center',
           sortable: true,
-          value: 'exps',
+          value: 'xPSum',
         },
         {
           text: 'Stávající level',
           align: 'center',
           sortable: true,
-          value: 'exps',
+          value: 'actualLvl',
         },
         {
           text: 'Nový level',
           align: 'center',
           sortable: true,
-          value: 'exps',
+          value: 'newLvl',
         },
         {
-          text: 'Přidat extra XP',
+          text: 'Přidat bonus XP',
           align: 'center',
           sortable: false,
-          value: 'actions',
+          value: 'addExpAction',
         },
         {
           text: '',
           align: 'center',
           sortable: false,
-          value: 'expand',
+          value: 'expandAction',
         },
       ];
     },
@@ -214,7 +322,7 @@ export default {
         text: p.date,
         align: 'center',
         sortable: false,
-        value: p.week,
+        value: p.date,
       }));
 
       return [
@@ -245,28 +353,73 @@ export default {
         },
       ];
     },
+
+    userDetailItems () {
+      const userDetail = this.projectStatistics.userStatistics.filter(u => u.id === this.expandedRowId);
+
+      return userDetail[0].userDetail;
+    },
   },
   async fetch ({ store }) {
     const now = new Date();
     const params = {
-      month: now.getMonth(),
+      month: now.getMonth() + 1,
       year: now.getFullYear(),
     };
 
     await store.dispatch('getProjectStatistics', params);
   },
   methods: {
-    addExp() {
-      console.log(this.expanded);
+    addExp(user) {
+      this.userInfo = {
+        id: user.id,
+        currentXp: user.currentXp,
+      };
+
+      this.dialog = true;
+    },
+
+    close () {
+      this.dialog = false;
+      this.userInfo = {
+        id: null,
+        currentXp: null,
+        bonusXp: null,
+      };
+      this.$store.commit('clearErrorState');
+    },
+
+    async save () {
+      const userBonusXp = {
+        id: this.userInfo.id,
+        bonusXp: Number(this.userInfo.bonusXp),
+        totalXp: this.userInfo.currentXp + Number(this.userInfo.bonusXp),
+        date: new Date(),
+      };
+
+      await this.$store.dispatch('addUserBonusXp', userBonusXp);
+      !this.error.isVisible && this.close();
+    },
+
+    getRowId(row) {
+      this.expandedRowId = row.item.id;
     },
 
     getProjectsStandupDates() {
-      const filteredUserStatistics = this.projectStatistics.filter(userStat => userStat.id === this.expanded[0].id);
-      const standupDates = filteredUserStatistics[0].project[0].projectRating.map(p => ({
-        date: p.date,
-      }));
+      let standupDates;
+      if (this.projectStatistics.standups.length > 0) {
+        standupDates = this.projectStatistics.standups.map(p => ({
+          date: this.formatMonth(p.date),
+        }));
+      }
 
       return standupDates;
+    },
+
+    formatMonth (date) {
+      const d = new Date(date);
+
+      return format(d, 'DD. MM.');
     },
 
     updateMonth (monthInput) {
@@ -280,7 +433,7 @@ export default {
       const [year, month] = this.statisticsMonthDialog.month.split('-');
       const selectedDate = {
         year: Number(year),
-        month: Number(month) - 1,
+        month: Number(month),
       };
 
       this.$store.dispatch('getProjectStatistics', selectedDate);

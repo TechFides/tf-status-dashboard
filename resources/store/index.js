@@ -146,20 +146,22 @@ export const mutations = {
     state.standupRatings = newStandupRatings;
   },
   setProjectStatistics (state, projectStatistics) {
-    state.projectStatistics = projectStatistics.map(s => ({
-      id: s.id,
-      userName: `${s.first_name} ${s.last_name}`,
-      project: s.projectParticipations.map(p => ({
-        code: p.project.code,
-        timeSpent: p.time_spent,
-        projectRating: p.project.standupProjectRating.map(r => ({
-          id: r.projectRating.id,
-          value: r.projectRating.value,
-          date: r.standup.date,
-        })),
-      })),
-    })).sort(sortByProperty.bind(this, 'projectCode'));
+    state.projectStatistics = projectStatistics;
   },
+  setUserBonusXp(state, userStatistic) {
+    const user = state.projectStatistics.userStatistics.filter(u => userStatistic.id === u.id);
+    const totalExp = user[0].sumXpProjects + user[0].sumHoursWorked + userStatistic.bonusXp + user[0].currentXp;
+    const XpPerMonth = user[0].sumXpProjects + user[0].sumHoursWorked + userStatistic.bonusXp;
+    
+    state.projectStatistics.userStatistics.forEach((el, index) => {
+      if (el.id === userStatistic.id) {
+        state.projectStatistics.userStatistics[index].bonusXp = userStatistic.bonusXp;
+        state.projectStatistics.userStatistics[index].totalXp = totalExp;
+        state.projectStatistics.userStatistics[index].newLevel = calculateLevel(totalExp);
+        state.projectStatistics.userStatistics[index].XpPerMonth = XpPerMonth;
+      }
+    });
+  } ,
   setNotes (state, notes) {
     state.notes = notes.map(n => ({
       id: n.id,
@@ -177,8 +179,6 @@ export const mutations = {
       isActive: u.is_active,
       sendFeedback: u.send_feedback,
       lastName: u.last_name,
-      level: calculateLevel(u.total_exp),
-      totalExp: u.total_exp,
       username: u.username,
       email: u.email,
       roles: u.roles.map(r => r.slug),
@@ -445,6 +445,17 @@ export const actions = {
     );
 
     commit('setProjectStatistics', projectStatistics);
+  },
+  async addUserBonusXp ({ dispatch, commit }, params) {
+    try {
+      await this.$axios.$post('/api/statistics/user/', params);
+      commit('setUserBonusXp', params);
+      commit('clearErrorState');
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('setErrorState', error.response.data[0]);
+      }
+    }
   },
   async getUsers ({ commit }) {
     const users = await this.$axios.$get('/api/users');
