@@ -42,3 +42,6 @@ use G Suite Domain-Wide Delegation of Authority and for this is needed create se
 - Next is necessary to delegate domain-wide authority to newly created service account. In the `One or More API Scopes` field set this scope `https://www.googleapis.com/auth/admin.directory.user.readonly`.
  More information about this can be find [here](https://developers.google.com/admin-sdk/directory/v1/guides/delegation).
 - Finally set variables in your env file from credential file. You need to set GOOGLE_SERVICE_EMAIL, ADMIN_EMAIL (it is email of person who has admin privileges in your domain) and GOOGLE_PRIVATE_KEY.
+
+- All users statistic are obtained from JIRA worklogs. For this create API token [here](https://id.atlassian.com/manage/api-tokens) and then
+set this token into env file to the variable JIRA_KEY. More info is possible find [here](https://support.siteimprove.com/hc/en-gb/articles/360004317332-How-to-create-an-API-token-from-your-Atlassian-account).

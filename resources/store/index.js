@@ -28,8 +28,13 @@ export const state = () => ({
   meetingTimes: [],
 });
 
-const sortByProperty = function (property, a, b) {
+const sortAscByProperty = function (property, a, b) {
   return a[property] > b[property] ? 1
+    : a[property] === b[property] ? 0 : -1;
+};
+
+const sortDesByProperty = function (property, a, b) {
+  return a[property] < b[property] ? 1
     : a[property] === b[property] ? 0 : -1;
 };
 
@@ -126,14 +131,19 @@ export const mutations = {
       code: p.code,
       description: p.description,
       isActive: p.is_active === 1,
+      teamLeader: {
+        id: p.projectUser ? p.projectUser.user.id : null,
+        name: p.projectUser ? `${p.projectUser.user.first_name} ${p.projectUser.user.last_name}` : '',
+        teamLeaderTypeId: p.projectUser ? p.projectUser.project_exp_modifier_id : '',
+      },
       meetingTime: {
         text: findAndFormatMeetingTimeTextForSelect(state, p.meeting_time_id),
         value: p.meeting_time_id,
       },
-    })).sort(sortByProperty.bind(this, 'code'));
+    })).sort(sortAscByProperty.bind(this, 'code'));
   },
   setProjectRatings (state, standupRatings) {
-    const newStandupRatings = standupRatings.sort(sortByProperty.bind(this, 'date'));
+    const newStandupRatings = standupRatings.sort(sortAscByProperty.bind(this, 'date'));
     for (const [index, { standupProjectRating }] of newStandupRatings.entries()) {
       const newRatings = {};
       for (const { project_id: projectId, standup_project_rating_enum_id: standupId } of standupProjectRating) {
@@ -147,20 +157,26 @@ export const mutations = {
   },
   setProjectStatistics (state, projectStatistics) {
     state.projectStatistics = projectStatistics;
+    const sortedUsersByMonthXp = projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'monthXp'));
+    state.projectStatistics.heroesOfMonth = [sortedUsersByMonthXp[0], sortedUsersByMonthXp[1], sortedUsersByMonthXp[2]];
+
+    const sortedUsersByTotalXp = projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'totalXp'));
+    state.projectStatistics.heroesOfGame = [sortedUsersByTotalXp[0], sortedUsersByTotalXp[1], sortedUsersByTotalXp[2]];
   },
   setUserBonusXp(state, userStatistic) {
-    const user = state.projectStatistics.userStatistics.filter(u => userStatistic.id === u.id);
-    const totalExp = user[0].sumXpProjects + user[0].sumHoursWorked + userStatistic.bonusXp + user[0].currentXp;
-    const XpPerMonth = user[0].sumXpProjects + user[0].sumHoursWorked + userStatistic.bonusXp;
-    
     state.projectStatistics.userStatistics.forEach((el, index) => {
       if (el.id === userStatistic.id) {
         state.projectStatistics.userStatistics[index].bonusXp = userStatistic.bonusXp;
-        state.projectStatistics.userStatistics[index].totalXp = totalExp;
-        state.projectStatistics.userStatistics[index].newLevel = calculateLevel(totalExp);
-        state.projectStatistics.userStatistics[index].XpPerMonth = XpPerMonth;
+        state.projectStatistics.userStatistics[index].totalXp = userStatistic.totalXp;
+        state.projectStatistics.userStatistics[index].newLevel = calculateLevel(userStatistic.totalXp);
+        state.projectStatistics.userStatistics[index].monthXp = userStatistic.monthXp;
       }
     });
+    const sortedUsersByMonthXp = state.projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'monthXp'));
+    state.projectStatistics.heroesOfMonth = [sortedUsersByMonthXp[0], sortedUsersByMonthXp[1], sortedUsersByMonthXp[2]];
+
+    const sortedUsersByTotalXp = state.projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'totalXp'));
+    state.projectStatistics.heroesOfGame = [sortedUsersByTotalXp[0], sortedUsersByTotalXp[1], sortedUsersByTotalXp[2]];
   } ,
   setNotes (state, notes) {
     state.notes = notes.map(n => ({
@@ -170,7 +186,7 @@ export const mutations = {
       deadlineDate: n.deadline,
       created: n.created_at,
       text: n.note,
-    })).sort(sortByProperty.bind(this, 'projectCode'));
+    })).sort(sortAscByProperty.bind(this, 'projectCode'));
   },
   setUsers (state, users) {
     state.users = users.map(u => ({
@@ -188,7 +204,7 @@ export const mutations = {
     state.roles = roles;
   },
   setUsersFeedbacks (state, userFeedbacks) {
-    const newUserFeedbacks = userFeedbacks.sort(sortByProperty.bind(this, 'first_name'));
+    const newUserFeedbacks = userFeedbacks.sort(sortAscByProperty.bind(this, 'first_name'));
     for (const [index, { feedback }] of newUserFeedbacks.entries()) {
       const newFeedback = {};
       for (const { heatmap_week_id: heatMapId, feedback_enum_id: feedbackId } of feedback) {
@@ -201,7 +217,7 @@ export const mutations = {
     state.usersFeedbacks = newUserFeedbacks;
   },
   setHeatmapWeeks (state, heatmap) {
-    state.heatmapWeeks = heatmap.sort(sortByProperty.bind(this, 'date'));
+    state.heatmapWeeks = heatmap.sort(sortAscByProperty.bind(this, 'date'));
   },
   setMeetingTimes (state, meetingTimes) {
     state.meetingTimes = meetingTimes.map(
@@ -317,6 +333,17 @@ export const actions = {
   async editProject ({ dispatch, commit }, project) {
     try {
       await this.$axios.$put(`/api/projects/${project.id}`, project);
+      dispatch('getAllProjects');
+      commit('clearErrorState');
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('setErrorState', error.response.data[0]);
+      }
+    }
+  },
+  async addTeamLeader ({ dispatch, commit }, teamLeader) {
+    try {
+      await this.$axios.$put('/api/projects/teamLeader', teamLeader);
       dispatch('getAllProjects');
       commit('clearErrorState');
     } catch (error) {

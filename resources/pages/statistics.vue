@@ -1,230 +1,277 @@
 <template>
-  <div>
-    <v-layout
-      row
-      reverse
-      align-end
+  <div
+    class="full-height"
+  >
+    <template
+      v-if="!pending"
     >
-      <v-dialog
-        v-model="dialog"
-        max-width="450px"
-        transition="scale-transition"
-        :persistent="true"
+      <v-layout
+        row
+        reverse
+        align-end
       >
-        <v-card>
-          <v-card-title>
-            <span class="headline">Přidat bonus XP</span>
-          </v-card-title>
+        <v-dialog
+          v-model="userInfoDialog.isOpen"
+          max-width="450px"
+          transition="scale-transition"
+          :persistent="true"
+        >
+          <v-card>
+            <v-card-title>
+              <span class="headline">Přidat bonus XP</span>
+            </v-card-title>
 
-          <v-form ref="form">
-            <v-card-text>
-              <v-container grid-list-md>
-                <v-layout
-                  wrap
-                >
-                  <v-flex
-                    xs12
+            <v-form ref="form">
+              <v-card-text>
+                <v-container grid-list-md>
+                  <v-layout
+                    wrap
                   >
-                    <v-text-field
-                      v-model="userInfo.bonusXp"
-                      type="number"
-                      label="Bonus Xp"
-                    />
-                  </v-flex>
+                    <v-flex
+                      xs12
+                    >
+                      <v-text-field
+                        v-model="userInfoDialog.bonusXp"
+                        type="number"
+                        label="Bonus Xp"
+                      />
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+                <v-alert
+                  transition="fade-transition"
+                  :value="error.isVisible"
+                  type="error"
+                  color="red darken-2"
+                >
+                  {{ error.message }}
+                </v-alert>
+              </v-card-text>
 
-                </v-layout>
-              </v-container>
-              <v-alert
-                transition="fade-transition"
-                :value="error.isVisible"
-                type="error"
-                color="red darken-2"
-              >
-                {{ error.message }}
-              </v-alert>
-            </v-card-text>
-
-            <v-card-actions>
+              <v-card-actions>
+                <v-spacer />
+                <v-btn
+                  color="blue darken-1"
+                  text
+                  @click.native="close"
+                >
+                  Zrušit
+                </v-btn>
+                <v-btn
+                  color="blue darken-1"
+                  text
+                  @click.native="save"
+                >
+                  Uložit
+                </v-btn>
+              </v-card-actions>
+            </v-form>
+          </v-card>
+        </v-dialog>
+        <v-flex
+          md1
+          class="pad"
+        >
+          <v-dialog
+            ref="dialogMonth"
+            v-model="statisticsMonthDialog.isOpen"
+            :return-value.sync="statisticsMonthDialog.month"
+            persistent
+            width="290px"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <div class="month-picker">
+                <v-text-field
+                  v-model="statisticsMonthDialog.month"
+                  label="Měsíc"
+                  append-icon="event"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                />
+              </div>
+            </template>
+            <v-date-picker
+              v-model="statisticsMonthDialog.month"
+              scrollable
+              type="month"
+              header-color="blue darken-2"
+              color="blue darken-2"
+            >
               <v-spacer />
               <v-btn
-                color="blue darken-1"
                 text
-                @click.native="close"
+                color="primary"
+                @click="statisticsMonthDialog.isOpen = false"
               >
                 Zrušit
               </v-btn>
               <v-btn
-                color="blue darken-1"
                 text
-                @click.native="save"
+                color="primary"
+                @click="updateMonth($refs.dialogMonth)"
               >
-                Uložit
+                OK
               </v-btn>
-            </v-card-actions>
-          </v-form>
-        </v-card>
-      </v-dialog>
-      <v-flex
-        md1
-        class="pad"
-      >
-        <v-dialog
-          ref="dialogMonth"
-          v-model="statisticsMonthDialog.isOpen"
-          :return-value.sync="statisticsMonthDialog.month"
-          persistent
-          width="290px"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <div class="month-picker">
-              <v-text-field
-                v-model="statisticsMonthDialog.month"
-                label="Měsíc"
-                append-icon="event"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-              />
-            </div>
-          </template>
-          <v-date-picker
-            v-model="statisticsMonthDialog.month"
-            scrollable
-            type="month"
-            header-color="blue darken-2"
-            color="blue darken-2"
-          >
-            <v-spacer />
-            <v-btn
-              text
-              color="primary"
-              @click="statisticsMonthDialog.isOpen = false"
-            >
-              Zrušit
-            </v-btn>
-            <v-btn
-              text
-              color="primary"
-              @click="updateMonth($refs.dialogMonth)"
-            >
-              OK
-            </v-btn>
-          </v-date-picker>
-        </v-dialog>
-      </v-flex>
-    </v-layout>
+            </v-date-picker>
+          </v-dialog>
+        </v-flex>
+      </v-layout>
 
-    <v-layout
-      column
-      justify-center
-      align-end
-    >
-      <v-data-table
-        :headers="headers"
-        :items="projectStatistics.userStatistics"
-        @item-expanded="getRowId"
-        :items-per-page="999"
-        item-key="id"
-        hide-default-footer
-        fill-height
-        single-expand
-        must-sort
-        class="elevation-1 fullscreen"
+      <v-layout
+        column
+        justify-center
+        align-end
       >
-        <template
-          v-slot:item="{item, expand, isExpanded}"
+        <v-data-table
+          :headers="headers"
+          :items="projectStatistics.userStatistics"
+          :items-per-page="999"
+          item-key="id"
+          hide-default-footer
+          fill-height
+          single-expand
+          must-sort
+          class="elevation-1 fullscreen"
+          @item-expanded="getRowId"
         >
-          <tr>
-            <td class="text-center element">
-              {{ item.userName }}
-            </td>
-            <td class="text-center element">
-              {{ item.bonusXp }}
-            </td>
-            <td class="text-center element">
-              {{ item.sumXpProjects }}
-            </td>
-            <td class="text-center element">
-              {{ item.sumHoursWorked }}
-            </td>
-            <td class="text-center element">
-              {{ item.XpPerMonth }}
-            </td>
-            <td class="text-center element">
-              {{ item.totalXp }}
-            </td>
-            <td class="text-center element">
-              {{ item.currentLevel }}
-            </td>
-            <td class="text-center element">
-              {{ item.newLevel }}
-            </td>
-            <td
-              class="text-center px-0"
-              v-if="isAdmin()"
-            >
-              <v-icon
-                class="mr-2"
-                @click="addExp(item)"
-              >
-                mdi-plus
-              </v-icon>
-            </td>
-            <td class="text-left px-0">
-              <v-icon
-                class="mr-2"
-                @click="expand(!isExpanded)"
-              >
-                {{isExpanded ? "mdi-chevron-up" : "mdi-chevron-down"}}
-              </v-icon>
-            </td>
-          </tr>
-        </template>
-        <template
-          v-slot:expanded-item="{ headers }"
-        >
-          <td
-            :colspan="headers.length"
+          <template
+            v-slot:item="{item, expand, isExpanded}"
           >
-            <v-data-table
-              :headers="expandedHeaders"
-              :items="userDetailItems"
-              item-key="id"
-              hide-default-footer
-              fill-height
-              must-sort
-              class="elevation-1 fullscreen"
-            >
-              <template
-                v-slot:item="{item}"
+            <tr>
+              <td class="text-left element">
+                {{ item.userName }}
+              </td>
+              <td class="text-right element pr-8">
+                {{ item.bonusXp }}
+              </td>
+              <td class="text-right element pr-8">
+                {{ item.sumXpProjects }}
+              </td>
+              <td class="text-right element pr-8">
+                {{ item.sumHoursWorked }}
+              </td>
+              <td
+                class="text-right element pr-8"
+                :class="{ 'hero-element': isHeroOfMonth(item.id)}"
               >
-                <tr>
-                  <td class="text-center">
-                    {{ item.code }}
-                  </td>
-                  <td class="text-center">
-                    {{ item.timeSpent }}
-                  </td>
-                  <td class="text-center">
-                    {{ item.coefficient }}%
-                  </td>
-                  <td
-                    v-for="(i, itemIndex) in item.projectRatings"
-                    :key="itemIndex"
-                    class="text-center"
-                  >
-                    {{ i.rating }}
-                  </td>
-                  <td class="text-center">
-                    {{ item.projectsXp }}
-                  </td>
-                </tr>
-              </template>
-            </v-data-table>
-          </td>
-        </template>
-      </v-data-table>
-    </v-layout>
+                {{ item.monthXp }}
+              </td>
+              <td class="text-right element pr-8">
+                {{ item.previousXp }}
+              </td>
+              <td
+                class="text-right element pr-8"
+                :class="{ 'hero-element': isHeroOfGame(item.id)}"
+              >
+                {{ item.totalXp }}
+              </td>
+              <td class="text-right element pr-8">
+                {{ item.currentLevel }}
+              </td>
+              <td class="text-right element pr-8">
+                {{ item.newLevel }}
+              </td>
+              <td
+                v-if="isAdmin()"
+                class="text-center px-0"
+              >
+                <v-icon
+                  color="green lighten-1"
+                  class="justify-center"
+                  @click="addExp(item)"
+                >
+                  mdi-plus-circle-outline
+                </v-icon>
+              </td>
+              <td class="text-left px-0">
+                <v-icon
+                  class="mr-2"
+                  @click="expand(!isExpanded)"
+                >
+                  {{ isExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
+                </v-icon>
+              </td>
+            </tr>
+          </template>
+          <template
+            v-slot:expanded-item="{ headers }"
+          >
+            <td
+              :colspan="headers.length"
+            >
+              <v-data-table
+                :headers="expandedHeaders"
+                :items="userDetailItems"
+                item-key="id"
+                hide-default-footer
+                fill-height
+                must-sort
+                class="elevation-1 fullscreen"
+              >
+                <template
+                  v-slot:item="{item}"
+                >
+                  <tr>
+                    <td class="text-left">
+                      {{ item.code }}
+                    </td>
+                    <td class="text-right pr-8">
+                      {{ item.timeSpent }}
+                    </td>
+                    <td class="text-left">
+                      {{ item.projectExpModifierName }}
+                    </td>
+                    <td class="text-right pr-8">
+                      {{ item.coefficient }}%
+                    </td>
+                    <td
+                      v-for="(i, itemIndex) in item.projectRatings"
+                      :key="itemIndex"
+                      class="text-right"
+                    >
+                      {{ i.rating }}
+                    </td>
+                    <td class="text-right pr-8">
+                      {{ item.projectsXp }}
+                    </td>
+                  </tr>
+                </template>
+              </v-data-table>
+            </td>
+          </template>
+        </v-data-table>
+      </v-layout>
+      <v-layout
+        row
+        justify-center
+      >
+        <v-btn
+          v-show="isAdmin()"
+          class="standup-button"
+          color="blue darken-2"
+          dark
+          @click="fetchJiraData()"
+        >
+          <v-icon
+            class="mr-2"
+          >
+            mdi-download
+          </v-icon>
+          Stáhnout data
+        </v-btn>
+      </v-layout>
+    </template>
+    <div
+      v-if="pending"
+      class="full-height align-center"
+    >
+      <v-progress-circular
+        :size="150"
+        color="blue darken-2"
+        indeterminate
+      />
+    </div>
   </div>
 </template>
 
@@ -237,14 +284,18 @@ export default {
     return {
       statisticsMonthDialog: {
         isOpen: false,
-        month: null,
+        month: `${new Date().getFullYear()}-${new Date().getMonth() + 1}`,
       },
-      userInfo: {
+      userInfoDialog: {
         id: null,
-        currentXp: null,
+        previousXp: null,
         bonusXp: null,
+        isOpen: false,
+        sumXpProjects: null,
+        sumHoursWorked: null,
       },
-      dialog: false,
+      expandedRowId: null,
+      pending: false,
     };
   },
   computed: {
@@ -253,74 +304,93 @@ export default {
       'error',
     ]),
     headers: function () {
-      return [
+      const headers = [
         {
           text: 'Jméno',
-          align: 'center',
+          align: 'left',
           sortable: true,
           value: 'userName',
+          isVisible: true,
         },
         {
           text: 'Bonus XP',
-          align: 'center',
+          align: 'right',
           sortable: true,
           value: 'bonusXp',
+          isVisible: true,
         },
         {
           text: 'Celkem XP za projekty',
-          align: 'center',
+          align: 'right',
           sortable: true,
-          value: 'projectsXp',
+          value: 'sumXpProjects',
+          isVisible: true,
         },
         {
           text: 'Odpracované hodiny',
-          align: 'center',
+          align: 'right',
           sortable: true,
-          value: 'projectsHours',
+          value: 'sumHoursWorked',
+          isVisible: true,
         },
         {
           text: 'XP za měsíc',
-          align: 'center',
+          align: 'right',
           sortable: true,
-          value: 'xPPerMonth',
+          value: 'monthXp',
+          isVisible: true,
+        },
+        {
+          text: 'Celkem XP minulý měsíc',
+          align: 'right',
+          sortable: true,
+          value: 'previousXp',
+          isVisible: true,
         },
         {
           text: 'Celkem XP',
-          align: 'center',
+          align: 'right',
           sortable: true,
-          value: 'xPSum',
+          value: 'totalXp',
+          isVisible: true,
         },
         {
           text: 'Stávající level',
-          align: 'center',
+          align: 'right',
           sortable: true,
-          value: 'actualLvl',
+          value: 'currentLevel',
+          isVisible: true,
         },
         {
           text: 'Nový level',
-          align: 'center',
+          align: 'right',
           sortable: true,
-          value: 'newLvl',
+          value: 'newLevel',
+          isVisible: true,
         },
         {
           text: 'Přidat bonus XP',
           align: 'center',
           sortable: false,
           value: 'addExpAction',
+          isVisible: this.isAdmin(),
         },
         {
           text: '',
           align: 'center',
           sortable: false,
           value: 'expandAction',
+          isVisible: true,
         },
       ];
+
+      return headers.filter(h => h.isVisible);
     },
     expandedHeaders () {
       const projectsStandupDates = this.getProjectsStandupDates();
       const standupDate = projectsStandupDates.map(p => ({
         text: p.date,
-        align: 'center',
+        align: 'right',
         sortable: false,
         value: p.date,
       }));
@@ -328,26 +398,32 @@ export default {
       return [
         {
           text: 'Projekty',
-          align: 'center',
+          align: 'left',
           sortable: true,
-          value: 'projectCode',
+          value: 'code',
         },
         {
           text: 'Hodiny',
-          align: 'center',
+          align: 'right',
           sortable: true,
           value: 'timeSpent',
         },
         {
+          text: 'Typ vedoucího týmu',
+          align: 'left',
+          sortable: true,
+          value: 'projectExpModifierName',
+        },
+        {
           text: 'koeficient',
-          align: 'center',
+          align: 'right',
           sortable: true,
           value: 'timeSpent',
         },
         ...standupDate,
         {
           text: 'XP za projekty',
-          align: 'center',
+          align: 'right',
           sortable: true,
           value: 'projectsXp',
         },
@@ -355,9 +431,8 @@ export default {
     },
 
     userDetailItems () {
-      const userDetail = this.projectStatistics.userStatistics.filter(u => u.id === this.expandedRowId);
-
-      return userDetail[0].userDetail;
+      const userDetail = this.projectStatistics.userStatistics.find(u => u.id === this.expandedRowId);
+      return userDetail.userDetail;
     },
   },
   async fetch ({ store }) {
@@ -371,34 +446,54 @@ export default {
   },
   methods: {
     addExp(user) {
-      this.userInfo = {
+      this.userInfoDialog = {
         id: user.id,
-        currentXp: user.currentXp,
+        previousXp: user.previousXp,
+        bonusXp: user.bonusXp,
+        sumXpProjects: user.sumXpProjects,
+        sumHoursWorked: user.sumHoursWorked,
       };
 
-      this.dialog = true;
+      this.userInfoDialog.isOpen = true;
     },
 
     close () {
-      this.dialog = false;
-      this.userInfo = {
+      this.userInfoDialog = {
         id: null,
-        currentXp: null,
+        previousXp: null,
         bonusXp: null,
+        sumXpProjects: null,
+        sumHoursWorked: null,
+        isOpen: false,
       };
       this.$store.commit('clearErrorState');
     },
 
     async save () {
+      const [year, month] = this.statisticsMonthDialog.month.split('-');
+      const d = {
+        year: Number(year),
+        month: Number(month),
+      };
+
       const userBonusXp = {
-        id: this.userInfo.id,
-        bonusXp: Number(this.userInfo.bonusXp),
-        totalXp: this.userInfo.currentXp + Number(this.userInfo.bonusXp),
-        date: new Date(),
+        id: this.userInfoDialog.id,
+        bonusXp: Number(this.userInfoDialog.bonusXp),
+        totalXp: this.userInfoDialog.previousXp + Number(this.userInfoDialog.bonusXp),
+        monthXp: this.userInfoDialog.sumXpProjects + this.userInfoDialog.sumHoursWorked + Number(this.userInfoDialog.bonusXp),
+        date: d,
       };
 
       await this.$store.dispatch('addUserBonusXp', userBonusXp);
       !this.error.isVisible && this.close();
+    },
+
+    isHeroOfMonth(user) {
+      return this.projectStatistics.heroesOfMonth.find(h => h.id === user);
+    },
+
+    isHeroOfGame(user) {
+      return this.projectStatistics.heroesOfGame.find(h => h.id === user);
     },
 
     getRowId(row) {
@@ -414,6 +509,22 @@ export default {
       }
 
       return standupDates;
+    },
+
+    async fetchJiraData() {
+      const [year, month] = this.statisticsMonthDialog.month.split('-');
+      const params = {
+        year: Number(year),
+        month: Number(month),
+      };
+
+      this.pending = true;
+
+      const projectStatistics = await this.$axios.get(`/api/statistics/data`,{ params });
+
+      this.pending = false;
+
+      this.$store.commit('setProjectStatistics', projectStatistics.data);
     },
 
     formatMonth (date) {
@@ -449,12 +560,31 @@ export default {
     height: 100%;
   }
 
+  .hero-element {
+    color: #0091EA;
+    font-weight: bold;
+  }
+
   .element {
     font-size: 1.3em !important;
   }
 
   .month-picker {
     margin-right: 20px;
+  }
+
+  .standup-button {
+    margin-top: 6px;
+  }
+
+  .full-height {
+    height: 100%;
+  }
+
+  .align-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .header {

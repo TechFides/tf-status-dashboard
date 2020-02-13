@@ -1,8 +1,7 @@
 'use strict';
 
 const UsersXpCounter = use('App/Services/UsersXpCounter');
-const UserTotalExpModel = use('App/Models/UserTotalExp');
-const BonusExp = use('App/Models/BonusExp');
+const BonusExpModel = use('App/Models/BonusExp');
 
 class StatisticsController {
 
@@ -18,13 +17,10 @@ class StatisticsController {
 
   async addUserBonusXp ({ request, response, params }) {
     const { id, date, totalXp,  bonusXp } = request.only(['id', 'date', 'totalXp', 'bonusXp']);
-    const d = new Date();
-    const month = d.getMonth();
-    const year = d.getFullYear();
-    const currentMonth = new Date(year, month, 1);
-    const nextMonth = new Date(year, month + 1, 1);
+    const currentMonth = new Date(Number(date.year), Number(date.month) -1, 1);
+    const nextMonth = new Date(Number(date.year), Number(date.month), 1);
 
-    const userBonusExp = await BonusExp
+    const userBonusExp = await BonusExpModel
       .query()
       .where('date', '>=', currentMonth)
       .where('date', '<', nextMonth)
@@ -32,27 +28,23 @@ class StatisticsController {
       .fetch();
 
     if (userBonusExp.rows.length > 0) {
-      await BonusExp
+      await BonusExpModel
         .query()
         .where('date', '>=', currentMonth)
         .where('date', '<', nextMonth)
         .where('user_id', '=', id)
-        .update({ exp: bonusXp })
+        .update({ exp: bonusXp });
     } else {
-      await BonusExp.create({
+      await BonusExpModel.create({
         user_id: id,
         exp: bonusXp,
-        date: date,
+        date: currentMonth,
         description: '',
       });
     }
 
-    await UserTotalExpModel
-      .query()
-      .where('date', '>=', currentMonth)
-      .where('date', '<', nextMonth)
-      .where('user_id', '=', id)
-      .update({ total_exp: totalXp })
+    const user = [{id: id, totalXp: totalXp}];
+    await UsersXpCounter.setUserExperience(currentMonth, nextMonth, user);
   }
 }
 

@@ -93,6 +93,8 @@ Route
   .get('/api/projects', 'ProjectController.getProjects')
   .middleware(AUTH);
 Route
+  .put('/api/projects/teamLeader', 'ProjectController.addTeamLeader')
+Route
   .post('/api/projects', 'ProjectController.createProject')
   .validator('StoreProjectValidator')
   .middleware(ADMIN);
@@ -138,6 +140,9 @@ Route
   .middleware(AUTH);
 Route
   .post('/api/statistics/user', 'StatisticsController.addUserBonusXp')
+  .middleware(ADMIN);
+Route
+  .get('/api/statistics/data', 'JiraController.fetchData')
   .middleware(ADMIN);
 
 /**

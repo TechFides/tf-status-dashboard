@@ -35,6 +35,10 @@ class User extends Model {
     return this.hasMany('App/Models/Feedback');
   }
 
+  projectUser () {
+    return this.hasMany('App/Models/projectUser');
+  }
+
   feedbackValue () {
     return this.hasOne('App/Models/FeedbackEnum');
   }

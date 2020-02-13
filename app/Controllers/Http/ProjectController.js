@@ -2,6 +2,7 @@
 
 const ProjectModel = use('App/Models/Project');
 const NoteModel = use('App/Models/Note');
+const ProjectUserModel = use('App/Models/ProjectUser');
 
 class ProjectController {
   static getProjectData (request) {
@@ -25,7 +26,15 @@ class ProjectController {
     const projectsQuery = ProjectModel
       .query()
       .with('notes')
-      .with('meetingTime');
+      .with('meetingTime')
+      .with('projectUser', (builder) => {
+        builder
+          .whereHas('projectExpModifier', (builder) => {
+            builder
+              .where('value', '>', 1);
+          })
+        .with('user');
+      });
 
     if (isActive === 'true') {
       projectsQuery
@@ -53,6 +62,38 @@ class ProjectController {
     await project.save();
 
     return project.toJSON();
+  }
+
+  async addTeamLeader ({ request, response, params }) {
+    const {projectId, userId, teamLeaderTypeId} = request.only(['projectId', 'userId', 'teamLeaderTypeId']);
+
+    const ProjectUser = await ProjectUserModel
+      .query()
+      .where('project_id', '=', projectId)
+      .fetch();
+
+    if (ProjectUser.rows.length > 0) {
+      if (userId === 0) {
+        await ProjectUserModel
+          .query()
+          .where('project_id', '=', projectId)
+          .delete();
+      } else {
+        await ProjectUserModel
+          .query()
+          .where('project_id', '=', projectId)
+          .update({
+            project_exp_modifier_id: teamLeaderTypeId,
+            user_id: userId,
+          });
+      }
+    } else {
+      await ProjectUserModel.create({
+        project_id: projectId,
+        user_id: userId,
+        project_exp_modifier_id: teamLeaderTypeId,
+      });
+    }
   }
 
   async deleteProject ({ request, response, params }) {
