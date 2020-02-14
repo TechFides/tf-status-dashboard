@@ -19,6 +19,7 @@ class GoogleLoginController {
         first_name: gUser.getName().split(' ').slice(0, -1).join(' '),
         last_name: gUser.getName().split(' ').slice(-1).join(' '),
         username: gUser.getNickname(),
+        is_active: true,
       };
 
       // search for existing user
