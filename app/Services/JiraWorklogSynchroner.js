@@ -9,7 +9,7 @@ const ProjectModel = use('App/Models/Project');
 const UserProjectParticipationModel = use('App/Models/UserProjectParticipation');
 
 let options;
-let userMap = new Map();
+let UserIdMap = new Map();
 let currentMonth, nextMonth;
 
 class JiraWorklogSynchroner {
@@ -55,35 +55,44 @@ class JiraWorklogSynchroner {
     return await axios.get(`https://techfides.atlassian.net/rest/api/3/issue/${issueId}/worklog`, options);
   }
 
-  async getAllWorklogsFromJira (issues, jiraUserId) {
-    let timeSpentSum = 0;
-    let worklogMap = new Map();
+  async getAllWorklogsFromJira (issues) {
+    let usersProject = [];
+    let userObj;
 
     for (const issue of issues) {
-      const worklogs = await this.getWorklogsFromJira(issue.id);
+      let worklogs = await this.getWorklogsFromJira(issue.id);
+      let projectId = (await ProjectModel.query().where('code', '=', this.getProjectNameFromKey(issue.key)).fetch()).toJSON();
+      projectId = projectId[0] ? projectId[0].id : null;
 
       for (const worklog of worklogs.data.worklogs) {
-        if (worklog.author.accountId === jiraUserId && this.isDateInThisMonth(worklog.updated)) {
-          timeSpentSum += worklog.timeSpentSeconds;
+        if (this.isDateInThisMonth(worklog.updated)) {
+          let isUser = usersProject.find(u => u.accountId === UserIdMap.get(worklog.author.accountId));
+
+          if (isUser) {
+            let userId = usersProject.findIndex(u => u.accountId === UserIdMap.get(worklog.author.accountId) && u.projectId === projectId);
+
+            if (userId >= 0) {
+              usersProject[userId].timeSpent += worklog.timeSpentSeconds;
+            } else {
+              userObj = {
+                projectId: projectId,
+                timeSpent: worklog.timeSpentSeconds,
+                accountId: UserIdMap.get(worklog.author.accountId),
+              };
+              usersProject.push(userObj);
+            }
+          } else {
+            userObj = {
+              projectId: projectId,
+              timeSpent: worklog.timeSpentSeconds,
+              accountId: UserIdMap.get(worklog.author.accountId),
+            };
+            usersProject.push(userObj);
+          }
         }
       }
-      if (timeSpentSum > 0) {
-        let projectId = (await ProjectModel.query().where('code', '=', this.getProjectNameFromKey(issue.key)).fetch()).toJSON();
-        const worklogObj = {
-          userId: userMap.get(jiraUserId),
-          projectId: projectId[0] ? projectId[0].id : 999,
-          timeSpent: timeSpentSum + this.isEmpty(worklogMap.get(this.getProjectNameFromKey(issue.key))),
-        };
-        worklogMap.set(this.getProjectNameFromKey(issue.key), worklogObj);
-        timeSpentSum = 0;
-      }
     }
-
-    for (const [key, value] of worklogMap.entries()) {
-      await this.insertWorklogToDB(value.userId, value.projectId, value.timeSpent);
-    }
-
-    worklogMap.clear();
+    await this.insertWorklogToDB(usersProject);
   }
 
   async cleanDB () {
@@ -93,14 +102,18 @@ class JiraWorklogSynchroner {
       .delete();
   }
 
-  async insertWorklogToDB (userId, projectId, timeSpent) {
-    await UserProjectParticipationModel
-      .create({
-        user_id: userId,
-        project_id: projectId,
-        time_spent: timeSpent,
-        date: currentMonth,
-      });
+  async insertWorklogToDB (usersProject) {
+    for (const u of usersProject) {
+      if (u.accountId && u.projectId) {
+        await UserProjectParticipationModel
+          .create({
+            user_id: u.accountId,
+            project_id: u.projectId,
+            time_spent: u.timeSpent,
+            date: currentMonth,
+          });
+      }
+    }
   }
 
   async mapUserId () {
@@ -110,14 +123,10 @@ class JiraWorklogSynchroner {
     for (const user of users) {
       jiraUser = await this.getUserFromJira(user.email);
       if (jiraUser.data[0]) {
-        userMap.set(jiraUser.data[0].accountId, user.id);
+        UserIdMap.set(jiraUser.data[0].accountId, user.id);
       }
     }
   }
-
-  isEmpty (worklog) {
-    return worklog ? worklog.timeSpent : 0;
-  };
 
   isDateInThisMonth (dateToCompare) {
     const formattedDayToCompare = new Date(dateToCompare);
@@ -138,9 +147,7 @@ class JiraWorklogSynchroner {
     issues = await this.getProjectIssuesFromJira();
     await this.mapUserId();
 
-    for (const key of userMap.keys()) {
-      await this.getAllWorklogsFromJira(issues, key);
-    }
+    await this.getAllWorklogsFromJira(issues);
   }
 }
 
