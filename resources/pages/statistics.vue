@@ -519,12 +519,8 @@ export default {
       };
 
       this.pending = true;
-
-      const projectStatistics = await this.$axios.get(`/api/statistics/data`,{ params });
-
+      await this.$store.dispatch('getJiraData', params);
       this.pending = false;
-
-      this.$store.commit('setProjectStatistics', projectStatistics.data);
     },
 
     formatMonth (date) {

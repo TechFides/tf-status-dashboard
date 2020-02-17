@@ -30,19 +30,6 @@
                   label="Vyberte vedoucího projektu"
                 />
               </v-flex>
-              <v-flex
-                xs12
-                sm6
-                md4
-              >
-                <v-select
-                  v-if="teamLeaderModalItem.userId !== 0"
-                  v-model="teamLeaderModalItem.teamLeaderTypeId"
-                  :items="formattedLeaderTypeForSelect"
-                  :rules="[rules.required]"
-                  label="Typ vedoucího projektu"
-                />
-              </v-flex>
             </v-layout>
 
             <v-alert
@@ -274,7 +261,10 @@ export default {
       teamLeaderModalItem: {
         projectId: null,
         userId: 0,
-        teamLeaderTypeId: 0,
+      },
+      defaultTeamLeaderModalItem: {
+        projectId: null,
+        userId: 0,
       },
       defaultModalItem: {
         id: null,
@@ -363,12 +353,6 @@ export default {
         })),
       ];
     },
-    formattedLeaderTypeForSelect () {
-      return [
-        {text: 'Sólo hráč', value: 1},
-        {text: 'Vedoucí týmu', value: 2},
-      ];
-    },
   },
   async fetch ({ store, params }) {
     await Promise.all([
@@ -385,8 +369,7 @@ export default {
     addTeamleader(item) {
       this.teamLeaderModalItem = {
         projectId: item.id,
-        userId: item.teamLeader.id ? item.teamLeader.id: 0,
-        teamLeaderTypeId: item.teamLeader.id ? item.teamLeader.teamLeaderTypeId : 0,
+        userId: item.teamLeader.id ? item.teamLeader.id : this.defaultTeamLeaderModalItem.userId,
       };
 
       this.modalTitle = 'Nastavit vedoucího projektu';
@@ -425,11 +408,7 @@ export default {
     },
     closeTeamleaderModal () {
       this.teamLeaderDialog = false;
-      this.teamleaderModalItem = {
-        userId: null,
-        projectId: null,
-        teamLeaderTypeId: null,
-      };
+      this.teamleaderModalItem = {...this.defaultTeamLeaderModalItem};
     },
     async saveTeamleaderModal() {
       const teamLeader = this.teamLeaderModalItem;

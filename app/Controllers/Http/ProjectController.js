@@ -1,8 +1,11 @@
 'use strict';
 
+const { EXP_MODIFIER } = require('../../../constants');
+
 const ProjectModel = use('App/Models/Project');
 const NoteModel = use('App/Models/Note');
 const ProjectUserModel = use('App/Models/ProjectUser');
+const UserProjectParticipationModel = use('App/Models/UserProjectParticipation');
 
 class ProjectController {
   static getProjectData (request) {
@@ -65,9 +68,14 @@ class ProjectController {
   }
 
   async addTeamLeader ({ request, response, params }) {
-    const {projectId, userId, teamLeaderTypeId} = request.only(['projectId', 'userId', 'teamLeaderTypeId']);
+    const {projectId, userId} = request.only(['projectId', 'userId']);
 
     const ProjectUser = await ProjectUserModel
+      .query()
+      .where('project_id', '=', projectId)
+      .fetch();
+
+    const UserProjectParticipation = await UserProjectParticipationModel
       .query()
       .where('project_id', '=', projectId)
       .fetch();
@@ -83,7 +91,7 @@ class ProjectController {
           .query()
           .where('project_id', '=', projectId)
           .update({
-            project_exp_modifier_id: teamLeaderTypeId,
+            project_exp_modifier_id: UserProjectParticipation.rows.length > 1 ? EXP_MODIFIER.TEAM_LEADER : EXP_MODIFIER.SOLO_PLAYER,
             user_id: userId,
           });
       }
@@ -91,7 +99,7 @@ class ProjectController {
       await ProjectUserModel.create({
         project_id: projectId,
         user_id: userId,
-        project_exp_modifier_id: teamLeaderTypeId,
+        project_exp_modifier_id: UserProjectParticipation.rows.length > 1 ? EXP_MODIFIER.TEAM_LEADER  : EXP_MODIFIER.SOLO_PLAYER,
       });
     }
   }

@@ -12,7 +12,10 @@ class UserProjectParticipationsSchema extends Schema {
   }
 
   down () {
-    this.drop('user_project_participations')
+    this.alter('user_project_participations', (table) => {
+      table.dropColumn('date');
+      table.dropColumn('time_spent');
+    })
   }
 }
 

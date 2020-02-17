@@ -94,6 +94,7 @@ Route
   .middleware(AUTH);
 Route
   .put('/api/projects/teamLeader', 'ProjectController.addTeamLeader')
+  .middleware(AUTH);
 Route
   .post('/api/projects', 'ProjectController.createProject')
   .validator('StoreProjectValidator')

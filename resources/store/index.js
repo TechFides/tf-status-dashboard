@@ -134,7 +134,6 @@ export const mutations = {
       teamLeader: {
         id: p.projectUser ? p.projectUser.user.id : null,
         name: p.projectUser ? `${p.projectUser.user.first_name} ${p.projectUser.user.last_name}` : '',
-        teamLeaderTypeId: p.projectUser ? p.projectUser.project_exp_modifier_id : '',
       },
       meetingTime: {
         text: findAndFormatMeetingTimeTextForSelect(state, p.meeting_time_id),
@@ -471,6 +470,13 @@ export const actions = {
       { params },
     );
 
+    commit('setProjectStatistics', projectStatistics);
+  },
+  async getJiraData ({ commit }, params) {;
+    const projectStatistics = await this.$axios.$get(
+      `/api/statistics/data`,
+      { params },
+    );
     commit('setProjectStatistics', projectStatistics);
   },
   async addUserBonusXp ({ dispatch, commit }, params) {

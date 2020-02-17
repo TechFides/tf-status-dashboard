@@ -1,5 +1,7 @@
 'use strict';
 
+const { EXP_MODIFIER } = require('../../constants');
+
 const UserModel = use('App/Models/User');
 const StandupModel = use('App/Models/Standup');
 const UserTotalExpModel = use('App/Models/UserTotalExp');
@@ -142,23 +144,29 @@ class UsersXpCounter {
     };
   }
 
-  getTimeSpentInHours(timeSpent) {
-    const timeSpentInHours = (timeSpent / 60) / 60;
+  roundNumber(number) {
+    return Math.round((number + Number.EPSILON) * 100) / 100;
+  }
 
-    return Math.round((timeSpentInHours + Number.EPSILON) * 100) / 100;
+  getTimeSpentInHours(timeSpent) {
+    return this.roundNumber(timeSpent / 3600);
   }
 
   getProjectCoefficient(timeSpent) {
     const AVERAGE_HOURS_PER_MONTH = 176;
-    const projectCoefficient = (((timeSpent / 60) /60) / AVERAGE_HOURS_PER_MONTH) * 100;
+    const projectCoefficient = (this.getTimeSpentInHours(timeSpent) / AVERAGE_HOURS_PER_MONTH) * 100;
 
-    return Math.round((projectCoefficient + Number.EPSILON) * 100) / 100;
+    return this.roundNumber(projectCoefficient);
   }
 
   getRatings(ratings, standups) {
-    return standups.map(p => ({
-      rating: ratings.filter(r => r.standup_id === p.id)[0] ? ratings.filter(r => r.standup_id === p.id)[0].projectRating.value : 0,
-    }));
+    return standups.map(p => {
+      const projectRating = ratings.filter(r => r.standup_id === p.id)[0];
+
+      return {
+        rating: projectRating ? projectRating.projectRating.value : 0,
+      };
+    });
   }
 
   getProjectXp(projectRatings, projectCoefficient, projectRatingsWithoutZeros, projectModifier) {
@@ -171,6 +179,7 @@ class UsersXpCounter {
   getSumXpProjects(userDetailStatistics) {
     return userDetailStatistics.reduce((acc, cur) => acc + cur.projectsXp, 0);
   }
+
   getSumHoursWorked(userDetailStatistics) {
     const SumHoursWorked = userDetailStatistics.reduce((acc, cur) => acc + cur.timeSpent, 0);
 
@@ -189,13 +198,13 @@ class UsersXpCounter {
   }
 
   getGetExpModifier(projectUser, teamLeaderId, allUsersTimespent) {
-    if (!projectUser) return 1;
+    if (!projectUser) return EXP_MODIFIER.WITHOUT_LEADER;
     if (projectUser.user_id !== teamLeaderId) {
-      return 1;
+      return EXP_MODIFIER.OTHER_LEADER;
     }
 
     if(projectUser.projectExpModifier.id === 1) {
-      return projectUser.projectExpModifier.value;
+      return EXP_MODIFIER.SOLO_PLAYER;
     }
 
     const teamLeaderTimespents = allUsersTimespent.filter(u => projectUser.project_id === u.project_id && teamLeaderId !== u.user_id);
