@@ -23,12 +23,20 @@ class User extends Model {
     return this.hasMany('App/Models/BonusExp');
   }
 
+  userTotalExp () {
+    return this.hasMany('App/Models/UserTotalExp');
+  }
+
   projectParticipations () {
     return this.hasMany('App/Models/UserProjectParticipation');
   }
 
   feedback () {
     return this.hasMany('App/Models/Feedback');
+  }
+
+  projectUser () {
+    return this.hasMany('App/Models/projectUser');
   }
 
   feedbackValue () {

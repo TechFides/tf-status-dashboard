@@ -1,64 +1,50 @@
 'use strict';
 
-const StandupProjectRatingsModel = use('App/Models/StandupProjectRating');
-const StandupsModel = use('App/Models/Standup');
+const UsersXpCounter = use('App/Services/UsersXpCounter');
+const BonusExpModel = use('App/Models/BonusExp');
 
 class StatisticsController {
+
   async getProjectStatistics ({ request, response, params }) {
     let { month, year } = request.get();
     month = Number(month);
     year = Number(year);
-    const currentMonth = new Date(year, month, 1);
-    const nextMonth = new Date(year, month + 1, 1);
+    const currentMonth = new Date(year, month - 1, 1);
+    const nextMonth = new Date(year, month, 1);
 
-    const standups = (await StandupsModel
+    return UsersXpCounter.countUsersXp(currentMonth, nextMonth);
+  }
+
+  async addUserBonusXp ({ request, response, params }) {
+    const { id, date, totalXp,  bonusXp } = request.only(['id', 'date', 'totalXp', 'bonusXp']);
+    const currentMonth = new Date(Number(date.year), Number(date.month) -1, 1);
+    const nextMonth = new Date(Number(date.year), Number(date.month), 1);
+
+    const userBonusExp = await BonusExpModel
       .query()
       .where('date', '>=', currentMonth)
       .where('date', '<', nextMonth)
-      .fetch()).toJSON();
+      .where('user_id', '=', id)
+      .fetch();
 
-    const projectRatings = (await StandupProjectRatingsModel
-      .query()
-      .whereHas('standup', (builder) => {
-        builder
-          .where('date', '>=', currentMonth)
-          .where('date', '<', nextMonth);
-      })
-      .with('projectRating')
-      .with('project')
-      .fetch()).toJSON();
-
-    const projectStatisticsMap = projectRatings.reduce((acc, p) => {
-      if (!acc[p.project_id]) {
-        acc[p.project_id] = {
-          projectCode: p.project.code,
-          ratings: [],
-        };
-      }
-
-      acc[p.project_id].ratings.push(p.projectRating.value);
-
-      return acc;
-    }, {});
-
-    const totalStandups = standups.length;
-    const projectStatistics = Object
-      .keys(projectStatisticsMap)
-      .map(projectId => {
-        const project = projectStatisticsMap[projectId];
-        const ratings = project.ratings.filter(r => r !== 0);
-        const sum = ratings.reduce((acc, r) => acc + r, 0) || 0;
-        const exps = sum / ratings.length * totalStandups;
-
-        return {
-          exps,
-          projectId,
-          ratings,
-          projectCode: project.projectCode,
-        };
+    if (userBonusExp.rows.length > 0) {
+      await BonusExpModel
+        .query()
+        .where('date', '>=', currentMonth)
+        .where('date', '<', nextMonth)
+        .where('user_id', '=', id)
+        .update({ exp: bonusXp });
+    } else {
+      await BonusExpModel.create({
+        user_id: id,
+        exp: bonusXp,
+        date: currentMonth,
+        description: '',
       });
+    }
 
-    return projectStatistics;
+    const user = [{id: id, totalXp: totalXp}];
+    await UsersXpCounter.setUserExperience(currentMonth, nextMonth, user);
   }
 }
 

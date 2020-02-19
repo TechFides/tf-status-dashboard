@@ -93,6 +93,9 @@ Route
   .get('/api/projects', 'ProjectController.getProjects')
   .middleware(AUTH);
 Route
+  .put('/api/projects/teamLeader', 'ProjectController.addTeamLeader')
+  .middleware(AUTH);
+Route
   .post('/api/projects', 'ProjectController.createProject')
   .validator('StoreProjectValidator')
   .middleware(ADMIN);
@@ -136,6 +139,12 @@ Route
 Route
   .get('/api/statistics/projects', 'StatisticsController.getProjectStatistics')
   .middleware(AUTH);
+Route
+  .post('/api/statistics/user', 'StatisticsController.addUserBonusXp')
+  .middleware(ADMIN);
+Route
+  .get('/api/statistics/data', 'JiraController.fetchData')
+  .middleware(ADMIN);
 
 /**
  * USERS
