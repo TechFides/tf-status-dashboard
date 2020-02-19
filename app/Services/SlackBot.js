@@ -5,9 +5,7 @@ const format = require('date-fns/format');
 require('dotenv').config();
 
 let connection;
-let token;
-let web;
-let conversationId;
+let slackWebClient;
 
 function initialization() {
   connection = mysql.createConnection({
@@ -18,9 +16,7 @@ function initialization() {
     port: process.env.DB_PORT,
   });
 
-  token = process.env.SLACK_TOKEN;
-  web = new WebClient(token);
-  conversationId = 'general';
+  slackWebClient = new WebClient(process.env.SLACK_TOKEN);
 }
 
 function fetchUsersTimeSpent () {
@@ -36,7 +32,7 @@ function fetchUsersTimeSpent () {
 }
 
 async function sendMessage(conversationId, timeSpentSum) {
-  await web.chat.postMessage({ channel: conversationId, text: `Hey bro za minulý měsíc si odpracoval ${getTimeSpentInHours(timeSpentSum)}h. Jen tak dál.` });
+  await slackWebClient.chat.postMessage({ channel: conversationId, text: `Hey bro za minulý měsíc si odpracoval ${getTimeSpentInHours(timeSpentSum)}h. Jen tak dál.` });
 }
 
 function getTimeSpentInHours(timeSpent) {
@@ -46,12 +42,12 @@ function getTimeSpentInHours(timeSpent) {
 }
 
 async function sendMessageToUsers(userId, timeSpentSum) {
-  const { channel } = await web.conversations.open({users: userId});
+  const { channel } = await slackWebClient.conversations.open({users: userId});
   await sendMessage(channel.id, timeSpentSum);
 }
 
 async function getUserSlackId(email) {
-  return await web.users.lookupByEmail({email: email});
+  return await slackWebClient.users.lookupByEmail({email: email});
 }
 
 async function main () {

@@ -1,11 +1,13 @@
 'use strict';
 
 const { EXP_MODIFIER } = require('../../../constants');
+const { WebClient } = require('@slack/web-api');
 
 const ProjectModel = use('App/Models/Project');
 const NoteModel = use('App/Models/Note');
 const ProjectUserModel = use('App/Models/ProjectUser');
 const UserProjectParticipationModel = use('App/Models/UserProjectParticipation');
+const Env = use('Env');
 
 class ProjectController {
   static getProjectData (request) {
@@ -14,14 +16,44 @@ class ProjectController {
       description,
       isActive,
       meetingTimeId,
-    } = request.only(['code', 'description', 'isActive', 'meetingTimeId']);
+      slackChannel,
+    } = request.only(['code', 'description', 'isActive', 'meetingTimeId', 'slackChannel']);
 
     return {
       code,
       description,
+      slack_channel: slackChannel,
       is_active: isActive,
       meeting_time_id: meetingTimeId,
     };
+  }
+
+  static async checkSlackChannel (slackChannelName) {
+    const slackWebClient = new WebClient(Env.get('SLACK_TOKEN'));
+
+    const { channels } = await slackWebClient.conversations.list({limit: 1000});
+    const slackChannel = channels.find(s => s.name === slackChannelName);
+
+    if (!slackChannel) {
+      return 'Žádný takový kanál neexistuje.';
+    }
+
+    const { members } = await slackWebClient.conversations.members({channel: slackChannel.id});
+    let slackBot = null;
+
+    for (const member of members) {
+      let { user } = await slackWebClient.users.info({user: member});
+      if (user.is_bot) {
+        slackBot = user;
+        break;
+      }
+    }
+
+    if (!slackBot) {
+      return 'Bot pro odesílání zpráv není pozvaný do kanálu (V kanálu odeslat zprávu: @\'název bota\').';
+    }
+
+    return null;
   }
 
   async getProjects ({ request, response, params }) {
@@ -52,7 +84,15 @@ class ProjectController {
 
   async createProject ({ request, response }) {
     const project = new ProjectModel();
-    project.fill(ProjectController.getProjectData(request));
+
+    const projectData = ProjectController.getProjectData(request);
+    const isSlackChannelInvalid = await ProjectController.checkSlackChannel(projectData.slack_channel);
+
+    if (isSlackChannelInvalid) {
+      return response.status(404).send({ message: isSlackChannelInvalid });
+    }
+
+    project.fill(projectData);
     await project.save();
 
     return project.toJSON();
@@ -61,7 +101,15 @@ class ProjectController {
   async editProject ({ request, response, params }) {
     const { id } = params;
     const project = await ProjectModel.find(id);
-    project.merge(ProjectController.getProjectData(request));
+
+    const projectData = ProjectController.getProjectData(request);
+    const isSlackChannelInvalid = await ProjectController.checkSlackChannel(projectData.slack_channel);
+
+    if (isSlackChannelInvalid) {
+      return response.status(404).send({ message: isSlackChannelInvalid });
+    }
+
+    project.merge(projectData);
     await project.save();
 
     return project.toJSON();

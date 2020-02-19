@@ -5,7 +5,7 @@
     align-end
   >
     <v-dialog
-      v-model="teamLeaderDialog"
+      v-model="defaultTeamLeaderModalItem.isOpen"
       max-width="500px"
     >
       <v-card>
@@ -74,7 +74,7 @@
     </v-btn>
 
     <v-dialog
-      v-model="dialog"
+      v-model="modalItem.isOpen"
       max-width="500px"
     >
       <v-card>
@@ -107,6 +107,17 @@
                 <v-text-field
                   v-model="modalItem.description"
                   label="Popis"
+                />
+              </v-flex>
+              <v-flex
+                xs12
+                sm6
+                md4
+              >
+                <v-text-field
+                  v-model="modalItem.slackChannel"
+                  :rules="[rules.required]"
+                  label="Název slack kanálu"
                 />
               </v-flex>
               <v-flex
@@ -208,6 +219,9 @@
             <td class="text-center element">
               {{ props.item.teamLeader.name }}
             </td>
+            <td class="text-center element">
+              {{ props.item.slackChannel }}
+            </td>
             <td class="justify-center layout px-0">
               <v-icon
                 small
@@ -245,9 +259,7 @@ export default {
   data () {
     return {
       pagination: { sortBy: 'code' },
-      dialog: false,
       modalTitle: '',
-      teamLeaderDialog: false,
       rules: {
         required: value => !!value || 'Povinné.',
       },
@@ -257,14 +269,8 @@ export default {
         description: '',
         isActive: true,
         meetingTimeId: null,
-      },
-      teamLeaderModalItem: {
-        projectId: null,
-        userId: 0,
-      },
-      defaultTeamLeaderModalItem: {
-        projectId: null,
-        userId: 0,
+        slackChannel: null,
+        isOpen: false,
       },
       defaultModalItem: {
         id: null,
@@ -272,6 +278,18 @@ export default {
         description: '',
         isActive: true,
         meetingTimeId: null,
+        slackChannel: null,
+        isOpen: false,
+      },
+      teamLeaderModalItem: {
+        projectId: null,
+        userId: 0,
+        isOpen: false,
+      },
+      defaultTeamLeaderModalItem: {
+        projectId: null,
+        userId: 0,
+        isOpen: false,
       },
       filteringText: '',
     };
@@ -316,6 +334,12 @@ export default {
           value: 'teamLeader',
         },
         {
+          text: 'Slack kanál',
+          align: 'center',
+          sortable: false,
+          value: 'slackChannel',
+        },
+        {
           text: 'Akce',
           align: 'center',
           sortable: false,
@@ -327,12 +351,14 @@ export default {
       return this.allProjects.filter((element) => {
         const description = element.description ? element.description.toUpperCase() : '';
         const teamLeader = element.teamLeader.name.toUpperCase();
+        const slackChannel = element.slackChannel ? element.slackChannel.toUpperCase() : '';
         const uppercasedFilterText = this.filteringText.toUpperCase();
 
         return element.code.match(uppercasedFilterText) ||
           this.isProjectActive(element.isActive, true).match(uppercasedFilterText) ||
           description.match(uppercasedFilterText) ||
-          teamLeader.match(uppercasedFilterText);
+          teamLeader.match(uppercasedFilterText) ||
+          slackChannel.match(uppercasedFilterText);
       });
     },
     formattedMeetingTimesForSelect () {
@@ -364,7 +390,7 @@ export default {
   methods: {
     createNewProject () {
       this.modalTitle = 'Nový projekt';
-      this.dialog = true;
+      this.modalItem.isOpen = true;
     },
     addTeamleader(item) {
       this.teamLeaderModalItem = {
@@ -373,7 +399,7 @@ export default {
       };
 
       this.modalTitle = 'Nastavit vedoucího projektu';
-      this.teamLeaderDialog = true;
+      this.defaultTeamLeaderModalItem.isOpen = true;
     },
     editItem (item) {
       this.modalItem = {
@@ -382,10 +408,11 @@ export default {
         description: item.description,
         isActive: item.isActive,
         meetingTimeId: item.meetingTime.value,
+        slackChannel: item.slackChannel,
       };
 
       this.modalTitle = 'Upravit projekt';
-      this.dialog = true;
+      this.modalItem.isOpen = true;
     },
     async deleteItem (item) {
       const confirmed = confirm(`Opravdu chcete smazat projekt ${item.code}?`);
@@ -396,8 +423,9 @@ export default {
       }
     },
     close () {
-      this.dialog = false;
+      this.modalItem.isOpen = false;
       this.modalItem = { ...this.defaultModalItem };
+      this.$store.commit('clearErrorState');
     },
     async save () {
       const action = this.modalItem.id ? 'editProject' : 'createProject';
@@ -407,8 +435,9 @@ export default {
       !this.error.isVisible && this.close();
     },
     closeTeamleaderModal () {
-      this.teamLeaderDialog = false;
+      this.defaultTeamLeaderModalItem.isOpen = false;
       this.teamleaderModalItem = {...this.defaultTeamLeaderModalItem};
+      this.$store.commit('clearErrorState');
     },
     async saveTeamleaderModal() {
       const teamLeader = this.teamLeaderModalItem;
