@@ -20,7 +20,7 @@ class Project extends Model {
   }
 
   projectUser () {
-    return this.hasOne('App/Models/projectUser');
+    return this.hasOne('App/Models/ProjectUser');
   }
 
   meetingTime () {

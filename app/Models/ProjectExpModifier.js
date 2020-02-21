@@ -8,7 +8,7 @@ class ProjectExpModifier extends Model {
   }
 
   projectUser () {
-    return this.hasMany('App/Models/projectUser');
+    return this.hasMany('App/Models/ProjectUser');
   }
 }
 
