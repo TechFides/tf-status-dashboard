@@ -36,7 +36,7 @@ class User extends Model {
   }
 
   projectUser () {
-    return this.hasMany('App/Models/projectUser');
+    return this.hasMany('App/Models/ProjectUser');
   }
 
   feedbackValue () {
