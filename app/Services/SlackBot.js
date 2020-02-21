@@ -32,7 +32,18 @@ function fetchUsersTimeSpent () {
 }
 
 async function sendMessage(conversationId, timeSpentSum) {
-  await slackWebClient.chat.postMessage({ channel: conversationId, text: `Hey bro za minulý měsíc si odpracoval ${getTimeSpentInHours(timeSpentSum)}h. Jen tak dál.` });
+  const attachments = [
+    {
+      fallback: 'Plain-text summary of the attachment.',
+      color: '#0091EA',
+      pretext: `Dobrá práce, za minulý měsíc si odpracoval: \*${getTimeSpentInHours(timeSpentSum)}h\*. Podrobnější informace nalezneš v naši aplikaci. :muscle:`,
+      title: 'Dashboard',
+      title_link: `${process.env.VUE_APP_URL}/statistics`,
+      image_url: `${process.env.VUE_APP_URL}/images/techfides_logo.png`,
+    }
+  ];
+
+  await slackWebClient.chat.postMessage({ channel: conversationId, attachments: attachments });
 }
 
 function getTimeSpentInHours(timeSpent) {
