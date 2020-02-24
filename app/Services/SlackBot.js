@@ -40,7 +40,7 @@ async function sendMessage(conversationId, timeSpentSum) {
       title: 'Dashboard',
       title_link: `${process.env.VUE_APP_URL}/statistics`,
       image_url: `${process.env.VUE_APP_URL}/images/techfides_logo.png`,
-    }
+    },
   ];
 
   await slackWebClient.chat.postMessage({ channel: conversationId, attachments: attachments });
