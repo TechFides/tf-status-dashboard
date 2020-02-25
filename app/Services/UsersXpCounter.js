@@ -171,7 +171,10 @@ class UsersXpCounter {
 
   getProjectXp(projectRatings, projectCoefficient, projectRatingsWithoutZeros, projectModifier) {
     const projectRatingSum = projectRatings.reduce((acc, cur) => acc + cur.rating, 0);
-    const projectXp = (projectRatingSum / projectRatingsWithoutZeros.length * projectRatings.length) * projectCoefficient * projectModifier / 100;
+    const numberOfRatings = projectRatings.length === 0 ? 1 : projectRatings.length;
+    const numberOfRatingsWithoutZeros = projectRatingsWithoutZeros.length === 0 ? 1 : projectRatingsWithoutZeros.length;
+
+    const projectXp = (projectRatingSum / numberOfRatings * numberOfRatingsWithoutZeros) * projectCoefficient * projectModifier / 100;
 
     return Math.round((projectXp + Number.EPSILON));
   }

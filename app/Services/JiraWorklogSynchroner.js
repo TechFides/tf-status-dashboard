@@ -41,7 +41,7 @@ class JiraWorklogSynchroner {
 
     do {
       issues = await axios.get(
-        `https://techfides.atlassian.net/rest/api/latest/search?jql=worklogDate>='${startOfMonth}'&worklogDate<'${endOfMonth}'&startAt=${startAt}&maxResults=${MAX_RESULT}&fields=id, key`, options);
+        `https://techfides.atlassian.net/rest/api/latest/search?jql=worklogDate>='${startOfMonth}'&worklogDate<'${endOfMonth}'&startAt=${startAt}&maxResults=${MAX_RESULT}`, options);
       startAt += issues.data.maxResults;
 
       allIssues = [...allIssues, ...issues.data.issues];
@@ -55,14 +55,29 @@ class JiraWorklogSynchroner {
     return await axios.get(`https://techfides.atlassian.net/rest/api/3/issue/${issueId}/worklog`, options);
   }
 
+  async getProjectId (issue) {
+    let project = null;
+
+    if (issue.fields.labels.length > 0) {
+      for (const label of issue.fields.labels) {
+        project = (await ProjectModel.query().where('code', '=', label).fetch()).toJSON();
+        if (project[0]) {
+          return project[0].id;
+        }
+      }
+    }
+
+    project = (await ProjectModel.query().where('code', '=', issue.fields.project.key).fetch()).toJSON();
+    return project[0] ? project[0].id : null;
+  }
+
   async getAllWorklogsFromJira (issues) {
     let usersProject = [];
     let userObj;
 
     for (const issue of issues) {
       let worklogs = await this.getWorklogsFromJira(issue.id);
-      let projectId = (await ProjectModel.query().where('code', '=', this.getProjectNameFromKey(issue.key)).fetch()).toJSON();
-      projectId = projectId[0] ? projectId[0].id : null;
+      let projectId = await this.getProjectId(issue);
 
       for (const worklog of worklogs.data.worklogs) {
         if (this.isDateInThisMonth(worklog.updated)) {
@@ -132,10 +147,6 @@ class JiraWorklogSynchroner {
     const formattedDayToCompare = new Date(dateToCompare);
 
     return formattedDayToCompare >= currentMonth && formattedDayToCompare < nextMonth;
-  };
-
-  getProjectNameFromKey (projectKey) {
-    return projectKey.split('-')[0];
   };
 
   async fetchJiraData (currentMonth, nextMonth) {
