@@ -19,9 +19,8 @@ class ProjectRatingMessenger {
       case 1:
         attachments = [
           {
-            fallback: 'Plain-text summary of the attachment.',
             color: '#c62828',
-            text: `Tak tohle se hodně nepovedlo, chtělo by to zase pořádně máknout. Ze standupu máte hodnotu \*${ratingValue.value}\*.`,
+            text: `Tak tohle se hodně nepovedlo, chtělo by to zase pořádně máknout. Ze standupu máte \*${ratingValue.value}XP\*.`,
             thumb_url: `${process.env.VUE_APP_URL}/images/standup_rating_fail.png`,
           },
         ];
@@ -29,9 +28,8 @@ class ProjectRatingMessenger {
       case 2:
         attachments = [
           {
-            fallback: 'Plain-text summary of the attachment.',
             color: '#c62828',
-            text: `Tohle už je hodně na hraně, chtělo by to zlepšit \*${ratingValue.value}\*.`,
+            text: `Tohle už je hodně na hraně, chtělo by to zlepšit \*${ratingValue.value}XP\*.`,
             thumb_url: `${process.env.VUE_APP_URL}/images/standup_rating_bad.png`,
           },
         ];
@@ -39,9 +37,8 @@ class ProjectRatingMessenger {
       case 3:
         attachments = [
           {
-            fallback: 'Plain-text summary of the attachment.',
             color: '#3f51b5',
-            text: `Nazvěme to průměrně odvedená práce... ale tu my přece neděláme \*${ratingValue.value}\*.`,
+            text: `Nazvěme to průměrně odvedená práce... ale tu my přece neděláme \*${ratingValue.value}XP\*.`,
             thumb_url: `${process.env.VUE_APP_URL}/images/standup_rating_standard.png`,
           },
         ];
@@ -49,9 +46,8 @@ class ProjectRatingMessenger {
       case 4:
         attachments = [
           {
-            fallback: 'Plain-text summary of the attachment.',
             color: '#4caf50',
-            text: `Prostor na zlepšení by tu byl, ale v zásadě dobře odvedený kus práce. \n Ze standupu máte hodnotu \*${ratingValue.value}\*.`,
+            text: `Prostor na zlepšení by tu byl, ale v zásadě dobře odvedený kus práce. \n Ze standupu máte hodnotu \*${ratingValue.value}XP\*.`,
             thumb_url: `${process.env.VUE_APP_URL}/images/standup_rating_good.png`,
           },
         ];
@@ -59,9 +55,8 @@ class ProjectRatingMessenger {
       case 5:
         attachments = [
           {
-            fallback: 'Plain-text summary of the attachment.',
             color: '#4caf50',
-            text: `Fantastická práce. :hero: Ze standupu máte \*${ratingValue.value}\*. Jen tak dál.`,
+            text: `Fantastická práce. :hero: Ze standupu máte \*${ratingValue.value}XP\*. Jen tak dál.`,
             thumb_url: `${process.env.VUE_APP_URL}/images/standup_rating_amazing.png`,
           },
         ];

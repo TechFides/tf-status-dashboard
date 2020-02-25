@@ -36,7 +36,7 @@ async function sendMessage(conversationId, timeSpentSum) {
     {
       fallback: 'Plain-text summary of the attachment.',
       color: '#0091EA',
-      pretext: `Dobrá práce, za minulý měsíc si odpracoval: \*${getTimeSpentInHours(timeSpentSum)}h\*. Podrobnější informace nalezneš v naši aplikaci. :muscle:`,
+      pretext: `Dobrá práce, za minulý měsíc si odpracoval \*${getTimeSpentInHours(timeSpentSum)}h\*. Podrobnější informace nalezneš v naši aplikaci :muscle:.`,
       title: 'Dashboard',
       title_link: `${process.env.VUE_APP_URL}/statistics`,
       image_url: `${process.env.VUE_APP_URL}/images/techfides_logo.png`,

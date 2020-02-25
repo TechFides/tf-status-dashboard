@@ -45,3 +45,19 @@ use G Suite Domain-Wide Delegation of Authority and for this is needed create se
 
 - All users statistic are obtained from JIRA worklogs. For this create API token [here](https://id.atlassian.com/manage/api-tokens) and then
 set this token into env file to the variable JIRA_KEY. More info is possible find [here](https://support.siteimprove.com/hc/en-gb/articles/360004317332-How-to-create-an-API-token-from-your-Atlassian-account).
+
+- Dashboard can send informations to your Slack workspace. For this create [slack app](https://api.slack.com/apps) with your
+workspace name. Next set scopes. It is possible in section OAuth & Permissions->Scopes->Bot Token Scopes. Here chose this scopes:
+`chat:write, groups:write, im:write, mpim:write, users:read, users:read.email`. After that save changes a click on Install App.
+
+- Next save generated Bot User OAuth Access Token and set it into env file to the variable SLACK_TOKEN.
+
+- For sending information about worked hours for each employee is implemented script `app/Services/SlackBot.js`. This script
+should be run at the beginning of each month.
+
+- To send a notification about the start of the standup use script `app/Services/MessageScheduler.js`. This script
+should be run every morning.
+
+- Dashboard can send value of standup to the project channel. For this is necessarily to each project has a channel 
+that exists in your workspace. Also, each channel must have invited bot to the conversation. 
+This is possible by sending this message to the channel: `@'name of bot'`.
