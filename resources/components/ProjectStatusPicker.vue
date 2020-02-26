@@ -48,13 +48,6 @@
           </v-icon>
           <v-icon
             large
-            class="material-icons red800 custom-picker-font-size"
-            @click="submit('BAD')"
-          >
-            radio_button_unchecked
-          </v-icon>
-          <v-icon
-            large
             class="material-icons blue500 custom-picker-font-size"
             @click="submit('STANDARD')"
           >
@@ -131,11 +124,9 @@ export default {
           return className;
         case 1:
           return `${className} red800`;
-        case 2:
-          return `${className} red800`;
-        case 3:
+        case 6:
           return `${className} blue500`;
-        case 4:
+        case 7:
           return `${className} green500`;
         case 5:
           return `${className} green500`;
@@ -166,12 +157,10 @@ export default {
           return 0;
         case 'FAIL':
           return 1;
-        case 'BAD':
-          return 2;
         case 'STANDARD':
-          return 3;
+          return 6;
         case 'GOOD':
-          return 4;
+          return 7;
         case 'AMAZING':
           return 5;
       }
@@ -182,8 +171,6 @@ export default {
           return 'remove';
         case 'FAIL':
           return 'close';
-        case 'BAD':
-          return 'radio_button_unchecked';
         case 'STANDARD':
           return 'radio_button_unchecked';
         case 'GOOD':
@@ -198,11 +185,9 @@ export default {
           return 'remove';
         case 1:
           return 'close';
-        case 2:
+        case 6:
           return 'radio_button_unchecked';
-        case 3:
-          return 'radio_button_unchecked';
-        case 4:
+        case 7:
           return 'radio_button_unchecked';
         case 5:
           return 'done';

@@ -56,6 +56,18 @@ class StandupProjectRatingEnumSeeder {
         description: 'Great positive impact from our side',
         value: 120,
       },
+      {
+        id: 6,
+        name: 'STANDARD_v2',
+        description: 'Average',
+        value: 50,
+      },
+      {
+        id: 7,
+        name: 'GOOD_v2',
+        description: 'Doing better than expected',
+        value: 80,
+      },
     ];
   }
 }
