@@ -11,7 +11,9 @@
           v-bind="attrs"
           v-on="on"
         >
-          <i :class="getClassName()">{{ icon }}</i>
+          <v-icon :class="getClassName()">
+            {{ icon }}
+          </v-icon>
         </div>
       </template>
       <v-card>
@@ -109,6 +111,7 @@ export default {
         STANDARD: 6,
         GOOD: 7,
         AMAZING: 5,
+        DEFAULT: 8,
       },
     };
   },
@@ -137,6 +140,8 @@ export default {
           return `${className} green500`;
         case this.RATING_ENUM.AMAZING:
           return `${className} green500`;
+        case this.RATING_ENUM.DEFAULT:
+          return 'material-icons custom-default-rating-font-size';
         default:
           return '';
       }
@@ -198,6 +203,8 @@ export default {
           return 'radio_button_unchecked';
         case this.RATING_ENUM.AMAZING:
           return 'done';
+        case this.RATING_ENUM.DEFAULT:
+          return 'mdi-help';
       }
     },
   },
@@ -217,6 +224,12 @@ export default {
 
 .material-icons.custom-font-size {
   font-size: 500% !important;
+  cursor: pointer;
+}
+
+.material-icons.custom-default-rating-font-size {
+  font-size: 350% !important;
+  margin: 0.7rem 0;
   cursor: pointer;
 }
 

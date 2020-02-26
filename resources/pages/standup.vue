@@ -317,6 +317,7 @@ export default {
     return {
       filteredProjectsBySelectedMeetingTime: this.projects,
       selectedMeetingTimeId: null,
+      defaultRating: 8,
       modalItem: {
         standupMonth: null,
       },
@@ -493,7 +494,7 @@ export default {
       return this.getFilteredProjectsBySelectedMeetingTime(this.sortProjectsByMeetingTime()).map(p => ({
         standupId: standup.id,
         projectId: p.id,
-        rating: standup.standupProjectRating[p.id] || 0,
+        rating: standup.standupProjectRating[p.id] >= 0 ? standup.standupProjectRating[p.id] : this.defaultRating,
       }));
     },
     resetNote () {

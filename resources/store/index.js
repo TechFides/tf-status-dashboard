@@ -70,15 +70,17 @@ const calculateLevel = (totalExp) => {
   return Math.floor(result);
 };
 
-const filterProjectsByRatings = (projects, ratings) => {
+const filterProjectsByRatings = (projects, ratings, date) => {
   const allowedProjectIds = {};
+  const currentDate = new Date();
+
   for (const { standupProjectRating } of ratings) {
     for (const { project_id: projectId } of standupProjectRating) {
       allowedProjectIds[projectId] = true;
     }
   }
 
-  return projects.filter(p => allowedProjectIds[p.id]);
+  return date > currentDate ? projects : projects.filter(p => allowedProjectIds[p.id]);
 };
 
 const getStandupIndex = (state, standupId) => {
@@ -420,8 +422,7 @@ export const actions = {
       this.$axios.$get('/api/projectRatings', dateParams),
     ]);
 
-    const projects = filterProjectsByRatings(projectData, ratingsData);
-
+    const projects = filterProjectsByRatings(projectData, ratingsData, date);
     commit('setProjects', projects);
     commit('setProjectRatings', ratingsData);
   },
