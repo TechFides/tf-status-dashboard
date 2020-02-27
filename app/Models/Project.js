@@ -26,6 +26,10 @@ class Project extends Model {
   meetingTime () {
     return this.belongsTo('App/Models/MeetingTime');
   }
+
+  slackChannel () {
+    return this.belongsTo('App/Models/SlackChannel');
+  }
 }
 
 module.exports = Project;

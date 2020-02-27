@@ -26,8 +26,10 @@ function fetchUsersTimeSpent () {
   const previousMonth = format(date, 'YYYY-MM-DD');
 
   return new Promise(function(resolve, reject) {
-    const query = `SELECT SUM(time_spent) AS timeSpentSum, user_id, users.email FROM user_project_participations, users WHERE user_id=users.id AND date='${previousMonth}' GROUP BY user_id`;
-    connection.query(query, (err, data) => (err ? reject(err) : resolve(data)));
+    const columns = ['user_project_participations.time_spent', 'user_project_participations.user_id', 'users.email'];
+    const tables = ['user_project_participations', 'users'];
+    const query = 'SELECT SUM(??) AS timeSpentSum, ??, ?? FROM ?? WHERE user_id = users.id AND date = ? GROUP BY user_id';
+    connection.query(query, [columns[0], columns[1], columns[2], tables, previousMonth], (err, data) => (err ? reject(err) : resolve(data)));
   });
 }
 
@@ -43,7 +45,19 @@ async function sendMessage(conversationId, timeSpentSum) {
     },
   ];
 
-  await slackWebClient.chat.postMessage({ channel: conversationId, attachments: attachments });
+  try {
+    await slackWebClient.chat.postMessage({ channel: conversationId, attachments: attachments });
+  } catch (error) {
+    const attachments = [
+      {
+        color: '#c62828',
+        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: \*${error.data.error}\*.`,
+      },
+    ];
+
+    await slackWebClient.chat.postMessage({ channel: 'slackbot-errors', attachments: attachments });
+    console.error(error);
+  }
 }
 
 function getTimeSpentInHours(timeSpent) {

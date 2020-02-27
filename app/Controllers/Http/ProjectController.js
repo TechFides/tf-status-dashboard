@@ -7,35 +7,23 @@ const ProjectModel = use('App/Models/Project');
 const NoteModel = use('App/Models/Note');
 const ProjectUserModel = use('App/Models/ProjectUser');
 const UserProjectParticipationModel = use('App/Models/UserProjectParticipation');
+const SlackChannelModel = use('App/Models/SlackChannel');
 const Env = use('Env');
 
 class ProjectController {
-  static getProjectData (request) {
-    const {
-      code,
-      description,
-      isActive,
-      meetingTimeId,
-      slackChannel,
-    } = request.only(['code', 'description', 'isActive', 'meetingTimeId', 'slackChannel']);
-
-    return {
-      code,
-      description,
-      slack_channel: slackChannel,
-      is_active: isActive,
-      meeting_time_id: meetingTimeId,
-    };
-  }
-
   static async checkSlackChannel (slackChannelName) {
     const slackWebClient = new WebClient(Env.get('SLACK_TOKEN'));
+    let channelData = {
+      error: '',
+      id: '',
+    };
 
     const { channels } = await slackWebClient.conversations.list({limit: 1000});
     const slackChannel = channels.find(s => s.name === slackChannelName);
 
     if (!slackChannel) {
-      return 'Žádný takový kanál neexistuje.';
+      channelData.error = 'Žádný takový kanál neexistuje.';
+      return channelData;
     }
 
     const { members } = await slackWebClient.conversations.members({channel: slackChannel.id});
@@ -50,10 +38,12 @@ class ProjectController {
     }
 
     if (!slackBot) {
-      return 'Bot pro odesílání zpráv není pozvaný do kanálu (V kanálu odeslat zprávu: @\'název bota\').';
+      channelData.error = 'Bot pro odesílání zpráv není pozvaný do kanálu (V kanálu odeslat zprávu: /invite @\'nazev_bota\').';
+      return channelData;
     }
 
-    return null;
+    channelData.id = slackChannel.id;
+    return channelData;
   }
 
   async getProjects ({ request, response, params }) {
@@ -62,6 +52,7 @@ class ProjectController {
       .query()
       .with('notes')
       .with('meetingTime')
+      .with('slackChannel')
       .with('projectUser', (builder) => {
         builder
           .whereHas('projectExpModifier', (builder) => {
@@ -83,14 +74,36 @@ class ProjectController {
   }
 
   async createProject ({ request, response }) {
+    const {
+      code,
+      description,
+      isActive,
+      meetingTimeId,
+      slackChannelName,
+    } = request.only(['code', 'description', 'isActive', 'meetingTimeId', 'slackChannelName']);
+
     const project = new ProjectModel();
+    const channelData = await ProjectController.checkSlackChannel(slackChannelName);
 
-    const projectData = ProjectController.getProjectData(request);
-    const isSlackChannelInvalid = await ProjectController.checkSlackChannel(projectData.slack_channel);
-
-    if (isSlackChannelInvalid) {
-      return response.status(404).send({ message: isSlackChannelInvalid });
+    if (channelData.error) {
+      return response.status(404).send({ message: channelData.error });
     }
+
+    await SlackChannelModel.findOrCreate({
+        id: channelData.id,
+      },
+      {
+      channel_name: slackChannelName,
+      id: channelData.id,
+    });
+
+    const projectData = {
+      code,
+      description,
+      slack_channel_id: channelData.id,
+      is_active: isActive,
+      meeting_time_id: meetingTimeId,
+    };
 
     project.fill(projectData);
     await project.save();
@@ -100,14 +113,45 @@ class ProjectController {
 
   async editProject ({ request, response, params }) {
     const { id } = params;
+    const {
+      code,
+      description,
+      isActive,
+      meetingTimeId,
+      slackChannelName,
+    } = request.only(['code', 'description', 'isActive', 'meetingTimeId', 'slackChannelName']);
+
     const project = await ProjectModel.find(id);
+    const channelData = await ProjectController.checkSlackChannel(slackChannelName);
 
-    const projectData = ProjectController.getProjectData(request);
-    const isSlackChannelInvalid = await ProjectController.checkSlackChannel(projectData.slack_channel);
-
-    if (isSlackChannelInvalid) {
-      return response.status(404).send({ message: isSlackChannelInvalid });
+    if (channelData.error) {
+      return response.status(404).send({ message: channelData.error });
     }
+
+    const slackChannel = await SlackChannelModel.find(channelData.id);
+
+    if (slackChannel) {
+      const slackChannelData = {
+        channel_name: slackChannelName,
+        id: channelData.id,
+      };
+
+      slackChannel.merge(slackChannelData);
+      await slackChannel.save();
+    } else {
+      await SlackChannelModel.create({
+          channel_name: slackChannelName,
+          id: channelData.id,
+        });
+    }
+
+    const projectData = {
+      code,
+      description,
+      slack_channel_id: channelData.id,
+      is_active: isActive,
+      meeting_time_id: meetingTimeId,
+    };
 
     project.merge(projectData);
     await project.save();

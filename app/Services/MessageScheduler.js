@@ -28,7 +28,19 @@ function fetchProjectsMeetings () {
 async function sendNotificationOfStandup(slackChannel, time) {
   const text = 'Stand-up za 15 minut. Připravte si, co jste za poslední týden dělali a co budete dělat následující týden.';
 
-  await slackWebClient.chat.scheduleMessage({ channel: slackChannel, text: text, post_at: time});
+  try {
+    await slackWebClient.chat.scheduleMessage({ channel: slackChannel, text: text, post_at: time});
+  } catch (error) {
+    const attachments = [
+      {
+        color: '#c62828',
+        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: \*${error.data.error}\*.`,
+      },
+    ];
+
+    await slackWebClient.chat.postMessage({ channel: 'slackbot-errors', attachments: attachments });
+    console.error(error);
+  }
 }
 
 function getUnixTimestamp(time, weekDay) {
@@ -37,10 +49,7 @@ function getUnixTimestamp(time, weekDay) {
   const separatedTime = time.split(':');
   const currentDay = date.getDay();
 
-  weekDay += 1;
-  if (weekDay === 7) {
-    weekDay = 0;
-  }
+  weekDay = (weekDay + 1) % 7;
 
   if (currentDay !== weekDay) {
     return null;

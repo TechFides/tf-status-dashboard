@@ -60,4 +60,6 @@ should be run every morning.
 
 - Dashboard can send value of standup to the project channel. For this is necessarily to each project has a channel 
 that exists in your workspace. Also, each channel must have invited bot to the conversation. 
-This is possible by sending this message to the channel: `@'name of bot'`.
+This is possible by sending this message to the channel: `/invite @nazev_bota`.
+
+- If you want to get error messages when something get wrong then create channel `slackbot-errors` in your workspace. 

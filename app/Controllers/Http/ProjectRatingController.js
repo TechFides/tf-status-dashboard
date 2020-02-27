@@ -20,7 +20,7 @@ class ProjectRatingController {
         .projectRating()
         .associate(ratingValue);
 
-      ProjectRatingMessenger.sendRatingMessage(projectId, ratingValue.toJSON(), ratingValueId);
+      await ProjectRatingMessenger.sendRatingMessage(projectId, ratingValue.toJSON(), ratingValueId);
 
       await rating.save();
       response.status(200).send();

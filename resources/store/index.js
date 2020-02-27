@@ -116,7 +116,7 @@ export const mutations = {
         code: p.code,
         description: p.description,
         isActive: p.is_active === 1,
-        slackChannel: p.slack_channel,
+        slackChannelName: p.slackChannel ? p.slackChannel.channel_name : '',
         meetingTime: {
           id: p.meeting_time_id,
           dayAndTime: meetingTime && meetingTime.dayAndTime ? meetingTime.dayAndTime : null,
@@ -132,7 +132,7 @@ export const mutations = {
       code: p.code,
       description: p.description,
       isActive: p.is_active === 1,
-      slackChannel: p.slack_channel,
+      slackChannelName: p.slackChannel ? p.slackChannel.channel_name : '',
       teamLeader: {
         id: p.projectUser ? p.projectUser.user.id : null,
         name: p.projectUser ? `${p.projectUser.user.first_name} ${p.projectUser.user.last_name}` : '',
@@ -237,7 +237,6 @@ export const mutations = {
       });
   },
   setErrorState (state, errorObj) {
-    console.log(errorObj);
     state.error = {
       isVisible: true,
       message: errorObj.message ? errorObj.message : '',

@@ -1,5 +1,6 @@
 'use strict';
 const { WebClient } = require('@slack/web-api');
+const { RATING_ENUM } = require('../../constants');
 
 const ProjectModel = use('App/Models/Project');
 const Env = use('Env');
@@ -11,12 +12,13 @@ class ProjectRatingMessenger {
 
     const project = (await ProjectModel
       .query()
+      .with('slackChannel')
       .where('id', '=', projectId)
       .fetch()).toJSON();
 
     let attachments = '';
     switch (ratingValueId) {
-      case 1:
+      case RATING_ENUM.FAIL:
         attachments = [
           {
             color: '#c62828',
@@ -25,7 +27,7 @@ class ProjectRatingMessenger {
           },
         ];
         break;
-      case 6:
+      case RATING_ENUM.STANDARD:
         attachments = [
           {
             color: '#3f51b5',
@@ -34,7 +36,7 @@ class ProjectRatingMessenger {
           },
         ];
         break;
-      case 7:
+      case RATING_ENUM.GOOD:
         attachments = [
           {
             color: '#4caf50',
@@ -43,7 +45,7 @@ class ProjectRatingMessenger {
           },
         ];
         break;
-      case 5:
+      case RATING_ENUM.AMAZING:
         attachments = [
           {
             color: '#4caf50',
@@ -54,7 +56,19 @@ class ProjectRatingMessenger {
         break;
     }
 
-    await slackWebClient.chat.postMessage({ channel: project[0].slack_channel, attachments: attachments });
+    try {
+      await slackWebClient.chat.postMessage({ channel: project[0].slack_channel_id, attachments: attachments });
+    } catch (error) {
+      const attachments = [
+        {
+          color: '#c62828',
+          text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: \*${error.data.error}\*.`,
+        },
+      ];
+
+      await slackWebClient.chat.postMessage({ channel: 'slackbot-errors', attachments: attachments });
+      console.error(error);
+    }
   }
 }
 

@@ -115,7 +115,7 @@
                 md4
               >
                 <v-text-field
-                  v-model="modalItem.slackChannel"
+                  v-model="modalItem.slackChannelName"
                   :rules="[rules.required]"
                   label="Název slack kanálu"
                 />
@@ -220,7 +220,7 @@
               {{ props.item.teamLeader.name }}
             </td>
             <td class="text-center element">
-              {{ props.item.slackChannel }}
+              {{ props.item.slackChannelName }}
             </td>
             <td class="justify-center layout px-0">
               <v-icon
@@ -269,7 +269,7 @@ export default {
         description: '',
         isActive: true,
         meetingTimeId: null,
-        slackChannel: null,
+        slackChannelName: null,
         isOpen: false,
       },
       defaultModalItem: {
@@ -278,7 +278,7 @@ export default {
         description: '',
         isActive: true,
         meetingTimeId: null,
-        slackChannel: null,
+        slackChannelName: null,
         isOpen: false,
       },
       teamLeaderModalItem: {
@@ -337,7 +337,7 @@ export default {
           text: 'Slack kanál',
           align: 'center',
           sortable: false,
-          value: 'slackChannel',
+          value: 'slackChannelName',
         },
         {
           text: 'Akce',
@@ -351,14 +351,14 @@ export default {
       return this.allProjects.filter((element) => {
         const description = element.description ? element.description.toUpperCase() : '';
         const teamLeader = element.teamLeader.name.toUpperCase();
-        const slackChannel = element.slackChannel ? element.slackChannel.toUpperCase() : '';
+        const slackChannelName = element.slackChannelName ? element.slackChannelName.toUpperCase() : '';
         const uppercasedFilterText = this.filteringText.toUpperCase();
 
         return element.code.match(uppercasedFilterText) ||
           this.isProjectActive(element.isActive, true).match(uppercasedFilterText) ||
           description.match(uppercasedFilterText) ||
           teamLeader.match(uppercasedFilterText) ||
-          slackChannel.match(uppercasedFilterText);
+          slackChannelName.match(uppercasedFilterText);
       });
     },
     formattedMeetingTimesForSelect () {
@@ -408,7 +408,7 @@ export default {
         description: item.description,
         isActive: item.isActive,
         meetingTimeId: item.meetingTime.value,
-        slackChannel: item.slackChannel,
+        slackChannelName: item.slackChannelName,
       };
 
       this.modalTitle = 'Upravit projekt';
