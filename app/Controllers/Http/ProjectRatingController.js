@@ -3,6 +3,7 @@
 const StandupModel = use('App/Models/Standup');
 const StandupProjectRatingEnumModel = use('App/Models/StandupProjectRatingEnum');
 const StandupProjectRating = use('App/Models/StandupProjectRating');
+const ProjectRatingMessenger = use('App/Services/ProjectRatingMessenger');
 
 class ProjectRatingController {
   async setProjectRating ({ request, response, session }) {
@@ -18,6 +19,8 @@ class ProjectRatingController {
       rating
         .projectRating()
         .associate(ratingValue);
+
+      await ProjectRatingMessenger.sendRatingMessage(projectId, ratingValue.toJSON(), ratingValueId);
 
       await rating.save();
       response.status(200).send();

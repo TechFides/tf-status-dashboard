@@ -61,6 +61,8 @@
                 <v-time-picker
                   landscape
                   format="24hr"
+                  header-color="blue darken-2"
+                  color="blue darken-2"
                   :value="formData.time"
                   @input="updateTime"
                 />

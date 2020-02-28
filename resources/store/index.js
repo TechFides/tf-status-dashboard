@@ -116,6 +116,7 @@ export const mutations = {
         code: p.code,
         description: p.description,
         isActive: p.is_active === 1,
+        slackChannelName: p.slackChannel ? p.slackChannel.channel_name : '',
         meetingTime: {
           id: p.meeting_time_id,
           dayAndTime: meetingTime && meetingTime.dayAndTime ? meetingTime.dayAndTime : null,
@@ -131,6 +132,7 @@ export const mutations = {
       code: p.code,
       description: p.description,
       isActive: p.is_active === 1,
+      slackChannelName: p.slackChannel ? p.slackChannel.channel_name : '',
       teamLeader: {
         id: p.projectUser ? p.projectUser.user.id : null,
         name: p.projectUser ? `${p.projectUser.user.first_name} ${p.projectUser.user.last_name}` : '',
@@ -324,6 +326,7 @@ export const actions = {
       dispatch('getAllProjects');
       commit('clearErrorState');
     } catch (error) {
+      commit('setErrorState', error.response.data);
       if (error && error.response && error.response.data && error.response.data[0]) {
         commit('setErrorState', error.response.data[0]);
       }
@@ -335,6 +338,7 @@ export const actions = {
       dispatch('getAllProjects');
       commit('clearErrorState');
     } catch (error) {
+      commit('setErrorState', error.response.data);
       if (error && error.response && error.response.data && error.response.data[0]) {
         commit('setErrorState', error.response.data[0]);
       }

@@ -14,7 +14,9 @@
     "precommit": "npm run lint",
     "lint": "eslint --max-warnings 0 --ext .js,.vue resources/ app/",
     "lint:fix": "eslint --fix --max-warnings 0 --ext .js,.vue resources/ app/",
-    "google:accounts:sync": "node app/Services/GoogleAccountsSyncScript.js"
+    "google:accounts:sync": "node app/Services/GoogleAccountsSyncScript.js",
+    "slack:bot": "node app/Services/SlackBot.js",
+    "message:scheduler": "node app/Services/MessageScheduler.js"
   },
   "dependencies": {
     "@adonisjs/ace": "^5.0.8",
@@ -33,6 +35,8 @@
     "@nuxtjs/auth": "^4.5.3",
     "@nuxtjs/axios": "^5.4.1",
     "@sendgrid/mail": "^6.4.0",
+    "@slack/events-api": "^2.3.1",
+    "@slack/web-api": "^5.7.0",
     "adonis-acl": "^1.1.1",
     "aws-sdk": "^2.437.0",
     "axios": "^0.19.0",

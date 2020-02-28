@@ -22,7 +22,6 @@ class AuthController {
           .with('roles')
           .where({ id: googleTokenQuery.user_id })
           .first();
-
         const { token } = await auth.generate(user);
         newToken = token;
 

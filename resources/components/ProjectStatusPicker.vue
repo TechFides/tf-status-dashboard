@@ -48,13 +48,6 @@
           </v-icon>
           <v-icon
             large
-            class="material-icons red800 custom-picker-font-size"
-            @click="submit('BAD')"
-          >
-            radio_button_unchecked
-          </v-icon>
-          <v-icon
-            large
             class="material-icons blue500 custom-picker-font-size"
             @click="submit('STANDARD')"
           >
@@ -110,6 +103,13 @@ export default {
     return {
       dialog: false,
       className: 'material-icons',
+      RATING_ENUM: {
+        HIATUS: 0,
+        FAIL: 1,
+        STANDARD: 6,
+        GOOD: 7,
+        AMAZING: 5,
+      },
     };
   },
   computed: {
@@ -127,17 +127,15 @@ export default {
     getClassName () {
       let className = 'material-icons custom-font-size';
       switch (this.projectRating) {
-        case 0:
+        case this.RATING_ENUM.HIATUS:
           return className;
-        case 1:
+        case this.RATING_ENUM.FAIL:
           return `${className} red800`;
-        case 2:
-          return `${className} red800`;
-        case 3:
+        case this.RATING_ENUM.STANDARD:
           return `${className} blue500`;
-        case 4:
+        case this.RATING_ENUM.GOOD:
           return `${className} green500`;
-        case 5:
+        case this.RATING_ENUM.AMAZING:
           return `${className} green500`;
         default:
           return '';
@@ -163,17 +161,15 @@ export default {
     getRatingId (icon) {
       switch (icon) {
         case 'HIATUS':
-          return 0;
+          return this.RATING_ENUM.HIATUS;
         case 'FAIL':
-          return 1;
-        case 'BAD':
-          return 2;
+          return this.RATING_ENUM.FAIL;
         case 'STANDARD':
-          return 3;
+          return this.RATING_ENUM.STANDARD;
         case 'GOOD':
-          return 4;
+          return this.RATING_ENUM.GOOD;
         case 'AMAZING':
-          return 5;
+          return this.RATING_ENUM.AMAZING;
       }
     },
     getRatingIcon (icon) {
@@ -182,8 +178,6 @@ export default {
           return 'remove';
         case 'FAIL':
           return 'close';
-        case 'BAD':
-          return 'radio_button_unchecked';
         case 'STANDARD':
           return 'radio_button_unchecked';
         case 'GOOD':
@@ -194,17 +188,15 @@ export default {
     },
     getRatingIconFromId (icon) {
       switch (icon) {
-        case 0:
+        case this.RATING_ENUM.HIATUS:
           return 'remove';
-        case 1:
+        case this.RATING_ENUM.FAIL:
           return 'close';
-        case 2:
+        case this.RATING_ENUM.STANDARD:
           return 'radio_button_unchecked';
-        case 3:
+        case this.RATING_ENUM.GOOD:
           return 'radio_button_unchecked';
-        case 4:
-          return 'radio_button_unchecked';
-        case 5:
+        case this.RATING_ENUM.AMAZING:
           return 'done';
       }
     },
