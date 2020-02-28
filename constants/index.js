@@ -11,6 +11,7 @@ module.exports = {
   },
 
   RATING_ENUM: {
+    HIATUS: 0,
     FAIL: 1,
     STANDARD: 6,
     GOOD: 7,
