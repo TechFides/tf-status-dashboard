@@ -20,7 +20,7 @@ function initialization() {
 
 function fetchProjectsMeetings () {
   return new Promise(function(resolve, reject) {
-    const query = 'SELECT slack_channel, time, week_day FROM projects JOIN meeting_times ON projects.meeting_time_id = meeting_times.id';
+    const query = 'SELECT slack_channel_id, time, week_day FROM projects JOIN meeting_times ON projects.meeting_time_id = meeting_times.id';
     connection.query(query, (err, data) => (err ? reject(err) : resolve(data)));
   });
 }
@@ -69,11 +69,11 @@ async function main () {
   connection.end();
 
   for (const projectMeeting of projectsMeetings) {
-    if (projectMeeting.slack_channel && projectMeeting.time) {
+    if (projectMeeting.slack_channel_id && projectMeeting.time) {
 
       let unixTimestamp = getUnixTimestamp(projectMeeting.time, parseInt(projectMeeting.week_day));
       if (unixTimestamp) {
-        await sendNotificationOfStandup(projectMeeting.slack_channel, unixTimestamp);
+        await sendNotificationOfStandup(projectMeeting.slack_channel_id, unixTimestamp);
       }
     }
   }
