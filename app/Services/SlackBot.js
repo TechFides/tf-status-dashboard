@@ -45,19 +45,7 @@ async function sendMessage(conversationId, timeSpentSum) {
     },
   ];
 
-  try {
-    await slackWebClient.chat.postMessage({ channel: conversationId, attachments: attachments });
-  } catch (error) {
-    const attachments = [
-      {
-        color: '#c62828',
-        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: \*${error.data.error}\*.`,
-      },
-    ];
-
-    await slackWebClient.chat.postMessage({ channel: 'slackbot-errors', attachments: attachments });
-    console.error(error);
-  }
+  await slackWebClient.chat.postMessage({ channel: conversationId, attachments: attachments });
 }
 
 function getTimeSpentInHours(timeSpent) {
@@ -82,12 +70,24 @@ async function main () {
   const dashboardUsers = await fetchUsersTimeSpent();
   connection.end();
 
-  for (const dUser of dashboardUsers) {
-    const userSlackId = await getUserSlackId(dUser.email);
+  try {
+    for (const dUser of dashboardUsers) {
+      const userSlackId = await getUserSlackId(dUser.email);
 
-    if (userSlackId) {
-      await sendMessageToUsers(userSlackId.user.id, dUser.timeSpentSum);
+      if (userSlackId) {
+        await sendMessageToUsers(userSlackId.user.id, dUser.timeSpentSum);
+      }
     }
+  } catch (error) {
+    const attachments = [
+      {
+        color: '#c62828',
+        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: \*${error.data.error}\*.`,
+      },
+    ];
+
+    await slackWebClient.chat.postMessage({ channel: 'slackbot-errors', attachments: attachments });
+    console.error(error);
   }
 }
 
