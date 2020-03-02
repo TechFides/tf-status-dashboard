@@ -57,7 +57,9 @@ class ProjectRatingMessenger {
     }
 
     try {
-      await slackWebClient.chat.postMessage({ channel: project[0].slack_channel_id, attachments: attachments });
+      if (ratingValueId !== RATING_ENUM.HIATUS) {
+        await slackWebClient.chat.postMessage({ channel: project[0].slack_channel_id, attachments: attachments });
+      }
     } catch (error) {
       const attachments = [
         {
