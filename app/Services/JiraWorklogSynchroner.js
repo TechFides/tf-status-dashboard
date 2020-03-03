@@ -3,10 +3,12 @@
 const axios = require('axios');
 const format = require('date-fns/format');
 
+const Server = use('Adonis/Src/Server');
 const Env = use('Env');
 const UserModel = use('App/Models/User');
 const ProjectModel = use('App/Models/Project');
 const UserProjectParticipationModel = use('App/Models/UserProjectParticipation');
+const JiraSynchronizationModel = use('App/Models/JiraSynchronization');
 
 let options;
 let UserIdMap = new Map();
@@ -19,7 +21,7 @@ class JiraWorklogSynchroner {
 
     options = {
       method: 'GET',
-      auth: { username: Env.get('ADMIN_EMAIL'), password: Env.get('JIRA_KEY') },
+      auth: { username: Env.get('JIRA_ADMIN_EMAIL'), password: Env.get('JIRA_KEY') },
       headers: {
         'Accept': 'application/json',
       },
@@ -149,16 +151,48 @@ class JiraWorklogSynchroner {
     return formattedDayToCompare >= currentMonth && formattedDayToCompare < nextMonth;
   };
 
+  async setSynchronizationStatus(error = null) {
+      const date = new Date();
+
+      const jiraSynchronization = await JiraSynchronizationModel.findBy('status', 1);
+      const jiraSynchronizationDetail = {
+        status: 0,
+        error: error ? error.response.status : null,
+        message: error ? error.response.data.errorMessages[0] : '',
+      };
+
+      if (jiraSynchronization) {
+        jiraSynchronization.merge(jiraSynchronizationDetail);
+        await jiraSynchronization.save();
+      } else {
+        await JiraSynchronizationModel.create({
+          status: 1,
+          date: date,
+        });
+      }
+  }
+
   async fetchJiraData (currentMonth, nextMonth) {
-    let issues;
-    this.initialization(currentMonth, nextMonth);
+    try {
+      Server.getInstance().timeout = 0;
+      await this.setSynchronizationStatus();
 
-    this.cleanDB();
+      let issues;
+      this.initialization(currentMonth, nextMonth);
 
-    issues = await this.getProjectIssuesFromJira();
-    await this.mapUserId();
+      await this.cleanDB();
 
-    await this.getAllWorklogsFromJira(issues);
+      issues = await this.getProjectIssuesFromJira();
+      await this.mapUserId();
+
+      await this.getAllWorklogsFromJira(issues);
+
+      await this.setSynchronizationStatus();
+      Server.getInstance().timeout = 240000;
+    } catch (e) {
+      await this.setSynchronizationStatus(e);
+      console.error(e);
+    }
   }
 }
 
