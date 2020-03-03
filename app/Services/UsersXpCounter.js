@@ -6,6 +6,7 @@ const UserModel = use('App/Models/User');
 const StandupModel = use('App/Models/Standup');
 const UserTotalExpModel = use('App/Models/UserTotalExp');
 const UserProjectParticipationModel = use('App/Models/UserProjectParticipation');
+const JiraSynchronizationModel = use('App/Models/JiraSynchronization');
 
 class UsersXpCounter {
   async countUsersXp (currentMonth, nextMonth) {
@@ -59,6 +60,8 @@ class UsersXpCounter {
       .query()
       .fetch()).toJSON();
 
+    const jiraSynchronizationStatus = await JiraSynchronizationModel.findBy('status', 1);
+
     const userDetailStatistics =  fetchedUserStatistics.map(s => ({
         id: s.id,
         userName: `${s.first_name} ${s.last_name}`,
@@ -77,6 +80,7 @@ class UsersXpCounter {
 
     const userStatistics = {
       standups: standups,
+      jiraSynchronizationStatus: jiraSynchronizationStatus ? 1 : 0,
       userStatistics: userDetailStatistics.map(s => ({
         id: s.id,
         userName: s.userName,

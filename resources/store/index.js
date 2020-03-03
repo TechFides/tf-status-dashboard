@@ -166,6 +166,9 @@ export const mutations = {
     const sortedUsersByTotalXp = projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'totalXp'));
     state.projectStatistics.heroesOfGame = [sortedUsersByTotalXp[0], sortedUsersByTotalXp[1], sortedUsersByTotalXp[2]];
   },
+  setJiraSynchronizationStatus (state, status) {
+    state.projectStatistics.jiraSynchronizationStatus = status;
+  },
   setUserBonusXp(state, userStatistic) {
     state.projectStatistics.userStatistics.forEach((el, index) => {
       if (el.id === userStatistic.id) {
@@ -477,10 +480,12 @@ export const actions = {
 
     commit('setProjectStatistics', projectStatistics);
   },
-  async getJiraData ({ commit }, params) {;
+  async getJiraData ({ commit }, params) {
+    commit('setJiraSynchronizationStatus', params.status);
+
     const projectStatistics = await this.$axios.$get(
       `/api/statistics/data`,
-      { params },
+      { params: params.date },
     );
     commit('setProjectStatistics', projectStatistics);
   },

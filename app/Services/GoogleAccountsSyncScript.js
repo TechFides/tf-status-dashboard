@@ -12,7 +12,7 @@ function initialization() {
     email: process.env.GOOGLE_SERVICE_EMAIL,
     key: process.env.GOOGLE_PRIVATE_KEY,
     scopes: "https://www.googleapis.com/auth/admin.directory.user.readonly",
-    subject: process.env.ADMIN_EMAIL,
+    subject: process.env.GOOGLE_ADMIN_EMAIL,
   });
 
   connection = mysql.createConnection({

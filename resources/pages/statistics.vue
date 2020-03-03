@@ -3,7 +3,7 @@
     class="full-height"
   >
     <template
-      v-if="!pending"
+      v-if="!projectStatistics.jiraSynchronizationStatus"
     >
       <v-layout
         row
@@ -258,12 +258,12 @@
           >
             mdi-download
           </v-icon>
-          Stáhnout data
+          Synchronizace dat
         </v-btn>
       </v-layout>
     </template>
     <div
-      v-if="pending"
+      v-if="projectStatistics.jiraSynchronizationStatus"
       class="full-height align-center"
     >
       <v-progress-circular
@@ -271,6 +271,11 @@
         color="blue darken-2"
         indeterminate
       />
+      <div
+        class="synchronization-text"
+      >
+        Probíhá synchronizace dat. Počkejte prosím...
+      </div>
     </div>
   </div>
 </template>
@@ -295,7 +300,6 @@ export default {
         sumHoursWorked: null,
       },
       expandedRowId: null,
-      pending: false,
     };
   },
   computed: {
@@ -388,37 +392,52 @@ export default {
     },
     expandedHeaders () {
       const projectsStandupDates = this.getProjectsStandupDates();
-      const standupDate = projectsStandupDates.map(p => ({
-        text: p.date,
-        align: 'right',
-        sortable: false,
-        value: p.date,
-      }));
+      let standupDate = [
+        {
+          text: '',
+          value: '',
+          isVisible: false,
+        },
+      ];
 
-      return [
+      if (projectsStandupDates) {
+        standupDate = projectsStandupDates.map(p => ({
+          text: p.date,
+          align: 'right',
+          sortable: false,
+          value: p.date,
+          isVisible: true,
+        }));
+      }
+
+      const expandedHeaders = [
         {
           text: 'Projekty',
           align: 'left',
           sortable: true,
           value: 'code',
+          isVisible: true,
         },
         {
           text: 'Hodiny',
           align: 'right',
           sortable: true,
           value: 'timeSpent',
+          isVisible: true,
         },
         {
           text: 'Typ vedoucího týmu',
           align: 'left',
           sortable: true,
           value: 'projectExpModifierName',
+          isVisible: true,
         },
         {
           text: 'koeficient',
           align: 'right',
           sortable: true,
           value: 'timeSpent',
+          isVisible: true,
         },
         ...standupDate,
         {
@@ -426,8 +445,11 @@ export default {
           align: 'right',
           sortable: true,
           value: 'projectsXp',
+          isVisible: true,
         },
       ];
+
+      return expandedHeaders.filter(h => h.isVisible);
     },
 
     userDetailItems () {
@@ -514,13 +536,14 @@ export default {
     async fetchJiraData() {
       const [year, month] = this.statisticsMonthDialog.month.split('-');
       const params = {
-        year: Number(year),
-        month: Number(month),
+        date: {
+          year: Number(year),
+          month: Number(month),
+        },
+        status: 1,
       };
 
-      this.pending = true;
       await this.$store.dispatch('getJiraData', params);
-      this.pending = false;
     },
 
     formatMonth (date) {
@@ -581,9 +604,18 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
   }
 
   .header {
     font-size: 2em !important;
+  }
+
+  .synchronization-text {
+    color: #0091EA;
+    font-size: 1.4rem;
+    margin-top: 2rem;
+    max-width: 300px;
+    text-align: center;
   }
 </style>
