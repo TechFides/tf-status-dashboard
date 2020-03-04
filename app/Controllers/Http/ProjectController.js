@@ -209,7 +209,7 @@ class ProjectController {
       await project.delete();
       response.send();
     } catch (e) {
-      return e.toJSON();
+      response.status(500).send({message: e.message});
     }
   }
 }

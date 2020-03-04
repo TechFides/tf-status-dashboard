@@ -60,7 +60,7 @@ class StandupController {
       await standup.delete();
       response.send();
     } catch (e) {
-      return e.toJSON();
+      response.status(500).send({message: e.message});
     }
   }
 }

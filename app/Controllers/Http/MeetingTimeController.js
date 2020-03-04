@@ -52,7 +52,7 @@ class MeetingTimeController {
       await meetingTime.delete();
       response.send();
     } catch (e) {
-      return e.toJSON();
+      response.status(500).send({message: e.message});
     }
   }
 }
