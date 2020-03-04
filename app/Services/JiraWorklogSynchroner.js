@@ -153,12 +153,19 @@ class JiraWorklogSynchroner {
 
   async setSynchronizationStatus(error = null) {
       const date = new Date();
+      let errorStatus;
+      let message;
+
+      if (error) {
+        errorStatus = error.response ? error.response.status : 500;
+        message = error.response ? error.response.data.errorMessages[0] : error.message;
+      }
 
       const jiraSynchronization = await JiraSynchronizationModel.findBy('status', 1);
       const jiraSynchronizationDetail = {
         status: 0,
-        error: error ? error.response.status : null,
-        message: error ? error.response.data.errorMessages[0] : '',
+        error: errorStatus,
+        message: message,
       };
 
       if (jiraSynchronization) {
@@ -189,9 +196,10 @@ class JiraWorklogSynchroner {
 
       await this.setSynchronizationStatus();
       Server.getInstance().timeout = 240000;
+
     } catch (e) {
-      await this.setSynchronizationStatus(e);
       console.error(e);
+      await this.setSynchronizationStatus(e);
     }
   }
 }
