@@ -24,7 +24,7 @@ class JiraController {
       .orderBy('start_date', 'desc')
       .fetch()).toJSON();
 
-    const syncDuration = new Date(jiraSyncData[0].finish_date) - new Date(jiraSyncData[0].start_date);
+    const syncDuration = jiraSyncData.length > 0 ? new Date(jiraSyncData[0].finish_date) - new Date(jiraSyncData[0].start_date) : 0;
 
     const syncDates = {
       startSyncDate: format(new Date(), 'HH:mm:ss'),

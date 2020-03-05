@@ -7,17 +7,16 @@ class JiraSynchronizationsSchema extends Schema {
   up () {
     this.alter('jira_synchronizations', (table) => {
       table.dropColumn('date');
-      table.dropColumn('message');
-      table.text('message');
-      table.date('start_date').notNullable();
-      table.date('finish_date').notNullable();
+      table.text('message').alter();
+      table.date('start_date');
+      table.date('finish_date');
     })
   }
 
   down () {
     this.alter('jira_synchronizations', (table) => {
       table.dropColumn('start_date');
-      table.date('date').notNullable();
+      table.date('date');
       table.dropColumn('finish_date');
       table.dropColumn('message');
       table.string('message');
