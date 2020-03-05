@@ -3,12 +3,12 @@
 const axios = require('axios');
 const format = require('date-fns/format');
 
-const Server = use('Adonis/Src/Server');
 const Env = use('Env');
 const UserModel = use('App/Models/User');
 const ProjectModel = use('App/Models/Project');
 const UserProjectParticipationModel = use('App/Models/UserProjectParticipation');
 const JiraSynchronizationModel = use('App/Models/JiraSynchronization');
+const UsersXpCounter = use('App/Services/UsersXpCounter');
 
 let options;
 let UserIdMap = new Map();
@@ -166,6 +166,7 @@ class JiraWorklogSynchroner {
         status: 0,
         error: errorStatus,
         message: message,
+        finish_date: date,
       };
 
       if (jiraSynchronization) {
@@ -174,29 +175,29 @@ class JiraWorklogSynchroner {
       } else {
         await JiraSynchronizationModel.create({
           status: 1,
-          date: date,
+          start_date: date,
         });
       }
   }
 
   async fetchJiraData (currentMonth, nextMonth) {
     try {
-      Server.getInstance().timeout = 0;
+      let issues;
+
       await this.setSynchronizationStatus();
 
-      let issues;
       this.initialization(currentMonth, nextMonth);
 
       await this.cleanDB();
 
       issues = await this.getProjectIssuesFromJira();
       await this.mapUserId();
-
       await this.getAllWorklogsFromJira(issues);
 
-      await this.setSynchronizationStatus();
-      Server.getInstance().timeout = 240000;
+      const projectStatistic = await UsersXpCounter.countUsersXp(currentMonth, nextMonth);
+      await UsersXpCounter.setUserExperience(currentMonth, nextMonth, projectStatistic.userStatistics);
 
+      await this.setSynchronizationStatus();
     } catch (e) {
       console.error(e);
       await this.setSynchronizationStatus(e);

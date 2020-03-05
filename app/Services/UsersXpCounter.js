@@ -58,6 +58,8 @@ class UsersXpCounter {
 
     const allUsersTimespent = (await UserProjectParticipationModel
       .query()
+      .where('date', '>=', currentMonth)
+      .where('date', '<', nextMonth)
       .fetch()).toJSON();
 
     const jiraSynchronizationStatus = await JiraSynchronizationModel.findBy('status', 1);
@@ -69,7 +71,7 @@ class UsersXpCounter {
         bonusXp: this.getTotalBonusXp(s.bonusExps),
         userDetailStatistics: s.projectParticipations.map(p => ({
           code: p.project.code,
-          projectExpModifierName: this.getProjectExpModifierName(s.id, p.project.projectUser),
+          projectExpModifierName: this.getProjectExpModifierName(this.getGetExpModifier(p.project.projectUser, s.id, allUsersTimespent)),
           timeSpent: this.getTimeSpentInHours(p.time_spent),
           coefficient: this.getProjectCoefficient(p.time_spent),
           projectRatings: this.getRatings(p.project.standupProjectRating, standups),
@@ -80,7 +82,11 @@ class UsersXpCounter {
 
     const userStatistics = {
       standups: standups,
-      jiraSynchronizationStatus: jiraSynchronizationStatus ? 1 : 0,
+      jiraSynchronization: {
+        status: jiraSynchronizationStatus ? 1 : 0,
+        startSyncDate: '',
+        lastDuration: '',
+      },
       userStatistics: userDetailStatistics.map(s => ({
         id: s.id,
         userName: s.userName,
@@ -178,7 +184,7 @@ class UsersXpCounter {
     const numberOfRatings = projectRatings.length === 0 ? 1 : projectRatings.length;
     const numberOfRatingsWithoutZeros = projectRatingsWithoutZeros.length === 0 ? 1 : projectRatingsWithoutZeros.length;
 
-    const projectXp = (projectRatingSum / numberOfRatings * numberOfRatingsWithoutZeros) * projectCoefficient * projectModifier / 100;
+    const projectXp = (projectRatingSum / numberOfRatings * numberOfRatingsWithoutZeros) * projectCoefficient * projectModifier.value / 100;
 
     return Math.round((projectXp + Number.EPSILON));
   }
@@ -210,31 +216,36 @@ class UsersXpCounter {
       return EXP_MODIFIER.OTHER_LEADER;
     }
 
-    if(projectUser.projectExpModifier.id === 1) {
+    const teamLeaderTimespents = allUsersTimespent.filter(u => projectUser.project_id === u.project_id && teamLeaderId !== u.user_id);
+
+    if (projectUser.projectExpModifier.id === 1 && teamLeaderTimespents.length === 0) {
       return EXP_MODIFIER.SOLO_PLAYER;
     }
 
-    const teamLeaderTimespents = allUsersTimespent.filter(u => projectUser.project_id === u.project_id && teamLeaderId !== u.user_id);
+    const teamLeader = {
+      name: EXP_MODIFIER.TEAM_LEADER.name,
+      value: teamLeaderTimespents.reduce((acc, cur) => {
+        return acc + (this.getProjectCoefficient(cur.time_spent) / 100);
+      }, 1),
+    };
 
-    return teamLeaderTimespents.reduce((acc, cur) => {
-      return acc + (this.getProjectCoefficient(cur.time_spent) / 100);
-    }, 1);
+    return teamLeader;
   }
 
-  getProjectExpModifierName(user, projectUser) {
-    if (!projectUser) return 'Projekt nemá vedoucího týmu';
-
-    if (user === projectUser.user_id) {
-      if (projectUser.projectExpModifier.name === 'TEAM_LEADER') {
-        return 'Vedoucí týmu';
-      }
-
-      if (projectUser.projectExpModifier.name === 'SOLO_PLAYER') {
-        return 'Sólo hráč';
-      }
+  getProjectExpModifierName(expModifier) {
+    if (expModifier.name === EXP_MODIFIER.WITHOUT_LEADER.name) {
+      return 'Projekt nemá vedoucího týmu';
     }
 
-    return 'Vedoucí týmu je někdo jiný';
+    if (expModifier.name === EXP_MODIFIER.OTHER_LEADER.name) {
+      return 'Vedoucí týmu je někdo jiný';
+    }
+
+    if (expModifier.name === EXP_MODIFIER.SOLO_PLAYER.name) {
+      return 'Sólo hráč';
+    }
+
+    return 'Vedoucí týmu';
   }
 }
 
