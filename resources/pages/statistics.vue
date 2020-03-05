@@ -289,7 +289,7 @@
         <div class="row-align blue-color">
           Synchronizece začala:
           <div class="synchronization-info">
-            {{ projectStatistics.jiraSynchronization.startSyncDate }}
+            {{ projectStatistics.jiraSynchronization.startSyncTime }}
           </div>
         </div>
         <div class="row-align blue-color">

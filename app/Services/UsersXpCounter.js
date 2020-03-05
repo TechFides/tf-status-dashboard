@@ -85,7 +85,7 @@ class UsersXpCounter {
       standups: standups,
       jiraSynchronization: {
         status: syncData.status,
-        startSyncDate: syncData.startSyncDate,
+        startSyncTime: syncData.startSyncTime,
         lastDuration: syncData.lastDuration,
       },
       userStatistics: userDetailStatistics.map(s => ({
@@ -255,7 +255,7 @@ class UsersXpCounter {
     return (minutes > 0 ? minutes + 'm ' : '') + (seconds < 10 ? '0' : '') + seconds + 's';
   }
 
-  async getSyncData(currentMonth, nextMonth) {
+  async getSyncData() {
     const jiraSyncData = (await JiraSynchronizationModel
       .query()
       .orderBy('start_date', 'desc')
@@ -264,7 +264,7 @@ class UsersXpCounter {
     const syncDuration = jiraSyncData.length > 0 ? new Date(jiraSyncData[1].finish_date) - new Date(jiraSyncData[1].start_date) : 0;
 
     const syncDates = {
-      startSyncDate: format(new Date(), 'HH:mm:ss'),
+      startSyncTime: format(new Date(), 'HH:mm:ss'),
       lastDuration: this.millisToMinutesAndSeconds(syncDuration),
       status: jiraSyncData.length > 0 ? jiraSyncData[0].status : 0,
     };

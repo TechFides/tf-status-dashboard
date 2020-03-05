@@ -169,7 +169,7 @@ export const mutations = {
   setJiraSynchronizationStatus (state, syncData) {
     state.projectStatistics.jiraSynchronization = {
       status: syncData.status,
-      startSyncDate: syncData.startSyncDate,
+      startSyncTime: syncData.startSyncTime,
       lastDuration: syncData.lastDuration,
     };
   },
@@ -492,7 +492,7 @@ export const actions = {
 
     const syncData = {
       status: params.status,
-      startSyncDate: syncDates.startSyncDate,
+      startSyncTime: syncDates.startSyncTime,
       lastDuration: syncDates.lastDuration,
     };
 
