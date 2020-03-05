@@ -1,6 +1,7 @@
 'use strict';
 
 const { EXP_MODIFIER } = require('../../constants');
+const format = require('date-fns/format');
 
 const UserModel = use('App/Models/User');
 const StandupModel = use('App/Models/Standup');
@@ -62,8 +63,6 @@ class UsersXpCounter {
       .where('date', '<', nextMonth)
       .fetch()).toJSON();
 
-    const jiraSynchronizationStatus = await JiraSynchronizationModel.findBy('status', 1);
-
     const userDetailStatistics =  fetchedUserStatistics.map(s => ({
         id: s.id,
         userName: `${s.first_name} ${s.last_name}`,
@@ -80,12 +79,14 @@ class UsersXpCounter {
         })),
       }));
 
+    const syncData = await this.getSyncData(currentMonth, nextMonth);
+
     const userStatistics = {
       standups: standups,
       jiraSynchronization: {
-        status: jiraSynchronizationStatus ? 1 : 0,
-        startSyncDate: '',
-        lastDuration: '',
+        status: syncData.status,
+        startSyncDate: syncData.startSyncDate,
+        lastDuration: syncData.lastDuration,
       },
       userStatistics: userDetailStatistics.map(s => ({
         id: s.id,
@@ -246,6 +247,29 @@ class UsersXpCounter {
     }
 
     return 'Vedoucí týmu';
+  }
+
+  millisToMinutesAndSeconds(millis) {
+    const minutes = Math.floor(millis / 60000);
+    const seconds = ((millis % 60000) / 1000).toFixed(0);
+    return (minutes > 0 ? minutes + 'm ' : '') + (seconds < 10 ? '0' : '') + seconds + 's';
+  }
+
+  async getSyncData(currentMonth, nextMonth) {
+    const jiraSyncData = (await JiraSynchronizationModel
+      .query()
+      .orderBy('start_date', 'desc')
+      .fetch()).toJSON();
+
+    const syncDuration = jiraSyncData.length > 0 ? new Date(jiraSyncData[1].finish_date) - new Date(jiraSyncData[1].start_date) : 0;
+
+    const syncDates = {
+      startSyncDate: format(new Date(), 'HH:mm:ss'),
+      lastDuration: this.millisToMinutesAndSeconds(syncDuration),
+      status: jiraSyncData.length > 0 ? jiraSyncData[0].status : 0,
+    };
+
+    return syncDates;
   }
 }
 

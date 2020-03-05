@@ -8,8 +8,8 @@ class JiraSynchronizationsSchema extends Schema {
     this.alter('jira_synchronizations', (table) => {
       table.dropColumn('date');
       table.text('message').alter();
-      table.date('start_date');
-      table.date('finish_date');
+      table.dateTime('start_date');
+      table.dateTime('finish_date');
     })
   }
 
