@@ -79,7 +79,7 @@ class UsersXpCounter {
         })),
       }));
 
-    const syncData = await this.getSyncData(currentMonth, nextMonth);
+    const syncData = await this.getSyncData();
 
     const userStatistics = {
       standups: standups,
