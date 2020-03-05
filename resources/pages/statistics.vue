@@ -2,279 +2,302 @@
   <div
     class="full-height"
   >
-    <template
-      v-if="!projectStatistics.jiraSynchronizationStatus"
+    <v-layout
+      row
+      reverse
+      align-end
     >
-      <v-layout
-        row
-        reverse
-        align-end
+      <v-dialog
+        v-model="userInfoDialog.isOpen"
+        max-width="450px"
+        transition="scale-transition"
+        :persistent="true"
       >
-        <v-dialog
-          v-model="userInfoDialog.isOpen"
-          max-width="450px"
-          transition="scale-transition"
-          :persistent="true"
-        >
-          <v-card>
-            <v-card-title>
-              <span class="headline">Přidat bonus XP</span>
-            </v-card-title>
+        <v-card>
+          <v-card-title>
+            <span class="headline">Přidat bonus XP</span>
+          </v-card-title>
 
-            <v-form ref="form">
-              <v-card-text>
-                <v-container grid-list-md>
-                  <v-layout
-                    wrap
+          <v-form ref="form">
+            <v-card-text>
+              <v-container grid-list-md>
+                <v-layout
+                  wrap
+                >
+                  <v-flex
+                    xs12
                   >
-                    <v-flex
-                      xs12
-                    >
-                      <v-text-field
-                        v-model="userInfoDialog.bonusXp"
-                        type="number"
-                        label="Bonus Xp"
-                      />
-                    </v-flex>
-                  </v-layout>
-                </v-container>
-                <v-alert
-                  transition="fade-transition"
-                  :value="error.isVisible"
-                  type="error"
-                  color="red darken-2"
-                >
-                  {{ error.message }}
-                </v-alert>
-              </v-card-text>
+                    <v-text-field
+                      v-model="userInfoDialog.bonusXp"
+                      type="number"
+                      label="Bonus Xp"
+                    />
+                  </v-flex>
+                </v-layout>
+              </v-container>
+              <v-alert
+                transition="fade-transition"
+                :value="error.isVisible"
+                type="error"
+                color="red darken-2"
+              >
+                {{ error.message }}
+              </v-alert>
+            </v-card-text>
 
-              <v-card-actions>
-                <v-spacer />
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click.native="close"
-                >
-                  Zrušit
-                </v-btn>
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click.native="save"
-                >
-                  Uložit
-                </v-btn>
-              </v-card-actions>
-            </v-form>
-          </v-card>
-        </v-dialog>
-        <v-flex
-          md1
-          class="pad"
-        >
-          <v-dialog
-            ref="dialogMonth"
-            v-model="statisticsMonthDialog.isOpen"
-            :return-value.sync="statisticsMonthDialog.month"
-            persistent
-            width="290px"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <div class="month-picker">
-                <v-text-field
-                  v-model="statisticsMonthDialog.month"
-                  label="Měsíc"
-                  append-icon="event"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                />
-              </div>
-            </template>
-            <v-date-picker
-              v-model="statisticsMonthDialog.month"
-              scrollable
-              type="month"
-              header-color="blue darken-2"
-              color="blue darken-2"
-            >
+            <v-card-actions>
               <v-spacer />
               <v-btn
+                color="blue darken-1"
                 text
-                color="primary"
-                @click="statisticsMonthDialog.isOpen = false"
+                @click.native="close"
               >
                 Zrušit
               </v-btn>
               <v-btn
+                color="blue darken-1"
                 text
-                color="primary"
-                @click="updateMonth($refs.dialogMonth)"
+                @click.native="save"
               >
-                OK
+                Uložit
               </v-btn>
-            </v-date-picker>
-          </v-dialog>
-        </v-flex>
-      </v-layout>
-
-      <v-layout
-        column
-        justify-center
-        align-end
+            </v-card-actions>
+          </v-form>
+        </v-card>
+      </v-dialog>
+      <v-flex
+        md1
+        class="pad"
       >
-        <v-data-table
-          :headers="headers"
-          :items="projectStatistics.userStatistics"
-          :items-per-page="999"
-          item-key="id"
-          hide-default-footer
-          fill-height
-          single-expand
-          must-sort
-          class="elevation-1 fullscreen"
-          @item-expanded="getRowId"
+        <v-dialog
+          ref="dialogMonth"
+          v-model="statisticsMonthDialog.isOpen"
+          :return-value.sync="statisticsMonthDialog.month"
+          persistent
+          width="290px"
         >
-          <template
-            v-slot:item="{item, expand, isExpanded}"
-          >
-            <tr>
-              <td class="text-left element">
-                {{ item.userName }}
-              </td>
-              <td class="text-right element pr-8">
-                {{ item.bonusXp }}
-              </td>
-              <td class="text-right element pr-8">
-                {{ item.sumXpProjects }}
-              </td>
-              <td class="text-right element pr-8">
-                {{ item.sumHoursWorked }}
-              </td>
-              <td
-                class="text-right element pr-8"
-                :class="{ 'hero-element': isHeroOfMonth(item.id)}"
-              >
-                {{ item.monthXp }}
-              </td>
-              <td class="text-right element pr-8">
-                {{ item.previousXp }}
-              </td>
-              <td
-                class="text-right element pr-8"
-                :class="{ 'hero-element': isHeroOfGame(item.id)}"
-              >
-                {{ item.totalXp }}
-              </td>
-              <td class="text-right element pr-8">
-                {{ item.currentLevel }}
-              </td>
-              <td class="text-right element pr-8">
-                {{ item.newLevel }}
-              </td>
-              <td
-                v-if="isAdmin()"
-                class="text-center px-0"
-              >
-                <v-icon
-                  color="green lighten-1"
-                  class="justify-center"
-                  @click="addExp(item)"
-                >
-                  mdi-plus-circle-outline
-                </v-icon>
-              </td>
-              <td class="text-left px-0">
-                <v-icon
-                  class="mr-2"
-                  @click="expand(!isExpanded)"
-                >
-                  {{ isExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
-                </v-icon>
-              </td>
-            </tr>
+          <template v-slot:activator="{ on, attrs }">
+            <div class="month-picker">
+              <v-text-field
+                v-model="statisticsMonthDialog.month"
+                label="Měsíc"
+                append-icon="event"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              />
+            </div>
           </template>
-          <template
-            v-slot:expanded-item="{ headers }"
+          <v-date-picker
+            v-model="statisticsMonthDialog.month"
+            scrollable
+            type="month"
+            header-color="blue darken-2"
+            color="blue darken-2"
           >
-            <td
-              :colspan="headers.length"
+            <v-spacer />
+            <v-btn
+              text
+              color="primary"
+              @click="statisticsMonthDialog.isOpen = false"
             >
-              <v-data-table
-                :headers="expandedHeaders"
-                :items="userDetailItems"
-                item-key="id"
-                hide-default-footer
-                fill-height
-                must-sort
-                class="elevation-1 fullscreen"
-              >
-                <template
-                  v-slot:item="{item}"
-                >
-                  <tr>
-                    <td class="text-left">
-                      {{ item.code }}
-                    </td>
-                    <td class="text-right pr-8">
-                      {{ item.timeSpent }}
-                    </td>
-                    <td class="text-left">
-                      {{ item.projectExpModifierName }}
-                    </td>
-                    <td class="text-right pr-8">
-                      {{ item.coefficient }}%
-                    </td>
-                    <td
-                      v-for="(i, itemIndex) in item.projectRatings"
-                      :key="itemIndex"
-                      class="text-right"
-                    >
-                      {{ i.rating }}
-                    </td>
-                    <td class="text-right pr-8">
-                      {{ item.projectsXp }}
-                    </td>
-                  </tr>
-                </template>
-              </v-data-table>
-            </td>
-          </template>
-        </v-data-table>
-      </v-layout>
-      <v-layout
-        row
-        justify-center
-      >
-        <v-btn
-          v-show="isAdmin()"
-          class="standup-button"
-          color="blue darken-2"
-          dark
-          @click="fetchJiraData()"
-        >
-          <v-icon
-            class="mr-2"
-          >
-            mdi-download
-          </v-icon>
-          Synchronizace dat
-        </v-btn>
-      </v-layout>
-    </template>
-    <div
-      v-if="projectStatistics.jiraSynchronizationStatus"
-      class="full-height align-center"
+              Zrušit
+            </v-btn>
+            <v-btn
+              text
+              color="primary"
+              @click="updateMonth($refs.dialogMonth)"
+            >
+              OK
+            </v-btn>
+          </v-date-picker>
+        </v-dialog>
+      </v-flex>
+    </v-layout>
+
+    <v-layout
+      column
+      justify-center
+      align-end
     >
-      <v-progress-circular
-        :size="150"
-        color="blue darken-2"
-        indeterminate
-      />
-      <div
-        class="synchronization-text"
+      <v-data-table
+        :headers="headers"
+        :items="projectStatistics.userStatistics"
+        :items-per-page="999"
+        item-key="id"
+        hide-default-footer
+        fill-height
+        single-expand
+        must-sort
+        class="elevation-1 fullscreen"
+        @item-expanded="getRowId"
       >
-        Probíhá synchronizace dat. Počkejte prosím...
+        <template
+          v-slot:item="{item, expand, isExpanded}"
+        >
+          <tr>
+            <td class="text-left element">
+              {{ item.userName }}
+            </td>
+            <td class="text-right element pr-8">
+              {{ item.bonusXp }}
+            </td>
+            <td class="text-right element pr-8">
+              {{ item.sumXpProjects }}
+            </td>
+            <td class="text-right element pr-8">
+              {{ item.sumHoursWorked }}
+            </td>
+            <td
+              class="text-right element pr-8"
+              :class="{ 'hero-element': isHeroOfMonth(item.id)}"
+            >
+              {{ item.monthXp }}
+            </td>
+            <td class="text-right element pr-8">
+              {{ item.previousXp }}
+            </td>
+            <td
+              class="text-right element pr-8"
+              :class="{ 'hero-element': isHeroOfGame(item.id)}"
+            >
+              {{ item.totalXp }}
+            </td>
+            <td class="text-right element pr-8">
+              {{ item.currentLevel }}
+            </td>
+            <td class="text-right element pr-8">
+              {{ item.newLevel }}
+            </td>
+            <td
+              v-if="isAdmin()"
+              class="text-center px-0"
+            >
+              <v-icon
+                color="green lighten-1"
+                class="justify-center"
+                @click="addExp(item)"
+              >
+                mdi-plus-circle-outline
+              </v-icon>
+            </td>
+            <td class="text-left px-0">
+              <v-icon
+                class="mr-2"
+                @click="expand(!isExpanded)"
+              >
+                {{ isExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
+              </v-icon>
+            </td>
+          </tr>
+        </template>
+        <template
+          v-slot:expanded-item="{ headers }"
+        >
+          <td
+            :colspan="headers.length"
+          >
+            <v-data-table
+              :headers="expandedHeaders"
+              :items="userDetailItems"
+              item-key="id"
+              hide-default-footer
+              fill-height
+              must-sort
+              class="elevation-1 fullscreen"
+            >
+              <template
+                v-slot:item="{item}"
+              >
+                <tr>
+                  <td class="text-left">
+                    {{ item.code }}
+                  </td>
+                  <td class="text-right pr-8">
+                    {{ item.timeSpent }}
+                  </td>
+                  <td class="text-left">
+                    {{ item.projectExpModifierName }}
+                  </td>
+                  <td class="text-right pr-8">
+                    {{ item.coefficient }}%
+                  </td>
+                  <td
+                    v-for="(i, itemIndex) in item.projectRatings"
+                    :key="itemIndex"
+                    class="text-right"
+                  >
+                    {{ i.rating }}
+                  </td>
+                  <td class="text-right pr-8">
+                    {{ item.projectsXp }}
+                  </td>
+                </tr>
+              </template>
+            </v-data-table>
+          </td>
+        </template>
+      </v-data-table>
+    </v-layout>
+    <v-layout
+      row
+      justify-center
+    >
+      <v-tooltip
+        bottom
+        :disabled="!projectStatistics.jiraSynchronization.status"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <div
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-btn
+              v-show="isAdmin()"
+              class="my-2 standup-button"
+              color="primary"
+              :disabled="!!projectStatistics.jiraSynchronization.status"
+              @click="fetchJiraData()"
+            >
+              <v-progress-circular
+                v-if="projectStatistics.jiraSynchronization.status"
+                :size="25"
+                class="mr-2"
+                color="grey lighten-1"
+                indeterminate
+              />
+              <v-icon
+                v-if="!projectStatistics.jiraSynchronization.status"
+                class="mr-2"
+              >
+                mdi-download
+              </v-icon>
+              Synchronizace dat
+            </v-btn>
+          </div>
+        </template>
+        <span>
+          Probíhá synchronizace. Počkejte prosím...
+        </span>
+      </v-tooltip>
+    </v-layout>
+    <div
+      v-if="projectStatistics.jiraSynchronization.status"
+      class="column-align"
+    >
+      <div class="synchronization-info-wrapper">
+        <div class="row-align blue-color">
+          Synchronizece začala:
+          <div class="synchronization-info">
+            {{ projectStatistics.jiraSynchronization.startSyncDate }}
+          </div>
+        </div>
+        <div class="row-align blue-color">
+          Synchronizece naposledy trvala:
+          <div class="synchronization-info">
+            {{ projectStatistics.jiraSynchronization.lastDuration }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -593,29 +616,44 @@ export default {
   }
 
   .standup-button {
-    margin-top: 6px;
+    background-color: #1976D2 !important;
   }
 
   .full-height {
     height: 100%;
   }
 
-  .align-center {
+  .synchronization-info-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .column-align {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
   }
 
+  .row-align {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+  }
+
+  .blue-color {
+    color: #0091EA;
+  }
+
   .header {
     font-size: 2em !important;
   }
 
-  .synchronization-text {
-    color: #0091EA;
-    font-size: 1.4rem;
-    margin-top: 2rem;
-    max-width: 300px;
-    text-align: center;
+  .synchronization-info {
+    font-weight: bold;
+    margin-left: 0.5rem;
   }
+
 </style>

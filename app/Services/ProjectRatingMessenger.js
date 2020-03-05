@@ -31,7 +31,7 @@ class ProjectRatingMessenger {
         attachments = [
           {
             color: '#3f51b5',
-            text: `Nazvěme to průměrně odvedená práce... ale tu my přece neděláme \*${ratingValue.value}XP\* :sunglasses:.`,
+            text: `Nazvěme to průměrně odvedená práce... ale tu my přece neděláme. Ze sitdownu máte \*${ratingValue.value}XP\* :sunglasses:.`,
             thumb_url: `${process.env.VUE_APP_URL}/images/standup_rating_standard.png`,
           },
         ];

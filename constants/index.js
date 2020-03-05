@@ -4,10 +4,22 @@ module.exports = {
   },
 
   EXP_MODIFIER: {
-    TEAM_LEADER: 2,
-    SOLO_PLAYER: 1,
-    WITHOUT_LEADER: 1,
-    OTHER_LEADER: 1,
+    TEAM_LEADER: {
+     value: 2,
+     name: 'teamLeader',
+    },
+    SOLO_PLAYER: {
+      value: 1,
+      name: 'soloPlayer',
+    },
+    WITHOUT_LEADER: {
+      value: 1,
+      name: 'withoutLeader',
+    },
+    OTHER_LEADER: {
+      value: 1,
+      name: 'otherLeader',
+    },
   },
 
   RATING_ENUM: {
