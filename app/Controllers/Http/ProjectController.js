@@ -6,6 +6,7 @@ const ProjectModel = use('App/Models/Project');
 const NoteModel = use('App/Models/Note');
 const ProjectUserModel = use('App/Models/ProjectUser');
 const SlackChannelModel = use('App/Models/SlackChannel');
+const StandupProjectRatingModel = use('App/Models/StandupProjectRating');
 const Env = use('Env');
 
 class ProjectController {
@@ -194,6 +195,11 @@ class ProjectController {
     const project = await ProjectModel.find(id);
 
     try {
+      await StandupProjectRatingModel
+        .query()
+        .where('project_id', '=', id)
+        .delete();
+
       await NoteModel
         .query()
         .where('project_id', '=', id)
