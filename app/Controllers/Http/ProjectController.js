@@ -17,11 +17,11 @@ class ProjectController {
       id: '',
     };
 
-    const { channels } = await slackWebClient.conversations.list({limit: 1000});
+    const { channels } = await slackWebClient.conversations.list({limit: 1000, types: 'public_channel, private_channel'});
     const slackChannel = channels.find(s => s.name === slackChannelName);
 
     if (!slackChannel) {
-      channelData.error = 'Žádný takový kanál neexistuje.';
+      channelData.error = 'Žádný takový kanál neexistuje nebo se jedná o privátní kanál a je nutné do tohoto kanálu bota pozvat (v kanálu odeslat zprávu: /invite @\'nazev_bota\').';
       return channelData;
     }
 
@@ -37,7 +37,7 @@ class ProjectController {
     }
 
     if (!slackBot) {
-      channelData.error = 'Bot pro odesílání zpráv není pozvaný do kanálu (V kanálu odeslat zprávu: /invite @\'nazev_bota\').';
+      channelData.error = 'Bot pro odesílání zpráv není pozvaný do tohoto kanálu (v kanálu odeslat zprávu: /invite @\'nazev_bota\').';
       return channelData;
     }
 
