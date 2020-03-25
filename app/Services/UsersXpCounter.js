@@ -261,7 +261,7 @@ class UsersXpCounter {
       .orderBy('start_date', 'desc')
       .fetch()).toJSON();
 
-    const syncDuration = jiraSyncData.length > 0 ? new Date(jiraSyncData[1].finish_date) - new Date(jiraSyncData[1].start_date) : 0;
+    const syncDuration = jiraSyncData.length > 1 ? new Date(jiraSyncData[1].finish_date) - new Date(jiraSyncData[1].start_date) : 0;
 
     const syncDates = {
       startSyncTime: format(new Date(), 'HH:mm:ss'),
