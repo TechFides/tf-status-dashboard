@@ -1,6 +1,6 @@
 'use strict';
 
-const { EXP_MODIFIER } = require('../../constants');
+const { EXP_MODIFIER, AVERAGE_MONTH_WORKED_HOURS } = require('../../constants');
 const format = require('date-fns/format');
 
 const UserModel = use('App/Models/User');
@@ -164,8 +164,8 @@ class UsersXpCounter {
   }
 
   getProjectCoefficient(timeSpent) {
-    const AVERAGE_HOURS_PER_MONTH = 168;
-    const projectCoefficient = (this.getTimeSpentInHours(timeSpent) / AVERAGE_HOURS_PER_MONTH) * 100;
+    const averageMonthWorkedHours = AVERAGE_MONTH_WORKED_HOURS;
+    const projectCoefficient = (this.getTimeSpentInHours(timeSpent) / averageMonthWorkedHours) * 100;
 
     return this.roundNumber(projectCoefficient);
   }
@@ -217,17 +217,18 @@ class UsersXpCounter {
       return EXP_MODIFIER.OTHER_LEADER;
     }
 
-    const teamLeaderTimespents = allUsersTimespent.filter(u => projectUser.project_id === u.project_id && teamLeaderId !== u.user_id);
+    const timeSpentsOfRestTeam = allUsersTimespent.filter(u => projectUser.project_id === u.project_id && teamLeaderId !== u.user_id);
+    const sumTimeSpentsOfRestTeam = timeSpentsOfRestTeam.reduce((acc, cur) => {
+      return acc + this.getProjectCoefficient(cur.time_spent);
+    }, 0);
 
-    if (projectUser.projectExpModifier.id === 1 && teamLeaderTimespents.length === 0) {
+    if ((projectUser.projectExpModifier.id === 1 && timeSpentsOfRestTeam.length === 0) || sumTimeSpentsOfRestTeam <= 50) {
       return EXP_MODIFIER.SOLO_PLAYER;
     }
 
     const teamLeader = {
       name: EXP_MODIFIER.TEAM_LEADER.name,
-      value: 1 + (teamLeaderTimespents.reduce((acc, cur) => {
-        return acc + (this.getProjectCoefficient(cur.time_spent) / 100);
-      }, 0) * 0.5),
+      value: 1 + (sumTimeSpentsOfRestTeam / 100 * 0.5),
     };
 
     return teamLeader;
