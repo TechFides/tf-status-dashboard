@@ -70,12 +70,12 @@ class UsersXpCounter {
         bonusXp: this.getTotalBonusXp(s.bonusExps),
         userDetailStatistics: s.projectParticipations.map(p => ({
           code: p.project.code,
-          projectExpModifierName: this.getProjectExpModifierName(this.getGetExpModifier(p.project.projectUser, s.id, allUsersTimespent)),
+          projectExpModifierName: this.getProjectExpModifierName(this.getExpModifier(p.project.projectUser, s.id, allUsersTimespent)),
           timeSpent: this.getTimeSpentInHours(p.time_spent),
           coefficient: this.getProjectCoefficient(p.time_spent),
           projectRatings: this.getRatings(p.project.standupProjectRating, standups),
           projectsXp: this.getProjectXp(this.getRatings(p.project.standupProjectRating, standups),
-            this.getProjectCoefficient(p.time_spent), p.project.standupProjectRating, this.getGetExpModifier(p.project.projectUser, s.id, allUsersTimespent)),
+            this.getProjectCoefficient(p.time_spent), p.project.standupProjectRating, this.getExpModifier(p.project.projectUser, s.id, allUsersTimespent)),
         })),
       }));
 
@@ -164,7 +164,7 @@ class UsersXpCounter {
   }
 
   getProjectCoefficient(timeSpent) {
-    const AVERAGE_HOURS_PER_MONTH = 176;
+    const AVERAGE_HOURS_PER_MONTH = 168;
     const projectCoefficient = (this.getTimeSpentInHours(timeSpent) / AVERAGE_HOURS_PER_MONTH) * 100;
 
     return this.roundNumber(projectCoefficient);
@@ -185,7 +185,7 @@ class UsersXpCounter {
     const numberOfRatings = projectRatings.length === 0 ? 1 : projectRatings.length;
     const numberOfRatingsWithoutZeros = projectRatingsWithoutZeros.length === 0 ? 1 : projectRatingsWithoutZeros.length;
 
-    const projectXp = (projectRatingSum / numberOfRatings * numberOfRatingsWithoutZeros) * projectCoefficient * projectModifier.value / 100;
+    const projectXp = (projectRatingSum / numberOfRatingsWithoutZeros * numberOfRatings) * projectCoefficient * projectModifier.value / 100;
 
     return Math.round((projectXp + Number.EPSILON));
   }
@@ -195,7 +195,7 @@ class UsersXpCounter {
   }
 
   getSumHoursWorked(userDetailStatistics) {
-    const SumHoursWorked = userDetailStatistics.reduce((acc, cur) => acc + cur.timeSpent, 0);
+    const SumHoursWorked = userDetailStatistics.reduce((acc, cur) => acc + cur.timeSpent, 0) * 1.5;
 
     return Math.round((SumHoursWorked + Number.EPSILON));
   }
@@ -211,7 +211,7 @@ class UsersXpCounter {
     return bonusExps ? bonusExps.reduce((acc, cur) => acc + cur.exp, 0) : 0;
   }
 
-  getGetExpModifier(projectUser, teamLeaderId, allUsersTimespent) {
+  getExpModifier(projectUser, teamLeaderId, allUsersTimespent) {
     if (!projectUser) return EXP_MODIFIER.WITHOUT_LEADER;
     if (projectUser.user_id !== teamLeaderId) {
       return EXP_MODIFIER.OTHER_LEADER;
@@ -225,9 +225,9 @@ class UsersXpCounter {
 
     const teamLeader = {
       name: EXP_MODIFIER.TEAM_LEADER.name,
-      value: teamLeaderTimespents.reduce((acc, cur) => {
+      value: 1 + (teamLeaderTimespents.reduce((acc, cur) => {
         return acc + (this.getProjectCoefficient(cur.time_spent) / 100);
-      }, 1),
+      }, 0) * 0.5),
     };
 
     return teamLeader;
