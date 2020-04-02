@@ -1,15 +1,17 @@
 module.exports = {
+  AVERAGE_MONTH_WORKED_HOURS: 168,
+
   SYSTEM_PARAMS: {
     FEEDBACK_CRONTAB: 'feedbackCrontab',
   },
 
   EXP_MODIFIER: {
     TEAM_LEADER: {
-     value: 2,
+     value: null,
      name: 'teamLeader',
     },
     SOLO_PLAYER: {
-      value: 1,
+      value: 1.5,
       name: 'soloPlayer',
     },
     WITHOUT_LEADER: {
