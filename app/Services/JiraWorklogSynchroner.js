@@ -82,7 +82,7 @@ class JiraWorklogSynchroner {
       let projectId = await this.getProjectId(issue);
 
       for (const worklog of worklogs.data.worklogs) {
-        if (this.isDateInThisMonth(worklog.updated)) {
+        if (this.isDateInThisMonth(worklog.started)) {
           let isUser = usersProject.find(u => u.accountId === UserIdMap.get(worklog.author.accountId));
 
           if (isUser) {
