@@ -135,7 +135,10 @@
         <template
           v-slot:item="{item, expand, isExpanded}"
         >
-          <tr>
+          <tr
+            class="expanded-row"
+            @click.stop="expand(!isExpanded)"
+          >
             <td class="text-left element">
               {{ item.userName }}
             </td>
@@ -176,7 +179,7 @@
               <v-icon
                 color="green lighten-1"
                 class="justify-center"
-                @click="addExp(item)"
+                @click.stop="addExp(item)"
               >
                 mdi-plus-circle-outline
               </v-icon>
@@ -184,7 +187,6 @@
             <td class="text-left px-0">
               <v-icon
                 class="mr-2"
-                @click="expand(!isExpanded)"
               >
                 {{ isExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
               </v-icon>
@@ -196,45 +198,60 @@
         >
           <td
             :colspan="headers.length"
+            class="pr-0 pl-0"
           >
-            <v-data-table
-              :headers="expandedHeaders"
-              :items="userDetailItems"
-              item-key="id"
-              hide-default-footer
-              fill-height
-              must-sort
-              class="elevation-1 fullscreen"
+            <div
+              v-if="userDetailItems.length === 0"
+              class="no-available-data"
             >
-              <template
-                v-slot:item="{item}"
-              >
+              {{ 'Žádná data k dispozici' }}
+            </div>
+            <table
+              v-if="userDetailItems.length"
+              class="expanded-row-body"
+            >
+              <thead>
                 <tr>
-                  <td class="text-left">
+                  <th
+                    v-for="h in expandedHeaders"
+                    :key="h.text"
+                    :class="h.align"
+                    class="pl-4 pr-6"
+                  >
+                    {{ h.text }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(item, itemIndex) in userDetailItems"
+                  :key="itemIndex"
+                >
+                  <td class="text-left border-bottom">
                     {{ item.code }}
                   </td>
-                  <td class="text-right pr-8">
+                  <td class="text-right border-bottom">
                     {{ item.timeSpent }}
                   </td>
-                  <td class="text-left">
+                  <td class="text-left border-bottom">
                     {{ item.projectExpModifierName }}
                   </td>
-                  <td class="text-right pr-8">
+                  <td class="text-right border-bottom">
                     {{ item.coefficient }}%
                   </td>
                   <td
-                    v-for="(i, itemIndex) in item.projectRatings"
-                    :key="itemIndex"
-                    class="text-right"
+                    v-for="(i, index) in item.projectRatings"
+                    :key="index"
+                    class="text-right border-bottom"
                   >
                     {{ i.rating }}
                   </td>
-                  <td class="text-right pr-8">
+                  <td class="text-right border-bottom pr-6">
                     {{ item.projectsXp }}
                   </td>
                 </tr>
-              </template>
-            </v-data-table>
+              </tbody>
+            </table>
           </td>
         </template>
       </v-data-table>
@@ -426,7 +443,7 @@ export default {
       if (projectsStandupDates) {
         standupDate = projectsStandupDates.map(p => ({
           text: p.date,
-          align: 'right',
+          align: 'text-right',
           sortable: false,
           value: p.date,
           isVisible: true,
@@ -436,28 +453,28 @@ export default {
       const expandedHeaders = [
         {
           text: 'Projekty',
-          align: 'left',
+          align: 'text-left',
           sortable: true,
           value: 'code',
           isVisible: true,
         },
         {
           text: 'Hodiny',
-          align: 'right',
+          align: 'text-right',
           sortable: true,
           value: 'timeSpent',
           isVisible: true,
         },
         {
           text: 'Typ vedoucího týmu',
-          align: 'left',
+          align: 'text-left',
           sortable: true,
           value: 'projectExpModifierName',
           isVisible: true,
         },
         {
           text: 'koeficient',
-          align: 'right',
+          align: 'text-right',
           sortable: true,
           value: 'timeSpent',
           isVisible: true,
@@ -465,7 +482,7 @@ export default {
         ...standupDate,
         {
           text: 'XP za projekty',
-          align: 'right',
+          align: 'text-right',
           sortable: true,
           value: 'projectsXp',
           isVisible: true,
@@ -654,6 +671,27 @@ export default {
   .synchronization-info {
     font-weight: bold;
     margin-left: 0.5rem;
+  }
+
+  .expanded-row {
+    cursor: pointer !important;
+  }
+
+  .expanded-row-body {
+    border-bottom: 1px solid rgba(0,0,0,.12);
+    border-top: 1px solid rgba(0,0,0,.12);
+  }
+
+  .no-available-data {
+    display: flex;
+    justify-content: center;
+    color: rgba(0,0,0,.38);
+    height: 48px;
+    align-items: center;
+  }
+
+  .border-bottom {
+    border-bottom: 1px solid rgba(0,0,0,.12) !important;
   }
 
 </style>

@@ -161,10 +161,10 @@ export const mutations = {
   setProjectStatistics (state, projectStatistics) {
     state.projectStatistics = projectStatistics;
     const sortedUsersByMonthXp = projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'monthXp'));
-    state.projectStatistics.heroesOfMonth = [sortedUsersByMonthXp[0], sortedUsersByMonthXp[1], sortedUsersByMonthXp[2]];
+    state.projectStatistics.heroesOfMonth = [sortedUsersByMonthXp[0], sortedUsersByMonthXp[1], sortedUsersByMonthXp[2], sortedUsersByMonthXp[3]];
 
     const sortedUsersByTotalXp = projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'totalXp'));
-    state.projectStatistics.heroesOfGame = [sortedUsersByTotalXp[0], sortedUsersByTotalXp[1], sortedUsersByTotalXp[2]];
+    state.projectStatistics.heroesOfGame = [sortedUsersByTotalXp[0], sortedUsersByTotalXp[1]];
   },
   setJiraSynchronizationStatus (state, syncData) {
     state.projectStatistics.jiraSynchronization = {
