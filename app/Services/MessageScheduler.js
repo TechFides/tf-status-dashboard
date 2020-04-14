@@ -49,15 +49,8 @@ async function sendNotificationOfStandup(slackChannel, time, projects) {
 }
 
 function transformProjectsToString (projects) {
-  let stringOfProjects = [];
-  let text = '';
-
-  projects.forEach((project, index) => {
-    stringOfProjects += `${project.code}`;
-    if (index !== projects.length - 1) {
-      stringOfProjects += ', ';
-    }
-  });
+  let text;
+  const stringOfProjects = projects.map(project => project.code).join(', ');
 
   if (projects.length === 1) {
     text = `Za 15 minut začne sitdown pro projekt \*${stringOfProjects}\*. Připravte si, co jste za poslední týden dělali a co budete dělat následující týden.`;
