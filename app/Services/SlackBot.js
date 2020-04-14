@@ -70,24 +70,23 @@ async function main () {
   const dashboardUsers = await fetchUsersTimeSpent();
   connection.end();
 
-  try {
-    for (const dUser of dashboardUsers) {
+  for (const dUser of dashboardUsers) {
+    try {
       const userSlackId = await getUserSlackId(dUser.email);
-
       if (userSlackId) {
         await sendMessageToUsers(userSlackId.user.id, dUser.timeSpentSum);
       }
-    }
-  } catch (error) {
-    const attachments = [
-      {
-        color: '#c62828',
-        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: \*${error.data.error}\*.`,
-      },
-    ];
+    } catch (error) {
+      const attachments = [
+        {
+          color: '#c62828',
+          text: `Jeejda, u uživatele \*${dUser.email}\* se něco porouchalo :exclamation: \n Chyba: \*${error.data.error}\*.`,
+        },
+      ];
 
-    await slackWebClient.chat.postMessage({ channel: 'slackbot-errors', attachments: attachments });
-    console.error(error);
+      await slackWebClient.chat.postMessage({ channel: 'slackbot-errors', attachments: attachments });
+      console.error(error);
+    }
   }
 }
 

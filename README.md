@@ -55,8 +55,8 @@ workspace name. Next set scopes. It is possible in section OAuth & Permissions->
 - For sending information about worked hours for each employee is implemented script `app/Services/SlackBot.js`. This script
 should be run at the beginning of each month.
 
-- To send a notification about the start of the standup use script `app/Services/MessageScheduler.js`. This script
-should be run every morning.
+- To send a notification about the start of the standup use script `app/Services/MessageScheduler.js` and set env variable SLACK_CHANNEL. 
+It is the name of the channel to which you want to send notification. This script should be run every morning.
 
 - Dashboard can send value of standup to the project channel. For this is necessarily to each project has a channel 
 that exists in your workspace. Also, each channel must have invited bot to the conversation. 
