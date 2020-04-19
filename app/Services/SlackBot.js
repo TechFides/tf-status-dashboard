@@ -1,6 +1,7 @@
 const { WebClient } = require('@slack/web-api');
 const mysql = require('mysql');
 const format = require('date-fns/format');
+const { SYSTEM_PARAMS } = require('../../constants');
 
 require('dotenv').config();
 
@@ -30,6 +31,13 @@ function fetchUsersTimeSpent () {
     const tables = ['user_project_participations', 'users'];
     const query = 'SELECT SUM(??) AS timeSpentSum, ??, ?? FROM ?? WHERE user_id = users.id AND date = ? GROUP BY user_id';
     connection.query(query, [columns[0], columns[1], columns[2], tables, previousMonth], (err, data) => (err ? reject(err) : resolve(data)));
+  });
+}
+
+function getChannelName(channelName) {
+  return new Promise(function(resolve, reject) {
+    const query = `SELECT value FROM system_params where \`key\`='${channelName}'`;
+    connection.query(query, (err, data) => (err ? reject(err) : resolve(data)));
   });
 }
 
@@ -68,7 +76,6 @@ async function main () {
 
   connection.connect();
   const dashboardUsers = await fetchUsersTimeSpent();
-  connection.end();
 
   for (const dUser of dashboardUsers) {
     try {
@@ -77,6 +84,7 @@ async function main () {
         await sendMessageToUsers(userSlackId.user.id, dUser.timeSpentSum);
       }
     } catch (error) {
+      const errorChannelName = await getChannelName(SYSTEM_PARAMS.SLACK_ERROR_CHANNEL);
       const attachments = [
         {
           color: '#c62828',
@@ -84,10 +92,11 @@ async function main () {
         },
       ];
 
-      await slackWebClient.chat.postMessage({ channel: 'slackbot-errors', attachments: attachments });
+      await slackWebClient.chat.postMessage({ channel: errorChannelName[0].value, attachments: attachments });
       console.error(error);
     }
   }
+  connection.end();
 }
 
 main();

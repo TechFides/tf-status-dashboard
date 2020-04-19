@@ -1,5 +1,6 @@
 const { WebClient } = require('@slack/web-api');
 const mysql = require('mysql');
+const { SYSTEM_PARAMS } = require('../../constants');
 
 require('dotenv').config();
 
@@ -18,24 +19,32 @@ function initialization() {
   slackWebClient = new WebClient(process.env.SLACK_TOKEN);
 }
 
-function fetchMeetings () {
+function fetchMeetings() {
   return new Promise(function(resolve, reject) {
     const query = 'SELECT id, time, week_day FROM meeting_times';
     connection.query(query, (err, data) => (err ? reject(err) : resolve(data)));
   });
 }
 
-function fetchProjects (meetingTimeId) {
+function fetchProjects(meetingTimeId) {
   return new Promise(function(resolve, reject) {
     const query = `SELECT code FROM projects where meeting_time_id=${meetingTimeId}`;
     connection.query(query, (err, data) => (err ? reject(err) : resolve(data)));
   });
 }
 
+function getChannelName(channelName) {
+  return new Promise(function(resolve, reject) {
+    const query = `SELECT value FROM system_params where \`key\`='${channelName}'`;
+    connection.query(query, (err, data) => (err ? reject(err) : resolve(data)));
+  });
+}
+
 async function sendNotificationOfStandup(slackChannel, time, projects) {
   try {
-    await slackWebClient.chat.scheduleMessage({ channel: slackChannel, text: transformProjectsToString(projects), post_at: time});
+    await slackWebClient.chat.scheduleMessage({ channel: slackChannel.value, text: transformProjectsToString(projects), post_at: time});
   } catch (error) {
+    const errorChannelName = await getChannelName(SYSTEM_PARAMS.SLACK_ERROR_CHANNEL);
     const attachments = [
       {
         color: '#c62828',
@@ -43,7 +52,7 @@ async function sendNotificationOfStandup(slackChannel, time, projects) {
       },
     ];
 
-    await slackWebClient.chat.postMessage({ channel: 'slackbot-errors', attachments: attachments });
+    await slackWebClient.chat.postMessage({ channel: errorChannelName[0].value, attachments: attachments });
     console.error(error);
   }
 }
@@ -84,13 +93,14 @@ async function main () {
 
   connection.connect();
   const meetingTimes = await fetchMeetings();
+  const sitdownChannelName = await getChannelName(SYSTEM_PARAMS.SLACK_SITDOWN_CHANNEL);
 
   for (const projectsMeetingTime of meetingTimes) {
     const projects = await fetchProjects(projectsMeetingTime.id);
     if (projects.length) {
       let unixTimestamp = getUnixTimestamp(projectsMeetingTime.time, parseInt(projectsMeetingTime.week_day));
       if (unixTimestamp) {
-        await sendNotificationOfStandup(process.env.SLACK_CHANNEL, unixTimestamp, projects);
+        await sendNotificationOfStandup(sitdownChannelName[0], unixTimestamp, projects);
       }
     }
   }

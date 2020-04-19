@@ -1,8 +1,10 @@
 'use strict';
 const { WebClient } = require('@slack/web-api');
 const { RATING_ENUM } = require('../../constants');
+const { SYSTEM_PARAMS } = require('../../constants');
 
 const ProjectModel = use('App/Models/Project');
+const systemParamModel = use('App/Models/SystemParam');
 const Env = use('Env');
 
 class ProjectRatingMessenger {
@@ -14,6 +16,11 @@ class ProjectRatingMessenger {
       .query()
       .with('slackChannel')
       .where('id', '=', projectId)
+      .fetch()).toJSON();
+
+    const slackErrorName = (await systemParamModel
+      .query()
+      .where('key', '=', SYSTEM_PARAMS.SLACK_ERROR_CHANNEL)
       .fetch()).toJSON();
 
     let attachments = '';
@@ -68,7 +75,7 @@ class ProjectRatingMessenger {
         },
       ];
 
-      await slackWebClient.chat.postMessage({ channel: 'slackbot-errors', attachments: attachments });
+      await slackWebClient.chat.postMessage({ channel: slackErrorName[0].value, attachments: attachments });
       console.error(error);
     }
   }
