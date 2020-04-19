@@ -10,28 +10,25 @@
       @submit.prevent="saveSettings"
     >
       <v-container>
-        <v-layout
-          row
-          justify-start
+        <v-row
+          justify="start"
         >
           <h3 class="section-header">
             E-mail pro zpětnou vazbu
           </h3>
-        </v-layout>
-        <v-layout
-          row
-          wrap
-          justify-between
+        </v-row>
+        <v-row
+          justify="space-between"
         >
-          <v-flex>
+          <v-col>
             <v-select
               v-model="form.feedbackCrontab.weekday"
               :items="weekdays"
               label="Den v týdnu"
               required
             />
-          </v-flex>
-          <v-flex>
+          </v-col>
+          <v-col>
             <v-menu
               ref="menu"
               v-model="menu"
@@ -63,11 +60,40 @@
                 @change="$refs.menu.save(form.feedbackCrontab.time)"
               />
             </v-menu>
-          </v-flex>
-        </v-layout>
-        <v-layout
+          </v-col>
+        </v-row>
+        <v-row
+          justify="start"
+        >
+          <h3 class="section-header">
+            Slack kanály
+          </h3>
+        </v-row>
+        <v-row
+          justify="space-between"
+        >
+          <v-col
+            xs6
+          >
+            <v-text-field
+              v-model="form.slackErrorChannel"
+              type="string"
+              label="Slack kanál pro chybové hlášky"
+            />
+          </v-col>
+          <v-col
+            xs6
+          >
+            <v-text-field
+              v-model="form.slackSchedulerChannel"
+              type="string"
+              label="Slack kanál pro sitdown"
+            />
+          </v-col>
+        </v-row>
+        <v-row
           row
-          justify-end
+          justify="end"
         >
           <v-btn
             color="blue darken-2"
@@ -77,7 +103,7 @@
           >
             Uložit nastavení
           </v-btn>
-        </v-layout>
+        </v-row>
       </v-container>
     </v-form>
   </v-layout>
@@ -102,6 +128,8 @@ export default {
       valid: false,
       loading: false,
       form: {
+        slackErrorChannel: '',
+        slackSchedulerChannel: '',
         feedbackCrontab: {
           weekday: null,
           time: null,
@@ -121,9 +149,13 @@ export default {
   async asyncData ({ $axios }) {
     try {
       const response = await $axios.$get('/api/configuration');
-      const form = {};
-      if (response.feedbackCrontab) {
-        form.feedbackCrontab = fromCrontab(response.feedbackCrontab);
+      let form = {};
+      if (response) {
+        form = {
+          feedbackCrontab: fromCrontab(response.feedbackCrontab),
+          slackErrorChannel: response.slackErrorChannel,
+          slackSchedulerChannel: response.slackSchedulerChannel,
+        };
       }
       return { form };
     } catch (err) {
@@ -138,6 +170,8 @@ export default {
         const { weekday, time } = this.form.feedbackCrontab;
         const settings = {
           feedbackCrontab: toCrontab(weekday, time),
+          slackErrorChannel: this.form.slackErrorChannel,
+          slackSchedulerChannel: this.form.slackSchedulerChannel,
         };
 
         await this.$axios.$post('/api/configuration', settings);

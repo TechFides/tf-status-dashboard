@@ -3,6 +3,8 @@ module.exports = {
 
   SYSTEM_PARAMS: {
     FEEDBACK_CRONTAB: 'feedbackCrontab',
+    SLACK_ERROR_CHANNEL: 'slackErrorChannel',
+    SLACK_SITDOWN_CHANNEL: 'slackSchedulerChannel',
   },
 
   EXP_MODIFIER: {
