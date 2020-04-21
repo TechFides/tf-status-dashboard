@@ -28,7 +28,7 @@ function fetchMeetings() {
 
 function fetchProjects(meetingTimeId) {
   return new Promise(function(resolve, reject) {
-    const query = `SELECT code FROM projects where meeting_time_id=${meetingTimeId}`;
+    const query = `SELECT code FROM projects where meeting_time_id=${meetingTimeId} AND is_active=1`;
     connection.query(query, (err, data) => (err ? reject(err) : resolve(data)));
   });
 }
@@ -59,7 +59,7 @@ async function sendNotificationOfStandup(slackChannel, time, projects) {
 
 function transformProjectsToString (projects) {
   let text;
-  const stringOfProjects = projects.map(project => project.code).join(', ');
+  const stringOfProjects = projects.map(project => project.code).sort().join(', ');
 
   if (projects.length === 1) {
     text = `Za 15 minut začne sitdown pro projekt \*${stringOfProjects}\*. Připravte si, co jste za poslední týden dělali a co budete dělat následující týden.`;
