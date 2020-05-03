@@ -44,7 +44,6 @@ function getChannelName(channelName) {
 async function sendMessage(conversationId, timeSpentSum) {
   const attachments = [
     {
-      fallback: 'Plain-text summary of the attachment.',
       color: '#0091EA',
       pretext: `Dobrá práce, za minulý měsíc si odpracoval \*${getTimeSpentInHours(timeSpentSum)}h\*. Podrobnější informace nalezneš v naši aplikaci :muscle:.`,
       title: 'Dashboard',
