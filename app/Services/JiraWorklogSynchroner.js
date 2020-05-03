@@ -29,8 +29,7 @@ class JiraWorklogSynchroner {
   }
 
   async getUserFromJira (email) {
-    const test = await axios.get(`https://techfides.atlassian.net/rest/api/2/user/search?username=${email}&fields=accountId`, options);
-    return test;
+    return await axios.get(`https://techfides.atlassian.net/rest/api/3/user/search?query=${email}&fields=accountId`, options);
   }
 
   async getProjectIssuesFromJira () {
