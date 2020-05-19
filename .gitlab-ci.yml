@@ -5,6 +5,9 @@ stages:
 
 image: registry.gitlab.techfides.cz/tf-internal/docker-images/node:10
 
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+
 install:
   stage: install
   cache:
