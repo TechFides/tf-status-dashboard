@@ -40,7 +40,7 @@ lint:
     policy: pull
   script:
     - cp .env.example .env
-    - npm install
+    - npm install --unsafe-perm=true
     - npm run build
     - rsync -rlEci -e "ssh" --delete --delay-updates --
       .nuxt app assets config constants database node_modules providers public resources start storage ace init_database.sh package.json server.js
