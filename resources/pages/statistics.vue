@@ -371,7 +371,7 @@ export default {
           isVisible: true,
         },
         {
-          text: 'Odpracované hodiny',
+          text: 'XP za odpracované hodiny',
           align: 'right',
           sortable: true,
           value: 'sumHoursWorked',
