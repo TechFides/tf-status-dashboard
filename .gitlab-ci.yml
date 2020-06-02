@@ -1,7 +1,12 @@
 stages:
   - install
   - lint
-  - cleanup
+  - deploy
+
+image: registry.gitlab.techfides.cz/tf-internal/docker-images/node:10
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
 
 install:
   stage: install
@@ -10,9 +15,9 @@ install:
     paths:
       - node_modules/
   script:
-    - npm ci
+    - npm ci --unsafe-perm=true
   tags:
-    - nodejs-8
+    - docker
 
 lint:
   stage: lint
@@ -24,13 +29,47 @@ lint:
   script:
     - npm run lint
   tags:
-    - nodejs-8
+    - docker
 
-cleanup:
-  stage: cleanup
-  when: always
+.deploy:
+  stage: deploy
+  cache:
+    key: "$CI_BUILD_REF_NAME-$CI_PIPELINE_ID"
+    paths:
+      - node_modules/
+    policy: pull
   script:
-    # Clean unused cache folder from removed branches
-    - clear-cache -g "$CI_PROJECT_NAMESPACE" -p "$CI_PROJECT_NAME" -b "$CI_BUILD_REF_NAME-$CI_PIPELINE_ID"
+    - cp .env.example .env
+    - npm install --unsafe-perm=true
+    - npm run build
+    - rsync -rlEci -e "ssh" --delete --delay-updates --
+      .nuxt app assets config constants database node_modules providers public resources start storage ace init_database.sh package.json server.js
+      "$TARGET_USER@$TARGET_SERVER:$TARGET_SOURCES_PATH/"
+    - ssh "$TARGET_USER@$TARGET_SERVER" sudo tf-projects-status-operations $TARGET_INSTANCE update
+    - ssh "$TARGET_USER@$TARGET_SERVER" sudo tf-projects-status-operations $TARGET_INSTANCE restart
   tags:
-    - nodejs-8
+    - docker
+
+deploy:dev:
+  extends: .deploy
+  only:
+    - develop
+  variables:
+    TARGET_SOURCES_PATH: $DEV_TARGET_SOURCES_PATH
+    TARGET_INSTANCE: $DEV_TARGET_INSTANCE
+  environment:
+    name: dev
+    url: https://dev.projects.status.techfides.cz/
+
+deploy:production:
+  extends: .deploy
+  when: manual
+  allow_failure: false
+  only:
+    - master
+  variables:
+    TARGET_SOURCES_PATH: $PRODUCTION_TARGET_SOURCES_PATH
+    TARGET_INSTANCE: $PRODUCTION_TARGET_INSTANCE
+  environment:
+    name: production
+    url: https://projects.status.techfides.cz/
