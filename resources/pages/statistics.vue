@@ -270,7 +270,7 @@
             v-on="on"
           >
             <v-btn
-              v-show="isAdmin()"
+              v-show="isAdmin() && checkSyncButton"
               class="my-2 standup-button"
               color="primary"
               :disabled="!!projectStatistics.jiraSynchronization.status"
@@ -340,6 +340,7 @@ export default {
         sumHoursWorked: null,
       },
       expandedRowId: null,
+      selectedDate: new Date(),
     };
   },
   computed: {
@@ -496,6 +497,17 @@ export default {
       const userDetail = this.projectStatistics.userStatistics.find(u => u.id === this.expandedRowId);
       return userDetail.userDetail;
     },
+
+    checkSyncButton() {
+      const selectedDate = new Date(this.selectedDate);
+      selectedDate.setDate(2);
+
+      const dateMonthAgo = new Date();
+      dateMonthAgo.setMonth(dateMonthAgo.getMonth() - 1);
+      dateMonthAgo.setDate(1);
+
+      return selectedDate >= dateMonthAgo;
+    },
   },
   async fetch ({ store }) {
     const now = new Date();
@@ -599,6 +611,7 @@ export default {
       }
 
       monthInput.save(this.statisticsMonthDialog.month);
+      this.selectedDate = this.statisticsMonthDialog.month;
 
       const [year, month] = this.statisticsMonthDialog.month.split('-');
       const selectedDate = {
