@@ -80,6 +80,12 @@ class UserController {
 
     try {
       await user.delete();
+      await AbsenceApproverModel
+        .query()
+        .where('absence_approver_id', id)
+        .orWhere('approved_user_id', id)
+        .delete();
+
       response.send();
     } catch (e) {
       response.status(500).send({message: e.message});
