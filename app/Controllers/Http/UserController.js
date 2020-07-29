@@ -1,6 +1,7 @@
 'use strict';
 
 const UserModel = use('App/Models/User');
+const AbsenceApproverModel = use('App/Models/AbsenceApprover');
 const RoleModel = use('Adonis/Acl/Role');
 
 class UserController {
@@ -25,34 +26,39 @@ class UserController {
   }
 
   async getUsers () {
-    const users = await UserModel
+    const users = (await UserModel
       .query()
       .with('roles')
-      .fetch();
+      .with('approvedUser', (builder) => {
+        builder
+          .with('absenceApprover');
+      })
+      .fetch()).toJSON();
 
-    return users.toJSON();
+    return users;
   }
 
   async createUser ({ request, response }) {
-    const user = new UserModel();
-    user.fill(UserController.mapToDbEntity(request));
+    const { absenceApprover } = request.body;
+    const userData = UserController.mapToDbEntity(request);
 
-    if (!request.input('password')) {
-      response.status(422).send({ message: 'Unprocessable entity' });
-      return;
+    if (request.input('password')) {
+      userData.password = request.input('password');
     }
 
-    user.password = request.input('password');
-
-    await user.save();
+    const user = await UserModel.create(userData);
     await this._setRoles(user, request.input('roles'));
+    await AbsenceApproverModel.create({approved_user_id: user.id, absence_approver_id: absenceApprover});
 
     return user.toJSON();
   }
 
   async editUser ({ request, response, params }) {
     const { id } = params;
+    const { absenceApprover } = request.body;
     const user = await UserModel.find(id);
+    const absenceApproverModel = await AbsenceApproverModel.findBy('approved_user_id', id);
+
     user.merge(UserController.mapToDbEntity(request));
 
     if (request.input('password')) {
@@ -61,6 +67,9 @@ class UserController {
 
     await user.save();
     await this._setRoles(user, request.input('roles'));
+
+    absenceApproverModel.absence_approver_id = absenceApprover;
+    await absenceApproverModel.save();
 
     return user.toJSON();
   }

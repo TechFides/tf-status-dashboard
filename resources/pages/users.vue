@@ -27,83 +27,81 @@
 
         <v-form ref="form">
           <v-card-text>
-            <v-container grid-list-md>
-              <v-layout
-                wrap
-              >
-                <v-flex
-                  xs6
-                >
+            <v-container>
+              <v-row>
+                <v-col cols="6">
                   <v-text-field
                     v-model="modalItem.username"
                     :rules="[rules.required]"
                     label="Přihlašovací jméno"
                   />
-                </v-flex>
-                <v-flex
-                  xs6
-                >
+                </v-col>
+                <v-col cols="6">
                   <v-text-field
                     v-model="modalItem.password"
                     type="password"
                     label="Heslo"
                   />
-                </v-flex>
-                <v-flex
-                  xs6
-                >
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="6">
                   <v-text-field
                     v-model="modalItem.firstName"
                     :rules="[rules.required]"
                     label="Jméno"
                   />
-                </v-flex>
-                <v-flex
-                  xs6
-                >
+                </v-col>
+                <v-col cols="6">
                   <v-text-field
                     v-model="modalItem.lastName"
                     :rules="[rules.required]"
                     label="Příjmení"
                   />
-                </v-flex>
-                <v-flex
-                  xs6
-                >
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="6">
                   <v-text-field
                     v-model="modalItem.email"
                     :rules="[rules.required, rules.email]"
                     type="email"
                     label="E-mail"
                   />
-                </v-flex>
-                <v-flex
-                  xs12
-                >
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="6">
                   <v-select
                     v-model="modalItem.roles"
                     label="Role"
                     :items="roleItems"
                     multiple
                   />
-                </v-flex>
-                <v-flex
-                  xs6
-                >
+                </v-col>
+                <v-col cols="6">
+                  <v-select
+                    v-model="modalItem.absenceApprover"
+                    label="Schvalovatel"
+                    :rules="[rules.required]"
+                    :items="absenceApproverItems"
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
                   <v-checkbox
                     v-model="modalItem.isActive"
                     label="Aktivní"
                   />
-                </v-flex>
-                <v-flex
-                  xs6
-                >
+                </v-col>
+                <v-col>
                   <v-checkbox
                     v-model="modalItem.sendFeedback"
                     label="Posílat feedback"
                   />
-                </v-flex>
-              </v-layout>
+                </v-col>
+              </v-row>
             </v-container>
             <v-alert
               transition="fade-transition"
@@ -178,6 +176,9 @@
               {{ props.item.email }}
             </td>
             <td class="text-left element">
+              {{ props.item.absenceApprover.fullName }}
+            </td>
+            <td class="text-left element">
               {{ userRoles(props.item) }}
             </td>
             <td class="text-center element">
@@ -232,6 +233,7 @@ export default {
         isActive: true,
         sendFeedback: true,
         username: '',
+        absenceApprover: null,
         roles: ['user'],
       },
       defaultModalItem: {
@@ -242,6 +244,7 @@ export default {
         isActive: true,
         sendFeedback: true,
         username: '',
+        absenceApprover: null,
         roles: ['user'],
       },
       filteringText: '',
@@ -275,6 +278,12 @@ export default {
           align: 'left',
           sortable: true,
           value: 'email',
+        },
+        {
+          text: 'Schvalovatel dovolené',
+          align: 'left',
+          sortable: true,
+          value: 'absenceAprrover',
         },
         {
           text: 'Role',
@@ -312,6 +321,12 @@ export default {
         value: r.slug,
       }));
     },
+    absenceApproverItems () {
+      return this.users.map(user => ({
+        text: `${user.firstName} ${user.lastName}`,
+        value: user.id,
+      }));
+    },
   },
   async fetch ({ store }) {
     await Promise.all([
@@ -335,6 +350,7 @@ export default {
         sendFeedback: item.sendFeedback === 1,
         username: item.username,
         roles: item.roles,
+        absenceApprover: item.absenceApprover.id,
       };
 
       this.modalTitle = 'Upravit uživatele';
@@ -349,6 +365,7 @@ export default {
       }
     },
     close () {
+      this.$refs.form.resetValidation();
       this.dialog = false;
       this.modalItem = { ...this.defaultModalItem };
       this.$store.commit('clearErrorState');

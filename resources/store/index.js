@@ -207,6 +207,10 @@ export const mutations = {
       lastName: u.last_name,
       username: u.username,
       email: u.email,
+      absenceApprover: {
+        id: u.approvedUser ? u.approvedUser.absenceApprover.id : null,
+        fullName: u.approvedUser ? `${u.approvedUser.absenceApprover.first_name} ${u.approvedUser.absenceApprover.last_name}` : '',
+      },
       roles: u.roles.map(r => r.slug),
     }));
   },
