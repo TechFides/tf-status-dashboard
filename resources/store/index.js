@@ -222,8 +222,8 @@ export const mutations = {
       username: u.username,
       email: u.email,
       absenceApprover: {
-        id: u.approvedUser ? u.approvedUser.absenceApprover.id : null,
-        fullName: u.approvedUser ? `${u.approvedUser.absenceApprover.first_name} ${u.approvedUser.absenceApprover.last_name}` : '',
+        id: u.user ? u.user.approver.id : null,
+        fullName: u.user ? `${u.user.approver.first_name} ${u.user.approver.last_name}` : '',
       },
       roles: u.roles.map(r => r.slug),
     }));

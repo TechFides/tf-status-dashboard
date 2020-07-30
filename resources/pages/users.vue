@@ -81,7 +81,7 @@
                 </v-col>
                 <v-col cols="6">
                   <v-select
-                    v-model="modalItem.absenceApprover"
+                    v-model="modalItem.absenceApproverId"
                     label="Schvalovatel"
                     :rules="[rules.required]"
                     :items="absenceApproverItems"
@@ -233,7 +233,7 @@ export default {
         isActive: true,
         sendFeedback: true,
         username: '',
-        absenceApprover: null,
+        absenceApproverId: null,
         roles: ['user'],
       },
       defaultModalItem: {
@@ -244,7 +244,7 @@ export default {
         isActive: true,
         sendFeedback: true,
         username: '',
-        absenceApprover: null,
+        absenceApproverId: null,
         roles: ['user'],
       },
       filteringText: '',
@@ -350,7 +350,7 @@ export default {
         sendFeedback: item.sendFeedback === 1,
         username: item.username,
         roles: item.roles,
-        absenceApprover: item.absenceApprover.id,
+        absenceApproverId: item.absenceApprover.id,
       };
 
       this.modalTitle = 'Upravit uživatele';

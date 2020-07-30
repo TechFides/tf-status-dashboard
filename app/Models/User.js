@@ -43,12 +43,12 @@ class User extends Model {
     return this.hasOne('App/Models/FeedbackEnum');
   }
 
-  approvedUser () {
-    return this.hasOne('App/Models/AbsenceApprover','id','approved_user_id');
+  user () {
+    return this.hasOne('App/Models/AbsenceApprover','id','user_id');
   }
 
-  absenceApprover () {
-    return this.hasOne('App/Models/AbsenceApprover');
+  approver () {
+    return this.hasOne('App/Models/AbsenceApprover','id','approver_id');
   }
 
   officeAbsence () {

@@ -7,10 +7,10 @@ class AbsenceApproverSchema extends Schema {
   up () {
     this.create('absence_approvers', (table) => {
       table.increments();
-      table.integer('approved_user_id').unsigned().notNullable();
-      table.foreign('approved_user_id').references('users');
-      table.integer('absence_approver_id').unsigned().notNullable();
-      table.foreign('absence_approver_id').references('users');
+      table.integer('user_id').unsigned().notNullable();
+      table.foreign('user_id').references('users');
+      table.integer('approver_id').unsigned().notNullable();
+      table.foreign('approver_id').references('users');
       table.timestamps()
     })
   }
