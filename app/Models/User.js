@@ -42,6 +42,14 @@ class User extends Model {
   feedbackValue () {
     return this.hasOne('App/Models/FeedbackEnum');
   }
+
+  user () {
+    return this.hasOne('App/Models/AbsenceApprover','id','user_id');
+  }
+
+  approver () {
+    return this.hasOne('App/Models/AbsenceApprover','id','approver_id');
+  }
 }
 
 module.exports = User;
