@@ -5,6 +5,8 @@ module.exports = {
     FEEDBACK_CRONTAB: 'feedbackCrontab',
     SLACK_ERROR_CHANNEL: 'slackErrorChannel',
     SLACK_SITDOWN_CHANNEL: 'slackSchedulerChannel',
+    SLACK_ABSENCE_CHANNEL: 'slackAbsenceChannel',
+    ABSENCE_APPROVER: 'absenceApprover',
   },
 
   EXP_MODIFIER: {

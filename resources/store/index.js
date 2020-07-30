@@ -9,6 +9,7 @@ export const state = () => ({
   projectStatistics: [],
   standups: [],
   standupRatings: {},
+  officeAbsences: [],
   users: [],
   roles: [],
   usersFeedbacks: [],
@@ -197,6 +198,19 @@ export const mutations = {
       created: n.created_at,
       text: n.note,
     })).sort(sortAscByProperty.bind(this, 'projectCode'));
+  },
+  setOfficeAbsences (state, officeAbsences) {
+    state.officeAbsences = officeAbsences.map(o => ({
+      id: o.id,
+      author: o.user,
+      absenceStart: o.absence_start,
+      absenceEnd: o.absence_end,
+      absenceType: o.absenceType.name,
+      absenceState: o.absenceState.name,
+      absenceApproverEmail: o.absence_approver_email,
+      absenceHoursNumber: o.absence_hours_number,
+      description: o.description,
+    }));
   },
   setUsers (state, users) {
     state.users = users.map(u => ({
@@ -512,6 +526,11 @@ export const actions = {
         commit('setErrorState', error.response.data[0]);
       }
     }
+  },
+  async getOfficeAbsences ({ commit }) {
+    const officeAbsences = await this.$axios.$get('/api/officeAbsences');
+
+    commit('setOfficeAbsences', officeAbsences);
   },
   async getUsers ({ commit }) {
     const users = await this.$axios.$get('/api/users');

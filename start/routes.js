@@ -147,6 +147,13 @@ Route
   .middleware(ADMIN);
 
 /**
+ * OFFICE ABSENCE
+ */
+Route
+  .get('/api/officeAbsences', 'OfficeAbsenceController.getOfficeAbsences')
+  .middleware(AUTH);
+
+/**
  * USERS
  */
 Route

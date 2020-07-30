@@ -10,6 +10,7 @@ services:
     volumes:
       - .:/app
   db:
+    build: docker/app
     image: mysql:5.7.22
     volumes:
       - tom-dashboard-db-data:/var/lib/mysql

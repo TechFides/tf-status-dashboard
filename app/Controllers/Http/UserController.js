@@ -68,8 +68,12 @@ class UserController {
     await user.save();
     await this._setRoles(user, request.input('roles'));
 
-    absenceApproverModel.absence_approver_id = absenceApprover;
-    await absenceApproverModel.save();
+    if (absenceApproverModel) {
+      absenceApproverModel.absence_approver_id = absenceApprover;
+      await absenceApproverModel.save();
+    } else {
+      await AbsenceApproverModel.create({approved_user_id: id, absence_approver_id: absenceApprover});
+    }
 
     return user.toJSON();
   }

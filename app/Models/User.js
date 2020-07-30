@@ -50,6 +50,10 @@ class User extends Model {
   absenceApprover () {
     return this.hasOne('App/Models/AbsenceApprover');
   }
+
+  officeAbsence () {
+    return this.hasMany('App/Models/OfficeAbsence');
+  }
 }
 
 module.exports = User;
