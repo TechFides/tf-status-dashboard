@@ -197,9 +197,7 @@ export default {
     }
   },
   async fetch ({ store }) {
-    await Promise.all([
-      store.dispatch('getUsers'),
-    ]);
+    await store.dispatch('getUsers');
   },
   methods: {
     async saveSettings () {
