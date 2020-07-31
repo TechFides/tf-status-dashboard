@@ -1,4 +1,5 @@
 import { WEEK_DAYS, WEEK_DAYS_SHORTHAND } from '../constants';
+import { format } from 'date-fns';
 
 const NOTIFICATION_TIMEOUT = 4000;
 
@@ -10,6 +11,8 @@ export const state = () => ({
   standups: [],
   standupRatings: {},
   officeAbsences: [],
+  absenceTypeEnums: [],
+  absenceStateEnums: [],
   users: [],
   roles: [],
   usersFeedbacks: [],
@@ -203,14 +206,21 @@ export const mutations = {
     state.officeAbsences = officeAbsences.map(o => ({
       id: o.id,
       author: o.user,
-      absenceStart: o.absence_start,
-      absenceEnd: o.absence_end,
-      absenceType: o.absenceType.name,
-      absenceState: o.absenceState.name,
-      absenceApproverEmail: o.absence_approver_email,
+      absenceStart: format(o.absence_start, 'DD. MM.YYYY'),
+      absenceEnd: format(o.absence_end, 'DD. MM.YYYY'),
+      created: format(o.created_at, 'DD. MM.YYYY'),
+      absenceType: o.absenceTypeEnum,
+      absenceState: o.absenceStateEnum,
+      absenceApprover: o.absenceApprover ? `${o.absenceApprover.first_name} ${o.absenceApprover.last_name}` : '',
       absenceHoursNumber: o.absence_hours_number,
       description: o.description,
     }));
+  },
+  setAbsenceTypeEnums (state, absenceTypeEnums) {
+    state.absenceTypeEnums = absenceTypeEnums;
+  },
+  setAbsenceStateEnums (state, absenceStateEnums) {
+    state.absenceStateEnums = absenceStateEnums;
   },
   setUsers (state, users) {
     state.users = users.map(u => ({
@@ -527,10 +537,22 @@ export const actions = {
       }
     }
   },
-  async getOfficeAbsences ({ commit }) {
-    const officeAbsences = await this.$axios.$get('/api/officeAbsences');
+  async getOfficeAbsences ({ commit }, params) {
+    const officeAbsences = await this.$axios.$get(
+      '/api/officeAbsences',
+      { params },
+      );
 
     commit('setOfficeAbsences', officeAbsences);
+  },
+  async getAbsenceTypeEnums ({ commit }) {
+    const absenceTypeEnums = await this.$axios.$get('/api/officeAbsences/typeEnums');
+
+    commit('setAbsenceTypeEnums', absenceTypeEnums);
+  },
+  async getAbsenceStateEnums ({ commit }) {
+    const absenceTypeEnums = await this.$axios.$get('/api/officeAbsences/stateEnums');
+    commit('setAbsenceStateEnums', absenceTypeEnums);
   },
   async getUsers ({ commit }) {
     const users = await this.$axios.$get('/api/users');

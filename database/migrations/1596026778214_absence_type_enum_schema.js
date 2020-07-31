@@ -7,16 +7,20 @@ class AbsenceTypeEnumSchema extends Schema {
   async up () {
     const enumData = [
       {
-        name: 'HO',
+        name: 'HOME_OFFICE',
+        value: 'HO',
       },
       {
-        name: 'Dovolená',
+        name: 'HOLIDAY',
+        value: 'Dovolená',
       },
       {
-        name: 'Pracovní výjezd',
+        name: 'WORK_TRAVEL',
+        value: 'Pracovní výjezd',
       },
       {
-        name: 'Neplacená dovolená',
+        name: 'UNPAID_HOLIDAY',
+        value: 'Neplacená dovolená',
       },
     ];
 

@@ -135,11 +135,11 @@
     </v-dialog>
 
     <v-card class="elevation-1 fullscreen">
-      <v-layout
-        align-center
-        justify-end
+      <v-row
+        align="center"
+        justify="end"
       >
-        <v-flex xs4>
+        <v-col cols="4">
           <v-card-title>
             <v-text-field
               v-model="filteringText"
@@ -149,8 +149,8 @@
               hide-details
             />
           </v-card-title>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
 
       <v-data-table
         :headers="headers"

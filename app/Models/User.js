@@ -54,6 +54,10 @@ class User extends Model {
   officeAbsence () {
     return this.hasMany('App/Models/OfficeAbsence');
   }
+
+  absence_approver () {
+    return this.hasOne('App/Models/OfficeAbsence','id','absence_approver_id');
+  }
 }
 
 module.exports = User;

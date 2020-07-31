@@ -8,6 +8,7 @@ class AbsenceStateEnumSchema extends Schema {
     this.create('absence_state_enums', (table) => {
       table.increments()
       table.string('name').notNullable();
+      table.string('value').notNullable();
       table.timestamps()
     })
   }

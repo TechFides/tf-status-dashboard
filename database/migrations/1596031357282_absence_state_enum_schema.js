@@ -7,22 +7,28 @@ class AbsenceStateEnumSchema extends Schema {
   async up () {
     const enumData = [
       {
-        name: 'Schválena',
+        name: 'APPROVED',
+        value: 'Schválena',
       },
       {
-        name: 'Zamítnuta',
+        name: 'REJECTED',
+        value: 'Zamítnuta',
       },
       {
-        name: 'Čeká na schválení o zrušení',
+        name: 'AWAITING_CANCELLATION_APPROVAL',
+        value: 'Čeká na schválení o zrušení',
       },
       {
-        name: 'Proběhla',
+        name: 'DONE',
+        value: 'Proběhla',
       },
       {
-        name: 'Zrušena',
+        name: 'CANCELED',
+        value: 'Zrušena',
       },
       {
-        name: 'Čeká na schválení',
+        name: 'WAITING_FOR_APPROVAL',
+        value: 'Čeká na schválení',
       },
     ];
 

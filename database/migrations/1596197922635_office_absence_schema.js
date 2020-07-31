@@ -9,17 +9,18 @@ class OfficeAbsenceSchema extends Schema {
       table.increments()
       table.date('absence_start').notNullable();
       table.date('absence_end').notNullable();
-      table.integer('absence_type_id').notNullable();
-      table.foreign('absence_type_id').references('absence_type_enums');
-      table.integer('absence_state_id').notNullable();
-      table.foreign('absence_state_id').references('absence_state_enums');
+      table.integer('absence_type_enum_id').notNullable();
+      table.foreign('absence_type_enum_id').references('absence_type_enums');
+      table.integer('absence_state_enum_id').notNullable();
+      table.foreign('absence_state_enum_id').references('absence_state_enums');
       table.integer('user_id').notNullable();
       table.foreign('user_id').references('users');
-      table.string('absence_approver_email').notNullable();
+      table.integer('absence_approver_id').notNullable();
+      table.foreign('absence_approver_id').references('users');
       table.integer('absence_hours_number').notNullable();
       table.string('calendar_event_title').notNullable();
-      table.string('description').notNullable();
-      table.timestamps()
+      table.text('description');
+      table.timestamps();
     })
   }
 

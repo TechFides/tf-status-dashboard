@@ -4,20 +4,20 @@
 const Model = use('Model');
 
 class OfficeAbsence extends Model {
-  static get hidden () {
-    return ['created_at', 'updated_at'];
-  }
-
-  absenceType () {
+  absenceTypeEnum () {
     return this.belongsTo('App/Models/AbsenceTypeEnum');
   }
 
-  absenceState () {
+  absenceStateEnum () {
     return this.belongsTo('App/Models/AbsenceStateEnum');
   }
 
   user () {
     return this.belongsTo('App/Models/User');
+  }
+
+  absenceApprover () {
+    return this.belongsTo('App/Models/User','absence_approver_id');
   }
 }
 

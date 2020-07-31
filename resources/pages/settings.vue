@@ -104,7 +104,7 @@
         >
           <v-col cols="4">
             <v-select
-              v-model="form.absenceApprover"
+              v-model="form.absenceApproverId"
               :items="approvers"
               label="Defaultní schvalovatel nepřítomnosti v kanceláři"
               required
@@ -152,7 +152,7 @@ export default {
         slackErrorChannel: '',
         slackSchedulerChannel: '',
         slackAbsenceChannel: '',
-        absenceApprover: '',
+        absenceApproverId: '',
         feedbackCrontab: {
           weekday: null,
           time: null,
@@ -174,7 +174,7 @@ export default {
     approvers () {
       return this.users.map(user => ({
         text: `${user.firstName} ${user.lastName}`,
-        value: user.email,
+        value: user.id,
       }));
     },
   },
@@ -188,7 +188,7 @@ export default {
           slackErrorChannel: response.slackErrorChannel,
           slackSchedulerChannel: response.slackSchedulerChannel,
           slackAbsenceChannel: response.slackAbsenceChannel,
-          absenceApprover: response.absenceApprover,
+          absenceApproverId: response.absenceApproverId,
         };
       }
       return { form };
@@ -210,7 +210,7 @@ export default {
           slackErrorChannel: this.form.slackErrorChannel,
           slackSchedulerChannel: this.form.slackSchedulerChannel,
           slackAbsenceChannel: this.form.slackAbsenceChannel,
-          absenceApprover: this.form.absenceApprover,
+          absenceApproverId: this.form.absenceApproverId,
         };
 
         await this.$axios.$post('/api/configuration', settings);

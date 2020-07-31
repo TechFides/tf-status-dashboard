@@ -153,6 +153,14 @@ Route
   .get('/api/officeAbsences', 'OfficeAbsenceController.getOfficeAbsences')
   .middleware(AUTH);
 
+Route
+  .get('/api/officeAbsences/typeEnums', 'OfficeAbsenceController.getAbsenceTypeEnums')
+  .middleware(AUTH);
+
+Route
+  .get('/api/officeAbsences/stateEnums', 'OfficeAbsenceController.getAbsenceStateEnums')
+  .middleware(AUTH);
+
 /**
  * USERS
  */

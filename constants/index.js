@@ -6,7 +6,7 @@ module.exports = {
     SLACK_ERROR_CHANNEL: 'slackErrorChannel',
     SLACK_SITDOWN_CHANNEL: 'slackSchedulerChannel',
     SLACK_ABSENCE_CHANNEL: 'slackAbsenceChannel',
-    ABSENCE_APPROVER: 'absenceApprover',
+    ABSENCE_APPROVER: 'absenceApproverId',
   },
 
   EXP_MODIFIER: {
