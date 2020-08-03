@@ -7,18 +7,42 @@ const SystemParamModel = use('App/Models/SystemParam');
 const UserModel = use('App/Models/User');
 const AbsenceApproverModel = use('App/Models/AbsenceApprover');
 
-const { SYSTEM_PARAMS } = require('../../../constants');
+const { ABSENCE_STATE_ENUM, SYSTEM_PARAMS } = require('../../../constants');
 
 class OfficeAbsenceController {
+  static mapToDbEntity (request) {
+    const {
+      userId,
+      absenceStart,
+      absenceEnd,
+      absenceType,
+      approver,
+      absenceHoursNumber,
+      description,
+    } = request.only(['userId', 'absenceStart', 'absenceEnd', 'absenceType', 'approver', 'absenceHoursNumber', 'description']);
+
+    return {
+      user_id: userId,
+      absence_start: absenceStart,
+      absence_end: absenceEnd,
+      absence_type_enum_id: absenceType,
+      absence_state_enum_id: ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL,
+      absence_approver_id: approver,
+      absence_hours_number: absenceHoursNumber,
+      calendar_event_title: `${absenceType}-${absenceStart}-${absenceEnd}`,
+      description,
+    };
+  }
+
   async getOfficeAbsences ({ request, response, params }) {
-    const { id } = params;
-    let { absenceType, absenceState } = request.get();
+    let { absenceType, absenceState, userId } = request.get();
     const officeAbsenceQuery = OfficeAbsenceModel
       .query()
       .with('user')
       .with('absenceApprover')
       .with('absenceTypeEnum')
       .with('absenceStateEnum')
+      .where('user_id', userId)
 
     if (absenceType) {
       officeAbsenceQuery.where('absence_type_enum_id', absenceType);
@@ -49,21 +73,67 @@ class OfficeAbsenceController {
     return absenceStateEnumModel.toJSON();
   }
 
-  async getApprover ({ request, response, params }) {
-    const { id } = params;
+  async getApprovers ({ request, response, params }) {
+    const { userId } = request.get();
     const absenceApproverList = [];
-    const absenceApprover = await SystemParamModel.find(SYSTEM_PARAMS.ABSENCE_APPROVER);
 
-    const defaultApprover = (await UserModel.findBy('email', absenceApprover.value)).toJSON();
-    const userApprover = (await AbsenceApproverModel
+    const userApprovers = (await AbsenceApproverModel
       .query()
-      .where('approved_user_id', id)
-      .with('absenceApprover')
+      .where('user_id', userId)
+      .with('approver')
       .fetch()).toJSON();
+    if (userApprovers.length) {
+      for (const userApprover of userApprovers) {
+        absenceApproverList.push(userApprover.approver);
+      }
+    }
 
-    absenceApproverList.push(defaultApprover, userApprover.absenceApprover);
+    const absenceApprover = await SystemParamModel.findBy('key', SYSTEM_PARAMS.ABSENCE_APPROVER_ID);
+    if (absenceApprover) {
+      const defaultApprover = (await UserModel.find(absenceApprover.value)).toJSON();
+      const foundDefaultApprover = absenceApproverList.find(approver => approver.id === defaultApprover.id);
+
+      if (!foundDefaultApprover) {
+        absenceApproverList.push(defaultApprover);
+      }
+    }
 
     return absenceApproverList;
+  }
+
+  async createOfficeAbsence ({ request, response, params }) {
+    const officeAbsence = new OfficeAbsenceModel();
+
+    officeAbsence.fill(OfficeAbsenceController.mapToDbEntity(request));
+    await officeAbsence.save();
+
+    return officeAbsence.toJSON();
+  }
+
+  async cancelOfficeAbsence ({ request, response, params }) {
+    const {
+      approverId,
+      absenceId,
+    } = request.only(['approverId', 'absenceId']);
+    const officeAbsence = await OfficeAbsenceModel.find(absenceId);
+    officeAbsence.absence_approver_id = approverId;
+    officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL;
+
+    await officeAbsence.save();
+
+    return officeAbsence.toJSON();
+  }
+
+  async deleteOfficeAbsence ({ request, response, params }) {
+    const { id } = params;
+    const officeAbsence = await OfficeAbsenceModel.find(id);
+
+    try {
+      await officeAbsence.delete();
+      response.send();
+    } catch (e) {
+      response.status(500).send({message: e.message});
+    }
   }
 }
 

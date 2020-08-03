@@ -3,6 +3,25 @@
     width="100%"
     class="fill-height"
   >
+    <v-row justify="end">
+      <v-btn
+        color="blue darken-2"
+        dark
+        class="mt-2 mr-5 mb-2"
+        @click="createNewAbsence()"
+      >
+        <i class="material-icons">add</i>
+        <span class="pl-2">
+          Vytvořít žádost o nepřítomnost
+        </span>
+      </v-btn>
+    </v-row>
+    <CreateAbsenceDialog
+     ref="createAbsenceDialog"
+    />
+    <CancelAbsenceDialog
+      ref="cancelAbsenceDialog"
+    />
     <v-card class="elevation-1">
       <v-row
         justify="start"
@@ -53,7 +72,7 @@
               {{ item.created }}
             </td>
             <td class="text-left element">
-              {{ item.absenceApprover }}
+              {{ item.absenceApprover.fullName }}
             </td>
             <td class="text-left element">
               {{ item.absenceState.value }}
@@ -67,7 +86,7 @@
             <td class="justify-center layout px-0">
               <v-icon
                 small
-                @click="deleteItem(props.item)"
+                @click.stop="deleteItem(item)"
               >
                 delete
               </v-icon>
@@ -103,9 +122,15 @@
 
 <script>
   import { mapState } from 'vuex';
+  import CreateAbsenceDialog from '../components/officeAbsence/dialogs/CreateAbsenceDialog';
+  import CancelAbsenceDialog from '../components/officeAbsence/dialogs/CancelAbsenceDialog';
 
   export default {
     name: 'OfficeAbsences',
+    components: {
+      CreateAbsenceDialog,
+      CancelAbsenceDialog,
+    },
     data () {
       return {
         filter: {
@@ -220,7 +245,6 @@
     },
     async fetch ({ store }) {
       await Promise.all([
-        store.dispatch('getOfficeAbsences'),
         store.dispatch('getAbsenceTypeEnums'),
         store.dispatch('getAbsenceStateEnums'),
       ]);
@@ -232,6 +256,12 @@
         },
         deep: true,
       },
+    },
+    async created() {
+      await Promise.all([
+        this.$store.dispatch('getOfficeAbsences'),
+        this.$store.dispatch('getApprovers'),
+      ]);
     },
     methods: {
       getRowId(row) {
@@ -256,8 +286,15 @@
             return '';
         }
       },
-      deleteItem(item) {
-
+      async deleteItem(item) {
+        if (item.absenceState.name === 'WAITING_FOR_APPROVAL') {
+          await this.$store.dispatch('deleteOfficeAbsence', item.id);
+        } else {
+          this.$refs.cancelAbsenceDialog.openDialog(item);
+        }
+      },
+      createNewAbsence() {
+        this.$refs.createAbsenceDialog.openDialog();
       },
     },
   };

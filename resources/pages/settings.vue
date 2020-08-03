@@ -152,7 +152,7 @@ export default {
         slackErrorChannel: '',
         slackSchedulerChannel: '',
         slackAbsenceChannel: '',
-        absenceApproverId: '',
+        absenceApproverId: null,
         feedbackCrontab: {
           weekday: null,
           time: null,
@@ -174,7 +174,7 @@ export default {
     approvers () {
       return this.users.map(user => ({
         text: `${user.firstName} ${user.lastName}`,
-        value: user.id,
+        value: user.id.toString(),
       }));
     },
   },

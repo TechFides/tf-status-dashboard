@@ -161,6 +161,22 @@ Route
   .get('/api/officeAbsences/stateEnums', 'OfficeAbsenceController.getAbsenceStateEnums')
   .middleware(AUTH);
 
+Route
+  .get('/api/officeAbsences/approvers', 'OfficeAbsenceController.getApprovers')
+  .middleware(AUTH);
+
+Route
+  .post('/api/officeAbsence', 'OfficeAbsenceController.createOfficeAbsence')
+  .middleware(AUTH);
+
+Route
+  .post('/api/officeAbsences/cancelOfficeAbsence', 'OfficeAbsenceController.cancelOfficeAbsence')
+  .middleware(AUTH);
+
+Route
+  .delete('/api/officeAbsences/:id', 'OfficeAbsenceController.deleteOfficeAbsence')
+  .middleware(AUTH);
+
 /**
  * USERS
  */
