@@ -10,8 +10,15 @@
       <v-card-title class="headline pl-3 systemPrimary">
         Vytvořit novou žádost o nepřítomnost
       </v-card-title>
-      <v-form ref="form" lazy-validation @submit.prevent>
-        <v-card-text class="card-text" style="max-height: 800px">
+      <v-form
+        ref="form"
+        lazy-validation
+        @submit.prevent
+      >
+        <v-card-text
+          class="card-text"
+          style="max-height: 800px"
+        >
           <v-row>
             <v-col cols="6">
               <DatePicker
@@ -30,7 +37,10 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="6" class="pl-11">
+            <v-col
+              cols="6"
+              class="pl-11"
+            >
               <v-select
                 v-model="dialogData.absenceType"
                 :items="absenceTypeEnumItems"
@@ -39,7 +49,10 @@
                 clearable
               />
             </v-col>
-            <v-col cols="6" class="pl-11">
+            <v-col
+              cols="6"
+              class="pl-11"
+            >
               <v-select
                 v-model="dialogData.approver"
                 :items="approverItems"
@@ -51,7 +64,10 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="6" class="pl-11">
+            <v-col
+              cols="6"
+              class="pl-11"
+            >
               <v-text-field
                 v-model="dialogData.absenceHoursNumber"
                 type="number"
@@ -61,7 +77,10 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="10" class="pl-11">
+            <v-col
+              cols="10"
+              class="pl-11"
+            >
               <v-textarea
                 v-model="dialogData.description"
                 label="Popis nepřítomnsoti"
@@ -97,10 +116,10 @@
   import moment from 'moment';
 
   export default {
+    name: 'CreateAbsenceDialog',
     components: {
       DatePicker,
     },
-    name: 'CreateAbsenceDialog',
     data () {
       return {
         show: false,
@@ -128,21 +147,6 @@
         },
       };
     },
-    watch: {
-      dialogData: {
-        handler() {
-          const startDay = moment(this.dialogData.absenceStart);
-          const endDay = moment(this.dialogData.absenceEnd).add(1, 'day');
-
-          if ((this.dialogData.absenceStart && this.dialogData.absenceEnd) &&
-            startDay.isBefore(endDay)
-          ) {
-            this.dialogData.absenceHoursNumber = endDay.diff(startDay, 'days') * 8;
-          }
-        },
-        deep: true,
-      },
-    },
     computed: {
       ...mapState([
         'absenceTypeEnums',
@@ -160,6 +164,21 @@
           text: absenceTypeEnum.value,
           value: absenceTypeEnum.id,
         }));
+      },
+    },
+    watch: {
+      dialogData: {
+        handler() {
+          const startDay = moment(this.dialogData.absenceStart);
+          const endDay = moment(this.dialogData.absenceEnd).add(1, 'day');
+
+          if ((this.dialogData.absenceStart && this.dialogData.absenceEnd) &&
+            startDay.isBefore(endDay)
+          ) {
+            this.dialogData.absenceHoursNumber = endDay.diff(startDay, 'days') * 8;
+          }
+        },
+        deep: true,
       },
     },
     methods: {

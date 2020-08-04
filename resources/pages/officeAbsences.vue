@@ -17,7 +17,7 @@
       </v-btn>
     </v-row>
     <CreateAbsenceDialog
-     ref="createAbsenceDialog"
+      ref="createAbsenceDialog"
     />
     <CancelAbsenceDialog
       ref="cancelAbsenceDialog"
@@ -26,7 +26,10 @@
       <v-row
         justify="start"
       >
-        <v-col cols="2" class="ml-5">
+        <v-col
+          cols="2"
+          class="ml-5"
+        >
           <v-select
             v-model="filter.absenceState"
             :items="absenceStateEnumItems"
@@ -46,9 +49,8 @@
       <v-data-table
         :headers="headers"
         :items="officeAbsences"
-        :items-per-page="999"
+        :items-per-page="10"
         item-key="id"
-        hide-default-footer
         fill-height
         single-expand
         must-sort
@@ -59,8 +61,8 @@
           v-slot:item="{item, expand, isExpanded}"
         >
           <tr
-            @click.stop="expand(!isExpanded)"
             :class="getRowClass(item.absenceState.name, item.description)"
+            @click.stop="expand(!isExpanded)"
           >
             <td class="text-right element pr-8">
               {{ item.absenceStart }}
@@ -85,6 +87,7 @@
             </td>
             <td class="justify-center layout px-0">
               <v-icon
+                v-if="item.absenceState.name === 'APPROVED' || item.absenceState.name === 'WAITING_FOR_APPROVAL'"
                 small
                 @click.stop="deleteItem(item)"
               >
@@ -99,17 +102,16 @@
                 {{ isExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
               </v-icon>
             </td>
-          </tr
-            >
+          </tr>
         </template>
         <template
           v-slot:expanded-item="{ headers }"
         >
           <td
+            v-if="officeAbsenceDetailItems.description"
             :colspan="headers.length"
             class="pr-0 pl-8"
             :class="getRowClass(officeAbsenceDetailItems.absenceState.name)"
-            v-if="officeAbsenceDetailItems.description"
           >
             <span class="expanded-column">{{ 'Popis nepřítomnosti:' }}</span>
             <span>{{ officeAbsenceDetailItems.description }}</span>
@@ -243,12 +245,6 @@
         }));
       },
     },
-    async fetch ({ store }) {
-      await Promise.all([
-        store.dispatch('getAbsenceTypeEnums'),
-        store.dispatch('getAbsenceStateEnums'),
-      ]);
-    },
     watch: {
       filter: {
         handler() {
@@ -256,6 +252,12 @@
         },
         deep: true,
       },
+    },
+    async fetch ({ store }) {
+      await Promise.all([
+        store.dispatch('getAbsenceTypeEnums'),
+        store.dispatch('getAbsenceStateEnums'),
+      ]);
     },
     async created() {
       await Promise.all([

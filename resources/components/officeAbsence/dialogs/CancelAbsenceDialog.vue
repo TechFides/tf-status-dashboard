@@ -8,10 +8,17 @@
   >
     <v-card>
       <v-card-title class="headline pl-3 systemPrimary">
-       Zrušit nepřítomnost v kanceláři
+        Zrušit nepřítomnost v kanceláři
       </v-card-title>
-      <v-form ref="form" lazy-validation @submit.prevent>
-        <v-card-text class="card-text" style="max-height: 800px">
+      <v-form
+        ref="form"
+        lazy-validation
+        @submit.prevent
+      >
+        <v-card-text
+          class="card-text"
+          style="max-height: 800px"
+        >
           <v-row>
             <v-col>
               <v-select

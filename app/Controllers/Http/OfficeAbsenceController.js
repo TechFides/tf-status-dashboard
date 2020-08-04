@@ -42,7 +42,7 @@ class OfficeAbsenceController {
       .with('absenceApprover')
       .with('absenceTypeEnum')
       .with('absenceStateEnum')
-      .where('user_id', userId)
+      .where('user_id', userId);
 
     if (absenceType) {
       officeAbsenceQuery.where('absence_type_enum_id', absenceType);
