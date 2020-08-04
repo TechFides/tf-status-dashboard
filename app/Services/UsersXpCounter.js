@@ -183,7 +183,9 @@ class UsersXpCounter {
   getProjectXp(projectRatings, projectCoefficient, projectRatingsWithoutZeros, projectModifier) {
     const projectRatingSum = projectRatings.reduce((acc, cur) => acc + cur.rating, 0);
     const numberOfRatings = projectRatings.length === 0 ? 1 : projectRatings.length;
-    const numberOfRatingsWithoutZeros = projectRatingsWithoutZeros.length === 0 ? 1 : projectRatingsWithoutZeros.length;
+
+    let numberOfRatingsWithoutZeros = (projectRatingsWithoutZeros.filter(p => p.projectRating.value !== 0));
+    numberOfRatingsWithoutZeros = numberOfRatingsWithoutZeros.length === 0 ? 1 : numberOfRatingsWithoutZeros.length;
 
     const projectXp = (projectRatingSum / numberOfRatingsWithoutZeros * numberOfRatings) * projectCoefficient * projectModifier.value / 100;
 
