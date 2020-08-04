@@ -61,13 +61,13 @@
           v-slot:item="{item, expand, isExpanded}"
         >
           <tr
-            :class="getRowClass(item.absenceState.name, item.description)"
+            :style="{backgroundColor: getRowColor(item.absenceState.name), cursor: item.description ? 'pointer': ''}"
             @click.stop="expand(!isExpanded)"
           >
             <td class="text-right element pr-8">
               {{ item.absenceStart }}
             </td>
-            <td class="text-right element">
+            <td class="text-right element pr-8">
               {{ item.absenceEnd }}
             </td>
             <td class="text-right element pr-8">
@@ -82,7 +82,7 @@
             <td class="text-left element">
               {{ item.absenceType.value }}
             </td>
-            <td class="text-right element">
+            <td class="text-right element pr-8">
               {{ `${item.absenceHoursNumber}h` }}
             </td>
             <td class="justify-center layout px-0">
@@ -111,7 +111,7 @@
             v-if="officeAbsenceDetailItems.description"
             :colspan="headers.length"
             class="pr-0 pl-8"
-            :class="getRowClass(officeAbsenceDetailItems.absenceState.name)"
+            :style="{backgroundColor: getRowColor(officeAbsenceDetailItems.absenceState.name)}"
           >
             <span class="expanded-column">{{ 'Popis nepřítomnosti:' }}</span>
             <span>{{ officeAbsenceDetailItems.description }}</span>
@@ -174,7 +174,7 @@
           {
             text: 'Ukončení nepřítomnosti',
             align: 'right',
-            sortable: false,
+            sortable: true,
             value: 'absenceEnd',
             isVisible: true,
           },
@@ -188,28 +188,28 @@
           {
             text: 'Schvalovatel',
             align: 'left',
-            sortable: false,
-            value: 'absenceApprover',
+            sortable: true,
+            value: 'absenceApprover.fullName',
             isVisible: true,
           },
           {
             text: 'Stav nepřítomnosti',
             align: 'left',
-            sortable: false,
-            value: 'absenceState',
+            sortable: true,
+            value: 'absenceState.value',
             isVisible: true,
           },
           {
             text: 'Typ nepřítomnosti',
             align: 'left',
-            sortable: false,
-            value: 'absenceType',
+            sortable: true,
+            value: 'absenceType.value',
             isVisible: true,
           },
           {
             text: 'Počet hodin nepřítomnosti',
             align: 'right',
-            sortable: false,
+            sortable: true,
             value: 'absenceHoursNumber',
             isVisible: true,
           },
@@ -269,21 +269,20 @@
       getRowId(row) {
         this.expandedRowId = row.item.id;
       },
-      getRowClass(absenceStateName, hasDescription) {
-        const className = hasDescription ? 'expanded-row color' : 'color';
+      getRowColor(absenceStateName) {
         switch (absenceStateName) {
           case 'APPROVED':
-            return `${className}-approved`;
+            return '#c7ffc9';
           case 'REJECTED':
-            return `${className}-reject`;
+            return '#ffd3d3';
           case 'AWAITING_CANCELLATION_APPROVAL':
-            return `${className}-cancellation-waiting`;
+            return '#feffc8';
           case 'DONE':
-            return `${className}-done`;
+            return '#b7e2f1';
           case 'CANCELED':
-            return `${className}-canceled`;
+            return '#e0e0e0';
           case 'WAITING_FOR_APPROVAL':
-            return `${className}-approval-waiting`;
+            return '#feffc8';
           default:
             return '';
         }
@@ -303,37 +302,9 @@
 </script>
 
 <style scoped>
-  .expanded-row {
-    cursor: pointer !important;
-  }
-  .no-available-data {
-    display: flex;
-    justify-content: center;
-    color: rgba(0,0,0,.38);
-    height: 48px;
-    align-items: center;
-  }
   .expanded-column {
     color: rgba(0,0,0,.6);
     font-size: 0.8rem;
     font-weight: bold;
-  }
-  .color-approved {
-    background-color: #c7ffc9;
-  }
-  .color-reject {
-    background-color: #ffd3d3;
-  }
-  .color-cancellation-waiting {
-     background-color: #feffc8;
-   }
-  .color-done {
-    background-color: #b7e2f1;
-  }
-  .color-canceled {
-    background-color: #e0e0e0;
-  }
-  .color-approval-waiting {
-    background-color: #feffc8;
   }
 </style>
