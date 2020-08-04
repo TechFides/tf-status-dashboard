@@ -503,7 +503,7 @@ export default {
       selectedDate.setDate(2);
 
       const dateMonthAgo = new Date();
-      dateMonthAgo.setMonth(dateMonthAgo.getMonth() - 1);
+      dateMonthAgo.setMonth(dateMonthAgo.getMonth() - 2);
       dateMonthAgo.setDate(1);
 
       return selectedDate >= dateMonthAgo;
@@ -550,11 +550,12 @@ export default {
         month: Number(month),
       };
 
+      const monthXp = this.userInfoDialog.sumXpProjects + this.userInfoDialog.sumHoursWorked + Number(this.userInfoDialog.bonusXp);
       const userBonusXp = {
         id: this.userInfoDialog.id,
         bonusXp: Number(this.userInfoDialog.bonusXp),
-        totalXp: this.userInfoDialog.previousXp + Number(this.userInfoDialog.bonusXp),
-        monthXp: this.userInfoDialog.sumXpProjects + this.userInfoDialog.sumHoursWorked + Number(this.userInfoDialog.bonusXp),
+        totalXp: this.userInfoDialog.previousXp + monthXp,
+        monthXp: monthXp,
         date: d,
       };
 
