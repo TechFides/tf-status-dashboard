@@ -5,6 +5,8 @@ module.exports = {
     FEEDBACK_CRONTAB: 'feedbackCrontab',
     SLACK_ERROR_CHANNEL: 'slackErrorChannel',
     SLACK_SITDOWN_CHANNEL: 'slackSchedulerChannel',
+    SLACK_ABSENCE_CHANNEL: 'slackAbsenceChannel',
+    ABSENCE_APPROVER_ID: 'absenceApproverId',
   },
 
   EXP_MODIFIER: {
@@ -32,5 +34,14 @@ module.exports = {
     STANDARD: 6,
     GOOD: 7,
     AMAZING: 5,
+  },
+
+  ABSENCE_STATE_ENUM: {
+    APPROVED: 1,
+    REJECTED: 2,
+    AWAITING_CANCELLATION_APPROVAL: 3,
+    DONE: 4,
+    CANCELED: 5,
+    WAITING_FOR_APPROVAL: 6,
   },
 };
