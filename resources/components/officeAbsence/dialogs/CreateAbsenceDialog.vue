@@ -20,19 +20,29 @@
           style="max-height: 800px"
         >
           <v-row>
-            <v-col cols="6">
+            <v-col cols="4">
               <DatePicker
                 v-model="dialogData.absenceStart"
                 label="Zahájení nepřítomnosti"
                 required
               />
             </v-col>
-            <v-col cols="6">
+            <v-col cols="4">
               <DatePicker
                 v-model="dialogData.absenceEnd"
                 :min="dialogData.absenceStart"
                 label="Ukončení nepřítomnosti"
                 required
+              />
+            </v-col>
+            <v-col
+              cols="4"
+            >
+              <v-text-field
+                v-model="dialogData.absenceHoursNumber"
+                type="number"
+                :rules="[rules.required, rules.minValue]"
+                label="Počet hodin nepřítomnosti"
               />
             </v-col>
           </v-row>
@@ -51,7 +61,6 @@
             </v-col>
             <v-col
               cols="6"
-              class="pl-11"
             >
               <v-select
                 v-model="dialogData.approver"
@@ -65,20 +74,6 @@
           </v-row>
           <v-row>
             <v-col
-              cols="6"
-              class="pl-11"
-            >
-              <v-text-field
-                v-model="dialogData.absenceHoursNumber"
-                type="number"
-                :rules="[rules.required, rules.minValue]"
-                label="Počet hodin nepřítomnosti"
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col
-              cols="10"
               class="pl-11"
             >
               <v-textarea
