@@ -1,11 +1,15 @@
 'use strict';
 
+const moment = require('moment');
+
 const OfficeAbsenceModel = use('App/Models/OfficeAbsence');
 const AbsenceTypeEnumModel = use('App/Models/AbsenceTypeEnum');
 const AbsenceStateEnumModel = use('App/Models/AbsenceStateEnum');
 const SystemParamModel = use('App/Models/SystemParam');
 const UserModel = use('App/Models/User');
 const AbsenceApproverModel = use('App/Models/AbsenceApprover');
+const AbsenceRequestApproverService = use('App/Services/AbsenceRequestApprover');
+const AbsenceRequestTokenModel = use('App/Models/AbsenceRequestToken');
 
 const { ABSENCE_STATE_ENUM, SYSTEM_PARAMS } = require('../../../constants');
 
@@ -102,12 +106,11 @@ class OfficeAbsenceController {
   }
 
   async createOfficeAbsence ({ request, response, params }) {
-    const officeAbsence = new OfficeAbsenceModel();
+    const officeAbsenceData = OfficeAbsenceController.mapToDbEntity(request);
+    const officeAbsence = (await OfficeAbsenceModel.create(officeAbsenceData)).toJSON();
 
-    officeAbsence.fill(OfficeAbsenceController.mapToDbEntity(request));
-    await officeAbsence.save();
-
-    return officeAbsence.toJSON();
+    AbsenceRequestApproverService.requestAbsence(officeAbsence.id);
+    return officeAbsence;
   }
 
   async cancelOfficeAbsence ({ request, response, params }) {
@@ -120,6 +123,7 @@ class OfficeAbsenceController {
     officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL;
 
     await officeAbsence.save();
+    AbsenceRequestApproverService.requestAbsence(officeAbsence.id);
 
     return officeAbsence.toJSON();
   }
@@ -134,6 +138,37 @@ class OfficeAbsenceController {
     } catch (e) {
       response.status(500).send({message: e.message});
     }
+  }
+
+  async approveOfficeAbsence ({ request, response, params }) {
+    const {
+      token,
+      absenceRequestEnumId,
+      officeAbsenceId,
+    } = request.only(['token', 'absenceRequestEnumId', 'officeAbsenceId']);
+    if (!token || !absenceRequestEnumId) {
+      return response.status(400).send({ message: 'Bad request: token and absenceRequestEnumId are required' });
+    }
+
+    const absenceToken = AbsenceRequestTokenModel.findBy('token', token);
+    if (!absenceToken && moment().isAfter(moment(absenceToken.expiration_date))) {
+      return response.status(404).send({ message: 'Not found: token is invalid or token is expired' });
+    }
+
+    const officeAbsence = await OfficeAbsenceModel.find(officeAbsenceId);
+    let officeAbsenceState;
+    if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.APPROVED) {
+      officeAbsenceState = ABSENCE_STATE_ENUM.CANCELED;
+    } else if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL)
+
+    if (absenceRequestEnumId === ABSENCE_STATE_ENUM.APPROVED.toString()) {
+      officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.APPROVED;
+    } else {
+      officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.REJECTED;
+    }
+
+    await officeAbsence.save();
+    return response.send();
   }
 }
 

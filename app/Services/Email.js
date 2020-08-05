@@ -10,6 +10,7 @@ class EmailService {
   }
 
   async sendEmail ({ toAddresses, html, text, subject }) {
+    const email = Env.get('EMAIL_ADDRESS');
     const msg = {
       to: toAddresses,
       from: Env.get('EMAIL_ADDRESS'),
