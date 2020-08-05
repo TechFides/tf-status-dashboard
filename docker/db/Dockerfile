@@ -1,9 +1,5 @@
-FROM node:10
+FROM mysql:5.7
 
 LABEL maintainer="Tomáš Bruckner <tomas.bruckner@staff.techfides.eu>"
 
-WORKDIR /app
-
-EXPOSE 3333
-
-CMD ["npm", "run", "dev"]
+COPY config-file.cnf /etc/mysql/conf.d
