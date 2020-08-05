@@ -8,7 +8,7 @@
   >
     <v-card>
       <v-card-title class="headline pl-3 systemPrimary">
-        Zrušit nepřítomnost v kanceláři
+        Žádost o zrušení nepřítomnosti
       </v-card-title>
       <v-form
         ref="form"
