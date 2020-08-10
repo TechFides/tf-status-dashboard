@@ -170,7 +170,11 @@ Route
   .middleware(AUTH);
 
 Route
-  .post('/api/officeAbsence/approveAbsence', 'OfficeAbsenceController.approveOfficeAbsence')
+  .post('/api/officeAbsence/approveAbsenceState', 'OfficeAbsenceController.approveAbsenceState')
+  .middleware(AUTH);
+
+Route
+  .post('/api/officeAbsence/rejectAbsenceState', 'OfficeAbsenceController.rejectAbsenceState')
   .middleware(AUTH);
 
 Route

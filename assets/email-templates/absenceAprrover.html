@@ -123,16 +123,28 @@
       margin-left: 5px;
     }
 
-    .td-rating{
+    .approver-decision-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between !important;
+      margin-top: 1rem;
+    }
+
+    .td-approver-option{
       cursor: pointer;
     }
+
+    .tr-absence-props {
+      margin-bottom: 0.5rem;
+    }
+
+    .td-absence-props {
+      font-weight: bold;
+    }
+
     a {
       color: #3498db;
       text-decoration: underline;
-    }
-    img.rating{
-      width: 165px;
-      margin: 3px;
     }
     .btn {
       margin: 3px;
@@ -158,7 +170,7 @@
       border-color: #0dd145;
     }
 
-    .td-rating:hover .btn.btn-approved{
+    .td-approver-option:hover .btn.btn-approved{
       color: #fff;
       background-color: #0dd145;
     }
@@ -168,7 +180,7 @@
       border-color: #ffd3d3;
     }
 
-    .td-rating:hover .btn.btn-reject{
+    .td-approver-option:hover .btn.btn-reject{
       color: #fff;
       background-color: #ffd3d3;
     }
@@ -251,10 +263,6 @@
       }
     }
 
-    .feedback td {
-      text-align: left;
-    }
-
     /* -------------------------------------
         PRESERVE THESE STYLES IN THE HEAD
     ------------------------------------- */
@@ -305,25 +313,38 @@
               <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <p>Ahoj,</p>
-                    <p>pevně věříme, že kvalitní prostředí je základem spokojenosti každého z nás. Dáváme si záležet, abychom byli pro ostatní společnosti a týmy vzorem, a rádi bychom touto cestou od tebe dostali zpětnou vazbu. </p>
-                    <p>Dej nám vědět, jaký jsi měl týden v práci. Nemusíš klikat pokaždé, není to nic povinného. Je to prostě příležitost dát najevo tvou spokojenost 😊.</p>
-                    <p>Tato zpětná vazba nám pomáhá reagovat na potřeby členů týmu. Vidíme, kdo a jak reagoval. Pokud s něčím nesouhlasíš, rozzlobil tě klient či práce na projektu, nebo naopak jsi spokojený, tvá práce tě baví či chceš ocenit maličkosti jako je třeba povedený teambuilding apod., neboj se nám to dát vědět. Alespoň touto formou. Uděláme maximum pro to, aby členové týmu byli ti nejspokojenější ✌.</p>
-                    <br>
+                    <h2>{{absenceText}}</h2>
                     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="feedback">
-                      <tr>
-                        {{#each absenceRequestOptions}}
-                        <td class="td-rating">
-                          <a href="{{absenceRequestUrl}}">
-                            <div class="btn btn-{{type}}">{{text}}</div>
-                          </a>
-                        </td>
-                        {{/each}}
+                      <tr class="tr-absence-props">
+                        <td class="td-absence-props">Zahájení nepřítomnosti:</td>
+                        <td>{{absenceProps.startDate}}</td>
+                      </tr>
+                      <tr class="tr-absence-props">
+                        <td class="td-absence-props">Ukončení nepřítomnosti:</td>
+                        <td>{{absenceProps.endDate}}</td>
+                      </tr>
+                      <tr class="tr-absence-props">
+                        <td class="td-absence-props">Typ nepřítomnosti:</td>
+                        <td>{{absenceProps.type}}</td>
+                      </tr>
+                      <tr class="tr-absence-props">
+                        <td class="td-absence-props">Počet hodin:</td>
+                        <td>{{absenceProps.hoursNumber}}</td>
+                      </tr>
+                      <tr class="tr-absence-props">
+                        <td class="td-absence-props">Popis:</td>
+                        <td>{{text}}</td>
                       </tr>
                     </table>
-                    <br>
-                    <p>Měj krásný víkend,</p>
-                    <p>Matouš a Vašek</p>
+                    <div class="approver-decision-option">
+                      {{#each approverDecisionOptions}}
+                      <div class="td-approver-option">
+                        <a href="{{absenceRequestUrl}}">
+                          <div class="btn btn-{{type}}">{{text}}</div>
+                        </a>
+                      </div>
+                      {{/each}}
+                    </div>
                   </td>
                 </tr>
               </table>
@@ -335,7 +356,7 @@
           <table role="presentation" border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="content-block">
-                <span class="apple-link">© TechFides 2014 - 2019</span>
+                <span class="apple-link">© TechFides 2014 - 2020</span>
               </td>
             </tr>
           </table>

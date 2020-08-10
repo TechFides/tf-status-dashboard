@@ -43,5 +43,11 @@ module.exports = {
     DONE: 4,
     CANCELED: 5,
     WAITING_FOR_APPROVAL: 6,
+    REJECT_CANCELLATION: 7,
+  },
+
+  APPROVER_DECISION_ENUM: {
+    APPROVED: 1,
+    REJECTED: 2,
   },
 };

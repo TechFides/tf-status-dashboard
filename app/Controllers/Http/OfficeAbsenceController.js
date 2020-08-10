@@ -11,7 +11,7 @@ const AbsenceApproverModel = use('App/Models/AbsenceApprover');
 const AbsenceRequestApproverService = use('App/Services/AbsenceRequestApprover');
 const AbsenceRequestTokenModel = use('App/Models/AbsenceRequestToken');
 
-const { ABSENCE_STATE_ENUM, SYSTEM_PARAMS } = require('../../../constants');
+const { ABSENCE_STATE_ENUM, SYSTEM_PARAMS, APPROVER_DECISION_ENUM } = require('../../../constants');
 
 class OfficeAbsenceController {
   static mapToDbEntity (request) {
@@ -140,31 +140,62 @@ class OfficeAbsenceController {
     }
   }
 
-  async approveOfficeAbsence ({ request, response, params }) {
+  async approveAbsenceState ({ request, response, params }) {
     const {
       token,
-      absenceRequestEnumId,
       officeAbsenceId,
-    } = request.only(['token', 'absenceRequestEnumId', 'officeAbsenceId']);
-    if (!token || !absenceRequestEnumId) {
-      return response.status(400).send({ message: 'Bad request: token and absenceRequestEnumId are required' });
+    } = request.only(['token', 'officeAbsenceId']);
+    if (!token) {
+      return response.status(400).send({ name: 'BAD_REQUEST', message: 'Token is required' });
     }
 
     const absenceToken = AbsenceRequestTokenModel.findBy('token', token);
     if (!absenceToken && moment().isAfter(moment(absenceToken.expiration_date))) {
-      return response.status(404).send({ message: 'Not found: token is invalid or token is expired' });
+      return response.status(404).send({ name: 'TOKEN_NOT_FOUND', message: 'Token is invalid or token is expired' });
     }
 
     const officeAbsence = await OfficeAbsenceModel.find(officeAbsenceId);
-    let officeAbsenceState;
-    if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.APPROVED) {
-      officeAbsenceState = ABSENCE_STATE_ENUM.CANCELED;
-    } else if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL)
+    if (!officeAbsence) {
+      return response.status(404).send({ name: 'OFFICE_ABSENCE_NOT_FOUND', message: 'Office absence does not exists' });
+    }
 
-    if (absenceRequestEnumId === ABSENCE_STATE_ENUM.APPROVED.toString()) {
+    if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL
+      || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.REJECTED) {
       officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.APPROVED;
-    } else {
+    } else if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL
+      || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.REJECT_CANCELLATION) {
+      officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.CANCELED;
+    }
+
+    await officeAbsence.save();
+    return response.send();
+  }
+
+  async rejectAbsenceState ({ request, response, params }) {
+    const {
+      token,
+      officeAbsenceId,
+    } = request.only(['token', 'officeAbsenceId']);
+    if (!token) {
+      return response.status(400).send({ name: 'BAD_REQUEST', message: 'Token is required' });
+    }
+
+    const absenceToken = AbsenceRequestTokenModel.findBy('token', token);
+    if (!absenceToken && moment().isAfter(moment(absenceToken.expiration_date))) {
+      return response.status(404).send({ name: 'TOKEN_NOT_FOUND', message: 'Token is invalid or token is expired' });
+    }
+
+    const officeAbsence = await OfficeAbsenceModel.find(officeAbsenceId);
+    if (!officeAbsence) {
+      return response.status(404).send({ name: 'OFFICE_ABSENCE_NOT_FOUND', message: 'Office absence does not exists' });
+    }
+
+    if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL
+      || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.APPROVED){
       officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.REJECTED;
+    } else if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL
+      || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.CANCELED) {
+      officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.REJECT_CANCELLATION;
     }
 
     await officeAbsence.save();

@@ -275,6 +275,8 @@
             return '#c7ffc9';
           case 'REJECTED':
             return '#ffd3d3';
+          case 'REJECT_CANCELLATION':
+            return '#ffd3d3';
           case 'AWAITING_CANCELLATION_APPROVAL':
             return '#feffc8';
           case 'DONE':

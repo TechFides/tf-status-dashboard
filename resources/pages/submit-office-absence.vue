@@ -11,18 +11,25 @@
         class="submit-feedback__message"
       >
         <v-img
+          v-if="approverDecisionId === '1'"
           class="thumb-up"
-          src="/thumbs_up.gif"
+          src="/approved_absence.png"
           max-height="125"
           max-width="125"
         />
-        <h2>
-          <strong>Díky moc za zpětnou vazbu!</strong>
+        <v-img
+          v-else
+          class="thumb-up"
+          src="/reject_absence.png"
+          max-height="125"
+          max-width="125"
+        />
+        <h2 v-if="approverDecisionId === '1'">
+          <strong>Žádost nepřítomnosti byla schválena</strong>
         </h2>
-        <div>
-          Pomůže nám tvořit takové prostředí, které tě bude bavit, a ve kterém budeš rád. <br> Btw. pokud chceš být konkrétnější,
-          neváhej se kdykoliv obrátit přímo na Matouše nebo Vaška <br> - spokojenost lidí v TechFides je a bude vždy naší důležitou prioritou.
-        </div>
+        <h2 v-else>
+          <strong>Žádost nepřítomnosti byla zamítnuta</strong>
+        </h2>
       </div>
       <div
         v-if="error"
@@ -36,26 +43,27 @@
   </v-layout>
 </template>
 <script>
-
-  const REDIRECT_TIMEOUT = 10000;
+  const APPROVER_DECISION_ENUM = {
+    APPROVED: '1',
+    REJECTED: '2',
+  };
 
   const handleFeedbackError = ({ response }) => {
-    const status = response.status;
+    const errorName = response.data.name;
     const data = {
       loading: false,
       submitted: false,
       error: `Jejda! Něco se pokazilo.`,
     };
-
-    switch (status) {
-      case 409:
-        data.error = 'Zdá se, že jste tento týden již odeslal(a) svůj feedback.';
+    switch (errorName) {
+      case 'BAD_REQUEST':
+        data.error = 'Token je povinný.';
         break;
-      case 403:
-        data.error = 'Doba platnosti tokenu již vypršela.';
+      case 'TOKEN_NOT_FOUND':
+        data.error = 'Token neexistuje nebo mu vypršela platnost.';
         break;
-      case 404:
-        data.error = 'Token neexistuje :(';
+      case 'OFFICE_ABSENCE_NOT_FOUND':
+        data.error = 'Žádost o nepřítomnost byla již pravděpodobně odstraněna.';
         break;
     }
 
@@ -64,8 +72,8 @@
 
   export default {
     validate ({ route, redirect }) {
-      const { token, absenceRequestEnumId, officeAbsenceId } = route.query;
-      if (!token || !absenceRequestEnumId || !officeAbsenceId) {
+      const { token, approverDecisionId, officeAbsenceId } = route.query;
+      if (!token || !approverDecisionId || !officeAbsenceId) {
         redirect('/');
         return false;
       }
@@ -77,16 +85,23 @@
         submitted: false,
         redirect: false,
         error: null,
+        approverDecisionId: null,
       };
     },
     async asyncData ({ route, store, redirect, $axios }) {
       try {
-        await $axios.post('/api/officeAbsence/approveAbsence', {
-          token: route.query.token,
-          absenceRequestEnumId: route.query.absenceRequestEnumId,
-          officeAbsenceId: route.query.officeAbsenceId,
-        });
-        return { loading: false, submitted: true };
+        if (route.query.approverDecisionId === APPROVER_DECISION_ENUM.APPROVED) {
+          await $axios.post('/api/officeAbsence/approveAbsenceState', {
+            token: route.query.token,
+            officeAbsenceId: route.query.officeAbsenceId,
+          });
+        } else {
+          await $axios.post('/api/officeAbsence/rejectAbsenceState', {
+            token: route.query.token,
+            officeAbsenceId: route.query.officeAbsenceId,
+          });
+        }
+        return { loading: false, submitted: true, approverDecisionId: route.query.approverDecisionId };
       } catch (error) {
         return handleFeedbackError(error);
       }
@@ -107,5 +122,7 @@
 
   .redirect-message {
     margin-top: 5px;
+    font-weight: bold;
+    font-size: 1.3rem;
   }
 </style>

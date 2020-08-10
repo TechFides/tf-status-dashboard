@@ -97,7 +97,7 @@
             text
             @click.native="confirmDialog"
           >
-            Uložit
+            Potvrdit
           </v-btn>
         </v-card-actions>
       </v-form>
