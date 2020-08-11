@@ -27,7 +27,6 @@
                 label="Schvalovatel"
                 :rules="[rules.required]"
                 no-data-text="Žádný data k dispozici."
-                clearable
               />
             </v-col>
           </v-row>

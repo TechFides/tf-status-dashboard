@@ -38,7 +38,7 @@ class OfficeAbsenceMessanger {
 
   static async sendMessage (userEmail, privateMessageAttachments, absenceChannelMessageAttachments) {
     const slackWebClient = new WebClient(Env.get('SLACK_TOKEN'));
-    const slackErrorName = (await systemParamModel
+    const slackAbsenceChannelName = (await systemParamModel
       .query()
       .where('key', '=', SYSTEM_PARAMS.SLACK_ABSENCE_CHANNEL)
       .first()).toJSON();
@@ -49,8 +49,8 @@ class OfficeAbsenceMessanger {
       await slackWebClient.chat.postMessage({ channel: channel.id, attachments: privateMessageAttachments });
     }
 
-    if (absenceChannelMessageAttachments) {
-      await slackWebClient.chat.postMessage({ channel: slackErrorName.value, attachments: absenceChannelMessageAttachments });
+    if (absenceChannelMessageAttachments && slackAbsenceChannelName.value) {
+      await slackWebClient.chat.postMessage({ channel: slackAbsenceChannelName.value, attachments: absenceChannelMessageAttachments });
     }
   }
 
@@ -68,12 +68,10 @@ class OfficeAbsenceMessanger {
   async sendApproveCreateAbsenceMessage (officeAbsenceId) {
     const officeAbsence = await OfficeAbsenceMessanger.getOfficeAbsence(officeAbsenceId);
     const privateMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
-      text: officeAbsence.absenceTypeEnum.name === 'WORK_TRAVEL'
-        ? `Tvůj ${officeAbsence.absenceTypeEnum.value.toLowerCase()} od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byl schválen.`
-        : `Tvoje ${officeAbsence.absenceTypeEnum.value.toLowerCase()} od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla schválena.`,
+      text: `Tvoje žádost o "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla schválena.`,
     });
     const absenceChannelMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
-      text: `${officeAbsence.user.first_name} ${officeAbsence.user.last_name} si bere ${officeAbsence.absenceTypeEnum.value.toLowerCase()} od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')}.`,
+      text: `${officeAbsence.user.first_name} ${officeAbsence.user.last_name} si bere "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')}.`,
     });
 
     try {
@@ -86,12 +84,10 @@ class OfficeAbsenceMessanger {
   async sendApproveCancelAbsenceMessage (officeAbsenceId) {
     const officeAbsence = await OfficeAbsenceMessanger.getOfficeAbsence(officeAbsenceId);
     const privateMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
-      text: officeAbsence.absenceTypeEnum.name === 'WORK_TRAVEL'
-        ? `Tvůj ${officeAbsence.absenceTypeEnum.value.toLowerCase()} od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byl zrušen.`
-        : `Tvoje ${officeAbsence.absenceTypeEnum.value.toLowerCase()} od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla zrušena.`,
+      text: `Tvoje napřítomnost "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla zrušena.`,
     });
     const absenceChannelMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
-      text: `${officeAbsence.user.first_name} ${officeAbsence.user.last_name} si ruší ${officeAbsence.absenceTypeEnum.value.toLowerCase()} od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')}.`,
+      text: `${officeAbsence.user.first_name} ${officeAbsence.user.last_name} si ruší "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')}.`,
     });
 
     try {
@@ -105,7 +101,7 @@ class OfficeAbsenceMessanger {
     const officeAbsence = await OfficeAbsenceMessanger.getOfficeAbsence(officeAbsenceId);
     const privateMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
       color: '#c62828',
-      text: `Tvoje žádost o ${officeAbsence.absenceTypeEnum.value.toLowerCase()} od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla bohužel zamítnuta. Pro bližší informace se poptej u ${officeAbsence.absenceApprover.first_name} ${officeAbsence.absenceApprover.last_name}`,
+      text: `Tvoje žádost o "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla bohužel zamítnuta. Pro bližší informace se poptej u ${officeAbsence.absenceApprover.first_name} ${officeAbsence.absenceApprover.last_name}`,
     });
 
     try {
@@ -119,7 +115,7 @@ class OfficeAbsenceMessanger {
     const officeAbsence = await OfficeAbsenceMessanger.getOfficeAbsence(officeAbsenceId);
     const privateMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
       color: '#c62828',
-      text: `Tvoje zrušení žádosti o ${officeAbsence.absenceTypeEnum.value.toLowerCase()} od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} bylo bohužel zamítnuto. Pro bližší informace se poptej u ${officeAbsence.absenceApprover.first_name} ${officeAbsence.absenceApprover.last_name}`,
+      text: `Tvoje žádost o zrušení "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla bohužel zamítnuta. Pro bližší informace se poptej u ${officeAbsence.absenceApprover.first_name} ${officeAbsence.absenceApprover.last_name}`,
     });
 
     try {
