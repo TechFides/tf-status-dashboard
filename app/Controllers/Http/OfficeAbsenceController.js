@@ -1,13 +1,17 @@
 'use strict';
 
+const moment = require('moment');
+
 const OfficeAbsenceModel = use('App/Models/OfficeAbsence');
 const AbsenceTypeEnumModel = use('App/Models/AbsenceTypeEnum');
 const AbsenceStateEnumModel = use('App/Models/AbsenceStateEnum');
 const SystemParamModel = use('App/Models/SystemParam');
 const UserModel = use('App/Models/User');
 const AbsenceApproverModel = use('App/Models/AbsenceApprover');
+const AbsenceRequestApproverService = use('App/Services/AbsenceRequestApprover');
+const AbsenceRequestTokenModel = use('App/Models/AbsenceRequestToken');
 
-const { ABSENCE_STATE_ENUM, SYSTEM_PARAMS } = require('../../../constants');
+const { ABSENCE_STATE_ENUM, SYSTEM_PARAMS, APPROVER_DECISION_ENUM } = require('../../../constants');
 
 class OfficeAbsenceController {
   static mapToDbEntity (request) {
@@ -102,12 +106,11 @@ class OfficeAbsenceController {
   }
 
   async createOfficeAbsence ({ request, response, params }) {
-    const officeAbsence = new OfficeAbsenceModel();
+    const officeAbsenceData = OfficeAbsenceController.mapToDbEntity(request);
+    const officeAbsence = (await OfficeAbsenceModel.create(officeAbsenceData)).toJSON();
 
-    officeAbsence.fill(OfficeAbsenceController.mapToDbEntity(request));
-    await officeAbsence.save();
-
-    return officeAbsence.toJSON();
+    AbsenceRequestApproverService.requestAbsence(officeAbsence.id);
+    return officeAbsence;
   }
 
   async cancelOfficeAbsence ({ request, response, params }) {
@@ -120,6 +123,7 @@ class OfficeAbsenceController {
     officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL;
 
     await officeAbsence.save();
+    AbsenceRequestApproverService.requestAbsence(officeAbsence.id);
 
     return officeAbsence.toJSON();
   }
@@ -134,6 +138,68 @@ class OfficeAbsenceController {
     } catch (e) {
       response.status(500).send({message: e.message});
     }
+  }
+
+  async approveAbsenceState ({ request, response, params }) {
+    const {
+      token,
+      officeAbsenceId,
+    } = request.only(['token', 'officeAbsenceId']);
+    if (!token) {
+      return response.status(400).send({ name: 'BAD_REQUEST', message: 'Token is required' });
+    }
+
+    const absenceToken = AbsenceRequestTokenModel.findBy('token', token);
+    if (!absenceToken && moment().isAfter(moment(absenceToken.expiration_date))) {
+      return response.status(404).send({ name: 'TOKEN_NOT_FOUND', message: 'Token is invalid or token is expired' });
+    }
+
+    const officeAbsence = await OfficeAbsenceModel.find(officeAbsenceId);
+    if (!officeAbsence) {
+      return response.status(404).send({ name: 'OFFICE_ABSENCE_NOT_FOUND', message: 'Office absence does not exists' });
+    }
+
+    if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL
+      || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.REJECTED) {
+      officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.APPROVED;
+    } else if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL
+      || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.REJECT_CANCELLATION) {
+      officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.CANCELED;
+    }
+
+    await officeAbsence.save();
+    return response.send();
+  }
+
+  async rejectAbsenceState ({ request, response, params }) {
+    const {
+      token,
+      officeAbsenceId,
+    } = request.only(['token', 'officeAbsenceId']);
+    if (!token) {
+      return response.status(400).send({ name: 'BAD_REQUEST', message: 'Token is required' });
+    }
+
+    const absenceToken = AbsenceRequestTokenModel.findBy('token', token);
+    if (!absenceToken && moment().isAfter(moment(absenceToken.expiration_date))) {
+      return response.status(404).send({ name: 'TOKEN_NOT_FOUND', message: 'Token is invalid or token is expired' });
+    }
+
+    const officeAbsence = await OfficeAbsenceModel.find(officeAbsenceId);
+    if (!officeAbsence) {
+      return response.status(404).send({ name: 'OFFICE_ABSENCE_NOT_FOUND', message: 'Office absence does not exists' });
+    }
+
+    if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL
+      || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.APPROVED){
+      officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.REJECTED;
+    } else if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL
+      || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.CANCELED) {
+      officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.REJECT_CANCELLATION;
+    }
+
+    await officeAbsence.save();
+    return response.send();
   }
 }
 
