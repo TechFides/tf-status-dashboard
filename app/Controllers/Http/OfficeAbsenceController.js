@@ -10,6 +10,7 @@ const UserModel = use('App/Models/User');
 const AbsenceApproverModel = use('App/Models/AbsenceApprover');
 const AbsenceRequestApproverService = use('App/Services/AbsenceRequestApprover');
 const AbsenceRequestTokenModel = use('App/Models/AbsenceRequestToken');
+const OfficeAbsenceMessanger = use('App/Services/OfficeAbsenceMessanger');
 
 const { ABSENCE_STATE_ENUM, SYSTEM_PARAMS, APPROVER_DECISION_ENUM } = require('../../../constants');
 
@@ -162,9 +163,11 @@ class OfficeAbsenceController {
     if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL
       || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.REJECTED) {
       officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.APPROVED;
+      OfficeAbsenceMessanger.sendApproveCreateAbsenceMessage(officeAbsenceId);
     } else if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL
       || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.REJECT_CANCELLATION) {
       officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.CANCELED;
+      OfficeAbsenceMessanger.sendApproveCancelAbsenceMessage(officeAbsenceId);
     }
 
     await officeAbsence.save();
@@ -193,9 +196,11 @@ class OfficeAbsenceController {
     if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL
       || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.APPROVED){
       officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.REJECTED;
+      OfficeAbsenceMessanger.sendRejectCreateAbsenceMessage(officeAbsenceId);
     } else if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL
       || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.CANCELED) {
       officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.REJECT_CANCELLATION;
+      OfficeAbsenceMessanger.sendRejectCancelAbsenceMessage(officeAbsenceId);
     }
 
     await officeAbsence.save();
