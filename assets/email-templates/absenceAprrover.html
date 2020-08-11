@@ -62,7 +62,7 @@
 
     .wrapper {
       box-sizing: border-box;
-      padding: 20px;
+      padding: 20px 15px;
     }
 
     .content-block {
@@ -132,6 +132,16 @@
 
     .td-approver-option{
       cursor: pointer;
+      width: 50%;
+      padding: 0 0.5rem;
+    }
+
+    .absence-text {
+      padding: 0 0.6rem;
+    }
+
+    .table-absence-props {
+      padding: 0 0.8rem;
     }
 
     .tr-absence-props {
@@ -140,6 +150,7 @@
 
     .td-absence-props {
       font-weight: bold;
+      width: 35%;
     }
 
     a {
@@ -160,7 +171,7 @@
       padding: 12px 25px;
       text-decoration: none;
       text-transform: capitalize;
-      width: 165px;
+      width: 100%;
       text-align: center;
       transition: 0.1s;
     }
@@ -176,13 +187,13 @@
     }
 
     .btn.btn-reject {
-      color: #ffd3d3;
-      border-color: #ffd3d3;
+      color: #E57373;
+      border-color: #E57373;
     }
 
     .td-approver-option:hover .btn.btn-reject{
       color: #fff;
-      background-color: #ffd3d3;
+      background-color: #E57373;
     }
 
 
@@ -313,8 +324,8 @@
               <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <h2>{{absenceText}}</h2>
-                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="feedback">
+                    <h2 class="absence-text">{{absenceText}}</h2>
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="table-absence-props">
                       <tr class="tr-absence-props">
                         <td class="td-absence-props">Zahájení nepřítomnosti:</td>
                         <td>{{absenceProps.startDate}}</td>
@@ -333,7 +344,7 @@
                       </tr>
                       <tr class="tr-absence-props">
                         <td class="td-absence-props">Popis:</td>
-                        <td>{{text}}</td>
+                        <td>{{absenceProps.description}}</td>
                       </tr>
                     </table>
                     <div class="approver-decision-option">
