@@ -1,7 +1,10 @@
 <template>
   <div v-if="$auth.$state.loggedIn">
     Přihlášen jako {{ $auth.user.first_name }} {{ $auth.user.last_name }}
-    <v-btn @click="logout">
+    <v-btn
+      class="ml-8"
+      @click="logout"
+    >
       Odhlásit
     </v-btn>
   </div>

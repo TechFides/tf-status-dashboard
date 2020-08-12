@@ -25,6 +25,7 @@
                 v-model="dialogData.absenceStart"
                 label="Zahájení nepřítomnosti"
                 required
+                :clearable="false"
               />
             </v-col>
             <v-col cols="4">
@@ -56,7 +57,6 @@
                 :items="absenceTypeEnumItems"
                 label="Typ nepřítomnosti"
                 :rules="[rules.required]"
-                clearable
               />
             </v-col>
             <v-col
@@ -68,7 +68,6 @@
                 label="Schvalovatel"
                 :rules="[rules.required]"
                 no-data-text="Žádný data k dispozici."
-                clearable
               />
             </v-col>
           </v-row>
