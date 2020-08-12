@@ -84,7 +84,7 @@ class OfficeAbsenceMessanger {
   async sendApproveCancelAbsenceMessage (officeAbsenceId) {
     const officeAbsence = await OfficeAbsenceMessanger.getOfficeAbsence(officeAbsenceId);
     const privateMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
-      text: `Tvoje napřítomnost "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla zrušena.`,
+      text: `Tvoje nepřítomnost "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla zrušena.`,
     });
     const absenceChannelMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
       text: `${officeAbsence.user.first_name} ${officeAbsence.user.last_name} si ruší "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')}.`,
