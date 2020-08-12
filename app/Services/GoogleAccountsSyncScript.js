@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const {JWT} = require('google-auth-library');
+const { JWT } = require('google-auth-library');
 
 require('dotenv').config();
 

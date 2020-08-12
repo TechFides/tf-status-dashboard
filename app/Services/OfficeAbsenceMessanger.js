@@ -8,7 +8,7 @@ const systemParamModel = use('App/Models/SystemParam');
 const Env = use('Env');
 
 class OfficeAbsenceMessanger {
-  static async sendError (error) {
+  async sendError (error) {
     const slackWebClient = new WebClient(Env.get('SLACK_TOKEN'));
     const slackErrorName = (await systemParamModel
       .query()
@@ -18,7 +18,7 @@ class OfficeAbsenceMessanger {
     const attachments = [
       {
         color: '#c62828',
-        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: \*${error.data.error}\*.`,
+        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: \*${error}\*.`,
       },
     ];
 
@@ -77,7 +77,7 @@ class OfficeAbsenceMessanger {
     try {
       await OfficeAbsenceMessanger.sendMessage(officeAbsence.user.email, privateMessageAttachments, absenceChannelMessageAttachments);
     } catch (error) {
-      await OfficeAbsenceMessanger.sendError(error);
+      await OfficeAbsenceMessanger.sendError(error.data.error);
     }
   }
 
@@ -93,7 +93,7 @@ class OfficeAbsenceMessanger {
     try {
       await OfficeAbsenceMessanger.sendMessage(officeAbsence.user.email, privateMessageAttachments, absenceChannelMessageAttachments);
     } catch (error) {
-      await OfficeAbsenceMessanger.sendError(error);
+      await OfficeAbsenceMessanger.sendError(error.data.error);
     }
   }
 
@@ -107,7 +107,7 @@ class OfficeAbsenceMessanger {
     try {
       await OfficeAbsenceMessanger.sendMessage(officeAbsence.user.email, privateMessageAttachments);
     } catch (error) {
-      await OfficeAbsenceMessanger.sendError(error);
+      await OfficeAbsenceMessanger.sendError(error.data.error);
     }
   }
 
@@ -121,7 +121,7 @@ class OfficeAbsenceMessanger {
     try {
       await OfficeAbsenceMessanger.sendMessage(officeAbsence.user.email, privateMessageAttachments);
     } catch (error) {
-      await OfficeAbsenceMessanger.sendError(error);
+      await OfficeAbsenceMessanger.sendError(error.data.error);
     }
   }
 }
