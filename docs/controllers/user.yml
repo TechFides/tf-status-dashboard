@@ -1,0 +1,19 @@
+/api/heatmap/feedbacks:
+  get:
+    tags:
+      - User
+    summary: Get user feedback
+    description: Get user feedback
+    parameters:
+      - in: body
+        name: Feedback command
+        schema:
+          type: object
+          properties:
+            isActive:
+              type: boolean
+    responses:
+      200:
+        description: success
+        schema:
+          $ref: '#/definitions/UserFeedback'

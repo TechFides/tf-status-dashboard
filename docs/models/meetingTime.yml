@@ -1,0 +1,12 @@
+definitions:
+  MeetingTime:
+    type: object
+    properties:
+      id:
+        type: integer
+      week_day:
+        type: string
+      name:
+        type: string
+      time:
+        type: string

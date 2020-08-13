@@ -1,0 +1,53 @@
+/api/auth/login:
+  post:
+    tags:
+      - Auth
+    summary: Authenticate a user
+    description: Login from the application
+    parameters:
+      - in: body
+        name: Authenticate command
+        schema:
+            type: object
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+              gToken:
+                type: string
+    responses:
+      200:
+        description: success
+        schema:
+          $ref: '#/definitions/UserRole'
+
+/api/auth/logout:
+  post:
+    tags:
+      - Auth
+    summary: Logout a user
+    description: Logout to the application
+    responses:
+      200:
+        description: success
+        properties:
+          message:
+            type: string
+
+/api/auth/me:
+  get:
+    tags:
+      - Auth
+    summary: get loged user
+    description: Get loged user
+    responses:
+      200:
+        description: success
+        schema:
+          $ref: '#/definitions/UserRole'
+      401:
+        description: Invalid credentials
+        properties:
+          message:
+            type: string

@@ -1,0 +1,12 @@
+definitions:
+  Feedback:
+    type: object
+    properties:
+      id:
+        type: integer
+      user_id:
+        type: integer
+      heatmap_week_id:
+        type: integer
+      feedback_enum_id:
+        type: integer
