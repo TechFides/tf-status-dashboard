@@ -150,7 +150,11 @@ Route
  * OFFICE ABSENCE
  */
 Route
-  .get('/api/office-absences', 'OfficeAbsenceController.getOfficeAbsences')
+  .get('/api/office-absences', 'OfficeAbsenceController.getOfficeAbsenceList')
+  .middleware(AUTH);
+
+Route
+  .get('/api/office-absence/:id', 'OfficeAbsenceController.getOfficeAbsence')
   .middleware(AUTH);
 
 Route
@@ -164,6 +168,9 @@ Route
 Route
   .get('/api/office-absences/approvers', 'OfficeAbsenceController.getApprovers')
   .middleware(AUTH);
+
+Route
+  .get('/api/office-absences/changes', 'OfficeAbsenceController.getOfficeAbsenceChanges');
 
 Route
   .post('/api/office-absence', 'OfficeAbsenceController.createOfficeAbsence')

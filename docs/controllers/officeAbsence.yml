@@ -2,8 +2,8 @@
   get:
     tags:
       - Office absence
-    summary: Get all office absence
-    description: Get all office absence
+    summary: Get all office absences
+    description: Get all office absences
     parameters:
       - in: body
         name: Filter command
@@ -25,6 +25,48 @@
           type: array
           items:
             $ref: '#/definitions/OfficeAbsenceDetail'
+
+/api/office-absence/:id:
+  get:
+    tags:
+      - Office absence
+    summary: Get office absence
+    description: Get office absence
+    parameters:
+      - in: query
+        name: id
+        description: id of office absence
+        required: true
+        type: string
+    responses:
+      200:
+        description: success
+        schema:
+          $ref: '#/definitions/OfficeAbsenceDetail'
+
+/api/office-absences/changes:
+  get:
+    tags:
+      - Office absence
+    summary: Get office absence
+    description: Get office absence
+    parameters:
+      - in: body
+        name: Filter command
+        schema:
+          type: object
+          properties:
+            date:
+              type: string
+          required:
+            - date
+    responses:
+      200:
+        description: success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/OfficeAbsenceChanges'
 
 /api/office-absences/type-enums:
   get:

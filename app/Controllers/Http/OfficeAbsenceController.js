@@ -39,7 +39,7 @@ class OfficeAbsenceController {
     };
   }
 
-  async getOfficeAbsences ({ request, response, params }) {
+  async getOfficeAbsenceList ({ request, response, params }) {
     let { absenceType, absenceState, userId } = request.get();
     const officeAbsenceQuery = OfficeAbsenceModel
       .query()
@@ -60,6 +60,24 @@ class OfficeAbsenceController {
     const officeAbsence = await officeAbsenceQuery.fetch();
 
     return officeAbsence.toJSON();
+  }
+
+  async getOfficeAbsence ({ request, response, params }) {
+    const { id } = params;
+    const officeAbsenceQuery = OfficeAbsenceModel
+      .query()
+      .with('user')
+      .with('absenceApprover')
+      .with('absenceTypeEnum')
+      .with('absenceStateEnum')
+      .where('user_id', userId)
+      .first();
+
+    return officeAbsence.toJSON();
+  }
+
+  async getOfficeAbsenceChanges ({ request, response, params }) {
+    return {};
   }
 
   async getAbsenceTypeEnums ({ request, response, params }) {
