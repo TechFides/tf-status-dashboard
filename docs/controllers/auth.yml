@@ -18,7 +18,7 @@
                 type: string
     responses:
       200:
-        description: success
+        description: Success
         schema:
           $ref: '#/definitions/UserRole'
 
@@ -30,7 +30,7 @@
     description: Logout to the application
     responses:
       200:
-        description: success
+        description: Success
         properties:
           message:
             type: string
@@ -43,7 +43,7 @@
     description: Get loged user
     responses:
       200:
-        description: success
+        description: Success
         schema:
           $ref: '#/definitions/UserRole'
       401:

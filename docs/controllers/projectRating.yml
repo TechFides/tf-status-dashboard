@@ -1,0 +1,51 @@
+/api/projectRatings:
+  get:
+    tags:
+      - Project rating
+    summary: Get all project rating
+    description: Get all project rating
+    parameters:
+      - in: body
+        name: Filter command
+        schema:
+          type: object
+          properties:
+            month:
+              type: string
+            year:
+              type: string
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/StandupDetail'
+
+/api/projectRating:
+  post:
+    tags:
+      - Project rating
+    summary: Ser project rating
+    description: Ser project rating
+    parameters:
+      - in: body
+        name: Set project rating command
+        schema:
+          type: object
+          properties:
+            projectId:
+              type: integer
+            standupId:
+              type: integer
+            ratingValueId:
+              type: integer
+          required:
+            - projectId
+            - standupId
+            - ratingValueId
+    responses:
+      200:
+        description: Success
+      404:
+        description: Not found

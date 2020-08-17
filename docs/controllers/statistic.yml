@@ -1,0 +1,49 @@
+/api/statistics/projects:
+  get:
+    tags:
+      - Statistic
+    summary: Get all statistic
+    description: Get all statistic
+    parameters:
+      - in: body
+        name: Filter command
+        schema:
+          type: object
+          properties:
+            month:
+              type: string
+            year:
+              type: string
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Statistic'
+
+/api/statistics/bonus-xp:
+  post:
+    tags:
+      - Statistic
+    summary: Add user bonus xp
+    description: Add user bonus xp
+    parameters:
+      - in: body
+        name: Add xp command
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+            date:
+              type: string
+            bonusXp:
+              type: integer
+            totalXp:
+              type: integer
+          required:
+            - id
+            - date
+            - bonusXp
+            - totalXp

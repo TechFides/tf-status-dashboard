@@ -1,14 +1,16 @@
 definitions:
-  Project:
+  NoteDetail:
     type: object
     properties:
       id:
         type: integer
-      description:
+      note:
         type: string
       is_active:
         type: boolean
-      meeting_time_id:
+      project_id:
         type: integer
-      slack_channel_id:
+      deadline:
         type: string
+      project:
+        $ref: '#/definitions/Project'

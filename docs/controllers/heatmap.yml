@@ -19,7 +19,7 @@
             - year
     responses:
       200:
-        description: success
+        description: Success
         schema:
           type: array
           items:

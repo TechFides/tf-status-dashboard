@@ -1,0 +1,26 @@
+definitions:
+  UserStatistic:
+    type: object
+    properties:
+      id:
+        type: integer
+      userName:
+        type: string
+      previousXp:
+        type: integer
+      bonusXp:
+        type: integer
+      sumXpProjects:
+        type: integer
+      sumHoursWorked:
+        type: integer
+      monthXp:
+        type: integer
+      totalXp:
+        type: integer
+      currentLevel:
+        type: integer
+      newLevel:
+        type: integer
+      userDetail:
+        $ref: '#/definitions/UserDetailStatistic'

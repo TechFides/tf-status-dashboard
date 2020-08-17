@@ -1,0 +1,23 @@
+definitions:
+  ProjectDetail:
+    type: object
+    properties:
+      id:
+        type: integer
+      description:
+        type: string
+      is_active:
+        type: boolean
+      meeting_time_id:
+        type: integer
+      slack_channel_id:
+        type: string
+      notes:
+        $ref: '#/definitions/Note'
+      meetingTime:
+        $ref: '#/definitions/MeetingTime'
+      slackChannel:
+        $ref: '#/definitions/SlackChannel'
+      projectUser:
+        $ref: '#/definitions/ProjectUser'
+

@@ -1,0 +1,12 @@
+definitions:
+  ProjectRating:
+    type: object
+    properties:
+      id:
+        type: integer
+      standup_id:
+        type: integer
+      standup_project_rating_enum_id:
+        type: integer
+      project_id:
+        type: integer

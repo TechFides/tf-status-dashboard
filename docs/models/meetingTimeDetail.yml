@@ -1,5 +1,5 @@
 definitions:
-  MeetingTimeProject:
+  meetingTimeDetail:
     type: object
     properties:
       id:

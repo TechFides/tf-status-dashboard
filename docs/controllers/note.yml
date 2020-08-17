@@ -1,0 +1,92 @@
+/api/notes:
+  get:
+    tags:
+      - Note
+    summary: Get all notes
+    description: Get all notes
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/NoteDetail'
+
+/api/note:
+  post:
+    tags:
+      - Note
+    summary: Create note
+    description: Create note
+    parameters:
+      - in: body
+        name: Create note command
+        schema:
+          type: object
+          properties:
+            note:
+              type: string
+            projectId:
+              type: integer
+            deadlineDate:
+              type: string
+          required:
+            - note
+            - projectId
+            - deadlineDate
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/Note'
+
+/api/notes/:id/completed:
+  post:
+    tags:
+      - Note
+    summary: Mark note as completed
+    description: Mark note as completed
+    parameters:
+      - in: query
+        name: id
+        description: id of note
+        required: true
+        type: string
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/Note'
+
+/api/notes/:id:
+  put:
+    tags:
+      - Note
+    summary: Edit note
+    description: Edit note
+    parameters:
+      - in: query
+        name: id
+        description: id of note
+        required: true
+        type: string
+      - in: body
+        name: Create note command
+        schema:
+          type: object
+          properties:
+            note:
+              type: string
+            projectId:
+              type: integer
+            deadlineDate:
+              type: string
+          required:
+            - note
+            - projectId
+            - deadlineDate
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/Note'

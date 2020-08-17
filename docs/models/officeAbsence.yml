@@ -1,0 +1,28 @@
+definitions:
+  OfficeAbsence:
+    type: object
+    properties:
+      id:
+        type: integer
+      absence_start:
+        type: string
+      absence_end:
+        type: string
+      absence_type_enum_id:
+        type: integer
+      absence_state_enum_id:
+        type: string
+      user_id:
+        type: integer
+      absence_approver_id:
+        type: integer
+      absence_hours_number:
+        type: integer
+      calendar_event_title:
+        type: string
+      description:
+        type: string
+      created_at:
+        type: string
+      google_event_id:
+        type: integer
