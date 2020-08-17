@@ -24,5 +24,7 @@ definitions:
         type: string
       created_at:
         type: string
+      updated_at:
+        type: string
       google_event_id:
         type: integer

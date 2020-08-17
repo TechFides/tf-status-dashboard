@@ -10,16 +10,14 @@ module.exports = {
   */
 
   enable: true,
-  specUrl: '/swagger.json',
 
   options: {
     swaggerDefinition: {
       info: {
-        title: 'Adonis 💘 Swagger',
+        title: 'Techfides Dashboard documentation',
+        description: 'Dates are formatted by ISO. Example: 2020-08-17 (The International Standard)',
         version: '1.0.0',
       },
-
-      basePath: '/',
 
       // Example security definitions.
       securityDefinitions: {

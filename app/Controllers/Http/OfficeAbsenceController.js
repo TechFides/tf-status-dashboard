@@ -39,6 +39,13 @@ class OfficeAbsenceController {
     };
   }
 
+  static async setOfficeAbsenceState (officeAbsenceId, stateId) {
+    const officeAbsence = await OfficeAbsenceModel.find(officeAbsenceId);
+
+    officeAbsence.absence_state_enum_id = stateId;
+    await officeAbsence.save();
+  }
+
   async getOfficeAbsenceList ({ request, response, params }) {
     let { absenceType, absenceState, userId } = request.get();
     const officeAbsenceQuery = OfficeAbsenceModel
@@ -57,9 +64,16 @@ class OfficeAbsenceController {
       officeAbsenceQuery.where('absence_state_enum_id', absenceState);
     }
 
-    const officeAbsence = await officeAbsenceQuery.fetch();
+    const officeAbsenceList = (await officeAbsenceQuery.fetch()).toJSON();
 
-    return officeAbsence.toJSON();
+    for (const officeAbsence of officeAbsenceList) {
+      if (moment().isAfter(moment(officeAbsence.absence_end).add(1, 'day')) && officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.APPROVED) {
+        officeAbsence.absenceStateEnum = await AbsenceStateEnumModel.find(ABSENCE_STATE_ENUM.DONE);
+        await OfficeAbsenceController.setOfficeAbsenceState(officeAbsence.id, ABSENCE_STATE_ENUM.DONE);
+      }
+    }
+
+    return officeAbsenceList;
   }
 
   async getOfficeAbsence ({ request, response, params }) {
@@ -83,6 +97,7 @@ class OfficeAbsenceController {
   async getAbsenceTypeEnums ({ request, response, params }) {
     const absenceTypeEnumModel = await AbsenceTypeEnumModel
       .query()
+      .orderBy('value', 'asc')
       .fetch();
 
     return absenceTypeEnumModel.toJSON();
@@ -91,6 +106,7 @@ class OfficeAbsenceController {
   async getAbsenceStateEnums ({ request, response, params }) {
     const absenceStateEnumModel = await AbsenceStateEnumModel
       .query()
+      .orderBy('value', 'asc')
       .fetch();
 
     return absenceStateEnumModel.toJSON();

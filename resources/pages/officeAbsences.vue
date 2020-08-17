@@ -280,7 +280,7 @@
           case 'AWAITING_CANCELLATION_APPROVAL':
             return '#feffc8';
           case 'DONE':
-            return '#b7e2f1';
+            return '#90caf9';
           case 'CANCELED':
             return '#e0e0e0';
           case 'WAITING_FOR_APPROVAL':
