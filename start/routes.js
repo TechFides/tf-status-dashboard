@@ -147,6 +147,45 @@ Route
   .middleware(ADMIN);
 
 /**
+ * OFFICE ABSENCE
+ */
+Route
+  .get('/api/officeAbsences', 'OfficeAbsenceController.getOfficeAbsences')
+  .middleware(AUTH);
+
+Route
+  .get('/api/officeAbsences/typeEnums', 'OfficeAbsenceController.getAbsenceTypeEnums')
+  .middleware(AUTH);
+
+Route
+  .get('/api/officeAbsences/stateEnums', 'OfficeAbsenceController.getAbsenceStateEnums')
+  .middleware(AUTH);
+
+Route
+  .get('/api/officeAbsences/approvers', 'OfficeAbsenceController.getApprovers')
+  .middleware(AUTH);
+
+Route
+  .post('/api/officeAbsence', 'OfficeAbsenceController.createOfficeAbsence')
+  .middleware(AUTH);
+
+Route
+  .post('/api/officeAbsence/approveAbsenceState', 'OfficeAbsenceController.approveAbsenceState')
+  .middleware(AUTH);
+
+Route
+  .post('/api/officeAbsence/rejectAbsenceState', 'OfficeAbsenceController.rejectAbsenceState')
+  .middleware(AUTH);
+
+Route
+  .post('/api/officeAbsences/cancelOfficeAbsence', 'OfficeAbsenceController.cancelOfficeAbsence')
+  .middleware(AUTH);
+
+Route
+  .delete('/api/officeAbsences/:id', 'OfficeAbsenceController.deleteOfficeAbsence')
+  .middleware(AUTH);
+
+/**
  * USERS
  */
 Route

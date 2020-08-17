@@ -6,7 +6,6 @@ const Schema = use('Schema')
 class UserProjectParticipationsSchema extends Schema {
   up () {
     this.alter('user_project_participations', (table) => {
-      table.dropForeign('project_exp_modifier_id', 'user_project_participations_project_exp_modifiers_id_fk');
       table.dropColumn('project_exp_modifier_id');
     })
   }

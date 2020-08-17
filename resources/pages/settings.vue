@@ -69,25 +69,45 @@
             Slack kanály
           </h3>
         </v-row>
-        <v-row
-          justify="space-between"
-        >
-          <v-col
-            xs6
-          >
+        <v-row>
+          <v-col cols="4">
             <v-text-field
               v-model="form.slackErrorChannel"
               type="string"
               label="Slack kanál pro chybové hlášky"
             />
           </v-col>
-          <v-col
-            xs6
-          >
+          <v-col cols="4">
             <v-text-field
               v-model="form.slackSchedulerChannel"
               type="string"
               label="Slack kanál pro sitdown"
+            />
+          </v-col>
+          <v-col cols="4">
+            <v-text-field
+              v-model="form.slackAbsenceChannel"
+              type="string"
+              label="Slack kanál pro nepřítomnost v kanceláři"
+            />
+          </v-col>
+        </v-row>
+        <v-row
+          justify="start"
+        >
+          <h3 class="section-header">
+            Nepřítomnosti v kanceláři
+          </h3>
+        </v-row>
+        <v-row
+          justify="start"
+        >
+          <v-col cols="4">
+            <v-select
+              v-model="form.absenceApproverId"
+              :items="approvers"
+              label="Defaultní schvalovatel nepřítomnosti v kanceláři"
+              required
             />
           </v-col>
         </v-row>
@@ -111,6 +131,7 @@
 
 <script>
 import { WEEK_DAYS } from '../constants';
+import { mapState } from 'vuex';
 
 const fromCrontab = (crontab) => {
   const [minutes, hours, , , weekday] = crontab.split(' ');
@@ -130,6 +151,8 @@ export default {
       form: {
         slackErrorChannel: '',
         slackSchedulerChannel: '',
+        slackAbsenceChannel: '',
+        absenceApproverId: null,
         feedbackCrontab: {
           weekday: null,
           time: null,
@@ -139,10 +162,19 @@ export default {
     };
   },
   computed: {
+    ...mapState([
+      'users',
+    ]),
     weekdays () {
       return WEEK_DAYS.map((weekday, index) => ({
         text: weekday,
         value: index + 1,
+      }));
+    },
+    approvers () {
+      return this.users.map(user => ({
+        text: `${user.firstName} ${user.lastName}`,
+        value: user.id.toString(),
       }));
     },
   },
@@ -155,12 +187,17 @@ export default {
           feedbackCrontab: fromCrontab(response.feedbackCrontab),
           slackErrorChannel: response.slackErrorChannel,
           slackSchedulerChannel: response.slackSchedulerChannel,
+          slackAbsenceChannel: response.slackAbsenceChannel,
+          absenceApproverId: response.absenceApproverId,
         };
       }
       return { form };
     } catch (err) {
       return null;
     }
+  },
+  async fetch ({ store }) {
+    await store.dispatch('getUsers');
   },
   methods: {
     async saveSettings () {
@@ -172,6 +209,8 @@ export default {
           feedbackCrontab: toCrontab(weekday, time),
           slackErrorChannel: this.form.slackErrorChannel,
           slackSchedulerChannel: this.form.slackSchedulerChannel,
+          slackAbsenceChannel: this.form.slackAbsenceChannel,
+          absenceApproverId: this.form.absenceApproverId,
         };
 
         await this.$axios.$post('/api/configuration', settings);

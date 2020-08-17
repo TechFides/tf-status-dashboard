@@ -266,13 +266,11 @@ class UsersXpCounter {
 
     const syncDuration = jiraSyncData.length > 1 ? new Date(jiraSyncData[1].finish_date) - new Date(jiraSyncData[1].start_date) : 0;
 
-    const syncDates = {
-      startSyncTime: format(new Date(), 'HH:mm:ss'),
+    return {
+      startSyncTime: jiraSyncData.length > 0 ? format(jiraSyncData[0].start_date, 'HH:mm:ss') : '',
       lastDuration: this.millisToMinutesAndSeconds(syncDuration),
       status: jiraSyncData.length > 0 ? jiraSyncData[0].status : 0,
     };
-
-    return syncDates;
   }
 }
 

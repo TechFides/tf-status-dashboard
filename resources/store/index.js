@@ -1,4 +1,5 @@
 import { WEEK_DAYS, WEEK_DAYS_SHORTHAND } from '../constants';
+import { format } from 'date-fns';
 
 const NOTIFICATION_TIMEOUT = 4000;
 
@@ -9,6 +10,10 @@ export const state = () => ({
   projectStatistics: [],
   standups: [],
   standupRatings: {},
+  officeAbsences: [],
+  absenceTypeEnums: [],
+  absenceStateEnums: [],
+  approvers: [],
   users: [],
   roles: [],
   usersFeedbacks: [],
@@ -198,6 +203,36 @@ export const mutations = {
       text: n.note,
     })).sort(sortAscByProperty.bind(this, 'projectCode'));
   },
+  setOfficeAbsences (state, officeAbsences) {
+    state.officeAbsences = officeAbsences.map(o => ({
+      id: o.id,
+      author: o.user,
+      absenceStart: format(o.absence_start, 'DD. MM.YYYY'),
+      absenceEnd: format(o.absence_end, 'DD. MM.YYYY'),
+      created: format(o.created_at, 'DD. MM.YYYY'),
+      absenceType: o.absenceTypeEnum,
+      absenceState: o.absenceStateEnum,
+      absenceApprover: {
+        fullName: o.absenceApprover ? `${o.absenceApprover.first_name} ${o.absenceApprover.last_name}` : '',
+        id: o.absenceApprover ? o.absenceApprover.id : null,
+      },
+      absenceHoursNumber: o.absence_hours_number,
+      description: o.description,
+    }));
+  },
+  setAbsenceTypeEnums (state, absenceTypeEnums) {
+    state.absenceTypeEnums = absenceTypeEnums;
+  },
+  setAbsenceStateEnums (state, absenceStateEnums) {
+    state.absenceStateEnums = absenceStateEnums;
+  },
+  setApprovers (state, approvers) {
+    state.approvers = approvers.map(u => ({
+      firstName: u.first_name,
+      id: u.id,
+      lastName: u.last_name,
+    }));
+  },
   setUsers (state, users) {
     state.users = users.map(u => ({
       firstName: u.first_name,
@@ -207,6 +242,10 @@ export const mutations = {
       lastName: u.last_name,
       username: u.username,
       email: u.email,
+      absenceApprover: {
+        id: u.user ? u.user.approver.id : null,
+        fullName: u.user ? `${u.user.approver.first_name} ${u.user.approver.last_name}` : '',
+      },
       roles: u.roles.map(r => r.slug),
     }));
   },
@@ -507,6 +546,68 @@ export const actions = {
       if (error && error.response && error.response.data && error.response.data[0]) {
         commit('setErrorState', error.response.data[0]);
       }
+    }
+  },
+  async getOfficeAbsences ({ commit }, params) {
+    const payloads = {
+      ...
+      params,
+      userId: this.$auth.user.id,
+    };
+    const officeAbsences = await this.$axios.$get(
+      '/api/officeAbsences',
+      { params: payloads },
+      );
+
+    commit('setOfficeAbsences', officeAbsences);
+  },
+  async getAbsenceTypeEnums ({ commit }) {
+    const absenceTypeEnums = await this.$axios.$get('/api/officeAbsences/typeEnums');
+
+    commit('setAbsenceTypeEnums', absenceTypeEnums);
+  },
+  async getAbsenceStateEnums ({ commit }) {
+    const absenceTypeEnums = await this.$axios.$get('/api/officeAbsences/stateEnums');
+    commit('setAbsenceStateEnums', absenceTypeEnums);
+  },
+  async getApprovers ({ commit }) {
+    const params = {
+      userId: this.$auth.user.id,
+    };
+    const approvers = await this.$axios.$get('/api/officeAbsences/approvers',
+      { params },
+    );
+    commit('setApprovers', approvers);
+  },
+  async createOfficeAbsence ({ dispatch, commit }, officeAbsence) {
+    try {
+      await this.$axios.$post('/api/officeAbsence', officeAbsence);
+      dispatch('getOfficeAbsences');
+      commit('clearErrorState');
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('setErrorState', error.response.data[0]);
+      }
+    }
+  },
+  async cancelOfficeAbsence ({ dispatch, commit }, officeAbsence) {
+    try {
+      await this.$axios.$post('/api/officeAbsences/cancelOfficeAbsence', officeAbsence);
+      dispatch('getOfficeAbsences');
+      commit('clearErrorState');
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('setErrorState', error.response.data[0]);
+      }
+    }
+  },
+  async deleteOfficeAbsence ({ dispatch, commit }, absenceId) {
+    try {
+      await this.$axios.$delete(`/api/officeAbsences/${absenceId}`);
+      dispatch('getOfficeAbsences');
+      commit('clearNotification');
+    } catch (error) {
+      commit('setNotification', { color: 'error', message: `Nepřítomnost se nepodařilo odstranit.` });
     }
   },
   async getUsers ({ commit }) {

@@ -1,6 +1,7 @@
 'use strict';
 
 const UserModel = use('App/Models/User');
+const AbsenceApproverModel = use('App/Models/AbsenceApprover');
 const RoleModel = use('Adonis/Acl/Role');
 
 class UserController {
@@ -25,34 +26,45 @@ class UserController {
   }
 
   async getUsers () {
-    const users = await UserModel
+    const users = (await UserModel
       .query()
       .with('roles')
-      .fetch();
+      .with('user', (builder) => {
+        builder
+          .with('approver');
+      })
+      .fetch()).toJSON();
 
-    return users.toJSON();
+    return users;
   }
 
   async createUser ({ request, response }) {
-    const user = new UserModel();
-    user.fill(UserController.mapToDbEntity(request));
+    const { absenceApproverId } = request.body;
+    const userData = UserController.mapToDbEntity(request);
 
     if (!request.input('password')) {
       response.status(422).send({ message: 'Unprocessable entity' });
       return;
+
     }
+    userData.password = request.input('password');
 
-    user.password = request.input('password');
-
-    await user.save();
+    const user = await UserModel.create(userData);
     await this._setRoles(user, request.input('roles'));
+
+    if (absenceApproverId) {
+      await AbsenceApproverModel.create({user_id: user.id, approver_id: absenceApproverId});
+    }
 
     return user.toJSON();
   }
 
   async editUser ({ request, response, params }) {
     const { id } = params;
+    const { absenceApproverId } = request.body;
     const user = await UserModel.find(id);
+    const absenceApproverModel = await AbsenceApproverModel.findBy('user_id', id);
+
     user.merge(UserController.mapToDbEntity(request));
 
     if (request.input('password')) {
@@ -61,6 +73,13 @@ class UserController {
 
     await user.save();
     await this._setRoles(user, request.input('roles'));
+
+    if (absenceApproverModel) {
+      absenceApproverModel.approver_id = absenceApproverId;
+      await absenceApproverModel.save();
+    } else {
+      await AbsenceApproverModel.create({user_id: id, approver_id: absenceApproverId});
+    }
 
     return user.toJSON();
   }
@@ -71,6 +90,12 @@ class UserController {
 
     try {
       await user.delete();
+      await AbsenceApproverModel
+        .query()
+        .where('approver_id', id)
+        .orWhere('user_id', id)
+        .delete();
+
       response.send();
     } catch (e) {
       response.status(500).send({message: e.message});
