@@ -154,8 +154,7 @@ Route
   .middleware(AUTH);
 
 Route
-  .get('/api/office-absence/:id', 'OfficeAbsenceController.getOfficeAbsence')
-  .middleware(AUTH);
+  .get('/api/office-absence/:id', 'OfficeAbsenceController.getOfficeAbsence');
 
 Route
   .get('/api/office-absences/type-enums', 'OfficeAbsenceController.getAbsenceTypeEnums')

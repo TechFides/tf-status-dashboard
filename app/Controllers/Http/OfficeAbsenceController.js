@@ -35,6 +35,7 @@ class OfficeAbsenceController {
       absence_state_enum_id: ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL,
       absence_approver_id: approver,
       absence_hours_number: absenceHoursNumber,
+      updated_at: moment().format('YYYY-MM-DD'),
       description,
     };
   }
@@ -78,20 +79,29 @@ class OfficeAbsenceController {
 
   async getOfficeAbsence ({ request, response, params }) {
     const { id } = params;
-    const officeAbsenceQuery = OfficeAbsenceModel
+    const officeAbsence = (await OfficeAbsenceModel
       .query()
       .with('user')
       .with('absenceApprover')
       .with('absenceTypeEnum')
       .with('absenceStateEnum')
-      .where('user_id', userId)
-      .first();
+      .where('id', id)
+      .first()).toJSON();
 
-    return officeAbsence.toJSON();
+    return officeAbsence;
   }
 
   async getOfficeAbsenceChanges ({ request, response, params }) {
-    return {};
+    const {
+      date,
+    } = request.only(['date']);
+    const officeAbsence = (await OfficeAbsenceModel
+      .query()
+      .where('updated_at', '>=', date)
+      .select('id', 'created_at', 'updated_at')
+      .fetch()).toJSON();
+
+    return officeAbsence;
   }
 
   async getAbsenceTypeEnums ({ request, response, params }) {
