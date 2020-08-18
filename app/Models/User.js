@@ -3,6 +3,25 @@
 const Model = use('Model');
 
 class User extends Model {
+/**
+ *  @swagger
+ *  definitions:
+ *    User:
+ *      type: object
+ *      properties:
+ *        id:
+ *          type: integer
+ *        username:
+ *          type: string
+ *        email:
+ *          type: string
+ *        password:
+ *          type: string
+ *      required:
+ *        - username
+ *        - email
+ *        - password
+ */
   static boot () {
     super.boot();
     this.addHook('beforeCreate', 'UserHook.hashPassword');

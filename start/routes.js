@@ -140,7 +140,7 @@ Route
   .get('/api/statistics/projects', 'StatisticsController.getProjectStatistics')
   .middleware(AUTH);
 Route
-  .post('/api/statistics/user', 'StatisticsController.addUserBonusXp')
+  .post('/api/statistics/bonus-xp', 'StatisticsController.addUserBonusXp')
   .middleware(ADMIN);
 Route
   .get('/api/statistics/data', 'JiraController.fetchData')
@@ -150,39 +150,45 @@ Route
  * OFFICE ABSENCE
  */
 Route
-  .get('/api/officeAbsences', 'OfficeAbsenceController.getOfficeAbsences')
+  .get('/api/office-absences', 'OfficeAbsenceController.getOfficeAbsenceList')
   .middleware(AUTH);
 
 Route
-  .get('/api/officeAbsences/typeEnums', 'OfficeAbsenceController.getAbsenceTypeEnums')
+  .get('/api/office-absence/:id', 'OfficeAbsenceController.getOfficeAbsence');
+
+Route
+  .get('/api/office-absences/type-enums', 'OfficeAbsenceController.getAbsenceTypeEnums')
   .middleware(AUTH);
 
 Route
-  .get('/api/officeAbsences/stateEnums', 'OfficeAbsenceController.getAbsenceStateEnums')
+  .get('/api/office-absences/state-enums', 'OfficeAbsenceController.getAbsenceStateEnums')
   .middleware(AUTH);
 
 Route
-  .get('/api/officeAbsences/approvers', 'OfficeAbsenceController.getApprovers')
+  .get('/api/office-absences/approvers', 'OfficeAbsenceController.getApprovers')
   .middleware(AUTH);
 
 Route
-  .post('/api/officeAbsence', 'OfficeAbsenceController.createOfficeAbsence')
+  .get('/api/office-absences/changes', 'OfficeAbsenceController.getOfficeAbsenceChanges');
+
+Route
+  .post('/api/office-absence', 'OfficeAbsenceController.createOfficeAbsence')
   .middleware(AUTH);
 
 Route
-  .post('/api/officeAbsence/approveAbsenceState', 'OfficeAbsenceController.approveAbsenceState')
+  .post('/api/office-absence/approve-absence-state', 'OfficeAbsenceController.approveAbsenceState')
   .middleware(AUTH);
 
 Route
-  .post('/api/officeAbsence/rejectAbsenceState', 'OfficeAbsenceController.rejectAbsenceState')
+  .post('/api/office-absence/reject-absence-state', 'OfficeAbsenceController.rejectAbsenceState')
   .middleware(AUTH);
 
 Route
-  .post('/api/officeAbsences/cancelOfficeAbsence', 'OfficeAbsenceController.cancelOfficeAbsence')
+  .post('/api/office-absences/cancel', 'OfficeAbsenceController.cancelOfficeAbsence')
   .middleware(AUTH);
 
 Route
-  .delete('/api/officeAbsences/:id', 'OfficeAbsenceController.deleteOfficeAbsence')
+  .delete('/api/office-absences/:id', 'OfficeAbsenceController.deleteOfficeAbsence')
   .middleware(AUTH);
 
 /**

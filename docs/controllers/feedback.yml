@@ -1,0 +1,32 @@
+/api/feedback:
+  post:
+    tags:
+      - Feedback
+    summary: Create feedback
+    description: Create feedback
+    parameters:
+      - in: body
+        name: Feedback command
+        schema:
+          type: object
+          properties:
+            token:
+              type: string
+            feedbackEnumId:
+              type: integer
+    responses:
+      400:
+        description: Bad request:token and feedbackEnumId are required
+        properties:
+          message:
+            type: string
+      404:
+        description: Not found:token is invalid or feedback enum with this ID does not exist
+        properties:
+          message:
+            type: string
+      403:
+        description: Forbidden:token has expired
+        properties:
+          message:
+            type: string

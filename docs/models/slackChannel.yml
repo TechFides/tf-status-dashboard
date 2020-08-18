@@ -1,0 +1,8 @@
+definitions:
+  SlackChannel:
+    type: object
+    properties:
+      id:
+        type: string
+      channel_name:
+        type: string

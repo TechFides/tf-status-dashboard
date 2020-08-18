@@ -1,0 +1,10 @@
+definitions:
+  OfficeAbsenceChanges:
+    type: object
+    properties:
+      id:
+        type: integer
+      created_at:
+        type: string
+      updated_at:
+        type: string

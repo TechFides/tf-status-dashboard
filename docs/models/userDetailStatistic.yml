@@ -1,0 +1,16 @@
+definitions:
+  UserDetailStatistic:
+    type: object
+    properties:
+      code:
+        type: string
+      projectExpModifierName:
+        type: string
+      timeSpent:
+        type: integer
+      coefficient:
+        type: string
+      projectRatings:
+        type: integer
+      projectsXp:
+        type: integer

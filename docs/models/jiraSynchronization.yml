@@ -1,0 +1,10 @@
+definitions:
+  JiraSynchronization:
+    type: object
+    properties:
+      status:
+        type: boolean
+      startSyncTime:
+        type: string
+      lastDuration:
+        type: string

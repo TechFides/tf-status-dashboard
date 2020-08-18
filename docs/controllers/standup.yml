@@ -1,0 +1,91 @@
+/api/standups:
+  get:
+    tags:
+      - Standup
+    summary: Get all stanudps
+    description: Get all stanudps
+    parameters:
+      - in: body
+        name: Filter command
+        schema:
+          type: object
+          properties:
+            month:
+              type: string
+            year:
+              type: string
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Standup'
+
+/api/standup:
+  post:
+    tags:
+      - Standup
+    summary: Create stanudp
+    description: Create stanudp
+    parameters:
+      - in: body
+        name: Create stanudp command
+        schema:
+          type: object
+          properties:
+            date:
+              type: string
+          required:
+            - date
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/Standup'
+
+/api/standup/:id:
+  put:
+    tags:
+      - Standup
+    summary: Edit standup
+    description: Edit standup
+    parameters:
+      - in: query
+        name: id
+        description: id of standup
+        required: true
+        type: string
+      - in: body
+        name: Create stanudp command
+        schema:
+          type: object
+          properties:
+            date:
+              type: string
+          required:
+            - date
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/Standup'
+
+/api/standups/:id:
+  delete:
+    tags:
+      - Standup
+    summary: Delete standup
+    description: Delete standup
+    parameters:
+      - in: query
+        name: id
+        description: id of standup
+        required: true
+        type: string
+    responses:
+      500:
+        description: Internal error
+        properties:
+          message:
+            type: string

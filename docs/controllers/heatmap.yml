@@ -1,0 +1,26 @@
+/api/heatmap:
+  get:
+    tags:
+      - Heatmap
+    summary: Get heatmap weeks
+    description: Get heatmap weeks
+    parameters:
+      - in: body
+        name: Feedback command
+        schema:
+          type: object
+          properties:
+            month:
+              type: string
+            year:
+              type: string
+          required:
+            - month
+            - year
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Heatmap'

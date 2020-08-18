@@ -1,0 +1,13 @@
+/api/roles:
+  get:
+    tags:
+      - Role
+    summary: Get all roles
+    description: Get all roles
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Role'

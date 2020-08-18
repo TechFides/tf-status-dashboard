@@ -1,0 +1,8 @@
+definitions:
+  Heatmap:
+    type: object
+    properties:
+      id:
+        type: integer
+      date:
+        type: string

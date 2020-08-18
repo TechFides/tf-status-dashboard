@@ -63,3 +63,8 @@ that exists in your workspace. Also, each channel must have invited bot to the c
 This is possible by sending this message to the channel: `/invite @nazev_bota`.
 
 - If you want to get error messages when something get wrong then create channel in your workspace for errors and set it into Dashboard app settings. 
+
+- Dashboard is integrated with google calendar. For this set variable GOOGLE_CALENDAR_ID in env file (you can find it in settings of calendar
+in section Integrate calendar->Calendar ID). Then under "Share with specific people" section, grant permissions
+to the created service account (<service_account>@<project_name>.iam.gserviceaccount.com) to make changes/read events.
+Don't forget you have to set it up GOOGLE_SERVICE_EMAIL and GOOGLE_PRIVATE_KEY in env file.

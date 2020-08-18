@@ -1,0 +1,10 @@
+definitions:
+  Statistic:
+    type: object
+    properties:
+      standups:
+        $ref: '#/definitions/Standup'
+      jiraSynchronization:
+        $ref: '#/definitions/JiraSynchronization'
+      userStatistic:
+        $ref: '#/definitions/UserStatistic'
