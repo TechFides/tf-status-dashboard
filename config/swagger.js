@@ -1,5 +1,7 @@
 'use strict'
 
+const Env = use('Env');
+
 module.exports = {
   /*
   |--------------------------------------------------------------------------
@@ -18,6 +20,8 @@ module.exports = {
         description: 'Dates are formatted by ISO. Example: 2020-08-17 (The International Standard)',
         version: '1.0.0',
       },
+
+      basePath: Env.get('API_URL'),
 
       // Example security definitions.
       securityDefinitions: {
