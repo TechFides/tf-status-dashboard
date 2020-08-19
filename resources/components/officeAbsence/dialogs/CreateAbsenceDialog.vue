@@ -147,6 +147,12 @@
         'approvers',
         'auth',
       ]),
+      absenceStart() {
+        return this.dialogData.absenceStart;
+      },
+      absenceEnd() {
+        return this.dialogData.absenceEnd;
+      },
       approverItems () {
         return this.approvers.length ? this.approvers.map(approver => ({
           text: `${approver.firstName} ${approver.lastName}`,
@@ -161,18 +167,11 @@
       },
     },
     watch: {
-      dialogData: {
-        handler() {
-          const startDay = moment(this.dialogData.absenceStart);
-          const endDay = moment(this.dialogData.absenceEnd).add(1, 'day');
-
-          if ((this.dialogData.absenceStart && this.dialogData.absenceEnd) &&
-            startDay.isBefore(endDay)
-          ) {
-            this.dialogData.absenceHoursNumber = endDay.diff(startDay, 'days') * 8;
-          }
-        },
-        deep: true,
+      absenceStart() {
+        this.countAbsenceHoursNumber();
+      },
+      absenceEnd() {
+        this.countAbsenceHoursNumber();
       },
     },
     methods: {
@@ -184,6 +183,16 @@
         if (this.$refs.form.validate()) {
           await this.$store.dispatch('createOfficeAbsence', this.dialogData);
           this.cancelDialog();
+        }
+      },
+      countAbsenceHoursNumber () {
+        const startDay = moment(this.dialogData.absenceStart);
+        const endDay = moment(this.dialogData.absenceEnd).add(1, 'day');
+
+        if ((this.dialogData.absenceStart && this.dialogData.absenceEnd) &&
+          startDay.isBefore(endDay)
+        ) {
+          this.dialogData.absenceHoursNumber = endDay.diff(startDay, 'days') * 8;
         }
       },
       cancelDialog () {

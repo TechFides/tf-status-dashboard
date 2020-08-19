@@ -4,7 +4,7 @@ definitions:
     properties:
       id:
         type: integer
-      token:
+      newToken:
         type: string
       username:
         type: string

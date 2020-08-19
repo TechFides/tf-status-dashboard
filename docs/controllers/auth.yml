@@ -2,6 +2,8 @@
   post:
     tags:
       - Auth
+    security:
+      - bearerAuth: []
     summary: Authenticate a user
     description: Login from the application
     parameters:

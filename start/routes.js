@@ -154,7 +154,8 @@ Route
   .middleware(AUTH);
 
 Route
-  .get('/api/office-absence/:id', 'OfficeAbsenceController.getOfficeAbsence');
+  .get('/api/office-absence/:id', 'OfficeAbsenceController.getOfficeAbsence')
+  .middleware(ADMIN);
 
 Route
   .get('/api/office-absences/type-enums', 'OfficeAbsenceController.getAbsenceTypeEnums')
@@ -169,7 +170,8 @@ Route
   .middleware(AUTH);
 
 Route
-  .get('/api/office-absences/changes', 'OfficeAbsenceController.getOfficeAbsenceChanges');
+  .get('/api/office-absences/changes', 'OfficeAbsenceController.getOfficeAbsenceChanges')
+  .middleware(ADMIN);
 
 Route
   .post('/api/office-absence', 'OfficeAbsenceController.createOfficeAbsence')

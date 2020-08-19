@@ -4,12 +4,14 @@ const ADMIN_ROUTES = [
   'statistics',
   'users',
   'heatmap',
+  'office-absences',
 ];
 
 // routes accessibled by role 'user'
 const USER_ROUTES = [
   'statistics',
   'standup',
+  'office-absences',
 ];
 
 export default function ({ app, store, route, redirect }) {
