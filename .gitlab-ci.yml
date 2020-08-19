@@ -43,7 +43,7 @@ lint:
     - npm install --unsafe-perm=true
     - npm run build
     - rsync -rlEci -e "ssh" --delete --delay-updates --
-      .nuxt app assets config constants database node_modules providers public resources start storage ace init_database.sh package.json server.js
+      .nuxt app assets config constants database docs node_modules providers public resources start storage ace init_database.sh package.json server.js
       "$TARGET_USER@$TARGET_SERVER:$TARGET_SOURCES_PATH/"
     - ssh "$TARGET_USER@$TARGET_SERVER" sudo tf-projects-status-operations $TARGET_INSTANCE update
     - ssh "$TARGET_USER@$TARGET_SERVER" sudo tf-projects-status-operations $TARGET_INSTANCE restart
