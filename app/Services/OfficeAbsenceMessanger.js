@@ -68,7 +68,7 @@ class OfficeAbsenceMessanger {
   async sendApproveCreateAbsenceMessage (officeAbsenceId) {
     const officeAbsence = await OfficeAbsenceMessanger.getOfficeAbsence(officeAbsenceId);
     const privateMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
-      text: `Tvoje žádost o "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla schválena.`,
+      text: `Tvoje žádost o "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla schválena. Nastav si prosím automatickou odpověď na mailu v době nepřítomnosti, viz <https://docs.google.com/document/d/19NslMB1JBY6yvPimD-U34WNiFAS06D57A-SJM-w-dVM/edit#|Automatická odpověď v nepřítomnosti>`,
     });
     const absenceChannelMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
       text: `${officeAbsence.user.first_name} ${officeAbsence.user.last_name} si bere "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')}.`,
