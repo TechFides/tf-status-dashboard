@@ -19,7 +19,7 @@ class GoogleCalendarManager {
         'date': moment(officeAbsence.absence_start).format('YYYY-MM-DD'),
       },
       'end': {
-        'date': moment(officeAbsence.absence_end).format('YYYY-MM-DD'),
+        'date': moment(officeAbsence.absence_end).add(1, 'day').format('YYYY-MM-DD'),
       },
     };
 
