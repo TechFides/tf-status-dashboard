@@ -21,53 +21,53 @@ class WorkLogController {
     };
   }
 
-  async getWorkLogsList ({ request, response, params }) {
+  async getWorkLogList ({ request, response, params }) {
     const { startDate, endDate, authorId, costCategoryId } = request.get();
     const WorkLogModelQuery = WorkLogModel
       .query()
       .with('user')
-      .with('absenceApprover')
-      .with('absenceTypeEnum')
-      .with('absenceStateEnum')
-      .where('user_id', userId);
+      .whereBetween('started',[startDate, endDate]);
 
-    if (absenceType) {
-      WorkLogModelQuery.where('absence_type_enum_id', absenceType);
+    if (authorId) {
+      WorkLogModelQuery.where('author_id', authorId);
     }
 
-    if (absenceState) {
-      WorkLogModelQuery.where('absence_state_enum_id', absenceState);
+    if (costCategoryId) {
+      WorkLogModelQuery.where('cost_category_id', costCategoryId);
     }
 
-    const officeAbsenceList = (await officeAbsenceQuery.fetch()).toJSON();
+    const workLogsList = (await WorkLogModelQuery.fetch()).toJSON();
 
-    return notes.toJSON();
+    return workLogsList;
   }
 
-  async createNote ({ request, response, params }) {
-    const note = new NoteModel();
-    note.fill(NoteController.mapToDbEntity(request));
-    await note.save();
+  async createWorkLog ({ request, response, params }) {
+    const workLog = new WorkLogModel();
+    workLog.fill(WorkLogController.mapToDbEntity(request));
+    await workLog.save();
 
-    return note.toJSON();
+    return workLog.toJSON();
   }
 
-  async editNote ({ request, response, params }) {
+  async editWorkLog ({ request, response, params }) {
     const { id } = params;
-    const note = await NoteModel.find(id);
-    note.merge(NoteController.mapToDbEntity(request));
-    await note.save();
+    const workLog = await WorkLogModel.find(id);
+    workLog.merge(WorkLogController.mapToDbEntity(request));
+    await workLog.save();
 
-    return note.toJSON();
+    return workLog.toJSON();
   }
 
-  async editNote ({ request, response, params }) {
+  async deleteWorkLog ({ request, response, params }) {
     const { id } = params;
-    const note = await NoteModel.find(id);
-    note.merge(NoteController.mapToDbEntity(request));
-    await note.save();
+    const workLog = await WorkLogModel.find(id);
 
-    return note.toJSON();
+    try {
+      await workLog.delete();
+      response.send();
+    } catch (e) {
+      response.status(500).send({message: e.message});
+    }
   }
 }
 

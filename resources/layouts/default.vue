@@ -73,7 +73,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'From zero to hero!',
+      title: 'TF-Hub',
     };
   },
   computed: {
