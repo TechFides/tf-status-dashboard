@@ -157,17 +157,19 @@ class OfficeAbsenceController {
       absenceStart,
       absenceEnd,
       absenceType,
-    } = request.only(['absenceStart', 'absenceEnd', 'absenceType']);
+      userId,
+    } = request.only(['absenceStart', 'absenceEnd', 'absenceType', 'userId']);
     const officeAbsenceData = OfficeAbsenceController.mapToDbEntity(request);
     const absenceTypeEnumModel = (await AbsenceTypeEnumModel.find(officeAbsenceData.absence_type_enum_id)).toJSON();
     const author = (await UserModel.find(officeAbsenceData.user_id)).toJSON();
     const foundedOfficeAbsence = await OfficeAbsenceModel
       .query()
       .where('absence_type_enum_id', absenceType)
-      .where('absence_start', '<=', absenceStart)
-      .andWhere('absence_end', '>=', absenceStart)
-      .orWhere('absence_start', '<=', absenceEnd)
-      .andWhere('absence_end', '>=', absenceEnd)
+      .where('user_id', userId)
+      .whereBetween('absence_start',[absenceStart,absenceEnd])
+      .orWhereBetween('absence_end',[absenceStart,absenceEnd])
+      .andWhere('absence_type_enum_id', absenceType)
+      .andWhere('user_id', userId)
       .first();
 
     if (foundedOfficeAbsence) {
