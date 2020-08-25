@@ -7,7 +7,7 @@
     @keydown.esc="cancelDialog"
   >
     <v-card>
-      <v-card-title class="headline pl-3 systemPrimary">
+      <v-card-title class="headline pl-5 systemPrimary">
         Vytvořit novou žádost o nepřítomnost
       </v-card-title>
       <v-form
@@ -19,12 +19,13 @@
           class="card-text"
           style="max-height: 800px"
         >
-          <v-row>
+          <v-row class="pr-6">
             <v-col cols="4">
               <DatePicker
                 v-model="dialogData.absenceStart"
                 label="Zahájení nepřítomnosti"
                 required
+                :allowed-dates="allowedDates"
                 :clearable="false"
               />
             </v-col>
@@ -32,8 +33,10 @@
               <DatePicker
                 v-model="dialogData.absenceEnd"
                 :min="dialogData.absenceStart"
+                :allowed-dates="allowedDates"
                 label="Ukončení nepřítomnosti"
                 required
+                :clearable="false"
               />
             </v-col>
             <v-col
@@ -47,7 +50,7 @@
               />
             </v-col>
           </v-row>
-          <v-row>
+          <v-row class="pr-6">
             <v-col
               cols="6"
               class="pl-11"
@@ -71,14 +74,41 @@
               />
             </v-col>
           </v-row>
-          <v-row>
+          <v-row class="pr-6">
             <v-col
               class="pl-11"
             >
               <v-textarea
                 v-model="dialogData.description"
-                label="Popis nepřítomnsoti"
+                label="Popis nepřítomnosti (tato informace bude vyplněna v google kalendáři)"
               />
+            </v-col>
+          </v-row>
+          <v-row class="pr-6">
+            <v-col
+              class="pl-11 pt-0 pb-0"
+            >
+              <v-alert
+                icon="mdi-alert-circle-outline"
+                type="error"
+                color="blue darken-1"
+              >
+                Nezapomeň si zkontrolovat, jestli sedí počet hodin nepřítomnosti.
+              </v-alert>
+            </v-col>
+          </v-row>
+          <v-row class="pr-6">
+            <v-col
+              class="pl-11 pt-0 pb-0"
+            >
+              <v-alert
+                transition="fade-transition"
+                :value="error.isVisible"
+                type="error"
+                color="red darken-2"
+              >
+                {{ error.message }}
+              </v-alert>
             </v-col>
           </v-row>
         </v-card-text>
@@ -109,6 +139,8 @@
   import { mapState } from 'vuex';
   import moment from 'moment';
 
+  const DEFAULT_ABSENCE_TYPE = 2;
+
   export default {
     name: 'CreateAbsenceDialog',
     components: {
@@ -121,7 +153,7 @@
           userId: null,
           absenceStart: '',
           absenceEnd: '',
-          absenceType: '',
+          absenceType: DEFAULT_ABSENCE_TYPE,
           description: '',
           approver: '',
           absenceHoursNumber: null,
@@ -129,7 +161,7 @@
         defaultDialogData: {
           absenceStart: '',
           absenceEnd: '',
-          absenceType: '',
+          absenceType: DEFAULT_ABSENCE_TYPE,
           description: '',
           approver: '',
           absenceHoursNumber: null,
@@ -146,6 +178,7 @@
         'absenceTypeEnums',
         'approvers',
         'auth',
+        'error',
       ]),
       absenceStart() {
         return this.dialogData.absenceStart;
@@ -176,14 +209,25 @@
     },
     methods: {
       openDialog() {
+        if (this.approvers.length) {
+          const priorityApprover = this.approvers.find(a => a.priority);
+          this.dialogData.approver = priorityApprover.id;
+        }
+
         this.dialogData.userId = this.auth.user.id;
         this.show = true;
       },
       async confirmDialog () {
         if (this.$refs.form.validate()) {
           await this.$store.dispatch('createOfficeAbsence', this.dialogData);
-          this.cancelDialog();
+          !this.error.isVisible && this.cancelDialog();
         }
+      },
+      cancelDialog () {
+        this.dialogData = { ...this.defaultDialogData };
+        this.$refs.form.resetValidation();
+        this.show = false;
+        this.$store.commit('clearErrorState');
       },
       countAbsenceHoursNumber () {
         const startDay = moment(this.dialogData.absenceStart);
@@ -192,13 +236,29 @@
         if ((this.dialogData.absenceStart && this.dialogData.absenceEnd) &&
           startDay.isBefore(endDay)
         ) {
-          this.dialogData.absenceHoursNumber = endDay.diff(startDay, 'days') * 8;
+          const numberOfWeekendDays = this.countNumberOfWeekendDays(this.dialogData.absenceStart, this.dialogData.absenceEnd);
+          this.dialogData.absenceHoursNumber = (endDay.diff(startDay, 'days') * 8) - numberOfWeekendDays * 8;
         }
       },
-      cancelDialog () {
-        this.dialogData = { ...this.defaultDialogData };
-        this.$refs.form.resetValidation();
-        this.show = false;
+      countNumberOfWeekendDays(startDay, endDay) {
+        let numberOfWeekendDays = 0;
+        const sDay = moment(startDay);
+        const eDay = moment(endDay).add(1, 'day');
+
+        while (sDay.isBefore(eDay)) {
+          const day = sDay.day();
+
+          if ((day === 6) || (day === 0)) {
+            numberOfWeekendDays++;
+          }
+          sDay.add(1, 'day');
+        }
+        return numberOfWeekendDays;
+      },
+      allowedDates (val) {
+        if (moment(val).day() !== 0 && moment(val).day() !== 6) {
+          return val;
+        }
       },
     },
   };

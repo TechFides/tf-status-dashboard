@@ -133,6 +133,7 @@ class OfficeAbsenceController {
       .fetch()).toJSON();
     if (userApprovers.length) {
       for (const userApprover of userApprovers) {
+        userApprover.approver.priority = true;
         absenceApproverList.push(userApprover.approver);
       }
     }
@@ -140,9 +141,10 @@ class OfficeAbsenceController {
     const absenceApprover = await SystemParamModel.findBy('key', SYSTEM_PARAMS.ABSENCE_APPROVER_ID);
     if (absenceApprover) {
       const defaultApprover = (await UserModel.find(absenceApprover.value)).toJSON();
-      const foundDefaultApprover = absenceApproverList.find(approver => approver.id === defaultApprover.id);
+      const foundedDefaultApprover = absenceApproverList.find(approver => approver.id === defaultApprover.id);
 
-      if (!foundDefaultApprover) {
+      if (!foundedDefaultApprover) {
+        defaultApprover.priority = false;
         absenceApproverList.push(defaultApprover);
       }
     }
@@ -151,9 +153,26 @@ class OfficeAbsenceController {
   }
 
   async createOfficeAbsence ({ request, response, params }) {
+    const {
+      absenceStart,
+      absenceEnd,
+      absenceType,
+    } = request.only(['absenceStart', 'absenceEnd', 'absenceType']);
     const officeAbsenceData = OfficeAbsenceController.mapToDbEntity(request);
     const absenceTypeEnumModel = (await AbsenceTypeEnumModel.find(officeAbsenceData.absence_type_enum_id)).toJSON();
     const author = (await UserModel.find(officeAbsenceData.user_id)).toJSON();
+    const foundedOfficeAbsence = await OfficeAbsenceModel
+      .query()
+      .where('absence_type_enum_id', absenceType)
+      .where('absence_start', '<=', absenceStart)
+      .andWhere('absence_end', '>=', absenceStart)
+      .orWhere('absence_start', '<=', absenceEnd)
+      .andWhere('absence_end', '>=', absenceEnd)
+      .first();
+
+    if (foundedOfficeAbsence) {
+      return response.status(400).send({ name: 'BAD_REQUEST', message: 'Office absence in this date range and absence type already exists' });
+    }
 
     officeAbsenceData.calendar_event_title = `${author.first_name} ${author.last_name}-${absenceTypeEnumModel.value}-${moment(officeAbsenceData.absence_start).format('DD.MM.YYYY')}-${moment(officeAbsenceData.absence_end).format('DD.MM.YYYY')} (${officeAbsenceData.absence_hours_number}h)`;
 
