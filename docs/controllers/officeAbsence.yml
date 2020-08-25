@@ -158,6 +158,11 @@
         description: Success
         schema:
           $ref: '#/definitions/OfficeAbsence'
+      400:
+        description: Bad request:Office absence in this date range and absence type already exists
+        properties:
+          message:
+            type: string
 
 /api/office-absences/cancel:
   post:

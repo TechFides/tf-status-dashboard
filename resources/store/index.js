@@ -231,6 +231,7 @@ export const mutations = {
       firstName: u.first_name,
       id: u.id,
       lastName: u.last_name,
+      priority: u.priority,
     }));
   },
   setUsers (state, users) {
@@ -585,8 +586,9 @@ export const actions = {
       dispatch('getOfficeAbsences');
       commit('clearErrorState');
     } catch (error) {
-      if (error && error.response && error.response.data && error.response.data[0]) {
-        commit('setErrorState', error.response.data[0]);
+      if (error && error.response && error.response.data) {
+        error.response.data.message = 'Nepřítomnost tohoto typu a v tomto intervalu již existuje.';
+        commit('setErrorState', error.response.data);
       }
     }
   },

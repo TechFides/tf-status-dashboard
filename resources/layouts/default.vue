@@ -35,11 +35,11 @@
       <v-spacer />
       <login-dialog />
     </v-app-bar>
-    <v-content>
+    <v-main>
       <no-ssr>
         <nuxt />
       </no-ssr>
-    </v-content>
+    </v-main>
     <v-snackbar
       :value="snackbar.isVisible"
       :color="snackbar.color"
