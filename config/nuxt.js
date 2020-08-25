@@ -22,13 +22,13 @@ module.exports = {
     ],
   },
   plugins: [
-    '~/plugins/vuetify.js',
     '~/plugins/auth-inject.js',
     '~/plugins/auth.js',
   ],
   modules: [
     '@nuxtjs/axios',
     '@nuxtjs/auth',
+    '@nuxtjs/vuetify',
   ],
   auth: {
     redirect: {
@@ -47,6 +47,9 @@ module.exports = {
       },
     },
   },
+  css: [
+    '~/assets/style/variables.scss'
+  ],
   router: {
     middleware: 'authenticated',
   },
@@ -59,7 +62,6 @@ module.exports = {
   */
   build: {
     vendor: [
-      '~/plugins/vuetify.js',
       'axios',
     ],
     extractCSS: true,
