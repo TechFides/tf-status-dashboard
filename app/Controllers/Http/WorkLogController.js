@@ -1,6 +1,7 @@
 'use strict';
 
 const WorkLogModel = use('App/Models/WorkLog');
+const UserModel = use('App/Models/User');
 
 class WorkLogController {
   static mapToDbEntity (request) {
@@ -9,24 +10,34 @@ class WorkLogController {
       started,
       timeSpent,
       description,
-      costCategory,
-    } = request.only(['authorId', 'started', 'timeSpent', 'description', 'costCategory']);
+      costCategoryId,
+    } = request.only(['authorId', 'started', 'timeSpent', 'description', 'costCategoryId']);
 
     return {
       user_id: authorId,
       started,
       time_spent: timeSpent,
       description,
-      cost_category: costCategory,
+      cost_category_id: costCategoryId,
     };
   }
 
   async getWorkLogList ({ request, response, params }) {
-    const { startDate, endDate, authorId, costCategoryId } = request.get();
+    const { startDate, endDate, authorId, costCategoryId, loggedInUserId } = request.get();
+    const user = (await UserModel
+      .query()
+      .with('roles')
+      .first()).toJSON();
+    const isUserRoleAdmin = user.roles.find(r => r.slug === 'admin');
+
     const WorkLogModelQuery = WorkLogModel
       .query()
       .with('user')
       .whereBetween('started',[startDate, endDate]);
+
+    if (!isUserRoleAdmin) {
+      WorkLogModelQuery.where('author_id', loggedInUserId);
+    }
 
     if (authorId) {
       WorkLogModelQuery.where('author_id', authorId);

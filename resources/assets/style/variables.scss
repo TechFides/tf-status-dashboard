@@ -1,3 +1,7 @@
 .error--text {
   color: red !important;
 }
+
+.v-icon.v-icon::after {
+  background-color: transparent !important;
+}

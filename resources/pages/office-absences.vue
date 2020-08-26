@@ -139,20 +139,7 @@
           absenceType: '',
           absenceState: '',
         },
-        statisticsMonthDialog: {
-          isOpen: false,
-          month: `${new Date().getFullYear()}-${new Date().getMonth() + 1}`,
-        },
-        userInfoDialog: {
-          id: null,
-          previousXp: null,
-          bonusXp: null,
-          isOpen: false,
-          sumXpProjects: null,
-          sumHoursWorked: null,
-        },
         expandedRowId: null,
-        selectedDate: new Date(),
       };
     },
     computed: {

@@ -33,6 +33,8 @@ class UserController {
         builder
           .with('approver');
       })
+      .orderBy('first_name', 'asc')
+      .orderBy('last_name', 'asc')
       .fetch()).toJSON();
 
     return users;

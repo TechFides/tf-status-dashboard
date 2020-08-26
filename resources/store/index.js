@@ -1,5 +1,5 @@
 import { WEEK_DAYS, WEEK_DAYS_SHORTHAND } from '../constants';
-import { format } from 'date-fns';
+import moment from 'moment';
 
 const NOTIFICATION_TIMEOUT = 4000;
 
@@ -31,6 +31,8 @@ export const state = () => ({
   },
   notificationTimeout: null,
   meetingTimes: [],
+  workLogs: [],
+  costCategories: [],
 });
 
 const sortAscByProperty = function (property, a, b) {
@@ -207,9 +209,9 @@ export const mutations = {
     state.officeAbsences = officeAbsences.map(o => ({
       id: o.id,
       author: o.user,
-      absenceStart: format(o.absence_start, 'DD. MM.YYYY'),
-      absenceEnd: format(o.absence_end, 'DD. MM.YYYY'),
-      created: format(o.created_at, 'DD. MM.YYYY'),
+      absenceStart: moment(o.absence_start).format('DD. MM. YYYY'),
+      absenceEnd: moment(o.absence_end).format('DD. MM. YYYY'),
+      created: moment(o.created_at).format('DD. MM. YYYY'),
       absenceType: o.absenceTypeEnum,
       absenceState: o.absenceStateEnum,
       absenceApprover: {
@@ -233,6 +235,22 @@ export const mutations = {
       lastName: u.last_name,
       priority: u.priority,
     }));
+  },
+  setWorkLogs (state, workLogs) {
+    state.workLogs = workLogs.map(w => ({
+      id: w.id,
+      author: {
+        fullName: w.user ? `${w.user .first_name} ${w.user .last_name}` : '',
+        id: w.user ? w.user .id : null,
+      },
+      started: moment(w.started).format('DD. MM. YYYY HH:MM'),
+      timeSpent: w.time_spent,
+      description: w.description,
+      costCategoryId: w.cost_category_id,
+    }));
+  },
+  setCostCategories (state, costCategories) {
+    state.costCategories = costCategories;
   },
   setUsers (state, users) {
     state.users = users.map(u => ({
@@ -611,6 +629,42 @@ export const actions = {
     } catch (error) {
       commit('setNotification', { color: 'error', message: `Nepřítomnost se nepodařilo odstranit.` });
     }
+  },
+  async getWorkLogs ({ commit }, params) {
+    const filter = {
+      authorId: params.authorId || '',
+      costCategoryId: params.costCategoryId || '',
+      startDate: params.startDate || moment().startOf('month').format('YYYY-MM-DD'),
+      endDate: params.endDate || moment().endOf('month').format('YYYY-MM-DD'),
+    };
+    const payloads = {
+      ...
+      filter,
+      loggedInUserId: this.$auth.user.id,
+    };
+    const workLogs = await this.$axios.$get(
+      '/api/work-logs',
+      { params: payloads },
+    );
+
+    commit('setWorkLogs', workLogs);
+  },
+  async deleteWorkLog ({ dispatch, commit }, workLogId) {
+    try {
+      await this.$axios.$delete(`/api/work-logs/${workLogId}`);
+      dispatch('getWorkLogs');
+      commit('clearNotification');
+    } catch (error) {
+      commit('setNotification', { color: 'error', message: `WorkLog se nepodařilo odstranit.` });
+    }
+  },
+  async getCostCategories ({ commit }) {
+    const costCategories = await this.$axios({ url: '/api/cost-categories', baseURL: process.env.TF_ERP_API_URL, headers: {
+        Authorization: `Bearer ${process.env.TF_ERP_API_TOKEN}`,
+      },
+    });
+
+    commit('setCostCategories', costCategories.data);
   },
   async getUsers ({ commit }) {
     const users = await this.$axios.$get('/api/users');

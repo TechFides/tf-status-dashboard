@@ -12,7 +12,7 @@
     <template v-slot:activator="{ on }">
       <v-text-field
         ref="textField"
-        :value="dateFormatted"
+        :value="value"
         :label="label"
         :prepend-icon="prependIconVisible ? 'mdi-calendar' : null"
         :append-icon="clearable ? null : appendIcon"
@@ -22,24 +22,31 @@
         :hide-details="hideDetails"
         :clearable="clearable"
         readonly
-        @click:clear="dateCleared"
+        @click:clear="timeCleared"
         v-on="on"
       />
     </template>
-    <v-date-picker
+    <v-time-picker
       :value="value"
-      :min="min"
-      :max="max"
-      :first-day-of-week="1"
-      :type="type ? type : undefined"
-      :disabled="disabled"
-      :allowed-dates="allowedDates"
+      format="24hr"
       scrollable
+      :disabled="disabled"
       header-color="blue darken-2"
       color="blue darken-2"
-      @change="dateSelected"
-      @input="menu = false"
-    />
+      :min="min"
+      :max="max"
+      @change="timeSelected"
+    >
+      <div class="time-picker-action">
+        <v-btn
+          color="blue darken-1"
+          text
+          @click.native="menu = false"
+        >
+          Potvrdit
+        </v-btn>
+      </div>
+    </v-time-picker>
   </v-menu>
 </template>
 
@@ -70,7 +77,7 @@
       },
       dateFormat: {
         type: String,
-        default: 'DD.MM.YYYY',
+        default: 'HH:MM',
       },
       value: {
         type: String,
@@ -126,9 +133,6 @@
       };
     },
     computed: {
-      dateFormatted() {
-        return this.value ? this.formatDate(this.value) : '';
-      },
       prependIconVisible() {
         return !this.hidePrependIcon;
       },
@@ -177,10 +181,10 @@
 
         return !invalidValues.includes(value);
       },
-      dateSelected(value) {
+      timeSelected(value) {
         this.$emit('input', value);
       },
-      dateCleared() {
+      timeCleared() {
         this.$emit('input', null);
       },
       validate() {
@@ -189,15 +193,18 @@
       resetValidation() {
         return this.$refs.textField.resetValidation();
       },
-      formatDate(date) {
-        return moment(date).format(this.dateFormat);
-      },
     },
   };
 </script>
 
-<style scoped>
+<style  lang="scss" scoped>
   ::v-deep input {
     cursor: pointer;
+  }
+
+  .time-picker-action {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
   }
 </style>
