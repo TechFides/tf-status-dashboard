@@ -167,11 +167,13 @@ class OfficeAbsenceController {
       .where('absence_type_enum_id', absenceType)
       .where('user_id', userId)
       .whereNot('absence_state_enum_id', ABSENCE_STATE_ENUM.CANCELED)
+      .whereNot('absence_state_enum_id', ABSENCE_STATE_ENUM.REJECTED)
       .whereBetween('absence_start',[absenceStart,absenceEnd])
       .orWhereBetween('absence_end',[absenceStart,absenceEnd])
       .andWhere('absence_type_enum_id', absenceType)
       .andWhere('user_id', userId)
       .andWhereNot('absence_state_enum_id', ABSENCE_STATE_ENUM.CANCELED)
+      .andWhereNot('absence_state_enum_id', ABSENCE_STATE_ENUM.REJECTED)
       .first();
 
     if (foundedOfficeAbsence) {

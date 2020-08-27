@@ -211,12 +211,14 @@
               class="expanded-row-body"
             >
               <thead>
-                <tr>
+                <tr
+                  class="expanded-header"
+                >
                   <th
                     v-for="h in expandedHeaders"
                     :key="h.text"
                     :class="h.align"
-                    class="pl-4 pr-6"
+                    class="pl-4 pr-6 border-bottom"
                   >
                     {{ h.text }}
                   </th>
@@ -226,23 +228,24 @@
                 <tr
                   v-for="(item, itemIndex) in userDetailItems"
                   :key="itemIndex"
+                  class="expanded-row-text"
                 >
-                  <td class="text-left border-bottom">
+                  <td class="text-left border-bottom pl-4">
                     {{ item.code }}
                   </td>
-                  <td class="text-right border-bottom">
+                  <td class="text-right border-bottom pr-6">
                     {{ item.timeSpent }}
                   </td>
-                  <td class="text-left border-bottom">
+                  <td class="text-left border-bottom pl-4">
                     {{ item.projectExpModifierName }}
                   </td>
-                  <td class="text-right border-bottom">
+                  <td class="text-right border-bottom pr-6">
                     {{ item.coefficient }}%
                   </td>
                   <td
                     v-for="(i, index) in item.projectRatings"
                     :key="index"
-                    class="text-right border-bottom"
+                    class="text-right border-bottom pr-6"
                   >
                     {{ i.rating }}
                   </td>
@@ -321,8 +324,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import { format } from 'date-fns';
+  import { mapState } from 'vuex';
+  import { format } from 'date-fns';
 
 export default {
   data () {
@@ -678,10 +681,6 @@ export default {
     color: #0091EA;
   }
 
-  .header {
-    font-size: 2em !important;
-  }
-
   .synchronization-info {
     font-weight: bold;
     margin-left: 0.5rem;
@@ -691,9 +690,19 @@ export default {
     cursor: pointer !important;
   }
 
+  .expanded-header {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.75rem;
+    height: 2.5rem;
+  }
+
   .expanded-row-body {
-    border-bottom: 1px solid rgba(0,0,0,.12);
-    border-top: 1px solid rgba(0,0,0,.12);
+    width: 100%;
+  }
+
+  .expanded-row-text {
+    font-size: 0.9rem;
+    height: 2.5rem;
   }
 
   .no-available-data {
