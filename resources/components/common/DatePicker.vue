@@ -35,7 +35,8 @@
       :disabled="disabled"
       :allowed-dates="allowedDates"
       scrollable
-      header-color="blue"
+      color="blue darken-2"
+      header-color="blue darken-2"
       @change="dateSelected"
       @input="menu = false"
     />

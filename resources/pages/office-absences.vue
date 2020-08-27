@@ -12,7 +12,7 @@
       >
         <i class="material-icons">add</i>
         <span class="pl-2">
-          Vytvořít žádost o nepřítomnost
+          Vytvořit žádost o nepřítomnost
         </span>
       </v-btn>
     </v-row>
@@ -168,21 +168,21 @@
             text: 'Zahájení nepřítomnosti',
             align: 'right',
             sortable: true,
-            value: 'absenceStart',
+            value: 'absenceStartByNumber',
             isVisible: true,
           },
           {
             text: 'Ukončení nepřítomnosti',
             align: 'right',
             sortable: true,
-            value: 'absenceEnd',
+            value: 'absenceEndByNumber',
             isVisible: true,
           },
           {
             text: 'Datum odeslání žádosti',
             align: 'right',
             sortable: true,
-            value: 'created',
+            value: 'createdByNumber',
             isVisible: true,
           },
           {

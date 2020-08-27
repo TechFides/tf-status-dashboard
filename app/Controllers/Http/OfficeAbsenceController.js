@@ -166,10 +166,12 @@ class OfficeAbsenceController {
       .query()
       .where('absence_type_enum_id', absenceType)
       .where('user_id', userId)
+      .whereNot('absence_state_enum_id', ABSENCE_STATE_ENUM.CANCELED)
       .whereBetween('absence_start',[absenceStart,absenceEnd])
       .orWhereBetween('absence_end',[absenceStart,absenceEnd])
       .andWhere('absence_type_enum_id', absenceType)
       .andWhere('user_id', userId)
+      .andWhereNot('absence_state_enum_id', ABSENCE_STATE_ENUM.CANCELED)
       .first();
 
     if (foundedOfficeAbsence) {
