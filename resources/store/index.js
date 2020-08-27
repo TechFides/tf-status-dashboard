@@ -1,5 +1,5 @@
 import { WEEK_DAYS, WEEK_DAYS_SHORTHAND } from '../constants';
-import { format } from 'date-fns';
+import moment from 'moment';
 
 const NOTIFICATION_TIMEOUT = 4000;
 
@@ -207,9 +207,12 @@ export const mutations = {
     state.officeAbsences = officeAbsences.map(o => ({
       id: o.id,
       author: o.user,
-      absenceStart: format(o.absence_start, 'DD. MM.YYYY'),
-      absenceEnd: format(o.absence_end, 'DD. MM.YYYY'),
-      created: format(o.created_at, 'DD. MM.YYYY'),
+      absenceStart: moment(o.absence_start).format('DD. MM. YYYY'),
+      absenceStartByNumber: moment(o.absence_start).valueOf(),
+      absenceEnd: moment(o.absence_end).format('DD. MM. YYYY'),
+      absenceEndByNumber: moment(o.absence_end).valueOf(),
+      created: moment(o.created_at).format('DD. MM. YYYY'),
+      createdByNumber: moment(o.created_at).valueOf(),
       absenceType: o.absenceTypeEnum,
       absenceState: o.absenceStateEnum,
       absenceApprover: {
