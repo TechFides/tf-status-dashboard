@@ -1,0 +1,92 @@
+/api/meeting-times:
+  get:
+    tags:
+      - Meeting time
+    summary: Get all meeting times
+    description: Get all meeting times
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/meetingTimeDetail'
+
+/api/meeting-time:
+  post:
+    tags:
+      - Meeting time
+    summary: Create meeting time
+    description: Create meeting time
+    parameters:
+      - in: body
+        name: Create meeting time command
+        schema:
+          type: object
+          properties:
+            weekDay:
+              type: string
+            time:
+              type: string
+            name:
+              type: string
+          required:
+            - weekDay
+            - time
+            - name
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/MeetingTime'
+
+/api/meeting-times/:id:
+  put:
+    tags:
+      - Meeting time
+    summary: Edit meeting time
+    description: Edit meeting time
+    parameters:
+      - in: query
+        name: id
+        description: id of meeting time
+        required: true
+        type: string
+      - in: body
+        name: Create meeting time command
+        schema:
+          type: object
+          properties:
+            weekDay:
+              type: string
+            time:
+              type: string
+            name:
+              type: string
+          required:
+            - weekDay
+            - time
+            - name
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/MeetingTime'
+
+/api/meeting-time/:id:
+  delete:
+    tags:
+      - Meeting time
+    summary: Delete meeting time
+    description: Delete meeting time
+    parameters:
+      - in: query
+        name: id
+        description: id of meeting time
+        required: true
+        type: string
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/MeetingTime'

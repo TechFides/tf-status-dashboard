@@ -33,8 +33,10 @@
       :first-day-of-week="1"
       :type="type ? type : undefined"
       :disabled="disabled"
+      :allowed-dates="allowedDates"
       scrollable
-      header-color="blue"
+      color="blue darken-2"
+      header-color="blue darken-2"
       @change="dateSelected"
       @input="menu = false"
     />
@@ -109,6 +111,10 @@
       hideDetails: {
         type: Boolean,
         default: false,
+      },
+      allowedDates: {
+        type: Function,
+        default: (val) => val,
       },
     },
     inject: {

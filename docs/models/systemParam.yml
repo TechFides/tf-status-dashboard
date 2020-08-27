@@ -1,0 +1,10 @@
+definitions:
+  SystemParam:
+    type: object
+    properties:
+      type:
+        type: integer
+      kye:
+        type: string
+      value:
+        type: string

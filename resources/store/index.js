@@ -1,5 +1,5 @@
 import { WEEK_DAYS, WEEK_DAYS_SHORTHAND } from '../constants';
-import { format } from 'date-fns';
+import moment from 'moment';
 
 const NOTIFICATION_TIMEOUT = 4000;
 
@@ -207,9 +207,12 @@ export const mutations = {
     state.officeAbsences = officeAbsences.map(o => ({
       id: o.id,
       author: o.user,
-      absenceStart: format(o.absence_start, 'DD. MM.YYYY'),
-      absenceEnd: format(o.absence_end, 'DD. MM.YYYY'),
-      created: format(o.created_at, 'DD. MM.YYYY'),
+      absenceStart: moment(o.absence_start).format('DD. MM. YYYY'),
+      absenceStartByNumber: moment(o.absence_start).valueOf(),
+      absenceEnd: moment(o.absence_end).format('DD. MM. YYYY'),
+      absenceEndByNumber: moment(o.absence_end).valueOf(),
+      created: moment(o.created_at).format('DD. MM. YYYY'),
+      createdByNumber: moment(o.created_at).valueOf(),
       absenceType: o.absenceTypeEnum,
       absenceState: o.absenceStateEnum,
       absenceApprover: {
@@ -231,6 +234,7 @@ export const mutations = {
       firstName: u.first_name,
       id: u.id,
       lastName: u.last_name,
+      priority: u.priority,
     }));
   },
   setUsers (state, users) {
@@ -539,7 +543,7 @@ export const actions = {
   },
   async addUserBonusXp ({ dispatch, commit }, params) {
     try {
-      await this.$axios.$post('/api/statistics/user/', params);
+      await this.$axios.$post('/api/statistics/bonus-xp', params);
       commit('setUserBonusXp', params);
       commit('clearErrorState');
     } catch (error) {
@@ -555,44 +559,45 @@ export const actions = {
       userId: this.$auth.user.id,
     };
     const officeAbsences = await this.$axios.$get(
-      '/api/officeAbsences',
+      '/api/office-absences',
       { params: payloads },
       );
 
     commit('setOfficeAbsences', officeAbsences);
   },
   async getAbsenceTypeEnums ({ commit }) {
-    const absenceTypeEnums = await this.$axios.$get('/api/officeAbsences/typeEnums');
+    const absenceTypeEnums = await this.$axios.$get('/api/office-absences/type-enums');
 
     commit('setAbsenceTypeEnums', absenceTypeEnums);
   },
   async getAbsenceStateEnums ({ commit }) {
-    const absenceTypeEnums = await this.$axios.$get('/api/officeAbsences/stateEnums');
+    const absenceTypeEnums = await this.$axios.$get('/api/office-absences/state-enums');
     commit('setAbsenceStateEnums', absenceTypeEnums);
   },
   async getApprovers ({ commit }) {
     const params = {
       userId: this.$auth.user.id,
     };
-    const approvers = await this.$axios.$get('/api/officeAbsences/approvers',
+    const approvers = await this.$axios.$get('/api/office-absences/approvers',
       { params },
     );
     commit('setApprovers', approvers);
   },
   async createOfficeAbsence ({ dispatch, commit }, officeAbsence) {
     try {
-      await this.$axios.$post('/api/officeAbsence', officeAbsence);
+      await this.$axios.$post('/api/office-absence', officeAbsence);
       dispatch('getOfficeAbsences');
       commit('clearErrorState');
     } catch (error) {
-      if (error && error.response && error.response.data && error.response.data[0]) {
-        commit('setErrorState', error.response.data[0]);
+      if (error && error.response && error.response.data) {
+        error.response.data.message = 'Nepřítomnost tohoto typu a v tomto intervalu již existuje.';
+        commit('setErrorState', error.response.data);
       }
     }
   },
   async cancelOfficeAbsence ({ dispatch, commit }, officeAbsence) {
     try {
-      await this.$axios.$post('/api/officeAbsences/cancelOfficeAbsence', officeAbsence);
+      await this.$axios.$post('/api/office-absences/cancel', officeAbsence);
       dispatch('getOfficeAbsences');
       commit('clearErrorState');
     } catch (error) {
@@ -603,7 +608,7 @@ export const actions = {
   },
   async deleteOfficeAbsence ({ dispatch, commit }, absenceId) {
     try {
-      await this.$axios.$delete(`/api/officeAbsences/${absenceId}`);
+      await this.$axios.$delete(`/api/office-absences/${absenceId}`);
       dispatch('getOfficeAbsences');
       commit('clearNotification');
     } catch (error) {

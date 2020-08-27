@@ -1,0 +1,270 @@
+/api/office-absences:
+  get:
+    tags:
+      - Office absence
+    summary: Get all office absences
+    description: Get all office absences
+    parameters:
+      - in: body
+        name: Filter command
+        schema:
+          type: object
+          properties:
+            absenceType:
+              type: integer
+            absenceState:
+              type: integer
+            userId:
+              type: integer
+          required:
+            - userId
+    responses:
+      200:
+        description: success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/OfficeAbsenceDetail'
+
+/api/office-absence/:id:
+  get:
+    tags:
+      - Office absence
+    summary: Get office absence
+    description: Get office absence
+    parameters:
+      - in: query
+        name: id
+        description: id of office absence
+        required: true
+        type: string
+    responses:
+      200:
+        description: success
+        schema:
+          $ref: '#/definitions/OfficeAbsenceDetail'
+
+/api/office-absences/changes:
+  get:
+    tags:
+      - Office absence
+    summary: Get office absence
+    description: Get office absence
+    parameters:
+      - in: body
+        name: Filter command
+        schema:
+          type: object
+          properties:
+            date:
+              type: string
+          required:
+            - date
+    responses:
+      200:
+        description: success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/OfficeAbsenceChanges'
+
+/api/office-absences/type-enums:
+  get:
+    tags:
+      - Office absence
+    summary: Get all office absence type enums
+    description: Get all office absence type enums
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/AbsenceTypeEnum'
+
+/api/office-absences/state-enums:
+  get:
+    tags:
+      - Office absence
+    summary: Get all office absence state enums
+    description: Get all office absence state enums
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/AbsenceStateEnum'
+
+/api/office-absences/approvers:
+  get:
+    tags:
+      - Office absence
+    summary: Get all approvers
+    description: Get all approvers
+    parameters:
+      - in: body
+        name: Filter command
+        schema:
+          type: object
+          properties:
+            userId:
+              type: integer
+          required:
+            - userId
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/User'
+
+/api/office-absence:
+  post:
+    tags:
+      - Office absence
+    summary: Create office absence
+    description: Create office absence
+    parameters:
+      - in: body
+        name: Create office absence command
+        schema:
+          type: object
+          properties:
+            userId:
+              type: integer
+            absenceStart:
+              type: string
+            absenceEnd:
+              type: string
+            absenceType:
+              type: integer
+            approver:
+              type: integer
+            absenceHoursNumber:
+              type: integer
+            description:
+              type: string
+          required:
+            - userId
+            - absenceStart
+            - absenceEnd
+            - absenceType
+            - approver
+            - absenceHoursNumber
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/OfficeAbsence'
+      400:
+        description: Bad request:Office absence in this date range and absence type already exists
+        properties:
+          message:
+            type: string
+
+/api/office-absences/cancel:
+  post:
+    tags:
+      - Office absence
+    summary: Cancel office absence
+    description: Cancel office absence
+    parameters:
+      - in: body
+        name: Create office absence command
+        schema:
+          type: object
+          properties:
+            approverId:
+              type: integer
+            absenceId:
+              type: string
+          required:
+            - approverId
+            - absenceId
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/OfficeAbsence'
+
+/api/office-absences/:id:
+  delete:
+    tags:
+      - Office absence
+    summary: Delete office absence
+    description: Delete office absence
+    parameters:
+      - in: query
+        name: id
+        description: id of office absence
+        required: true
+        type: string
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/OfficeAbsence'
+
+/api/office-absence/approve-absence-state:
+  post:
+    tags:
+      - Office absence
+    summary: Approve absence state
+    description: Approve absence state
+    parameters:
+      - in: body
+        name: Approve office absence command
+        schema:
+          type: object
+          properties:
+            token:
+              type: string
+            officeAbsenceId:
+              type: integer
+          required:
+            - token
+            - officeAbsenceId
+    responses:
+      400:
+        description: Bad request:Token is required
+        properties:
+          message:
+            type: string
+      404:
+        description: Not found:Token is invalid or token is expired or office absence does not exists
+        properties:
+          message:
+            type: string
+
+/api/office-absence/reject-absence-state:
+  post:
+    tags:
+      - Office absence
+    summary: Reject absence state
+    description: Reject absence state
+    parameters:
+      - in: body
+        name: Reject office absence command
+        schema:
+          type: object
+          properties:
+            token:
+              type: string
+            officeAbsenceId:
+              type: integer
+          required:
+            - token
+            - officeAbsenceId
+    responses:
+      400:
+        description: Bad request:Token is required
+        properties:
+          message:
+            type: string
+      404:
+        description: Not found:Token is invalid or token is expired or office absence does not exists
+        properties:
+          message:
+            type: string

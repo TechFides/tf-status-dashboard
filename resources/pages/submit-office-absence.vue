@@ -91,12 +91,12 @@
     async asyncData ({ route, store, redirect, $axios }) {
       try {
         if (route.query.approverDecisionId === APPROVER_DECISION_ENUM.APPROVED) {
-          await $axios.post('/api/officeAbsence/approveAbsenceState', {
+          await $axios.post('/api/office-absence/approve-absence-state', {
             token: route.query.token,
             officeAbsenceId: route.query.officeAbsenceId,
           });
         } else {
-          await $axios.post('/api/officeAbsence/rejectAbsenceState', {
+          await $axios.post('/api/office-absence/reject-absence-state', {
             token: route.query.token,
             officeAbsenceId: route.query.officeAbsenceId,
           });

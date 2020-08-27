@@ -1,0 +1,42 @@
+/api/configurations:
+  get:
+    tags:
+      - Configuration
+    summary: Get all configuration
+    description: Get all configuration
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/SystemParam'
+
+/api/configuration:
+  post:
+    tags:
+      - Configuration
+    summary: Create configuration
+    description: Create configuration
+    parameters:
+      - in: body
+        name: Create configuration command
+        schema:
+          type: object
+          properties:
+            feedbackCrontab:
+              type: string
+            slackErrorChannel:
+              type: string
+            slackSchedulerChannel:
+              type: string
+            slackAbsenceChannel:
+              type: string
+            absenceApproverId:
+              type: integer
+    responses:
+      400:
+        description: Invalid feedbackCrontab. Feedback crontab must have the following format:"minutes" "hours" "day of month" "month" "day of week"
+        properties:
+          message:
+            type: string

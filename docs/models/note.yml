@@ -1,0 +1,14 @@
+definitions:
+  Note:
+    type: object
+    properties:
+      id:
+        type: integer
+      note:
+        type: string
+      is_active:
+        type: boolean
+      project_id:
+        type: integer
+      deadline:
+        type: string

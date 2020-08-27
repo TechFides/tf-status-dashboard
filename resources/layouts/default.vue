@@ -35,11 +35,11 @@
       <v-spacer />
       <login-dialog />
     </v-app-bar>
-    <v-content>
+    <v-main>
       <no-ssr>
         <nuxt />
       </no-ssr>
-    </v-content>
+    </v-main>
     <v-snackbar
       :value="snackbar.isVisible"
       :color="snackbar.color"
@@ -89,7 +89,7 @@ export default {
         { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup', availableFor: ['admin', 'user']  },
         { icon: 'laptop_windows', title: 'Projekty', to: '/projects', availableFor: ['admin'] },
         { icon: 'bar_chart', title: 'The Game', to: '/statistics', availableFor: ['admin', 'user'] },
-        { icon: 'mdi-palm-tree -checked ', title: 'Nepřítomnosti', to: '/officeAbsences', availableFor: ['admin', 'user'] },
+        { icon: 'mdi-palm-tree -checked ', title: 'Nepřítomnosti', to: '/office-absences', availableFor: ['admin', 'user'] },
         { icon: 'face', title: 'Uživatelé', to: '/users', availableFor: ['admin'] },
         { icon: 'tag_faces', title: 'Heatmap', to: '/heatmap', availableFor: ['admin'] },
         { icon: 'schedule', title: 'Časy konání sitdownu', to: '/meeting-times', availableFor: ['admin'] },

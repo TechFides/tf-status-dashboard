@@ -1,0 +1,125 @@
+/api/projects:
+  get:
+    tags:
+      - Project
+    summary: Get all project
+    description: Get all project
+    parameters:
+      - in: body
+        name: Filter command
+        schema:
+          type: object
+          properties:
+            isActive:
+              type: integer
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/ProjectDetail'
+
+/api/project:
+  post:
+    tags:
+      - Project
+    summary: Create project
+    description: Create project
+    parameters:
+      - in: body
+        name: Create project command
+        schema:
+          type: object
+          properties:
+            code:
+              type: string
+            description:
+              type: string
+            isActive:
+              type: boolean
+            meetingTimeId:
+              type: integer
+            slackChannelName:
+              type: string
+          required:
+            - code
+            - isActive
+            - meetingTimeId
+            - slackChannelName
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/Project'
+
+/api/projects/:id:
+  put:
+    tags:
+      - Project
+    summary: Edit project
+    description: Edit project
+    parameters:
+      - in: query
+        name: id
+        description: id of project
+        required: true
+        type: string
+      - in: body
+        name: Edit project command
+        schema:
+          type: object
+          properties:
+            code:
+              type: string
+            description:
+              type: string
+            isActive:
+              type: boolean
+            meetingTimeId:
+              type: integer
+            slackChannelName:
+              type: string
+          required:
+            - code
+            - isActive
+            - meetingTimeId
+            - slackChannelName
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/Project'
+
+/api/projects/teamLeader:
+  post:
+    tags:
+      - Project
+    summary: Add team leader
+    description: Add team leader
+    parameters:
+      - in: body
+        name: Add team leader command
+        schema:
+          type: object
+          properties:
+            projectId:
+              type: integer
+            userId:
+              type: integer
+          required:
+            - projectId
+            - userId
+
+/api/project/:id:
+  delete:
+    tags:
+      - Project
+    summary: Delete project
+    description: Delete project
+    parameters:
+      - in: query
+        name: id
+        description: id of project
+        required: true
+        type: string

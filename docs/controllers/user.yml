@@ -1,0 +1,136 @@
+/api/users:
+  get:
+    tags:
+      - User
+    summary: Get all user
+    description: Get all user
+    responses:
+      200:
+        description: Success
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/UserDetail'
+
+/api/heatmap/feedbacks:
+  get:
+    tags:
+      - User
+    summary: Get user feedback
+    description: Get user feedback
+    parameters:
+      - in: body
+        name: Feedback command
+        schema:
+          type: object
+          properties:
+            isActive:
+              type: boolean
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/UserFeedback'
+
+/api/user:
+  post:
+    tags:
+      - User
+    summary: Create user
+    description: Create user
+    parameters:
+      - in: body
+        name: Create user command
+        schema:
+          type: object
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+            isActive:
+              type: boolean
+            username:
+              type: string
+            email:
+              type: string
+            sendFeedback:
+              type: boolean
+            absenceApproverId:
+              type: integer
+          required:
+            - firstName
+            - lastName
+            - username
+            - email
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/User'
+      422:
+        description: Unprocessable entity
+        properties:
+          message:
+            type: string
+
+/api/users/:id:
+  post:
+    tags:
+      - User
+    summary: Edit user
+    description: Edit user
+    parameters:
+      - in: query
+        name: id
+        description: id of user
+        required: true
+        type: string
+      - in: body
+        name: Edit user command
+        schema:
+          type: object
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+            isActive:
+              type: boolean
+            username:
+              type: string
+            email:
+              type: string
+            sendFeedback:
+              type: boolean
+            absenceApproverId:
+              type: integer
+          required:
+            - firstName
+            - lastName
+            - username
+            - email
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/User'
+
+/api/user/:id:
+  delete:
+    tags:
+      - User
+    summary: Delete user
+    description: Delete user
+    parameters:
+      - in: query
+        name: id
+        description: id of user
+        required: true
+        type: string
+    responses:
+      500:
+        description: Internal error
+        properties:
+          message:
+            type: string

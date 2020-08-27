@@ -1,0 +1,22 @@
+definitions:
+  UserRole:
+    type: object
+    properties:
+      id:
+        type: integer
+      newToken:
+        type: string
+      username:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      is_active:
+        type: boolean
+      send_feedback:
+        type: boolean
+      email:
+        type: string
+      role:
+        $ref: '#/definitions/Role'

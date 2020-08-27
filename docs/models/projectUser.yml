@@ -1,0 +1,14 @@
+definitions:
+  ProjectUser:
+    type: object
+    properties:
+      id:
+        type: integer
+      user_id:
+        type: integer
+      project_id:
+        type: integer
+      project_exp_modifier_id:
+        type: integer
+      projectUser:
+        $ref: '#/definitions/User'

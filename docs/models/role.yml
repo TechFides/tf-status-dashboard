@@ -1,0 +1,12 @@
+definitions:
+  Role:
+    type: object
+    properties:
+      id:
+        type: integer
+      slug:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
