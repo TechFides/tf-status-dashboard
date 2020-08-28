@@ -179,11 +179,9 @@ Route
 
 Route
   .post('/api/office-absence/approve-absence-state', 'OfficeAbsenceController.approveAbsenceState')
-  .middleware(AUTH);
 
 Route
   .post('/api/office-absence/reject-absence-state', 'OfficeAbsenceController.rejectAbsenceState')
-  .middleware(AUTH);
 
 Route
   .post('/api/office-absences/cancel', 'OfficeAbsenceController.cancelOfficeAbsence')
