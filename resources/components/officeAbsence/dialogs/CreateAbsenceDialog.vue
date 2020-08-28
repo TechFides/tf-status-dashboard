@@ -211,7 +211,9 @@
       openDialog() {
         if (this.approvers.length) {
           const priorityApprover = this.approvers.find(a => a.priority);
-          this.dialogData.approver = priorityApprover.id;
+          const secondaryApprover = this.approvers.find(a => !a.priority);
+
+          this.dialogData.approver = priorityApprover ? priorityApprover.id : secondaryApprover.id;
         }
 
         this.dialogData.userId = this.auth.user.id;
