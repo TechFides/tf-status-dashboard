@@ -217,7 +217,7 @@ Route
  */
 Route
   .get('/api/users', 'UserController.getUsers')
-  .middleware(ADMIN);
+  .middleware(AUTH);
 Route
   .post('/api/users', 'UserController.createUser')
   .validator('StoreUserValidator')

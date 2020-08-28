@@ -31,7 +31,10 @@ export const state = () => ({
   },
   notificationTimeout: null,
   meetingTimes: [],
-  workLogs: [],
+  workLogs: {
+    items: [],
+    timeSpentSum: '',
+  },
   costCategories: [],
 });
 
@@ -75,6 +78,20 @@ const calculateLevel = (totalExp) => {
   const result = d / (2 * 5);
 
   return Math.floor(result);
+};
+
+const getTimeSpent = (value)  => {
+  let timeSpent;
+
+  if (value < 60) {
+    timeSpent = value + 'm';
+  } else if (value % 60 === 0) {
+    timeSpent = (value / 60) + 'h';
+  } else {
+    timeSpent = `${Math.floor(value / 60)}h ${(value % 60)}m`;
+  }
+
+  return timeSpent;
 };
 
 const filterProjectsByRatings = (projects, ratings, date) => {
@@ -209,9 +226,9 @@ export const mutations = {
     state.officeAbsences = officeAbsences.map(o => ({
       id: o.id,
       author: o.user,
-      absenceStart: moment(o.absence_start).format('DD. MM. YYYY'),
-      absenceEnd: moment(o.absence_end).format('DD. MM. YYYY'),
-      created: moment(o.created_at).format('DD. MM. YYYY'),
+      absenceStart: moment(o.absence_start).format('DD.MM.YYYY'),
+      absenceEnd: moment(o.absence_end).format('DD.MM.YYYY'),
+      created: moment(o.created_at).format('DD.MM.YYYY'),
       absenceType: o.absenceTypeEnum,
       absenceState: o.absenceStateEnum,
       absenceApprover: {
@@ -237,17 +254,20 @@ export const mutations = {
     }));
   },
   setWorkLogs (state, workLogs) {
-    state.workLogs = workLogs.map(w => ({
+    state.workLogs.items = workLogs.items.map(w => ({
       id: w.id,
       author: {
         fullName: w.user ? `${w.user .first_name} ${w.user .last_name}` : '',
         id: w.user ? w.user .id : null,
       },
-      started: moment(w.started).format('DD. MM. YYYY HH:MM'),
-      timeSpent: w.time_spent,
+      started: moment(w.started).format('DD.MM.YYYY HH:mm'),
+      startedByNumber: moment(w.started).valueOf(),
+      timeSpent: getTimeSpent(w.time_spent),
       description: w.description,
       costCategoryId: w.cost_category_id,
     }));
+
+    state.workLogs.timeSpentSum = getTimeSpent(workLogs.timeSpentSum);
   },
   setCostCategories (state, costCategories) {
     state.costCategories = costCategories;
@@ -631,23 +651,39 @@ export const actions = {
     }
   },
   async getWorkLogs ({ commit }, params) {
-    const filter = {
-      authorId: params.authorId || '',
-      costCategoryId: params.costCategoryId || '',
-      startDate: params.startDate || moment().startOf('month').format('YYYY-MM-DD'),
-      endDate: params.endDate || moment().endOf('month').format('YYYY-MM-DD'),
-    };
-    const payloads = {
-      ...
-      filter,
-      loggedInUserId: this.$auth.user.id,
-    };
+    let payloads;
+    if (params) {
+      payloads = {
+        authorId: params.authorId,
+        costCategoryId: params.costCategoryId,
+        startDate: params.dates[0],
+        endDate: params.dates[1],
+        loggedInUserId: this.$auth.user.id,
+      };
+    } else {
+      payloads = {
+        startDate: moment().startOf('month').format('YYYY-MM-DD'),
+        endDate: moment().endOf('month').format('YYYY-MM-DD'),
+        loggedInUserId: this.$auth.user.id,
+      };
+    }
     const workLogs = await this.$axios.$get(
       '/api/work-logs',
       { params: payloads },
     );
 
     commit('setWorkLogs', workLogs);
+  },
+  async createWorkLog ({ dispatch, commit }, workLog) {
+    try {
+      await this.$axios.$post('/api/work-log', workLog);
+      dispatch('getWorkLogs');
+      commit('clearErrorState');
+    } catch (error) {
+      if (error && error.response && error.response.data) {
+        commit('setErrorState', error.response.data);
+      }
+    }
   },
   async deleteWorkLog ({ dispatch, commit }, workLogId) {
     try {
@@ -658,13 +694,28 @@ export const actions = {
       commit('setNotification', { color: 'error', message: `WorkLog se nepodařilo odstranit.` });
     }
   },
+  async editWorkLog ({ dispatch, commit }, workLog) {
+    try {
+      await this.$axios.$put(`/api/work-log/${workLog.id}`, workLog);
+      commit('clearErrorState');
+      dispatch('getWorkLogs');
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('setErrorState', error.response.data[0]);
+      }
+    }
+  },
   async getCostCategories ({ commit }) {
-    const costCategories = await this.$axios({ url: '/api/cost-categories', baseURL: process.env.TF_ERP_API_URL, headers: {
-        Authorization: `Bearer ${process.env.TF_ERP_API_TOKEN}`,
-      },
-    });
-
-    commit('setCostCategories', costCategories.data);
+    // const costCategories = await this.$axios({ url: '/api/cost-categories', baseURL: process.env.TF_ERP_API_URL, headers: {
+    //     Authorization: `Bearer ${process.env.TF_ERP_API_TOKEN}`,
+    //   },
+    // });
+    // const costCategories = await this.$axios({ url: '/api/cost-categories', baseURL: 'https://techfides-tf-erp-test1-server.herokuapp.com', headers: {
+    //     Authorization: `Bearer 4bkd1don0py3ucmie1wgc9eniacxkqice`,
+    //   },
+    // });
+    //
+    // commit('setCostCategories', costCategories.data);
   },
   async getUsers ({ commit }) {
     const users = await this.$axios.$get('/api/users');

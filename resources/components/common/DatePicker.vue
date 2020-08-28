@@ -12,7 +12,7 @@
     <template v-slot:activator="{ on }">
       <v-text-field
         ref="textField"
-        :value="dateFormatted"
+        :value="range ? dateRangeText : dateFormatted"
         :label="label"
         :prepend-icon="prependIconVisible ? 'mdi-calendar' : null"
         :append-icon="clearable ? null : appendIcon"
@@ -35,10 +35,11 @@
       :disabled="disabled"
       :allowed-dates="allowedDates"
       scrollable
+      :range="range"
       header-color="blue darken-2"
       color="blue darken-2"
       @change="dateSelected"
-      @input="menu = false"
+      @input="rangeDateSelected"
     />
   </v-menu>
 </template>
@@ -64,6 +65,10 @@
         type: Boolean,
         default: false,
       },
+      range: {
+        type: Boolean,
+        default: false,
+      },
       clearable: {
         type: Boolean,
         default: true,
@@ -73,8 +78,8 @@
         default: 'DD.MM.YYYY',
       },
       value: {
-        type: String,
-        default: '',
+        type: [Array, String],
+        default: () => [],
       },
       label: {
         type: String,
@@ -129,6 +134,10 @@
       dateFormatted() {
         return this.value ? this.formatDate(this.value) : '';
       },
+      dateRangeText() {
+        const dates = this.value ? [this.formatDate(this.value[0]), this.formatDate(this.value[1])] : '';
+        return dates ? dates.join(' ~ ') : '';
+      },
       prependIconVisible() {
         return !this.hidePrependIcon;
       },
@@ -176,6 +185,22 @@
         const invalidValues = [null, undefined, ''];
 
         return !invalidValues.includes(value);
+      },
+      rangeDateSelected(value) {
+        let temp;
+        if (this.range) {
+          if (value.length === 2) {
+            if (moment(value[0]).isAfter(moment(value[1]))) {
+              temp = value[1];
+              value[1] = value[0];
+              value[0] = temp;
+            }
+            this.menu = false;
+          }
+          this.$emit('input', value);
+        } else {
+          this.menu = false;
+        }
       },
       dateSelected(value) {
         this.$emit('input', value);

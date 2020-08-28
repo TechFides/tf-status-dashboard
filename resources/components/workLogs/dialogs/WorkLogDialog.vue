@@ -8,7 +8,7 @@
   >
     <v-card>
       <v-card-title class="headline pl-5 systemPrimary">
-        Vytvořit nový záznam práce
+        {{ dialogType ? 'Vytvořit nový záznam práce' : 'Editovat záznam práce' }}
       </v-card-title>
       <v-form
         ref="form"
@@ -22,7 +22,7 @@
           <v-row class="pr-8">
             <v-col cols="6">
               <DatePicker
-                v-model="dialogData.staredDate"
+                v-model="dialogData.startedDate"
                 label="Datum zahájení práce"
                 required
                 :clearable="false"
@@ -30,7 +30,7 @@
             </v-col>
             <v-col cols="6">
               <TimePicker
-                v-model="dialogData.staredTime"
+                v-model="dialogData.startedTime"
                 label="Čas zahájení práce"
                 required
                 :clearable="false"
@@ -44,8 +44,7 @@
             >
               <v-text-field
                 v-model="dialogData.timeSpent"
-                type="number"
-                :rules="[rules.required, rules.minValue]"
+                :rules="[rules.required, rules.timeSpentFormat]"
                 label="Strávený čas"
               />
             </v-col>
@@ -110,26 +109,30 @@
     data () {
       return {
         show: false,
+        dialogType: null,
         dialogData: {
-          userId: null,
-          staredDate: '',
-          staredTime: '',
+          id: null,
+          authorId: null,
+          startedDate: moment().format('YYYY-MM-DD'),
+          startedTime: moment().format('HH:mm'),
           timeSpent: '',
-          costCategory: null,
+          costCategory: 1,
           description: '',
         },
         defaultDialogData: {
-          userId: null,
-          staredDate: '',
-          staredTime: '',
+          id: null,
+          authorId: null,
+          startedDate: moment().format('YYYY-MM-DD'),
+          startedTime: moment().format('HH:mm'),
           timeSpent: '',
-          costCategory: null,
+          costCategory: 1,
           description: '',
         },
         defaultSelectItems: [],
         rules: {
           required: value => !!value || 'Povinné.',
           minValue: value => value > 0 || 'Hodnota musí být větší jak 0.',
+          timeSpentFormat: value => this.checkTimeSpentFormat(value) || 'Hodnota musí být ve validním formátu, například: 1h 30m',
         },
       };
     },
@@ -150,13 +153,39 @@
       },
     },
     methods: {
-      openDialog() {
-        this.dialogData.userId = this.auth.user.id;
+      openDialog(items) {
+        this.dialogType = 1;
+        if (items) {
+          this.dialogType = 0;
+          this.dialogData = {
+            id: items.id,
+            startedDate: moment(items.startedByNumber).format('YYYY-MM-DD'),
+            startedTime: moment(items.startedByNumber).format('HH:mm'),
+            timeSpent: items.timeSpent,
+            costCategory: items.costCategoryId,
+            description: items.description,
+          };
+        }
+
+        this.dialogData.authorId = this.auth.user.id;
         this.show = true;
       },
       async confirmDialog () {
         if (this.$refs.form.validate()) {
-          await this.$store.dispatch('createOfficeAbsence', this.dialogData);
+          const payloads = {
+            id: this.dialogData.id,
+            authorId: this.dialogData.authorId,
+            started: `${this.dialogData.startedDate} ${this.dialogData.startedTime}`,
+            timeSpent: this.timeSpentToMs(this.dialogData.timeSpent),
+            costCategoryId: this.dialogData.costCategory,
+            description: this.dialogData.description,
+          };
+
+          if (this.dialogType) {
+            await this.$store.dispatch('createWorkLog', payloads);
+          } else {
+            await this.$store.dispatch('editWorkLog', payloads);
+          }
           !this.error.isVisible && this.cancelDialog();
         }
       },
@@ -165,6 +194,15 @@
         this.$refs.form.resetValidation();
         this.show = false;
         this.$store.commit('clearErrorState');
+      },
+      timeSpentToMs (value) {
+        const m = value.substring(value.lastIndexOf(" ") + 1, value.lastIndexOf("m"));
+        const h = value.substring(0, value.lastIndexOf("h"));
+
+        return (m ? parseInt(m) : 0) + (h ? parseInt(h) * 60 : 0);
+      },
+      checkTimeSpentFormat (value) {
+        return /^(?:\d+[hm](?: +|$))+$/.test(value);
       },
     },
   };

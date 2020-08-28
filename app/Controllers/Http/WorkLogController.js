@@ -36,11 +36,11 @@ class WorkLogController {
       .whereBetween('started',[startDate, endDate]);
 
     if (!isUserRoleAdmin) {
-      WorkLogModelQuery.where('author_id', loggedInUserId);
+      WorkLogModelQuery.where('user_id', loggedInUserId);
     }
 
     if (authorId) {
-      WorkLogModelQuery.where('author_id', authorId);
+      WorkLogModelQuery.where('user_id', authorId);
     }
 
     if (costCategoryId) {
@@ -49,7 +49,12 @@ class WorkLogController {
 
     const workLogsList = (await WorkLogModelQuery.fetch()).toJSON();
 
-    return workLogsList;
+    let timeSpentSum = 0;
+    for (const workLogs of workLogsList) {
+      timeSpentSum += workLogs.time_spent;
+    }
+
+    return { items: workLogsList, timeSpentSum: timeSpentSum};
   }
 
   async createWorkLog ({ request, response, params }) {

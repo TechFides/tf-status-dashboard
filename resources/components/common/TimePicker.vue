@@ -14,7 +14,7 @@
         ref="textField"
         :value="value"
         :label="label"
-        :prepend-icon="prependIconVisible ? 'mdi-calendar' : null"
+        :prepend-icon="prependIconVisible ? 'mdi-clock-outline ' : null"
         :append-icon="clearable ? null : appendIcon"
         :append-outer-icon="appendOuterIcon"
         :rules="rules"

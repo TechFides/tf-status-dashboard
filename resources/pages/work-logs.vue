@@ -16,14 +16,15 @@
         </span>
       </v-btn>
     </v-row>
-    <CreateWorkLogDialog
-      ref="createWorkLogDialog"
+    <WorkLogDialog
+      ref="workLogDialog"
     />
     <v-card class="elevation-1">
       <v-row
         justify="start"
       >
         <v-col
+          v-if="isAdmin()"
           cols="2"
           class="ml-5"
         >
@@ -34,7 +35,10 @@
             clearable
           />
         </v-col>
-        <v-col cols="2">
+        <v-col
+          cols="2"
+          class="ml-5"
+        >
           <v-select
             v-model="filter.costCategoryId"
             :items="costCategoryItems"
@@ -42,10 +46,19 @@
             clearable
           />
         </v-col>
+        <v-col cols="2">
+          <DatePicker
+            v-model="filter.dates"
+            label="Zahájení nepřítomnosti"
+            :clearable="false"
+            required
+            range
+          />
+        </v-col>
       </v-row>
       <v-data-table
         :headers="headers"
-        :items="workLogs"
+        :items="workLogs.items"
         :items-per-page="10"
         item-key="id"
         fill-height
@@ -57,7 +70,10 @@
           v-slot:item="{item}"
         >
           <tr>
-            <td class="text-left element pr-8">
+            <td
+              v-if="isAdmin()"
+              class="text-left element pr-8"
+            >
               {{ item.author.fullName }}
             </td>
             <td class="text-right element pr-8">
@@ -91,26 +107,38 @@
         </template>
       </v-data-table>
     </v-card>
+    <v-row>
+      <v-col
+        cols="4"
+        class="time-spent-sum pl-6"
+      >
+        Celkem odpracovaný čas za zvolené období: {{ workLogs.timeSpentSum }}
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
   import { mapState } from 'vuex';
-  import CreateWorkLogDialog from '../components/workLogs/dialogs/CreateWorkLogDialog';
+  import WorkLogDialog from '../components/workLogs/dialogs/WorkLogDialog';
+  import DatePicker from '../components/common/DatePicker';
   import moment from 'moment';
 
   export default {
     name: 'WorkLogs',
     components: {
-      CreateWorkLogDialog,
+      WorkLogDialog,
+      DatePicker,
     },
     data () {
       return {
         filter: {
           authorId: '',
           costCategoryId: '',
-          startDate: '',
-          endDate: '',
+          dates: [
+            moment().startOf('month').format('YYYY-MM-DD'),
+            moment().endOf('month').format('YYYY-MM-DD'),
+          ],
         },
         expandedRowId: null,
       };
@@ -123,13 +151,13 @@
         'costCategories',
       ]),
       headers () {
-        return [
+        const headers = [
           {
             text: 'Autor',
             align: 'left',
             sortable: true,
             value: 'author',
-            isVisible: true,
+            isVisible: this.isAdmin(),
           },
           {
             text: 'Zahájení práce',
@@ -167,6 +195,8 @@
             isVisible: true,
           },
         ];
+
+        return headers.filter(h => h.isVisible);
       },
       costCategoryItems () {
         return [];
@@ -181,7 +211,9 @@
     watch: {
       filter: {
         handler() {
-          this.$store.dispatch('getWorkLogs', this.filter);
+          if (this.filter.dates[0] && this.filter.dates[1]) {
+            this.$store.dispatch('getWorkLogs', this.filter);
+          }
         },
         deep: true,
       },
@@ -190,19 +222,30 @@
       await Promise.all([
         this.$store.dispatch('getWorkLogs', this.filter),
         this.$store.dispatch('getUsers'),
-        // this.$store.dispatch('getCostCategories'),
+        this.$store.dispatch('getCostCategories'),
       ]);
     },
     methods: {
-      async editItem(item) {
-
-      },
       async deleteItem(item) {
-        await this.$store.dispatch('deleteWorkLog', item.id);
+        const confirmed = confirm(`Opravdu chcete smazat tento worklog.`);
+
+        if (confirmed) {
+          await this.$store.dispatch('deleteWorkLog', item.id);
+        }
       },
       createNewWorkLog() {
-        this.$refs.createWorkLogDialog.openDialog();
+        this.$refs.workLogDialog.openDialog();
+      },
+      editItem(item) {
+        this.$refs.workLogDialog.openDialog(item);
       },
     },
   };
 </script>
+
+<style scoped>
+  .time-spent-sum {
+    font-weight: bold;
+    font-size: 1.3rem;
+  }
+</style>

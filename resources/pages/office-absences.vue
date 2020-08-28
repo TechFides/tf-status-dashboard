@@ -278,7 +278,11 @@
       },
       async deleteItem(item) {
         if (item.absenceState.name === 'WAITING_FOR_APPROVAL') {
-          await this.$store.dispatch('deleteOfficeAbsence', item.id);
+          const confirmed = confirm(`Opravdu chcete smazat tuhle žádost o nepřítomnost.`);
+
+          if (confirmed) {
+            await this.$store.dispatch('deleteOfficeAbsence', item.id);
+          }
         } else {
           this.$refs.cancelAbsenceDialog.openDialog(item);
         }
