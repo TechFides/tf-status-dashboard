@@ -324,8 +324,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import { format } from 'date-fns';
+  import { mapState } from 'vuex';
+  import { format } from 'date-fns';
 
 export default {
   data () {

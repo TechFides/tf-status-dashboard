@@ -227,8 +227,11 @@ export const mutations = {
       id: o.id,
       author: o.user,
       absenceStart: moment(o.absence_start).format('DD.MM.YYYY'),
+      absenceStartByNumber: moment(o.absence_start).valueOf(),
       absenceEnd: moment(o.absence_end).format('DD.MM.YYYY'),
+      absenceEndByNumber: moment(o.absence_end).valueOf(),
       created: moment(o.created_at).format('DD.MM.YYYY'),
+      createdByNumber: moment(o.created_at).valueOf(),
       absenceType: o.absenceTypeEnum,
       absenceState: o.absenceStateEnum,
       absenceApprover: {

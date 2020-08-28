@@ -12,7 +12,7 @@
       >
         <i class="material-icons">add</i>
         <span class="pl-2">
-          Vytvořít žádost o nepřítomnost
+          Vytvořit žádost o nepřítomnost
         </span>
       </v-btn>
     </v-row>
@@ -110,11 +110,17 @@
           <td
             v-if="officeAbsenceDetailItems.description"
             :colspan="headers.length"
-            class="pr-0 pl-8"
+            class="pa-2 pl-4"
             :style="{backgroundColor: getRowColor(officeAbsenceDetailItems.absenceState.name)}"
           >
-            <span class="expanded-column">{{ 'Popis nepřítomnosti:' }}</span>
-            <span>{{ officeAbsenceDetailItems.description }}</span>
+            <div class="expanded-row">
+              <div class="expanded-column-label">
+                {{ 'Popis nepřítomnosti:' }}
+              </div>
+              <div class="expanded-column-text">
+                {{ officeAbsenceDetailItems.description }}
+              </div>
+            </div>
           </td>
         </template>
       </v-data-table>
@@ -155,21 +161,21 @@
             text: 'Zahájení nepřítomnosti',
             align: 'right',
             sortable: true,
-            value: 'absenceStart',
+            value: 'absenceStartByNumber',
             isVisible: true,
           },
           {
             text: 'Ukončení nepřítomnosti',
             align: 'right',
             sortable: true,
-            value: 'absenceEnd',
+            value: 'absenceEndByNumber',
             isVisible: true,
           },
           {
             text: 'Datum odeslání žádosti',
             align: 'right',
             sortable: true,
-            value: 'created',
+            value: 'createdByNumber',
             isVisible: true,
           },
           {
@@ -295,9 +301,20 @@
 </script>
 
 <style scoped>
-  .expanded-column {
+  .expanded-row {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .expanded-column-label {
     color: rgba(0,0,0,.6);
     font-size: 0.8rem;
     font-weight: bold;
+    min-width: 130px;
+    padding-top: 1px;
+  }
+
+  .expanded-column-text {
+    font-size: 0.9rem;
   }
 </style>
