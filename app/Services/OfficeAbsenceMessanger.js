@@ -60,7 +60,7 @@ class OfficeAbsenceMessanger {
         color: color || '#4caf50',
         text: text || '',
         title: title || 'Dashboard nepřítomnosti',
-        title_link: title_link || `${process.env.VUE_APP_URL}/officeAbsences`,
+        title_link: title_link || `${process.env.VUE_APP_URL}/office-absences`,
       },
     ];
   }
