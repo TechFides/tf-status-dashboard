@@ -93,7 +93,7 @@
                 type="error"
                 color="blue darken-1"
               >
-                Nezapomeň si zkontrolovat, jestli sedí počet hodin nepřítomnosti.
+                Nezapomeň si zkontrolovat, jestli sedí počet hodin nepřítomnosti. Ve výpočtu nejsou zahrnuty svátky a jiné nepracovní dny.
               </v-alert>
             </v-col>
           </v-row>
