@@ -31,6 +31,7 @@ export const state = () => ({
   },
   notificationTimeout: null,
   meetingTimes: [],
+  gifs: [],
 });
 
 const sortAscByProperty = function (property, a, b) {
@@ -251,6 +252,11 @@ export const mutations = {
         fullName: u.user ? `${u.user.approver.first_name} ${u.user.approver.last_name}` : '',
       },
       roles: u.roles.map(r => r.slug),
+    }));
+  },
+  setGifs (state, gifData) {
+    state.gifs = gifData.data.map(g => ({
+      url: g.embed_url,
     }));
   },
   setRoles (state, roles) {
@@ -650,6 +656,11 @@ export const actions = {
     } catch (error) {
       commit('setNotification', { color: 'error', message: `Uživatela se nepodařilo odstranit.` });
     }
+  },
+  async getRandomGif ({ dispatch, commit }, params)  {
+
+    const gifs = await this.$axios({baseURL: `${process.env.NUXT_ENV_GIPHY_API_URL}/v1/gifs/search`, params});
+    commit('setGifs', gifs.data);
   },
   async getRoles ({ commit }) {
     const roles = await this.$axios.$get('/api/roles');

@@ -83,6 +83,13 @@
                 label="Popis nepřítomnosti (tato informace bude vyplněna v google kalendáři)"
               />
             </v-col>
+            <v-col
+              class="pa-0 pt-4"
+              cols="6"
+              v-if="gif.url"
+            >
+              <iframe :src="gif.url" frameBorder="0" allowFullScreen />
+            </v-col>
           </v-row>
           <v-row class="pr-6">
             <v-col
@@ -149,6 +156,16 @@
     data () {
       return {
         show: false,
+        gif: {
+          url: '',
+        },
+        gifTagEnum: [
+          '',
+          'home office',
+          'holiday',
+          'work trip',
+          'holiday',
+        ],
         dialogData: {
           userId: null,
           absenceStart: '',
@@ -166,6 +183,9 @@
           approver: '',
           absenceHoursNumber: null,
         },
+        defaultGif: {
+          url: '',
+        },
         defaultSelectItems: [],
         rules: {
           required: value => !!value || 'Povinné.',
@@ -179,12 +199,16 @@
         'approvers',
         'auth',
         'error',
+        'gifs',
       ]),
       absenceStart() {
         return this.dialogData.absenceStart;
       },
       absenceEnd() {
         return this.dialogData.absenceEnd;
+      },
+      absenceType() {
+        return this.dialogData.absenceType;
       },
       approverItems () {
         return this.approvers.length ? this.approvers.map(approver => ({
@@ -206,6 +230,16 @@
       absenceEnd() {
         this.countAbsenceHoursNumber();
       },
+      async absenceType() {
+        const params = {
+          q: this.gifTagEnum[this.dialogData.absenceType],
+          limit: 10,
+          api_key: process.env.NUXT_ENV_GIPHY_API_TOKEN,
+        };
+        await this.$store.dispatch('getRandomGif', params);
+
+        this.gif = this.gifs[Math.floor(Math.random() * this.gifs.length)];
+      },
     },
     methods: {
       openDialog() {
@@ -218,6 +252,7 @@
 
         this.dialogData.userId = this.auth.user.id;
         this.show = true;
+        this.gif = this.defaultGif;
       },
       async confirmDialog () {
         if (this.$refs.form.validate()) {
