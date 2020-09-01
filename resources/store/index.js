@@ -709,16 +709,11 @@ export const actions = {
     }
   },
   async getCostCategories ({ commit }) {
-    // const costCategories = await this.$axios({ url: '/api/cost-categories', baseURL: process.env.TF_ERP_API_URL, headers: {
-    //     Authorization: `Bearer ${process.env.TF_ERP_API_TOKEN}`,
-    //   },
-    // });
-    // const costCategories = await this.$axios({ url: '/api/cost-categories', baseURL: 'https://techfides-tf-erp-test1-server.herokuapp.com', headers: {
-    //     Authorization: `Bearer 4bkd1don0py3ucmie1wgc9eniacxkqice`,
-    //   },
-    // });
-    //
-    // commit('setCostCategories', costCategories.data);
+    const costCategories = await this.$axios({ url: '/api/cost-categories', baseURL: process.env.NUXT_ENV_TF_ERP_API_URL, headers: {
+        apitoken: process.env.NUXT_ENV_TF_ERP_API_TOKEN,
+      },
+    });
+    commit('setCostCategories', costCategories.data);
   },
   async getUsers ({ commit }) {
     const users = await this.$axios.$get('/api/users');
