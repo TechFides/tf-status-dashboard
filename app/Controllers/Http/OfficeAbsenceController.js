@@ -40,6 +40,19 @@ class OfficeAbsenceController {
     };
   }
 
+  static getAbsenceTypeShortCut (absenceType) {
+    switch (absenceType.name) {
+      case 'HOME_OFFICE':
+        return absenceType.value;
+      case 'HOLIDAY':
+        return 'D';
+      case 'WORK_TRAVEL':
+        return 'PV';
+      case 'UNPAID_HOLIDAY':
+        return 'NV';
+    }
+  }
+
   static async setOfficeAbsenceState (officeAbsenceId, stateId) {
     const officeAbsence = await OfficeAbsenceModel.find(officeAbsenceId);
 
@@ -180,7 +193,7 @@ class OfficeAbsenceController {
       return response.status(400).send({ name: 'BAD_REQUEST', message: 'Office absence in this date range and absence type already exists' });
     }
 
-    officeAbsenceData.calendar_event_title = `${author.first_name} ${author.last_name}-${absenceTypeEnumModel.value}-${moment(officeAbsenceData.absence_start).format('DD.MM.YYYY')}-${moment(officeAbsenceData.absence_end).format('DD.MM.YYYY')} (${officeAbsenceData.absence_hours_number}h)`;
+    officeAbsenceData.calendar_event_title = `${officeAbsenceData.absence_hours_number}h-${OfficeAbsenceController.getAbsenceTypeShortCut(absenceTypeEnumModel)}-${author.first_name} ${author.last_name}`;
 
     const officeAbsence = (await OfficeAbsenceModel.create(officeAbsenceData)).toJSON();
 
