@@ -12,6 +12,7 @@ class WorkLogsSchema extends Schema {
       table.integer('user_id').notNullable();
       table.foreign('user_id').references('users');
       table.integer('cost_category_id').notNullable();
+      table.foreign('cost_category_id').references('cost_categories');
       table.text('description');
       table.timestamps();
     })

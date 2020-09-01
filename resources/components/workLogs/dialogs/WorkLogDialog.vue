@@ -44,6 +44,7 @@
             >
               <v-text-field
                 v-model="dialogData.timeSpent"
+                placeholder="například: 1h 30m"
                 :rules="[rules.required, rules.timeSpentFormat]"
                 label="Strávený čas"
               />
@@ -53,7 +54,7 @@
               class="pl-6 pr-5 pt-0"
             >
               <v-select
-                v-model="dialogData.costCategory"
+                v-model="dialogData.costCategoryId"
                 :items="costCategoryItems"
                 label="Kategorie"
                 :rules="[rules.required]"
@@ -116,7 +117,7 @@
           startedDate: moment().format('YYYY-MM-DD'),
           startedTime: moment().format('HH:mm'),
           timeSpent: '',
-          costCategory: 1,
+          costCategoryId: null,
           description: '',
         },
         defaultDialogData: {
@@ -125,7 +126,7 @@
           startedDate: moment().format('YYYY-MM-DD'),
           startedTime: moment().format('HH:mm'),
           timeSpent: '',
-          costCategory: 1,
+          costCategoryId: null,
           description: '',
         },
         defaultSelectItems: [],
@@ -143,7 +144,10 @@
         'error',
       ]),
       costCategoryItems () {
-        return [];
+        return this.costCategories.map(c => ({
+          text: c.name,
+          value: c.id,
+        }));
       },
       absenceTypeEnumItems () {
         return this.absenceTypeEnums.map(absenceTypeEnum => ({
@@ -162,7 +166,7 @@
             startedDate: moment(items.startedByNumber).format('YYYY-MM-DD'),
             startedTime: moment(items.startedByNumber).format('HH:mm'),
             timeSpent: items.timeSpent,
-            costCategory: items.costCategoryId,
+            costCategoryId: items.costCategory.id,
             description: items.description,
           };
         }
@@ -177,7 +181,7 @@
             authorId: this.dialogData.authorId,
             started: `${this.dialogData.startedDate} ${this.dialogData.startedTime}`,
             timeSpent: this.timeSpentToMs(this.dialogData.timeSpent),
-            costCategoryId: this.dialogData.costCategory,
+            costCategory: this.costCategories.find(c => c.id === this.dialogData.costCategoryId),
             description: this.dialogData.description,
           };
 

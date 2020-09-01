@@ -86,7 +86,7 @@
               {{ item.description }}
             </td>
             <td class="text-left element">
-              {{ item.costCategoryId }}
+              {{ item.costCategory.name }}
             </td>
             <td class="justify-center layout px-0">
               <v-icon
@@ -184,7 +184,7 @@
             text: 'Kategorie',
             align: 'left',
             sortable: true,
-            value: 'costCategoryId',
+            value: 'costCategory.name',
             isVisible: true,
           },
           {
@@ -199,7 +199,10 @@
         return headers.filter(h => h.isVisible);
       },
       costCategoryItems () {
-        return [];
+        return this.costCategories.map(c => ({
+          text: c.name,
+          value: c.id,
+        }));
       },
       authorItems () {
         return this.users.map(user => ({

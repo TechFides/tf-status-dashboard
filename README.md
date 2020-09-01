@@ -37,7 +37,7 @@ and configure it.
     - GOOGLE_CLIENT_SECRET=w6Xac...
 * More detailed guide can be find [here](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
 
-- Accounts in Dashboard can be synchronize with Gsuite via script `app/Services/GoogleAccountsSyncScript.js`. This script
+- Accounts in TF-Hub can be synchronize with Gsuite via script `app/Services/GoogleAccountsSyncScript.js`. This script
 use G Suite Domain-Wide Delegation of Authority and for this is needed create service account and credentials. It is possible from [here](https://console.cloud.google.com/iam-admin/serviceaccounts).
 - Next is necessary to delegate domain-wide authority to newly created service account. In the `One or More API Scopes` field set this scope `https://www.googleapis.com/auth/admin.directory.user.readonly`.
  More information about this can be find [here](https://developers.google.com/admin-sdk/directory/v1/guides/delegation).
@@ -46,7 +46,7 @@ use G Suite Domain-Wide Delegation of Authority and for this is needed create se
 - All users statistic are obtained from JIRA worklogs. For this create API token [here](https://id.atlassian.com/manage/api-tokens) and then
 set this token into env file to the variable JIRA_KEY and set JIRA_ADMIN_EMAIL (email of person who generated token). More info is possible find [here](https://support.siteimprove.com/hc/en-gb/articles/360004317332-How-to-create-an-API-token-from-your-Atlassian-account).
 
-- Dashboard can send informations to your Slack workspace. For this create [slack app](https://api.slack.com/apps) with your
+- TF-Hub can send informations to your Slack workspace. For this create [slack app](https://api.slack.com/apps) with your
 workspace name. Next set scopes. It is possible in section OAuth & Permissions->Scopes->Bot Token Scopes. Here chose this scopes:
 `chat:write, groups:write, im:write, mpim:write, users:read, users:read.email`. After that save changes a click on Install App.
 
@@ -56,15 +56,17 @@ workspace name. Next set scopes. It is possible in section OAuth & Permissions->
 should be run at the beginning of each month.
 
 - To send a notification about the start of the sitdown use script `app/Services/MessageScheduler.js` and set name of
-channel to which you want receive notification into settings of Dashboard app. This script should be run every morning.
+channel to which you want receive notification into settings of TF-Hub app. This script should be run every morning.
 
-- Dashboard can send value of sitdown to the project channel. For this is necessarily to each project has a channel 
+- TF-Hub can send value of sitdown to the project channel. For this is necessarily to each project has a channel 
 that exists in your workspace. Also, each channel must have invited bot to the conversation. 
 This is possible by sending this message to the channel: `/invite @nazev_bota`.
 
-- If you want to get error messages when something get wrong then create channel in your workspace for errors and set it into Dashboard app settings. 
+- If you want to get error messages when something get wrong then create channel in your workspace for errors and set it into TF-Hub app settings. 
 
-- Dashboard is integrated with google calendar. For this set variable GOOGLE_CALENDAR_ID in env file (you can find it in settings of calendar
+- TF-Hub is integrated with google calendar. For this set variable GOOGLE_CALENDAR_ID in env file (you can find it in settings of calendar
 in section Integrate calendar->Calendar ID). Then under "Share with specific people" section, grant permissions
 to the created service account (variable GOOGLE_SERVICE_EMAIL in Env) (<service_account>@<project_name>.iam.gserviceaccount.com) to make changes/read events.
 Don't forget you have to set it up GOOGLE_SERVICE_EMAIL and GOOGLE_PRIVATE_KEY in env file.
+
+- App is integrated with TF-ERP system to get cost categories. For that set env variables NUXT_ENV_TF_ERP_API_URL and NUXT_ENV_TF_ERP_API_TOKEN

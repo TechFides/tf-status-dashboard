@@ -7,6 +7,10 @@ class WorkLog extends Model {
   user () {
     return this.belongsTo('App/Models/User');
   }
+
+  costCategory () {
+    return this.belongsTo('App/Models/CostCategory');
+  }
 }
 
 module.exports = WorkLog;

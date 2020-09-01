@@ -2,6 +2,7 @@
 
 const WorkLogModel = use('App/Models/WorkLog');
 const UserModel = use('App/Models/User');
+const CostCategoryModel = use('App/Models/CostCategory');
 
 class WorkLogController {
   static mapToDbEntity (request) {
@@ -10,15 +11,15 @@ class WorkLogController {
       started,
       timeSpent,
       description,
-      costCategoryId,
-    } = request.only(['authorId', 'started', 'timeSpent', 'description', 'costCategoryId']);
+      costCategory,
+    } = request.only(['authorId', 'started', 'timeSpent', 'description', 'costCategory']);
 
     return {
       user_id: authorId,
       started,
       time_spent: timeSpent,
       description,
-      cost_category_id: costCategoryId,
+      cost_category_id: costCategory.id,
     };
   }
 
@@ -33,6 +34,7 @@ class WorkLogController {
     const WorkLogModelQuery = WorkLogModel
       .query()
       .with('user')
+      .with('costCategory')
       .whereBetween('started',[startDate, endDate]);
 
     if (!isUserRoleAdmin) {
@@ -58,18 +60,32 @@ class WorkLogController {
   }
 
   async createWorkLog ({ request, response, params }) {
+    const { costCategory } = request.only(['costCategory']);
+
     const workLog = new WorkLogModel();
     workLog.fill(WorkLogController.mapToDbEntity(request));
     await workLog.save();
+
+    await CostCategoryModel.findOrCreate(
+      { id: costCategory.id },
+      { id: costCategory.id, name: costCategory.name }
+    );
 
     return workLog.toJSON();
   }
 
   async editWorkLog ({ request, response, params }) {
+    const { costCategory } = request.only(['costCategory']);
     const { id } = params;
     const workLog = await WorkLogModel.find(id);
+
     workLog.merge(WorkLogController.mapToDbEntity(request));
     await workLog.save();
+
+    await CostCategoryModel.findOrCreate(
+      { id: costCategory.id },
+      { id: costCategory.id, name: costCategory.name }
+    );
 
     return workLog.toJSON();
   }

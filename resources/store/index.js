@@ -267,13 +267,27 @@ export const mutations = {
       startedByNumber: moment(w.started).valueOf(),
       timeSpent: getTimeSpent(w.time_spent),
       description: w.description,
-      costCategoryId: w.cost_category_id,
+      costCategory: {
+        id: w.costCategory.id,
+        name: w.costCategory.name,
+      },
     }));
 
     state.workLogs.timeSpentSum = getTimeSpent(workLogs.timeSpentSum);
   },
   setCostCategories (state, costCategories) {
-    state.costCategories = costCategories;
+    let flat = [];
+    for (let i = 0; i < costCategories.data.length; i++) {
+      flat = flat.concat(costCategories.data[i].subCategories);
+    }
+    const flattenArray = flat.concat(costCategories.data).map(f => ({
+      hasSubCategory: f.subCategories,
+      workCategory: f.workCategory,
+      name: f.name,
+      id: f.id,
+    }));
+
+    state.costCategories = flattenArray.filter(f => !f.hasSubCategory.length && f.workCategory);
   },
   setUsers (state, users) {
     state.users = users.map(u => ({
@@ -709,8 +723,9 @@ export const actions = {
     }
   },
   async getCostCategories ({ commit }) {
-    const costCategories = await this.$axios({ url: '/api/cost-categories', baseURL: process.env.NUXT_ENV_TF_ERP_API_URL, headers: {
+    const costCategories = await this.$axios({ url: '/api/cost-categories/tree', baseURL: process.env.NUXT_ENV_TF_ERP_API_URL, headers: {
         apitoken: process.env.NUXT_ENV_TF_ERP_API_TOKEN,
+        Authorization: '',
       },
     });
     commit('setCostCategories', costCategories.data);
