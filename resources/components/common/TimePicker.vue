@@ -12,9 +12,9 @@
     <template v-slot:activator="{ on }">
       <v-text-field
         ref="textField"
-        :value="range ? dateRangeText : dateFormatted"
+        :value="value"
         :label="label"
-        :prepend-icon="prependIconVisible ? 'mdi-calendar' : null"
+        :prepend-icon="prependIconVisible ? 'mdi-clock-outline ' : null"
         :append-icon="clearable ? null : appendIcon"
         :append-outer-icon="appendOuterIcon"
         :rules="rules"
@@ -22,25 +22,31 @@
         :hide-details="hideDetails"
         :clearable="clearable"
         readonly
-        @click:clear="dateCleared"
+        @click:clear="timeCleared"
         v-on="on"
       />
     </template>
-    <v-date-picker
+    <v-time-picker
       :value="value"
-      :min="min"
-      :max="max"
-      :first-day-of-week="1"
-      :type="type ? type : undefined"
-      :disabled="disabled"
-      :allowed-dates="allowedDates"
+      format="24hr"
       scrollable
-      :range="range"
+      :disabled="disabled"
       header-color="blue darken-2"
       color="blue darken-2"
-      @change="dateSelected"
-      @input="rangeDateSelected"
-    />
+      :min="min"
+      :max="max"
+      @change="timeSelected"
+    >
+      <div class="time-picker-action">
+        <v-btn
+          color="blue darken-1"
+          text
+          @click.native="menu = false"
+        >
+          Potvrdit
+        </v-btn>
+      </div>
+    </v-time-picker>
   </v-menu>
 </template>
 
@@ -65,21 +71,17 @@
         type: Boolean,
         default: false,
       },
-      range: {
-        type: Boolean,
-        default: false,
-      },
       clearable: {
         type: Boolean,
         default: true,
       },
       dateFormat: {
         type: String,
-        default: 'DD.MM.YYYY',
+        default: 'HH:MM',
       },
       value: {
-        type: [Array, String],
-        default: () => [],
+        type: String,
+        default: '',
       },
       label: {
         type: String,
@@ -131,13 +133,6 @@
       };
     },
     computed: {
-      dateFormatted() {
-        return this.value ? this.formatDate(this.value) : '';
-      },
-      dateRangeText() {
-        const dates = this.value ? [this.formatDate(this.value[0]), this.formatDate(this.value[1])] : '';
-        return dates ? dates.join(' ~ ') : '';
-      },
       prependIconVisible() {
         return !this.hidePrependIcon;
       },
@@ -186,26 +181,10 @@
 
         return !invalidValues.includes(value);
       },
-      rangeDateSelected(value) {
-        let temp;
-        if (this.range) {
-          if (value.length === 2) {
-            if (moment(value[0]).isAfter(moment(value[1]))) {
-              temp = value[1];
-              value[1] = value[0];
-              value[0] = temp;
-            }
-            this.menu = false;
-          }
-          this.$emit('input', value);
-        } else {
-          this.menu = false;
-        }
-      },
-      dateSelected(value) {
+      timeSelected(value) {
         this.$emit('input', value);
       },
-      dateCleared() {
+      timeCleared() {
         this.$emit('input', null);
       },
       validate() {
@@ -214,15 +193,18 @@
       resetValidation() {
         return this.$refs.textField.resetValidation();
       },
-      formatDate(date) {
-        return moment(date).format(this.dateFormat);
-      },
     },
   };
 </script>
 
-<style scoped>
+<style  lang="scss" scoped>
   ::v-deep input {
     cursor: pointer;
+  }
+
+  .time-picker-action {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
   }
 </style>

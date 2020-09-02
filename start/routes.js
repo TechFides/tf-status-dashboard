@@ -192,11 +192,30 @@ Route
   .middleware(AUTH);
 
 /**
+ * WORK LOGS
+ */
+Route
+  .get('/api/work-logs', 'WorkLogController.getWorkLogList')
+  .middleware(AUTH);
+
+Route
+  .post('/api/work-log', 'WorkLogController.createWorkLog')
+  .middleware(AUTH);
+
+Route
+  .put('/api/work-log/:id', 'WorkLogController.editWorkLog')
+  .middleware(ADMIN);
+
+Route
+  .delete('/api/work-logs/:id', 'WorkLogController.deleteWorkLog')
+  .middleware(AUTH);
+
+/**
  * USERS
  */
 Route
   .get('/api/users', 'UserController.getUsers')
-  .middleware(ADMIN);
+  .middleware(AUTH);
 Route
   .post('/api/users', 'UserController.createUser')
   .validator('StoreUserValidator')

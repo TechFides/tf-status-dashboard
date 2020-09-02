@@ -7,7 +7,7 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: 'TechFides Dashboard',
+    title: 'TF-Hub',
     htmlAttrs: {
       lang: 'cs',
     },

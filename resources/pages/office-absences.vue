@@ -145,20 +145,7 @@
           absenceType: '',
           absenceState: '',
         },
-        statisticsMonthDialog: {
-          isOpen: false,
-          month: `${new Date().getFullYear()}-${new Date().getMonth() + 1}`,
-        },
-        userInfoDialog: {
-          id: null,
-          previousXp: null,
-          bonusXp: null,
-          isOpen: false,
-          sumXpProjects: null,
-          sumHoursWorked: null,
-        },
         expandedRowId: null,
-        selectedDate: new Date(),
       };
     },
     computed: {
@@ -297,7 +284,11 @@
       },
       async deleteItem(item) {
         if (item.absenceState.name === 'WAITING_FOR_APPROVAL') {
-          await this.$store.dispatch('deleteOfficeAbsence', item.id);
+          const confirmed = confirm(`Opravdu chcete smazat tuhle žádost o nepřítomnost.`);
+
+          if (confirmed) {
+            await this.$store.dispatch('deleteOfficeAbsence', item.id);
+          }
         } else {
           this.$refs.cancelAbsenceDialog.openDialog(item);
         }

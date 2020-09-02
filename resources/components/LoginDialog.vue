@@ -37,7 +37,6 @@
                 v-model="data.username"
                 autofocus
                 label="Přihlašovací jméno"
-                :rules="[rules.usernameRequired]"
               />
             </v-flex>
             <v-flex xs12>
@@ -46,7 +45,6 @@
                 v-model="data.password"
                 label="Heslo"
                 type="password"
-                :rules="[rules.passwordRequired]"
                 required
               />
             </v-flex>
