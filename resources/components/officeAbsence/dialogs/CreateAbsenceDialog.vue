@@ -84,11 +84,21 @@
               />
             </v-col>
             <v-col
-              class="pa-0 pt-4"
-              cols="6"
               v-if="gif.url"
+              class="pa-0 pl-4 pr-4 pt-5"
+              cols="6"
             >
-              <iframe :src="gif.url" frameBorder="0" allowFullScreen />
+              <div class="gif">
+                <iframe
+                  :src="gif.url"
+                  width="100%"
+                  height="100%"
+                  style="position:absolute"
+                  frameBorder="0"
+                  class="giphy-embed"
+                  allowFullScreen
+                />
+              </div>
             </v-col>
           </v-row>
           <v-row class="pr-6">
@@ -302,5 +312,10 @@
 </script>
 
 <style scoped>
-
+  .gif {
+    width:100%;
+    height:0;
+    padding-bottom:50%;
+    position:relative;
+  }
 </style>

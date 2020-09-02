@@ -4,6 +4,17 @@
       row
       reverse
     >
+      <div
+        v-if="gifDialog.isOpen"
+        class="gif"
+      >
+        <v-img
+          width="100%"
+          height="100%"
+          style="position:absolute"
+          :src="gifDialog.url"
+        />
+      </div>
       <v-dialog
         v-show="isAdmin() || isUser()"
         v-model="noteDialog.isOpen"
@@ -273,6 +284,7 @@
                 :standup-id="i.standupId"
                 :disabled="!isAdmin() && !isUser()"
                 :date="formatDate(props.item.standup.date)"
+                :on-submit="openGifDialog"
               />
             </td>
             <td class="text-center px-0">
@@ -315,6 +327,11 @@ export default {
   },
   data () {
     return {
+      GIF_ANIMATION_DURATION: 5500,
+      gifDialog: {
+        isOpen: false,
+        url: '',
+      },
       filteredProjectsBySelectedMeetingTime: this.projects,
       selectedMeetingTimeId: null,
       defaultRating: 8,
@@ -586,6 +603,12 @@ export default {
         selectedDate: this.selectedDate,
       };
     },
+    openGifDialog () {
+      this.gifDialog.isOpen = true;
+      this.gifDialog.url = "/giphy.gif"+"?a="+Math.random();
+
+      setTimeout(() => this.gifDialog.isOpen = false, this.GIF_ANIMATION_DURATION);
+    },
     async save () {
       const action = this.standupDialog.id ? 'editStandup' : 'createStandup';
       const currentDateInMiliSec = new Date().getTime();
@@ -672,5 +695,12 @@ export default {
 
   .button {
     margin-top: 6px;
+  }
+
+  .gif {
+    width:600px;
+    height:500px;
+    position:absolute;
+    z-index: 9999;
   }
 </style>

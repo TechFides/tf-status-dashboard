@@ -68,3 +68,6 @@ This is possible by sending this message to the channel: `/invite @nazev_bota`.
 in section Integrate calendar->Calendar ID). Then under "Share with specific people" section, grant permissions
 to the created service account (variable GOOGLE_SERVICE_EMAIL in Env) (<service_account>@<project_name>.iam.gserviceaccount.com) to make changes/read events.
 Don't forget you have to set it up GOOGLE_SERVICE_EMAIL and GOOGLE_PRIVATE_KEY in env file.
+
+- TF-Hub is integrated with GIPHY. Fot that set env variables NUXT_ENV_GIPHY_API_URL and NUXT_ENV_GIPHY_API_TOKEN. Token you can get
+form [here](https://developers.giphy.com/dashboard/) by creating new App.
