@@ -70,7 +70,7 @@
                 :items="approverItems"
                 label="Schvalovatel"
                 :rules="[rules.required]"
-                no-data-text="Žádný data k dispozici."
+                no-data-text="Žádná data k dispozici."
               />
             </v-col>
           </v-row>

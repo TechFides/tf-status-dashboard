@@ -31,6 +31,11 @@ export const state = () => ({
   },
   notificationTimeout: null,
   meetingTimes: [],
+  workLogs: {
+    items: [],
+    timeSpentSum: '',
+  },
+  costCategories: [],
 });
 
 const sortAscByProperty = function (property, a, b) {
@@ -73,6 +78,20 @@ const calculateLevel = (totalExp) => {
   const result = d / (2 * 5);
 
   return Math.floor(result);
+};
+
+const getTimeSpent = (value)  => {
+  let timeSpent;
+
+  if (value < 60) {
+    timeSpent = value + 'm';
+  } else if (value % 60 === 0) {
+    timeSpent = (value / 60) + 'h';
+  } else {
+    timeSpent = `${Math.floor(value / 60)}h ${(value % 60)}m`;
+  }
+
+  return timeSpent;
 };
 
 const filterProjectsByRatings = (projects, ratings, date) => {
@@ -207,11 +226,11 @@ export const mutations = {
     state.officeAbsences = officeAbsences.map(o => ({
       id: o.id,
       author: o.user,
-      absenceStart: moment(o.absence_start).format('DD. MM. YYYY'),
+      absenceStart: moment(o.absence_start).format('DD.MM.YYYY'),
       absenceStartByNumber: moment(o.absence_start).valueOf(),
-      absenceEnd: moment(o.absence_end).format('DD. MM. YYYY'),
+      absenceEnd: moment(o.absence_end).format('DD.MM.YYYY'),
       absenceEndByNumber: moment(o.absence_end).valueOf(),
-      created: moment(o.created_at).format('DD. MM. YYYY'),
+      created: moment(o.created_at).format('DD.MM.YYYY'),
       createdByNumber: moment(o.created_at).valueOf(),
       absenceType: o.absenceTypeEnum,
       absenceState: o.absenceStateEnum,
@@ -236,6 +255,39 @@ export const mutations = {
       lastName: u.last_name,
       priority: u.priority,
     }));
+  },
+  setWorkLogs (state, workLogs) {
+    state.workLogs.items = workLogs.items.map(w => ({
+      id: w.id,
+      author: {
+        fullName: w.user ? `${w.user .first_name} ${w.user .last_name}` : '',
+        id: w.user ? w.user .id : null,
+      },
+      started: moment(w.started).format('DD.MM.YYYY HH:mm'),
+      startedByNumber: moment(w.started).valueOf(),
+      timeSpent: getTimeSpent(w.time_spent),
+      description: w.description,
+      costCategory: {
+        id: w.costCategory.id,
+        name: w.costCategory.name,
+      },
+    }));
+
+    state.workLogs.timeSpentSum = getTimeSpent(workLogs.timeSpentSum);
+  },
+  setCostCategories (state, costCategories) {
+    let flat = [];
+    for (let i = 0; i < costCategories.data.length; i++) {
+      flat = flat.concat(costCategories.data[i].subCategories);
+    }
+    const flattenArray = flat.concat(costCategories.data).map(f => ({
+      hasSubCategory: f.subCategories,
+      workCategory: f.workCategory,
+      name: f.name,
+      id: f.id,
+    }));
+
+    state.costCategories = flattenArray.filter(f => !f.hasSubCategory.length && f.workCategory);
   },
   setUsers (state, users) {
     state.users = users.map(u => ({
@@ -614,6 +666,69 @@ export const actions = {
     } catch (error) {
       commit('setNotification', { color: 'error', message: `Nepřítomnost se nepodařilo odstranit.` });
     }
+  },
+  async getWorkLogs ({ commit }, params) {
+    let payloads;
+    if (params) {
+      payloads = {
+        authorId: params.authorId,
+        costCategoryId: params.costCategoryId,
+        startDate: params.dates[0],
+        endDate: params.dates[1],
+        loggedInUserId: this.$auth.user.id,
+      };
+    } else {
+      payloads = {
+        startDate: moment().startOf('month').format('YYYY-MM-DD'),
+        endDate: moment().endOf('month').format('YYYY-MM-DD'),
+        loggedInUserId: this.$auth.user.id,
+      };
+    }
+    const workLogs = await this.$axios.$get(
+      '/api/work-logs',
+      { params: payloads },
+    );
+
+    commit('setWorkLogs', workLogs);
+  },
+  async createWorkLog ({ dispatch, commit }, workLog) {
+    try {
+      await this.$axios.$post('/api/work-log', workLog);
+      dispatch('getWorkLogs');
+      commit('clearErrorState');
+    } catch (error) {
+      if (error && error.response && error.response.data) {
+        commit('setErrorState', error.response.data);
+      }
+    }
+  },
+  async deleteWorkLog ({ dispatch, commit }, workLogId) {
+    try {
+      await this.$axios.$delete(`/api/work-logs/${workLogId}`);
+      dispatch('getWorkLogs');
+      commit('clearNotification');
+    } catch (error) {
+      commit('setNotification', { color: 'error', message: `WorkLog se nepodařilo odstranit.` });
+    }
+  },
+  async editWorkLog ({ dispatch, commit }, workLog) {
+    try {
+      await this.$axios.$put(`/api/work-log/${workLog.id}`, workLog);
+      commit('clearErrorState');
+      dispatch('getWorkLogs');
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('setErrorState', error.response.data[0]);
+      }
+    }
+  },
+  async getCostCategories ({ commit }) {
+    const costCategories = await this.$axios({ url: '/api/cost-categories/tree', baseURL: process.env.NUXT_ENV_TF_ERP_API_URL, headers: {
+        apitoken: process.env.NUXT_ENV_TF_ERP_API_TOKEN,
+        Authorization: '',
+      },
+    });
+    commit('setCostCategories', costCategories.data);
   },
   async getUsers ({ commit }) {
     const users = await this.$axios.$get('/api/users');
