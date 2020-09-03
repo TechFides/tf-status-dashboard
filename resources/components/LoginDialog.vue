@@ -1,6 +1,6 @@
 <template>
   <div v-if="$auth.$state.loggedIn">
-    Přihlášen jako {{ $auth.user.first_name }} {{ $auth.user.last_name }}
+    <span v-if="$device.isDesktop">Přihlášen jako {{ $auth.user.first_name }} {{ $auth.user.last_name }}</span>
     <v-btn
       class="ml-8"
       @click="logout"

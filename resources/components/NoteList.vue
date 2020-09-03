@@ -112,6 +112,12 @@ export default {
     column-fill: balance;
   }
 
+  @media only screen and (max-width: 600px) {
+    .note-columns {
+      column-count: auto;
+    }
+  }
+
   .note-card {
     display: inline-block;
     width: 100%;

@@ -95,6 +95,16 @@ const getTimeSpent = (value)  => {
   return timeSpent;
 };
 
+const getBestUsersByMonthXp = (array)  => {
+  const numberOfBestUsers = 4;
+  return array.slice(0, numberOfBestUsers);
+};
+
+const getBestUsersByTotalXp = (array)  => {
+  const numberOfBestUsers = 2;
+  return array.slice(0, numberOfBestUsers);
+};
+
 const filterProjectsByRatings = (projects, ratings, date) => {
   const allowedProjectIds = {};
   const currentDate = new Date();
@@ -186,10 +196,10 @@ export const mutations = {
   setProjectStatistics (state, projectStatistics) {
     state.projectStatistics = projectStatistics;
     const sortedUsersByMonthXp = projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'monthXp'));
-    state.projectStatistics.heroesOfMonth = [sortedUsersByMonthXp[0], sortedUsersByMonthXp[1], sortedUsersByMonthXp[2], sortedUsersByMonthXp[3]];
+    state.projectStatistics.heroesOfMonth = getBestUsersByMonthXp(sortedUsersByMonthXp);
 
     const sortedUsersByTotalXp = projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'totalXp'));
-    state.projectStatistics.heroesOfGame = [sortedUsersByTotalXp[0], sortedUsersByTotalXp[1]];
+    state.projectStatistics.heroesOfGame = getBestUsersByTotalXp(sortedUsersByTotalXp);
   },
   setJiraSynchronizationStatus (state, syncData) {
     state.projectStatistics.jiraSynchronization = {
@@ -208,10 +218,10 @@ export const mutations = {
       }
     });
     const sortedUsersByMonthXp = state.projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'monthXp'));
-    state.projectStatistics.heroesOfMonth = [sortedUsersByMonthXp[0], sortedUsersByMonthXp[1], sortedUsersByMonthXp[2]];
+    state.projectStatistics.heroesOfMonth = getBestUsersByMonthXp(sortedUsersByMonthXp);
 
     const sortedUsersByTotalXp = state.projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'totalXp'));
-    state.projectStatistics.heroesOfGame = [sortedUsersByTotalXp[0], sortedUsersByTotalXp[1], sortedUsersByTotalXp[2]];
+    state.projectStatistics.heroesOfGame = getBestUsersByTotalXp(sortedUsersByTotalXp);
   } ,
   setNotes (state, notes) {
     state.notes = notes.map(n => ({
