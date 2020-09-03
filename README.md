@@ -70,3 +70,6 @@ to the created service account (variable GOOGLE_SERVICE_EMAIL in Env) (<service_
 Don't forget you have to set it up GOOGLE_SERVICE_EMAIL and GOOGLE_PRIVATE_KEY in env file.
 
 - App is integrated with TF-ERP system to get cost categories. For that set env variables NUXT_ENV_TF_ERP_API_URL and NUXT_ENV_TF_ERP_API_TOKEN
+
+- TF-Hub is integrated with GIPHY. Fot that set env variables NUXT_ENV_GIPHY_API_URL and NUXT_ENV_GIPHY_API_TOKEN. Token you can get
+form [here](https://developers.giphy.com/dashboard/) by creating new App.

@@ -100,6 +100,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    onSubmit: {
+      type: Function,
+      default: () => {},
+    },
   },
   data () {
     return {
@@ -156,6 +160,10 @@ export default {
           ratingValueId: ratingValue,
           standupId: this.standupId,
         };
+
+        if (this.getRatingId(icon) === this.RATING_ENUM.AMAZING) {
+          this.onSubmit();
+        }
 
         await this.$store.dispatch('editRating', ratingData);
       } catch (e) {
