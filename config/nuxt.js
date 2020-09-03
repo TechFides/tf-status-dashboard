@@ -29,6 +29,7 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/auth',
     '@nuxtjs/vuetify',
+    '@nuxtjs/device',
   ],
   auth: {
     redirect: {

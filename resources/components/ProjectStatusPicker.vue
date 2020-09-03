@@ -220,6 +220,10 @@ export default {
 </script>
 
 <style scoped>
+/deep/ .v-dialog {
+  overflow: hidden !important;
+}
+
 .myicon {
   display: flex;
   flex-direction: row;
