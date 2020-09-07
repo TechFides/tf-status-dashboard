@@ -66,11 +66,11 @@
               </v-layout>
               <v-alert
                 transition="fade-transition"
-                :value="error.isVisible"
+                :value="errors.error.isVisible"
                 type="error"
                 color="red darken-2"
               >
-                {{ error.message }}
+                {{ errors.error.message }}
               </v-alert>
             </div>
             <v-card-actions>
@@ -124,11 +124,11 @@
             </v-layout>
             <v-alert
               transition="fade-transition"
-              :value="error.isVisible"
+              :value="errors.error.isVisible"
               type="error"
               color="red darken-2"
             >
-              {{ error.message }}
+              {{ errors.error.message }}
             </v-alert>
           </div>
           <v-card-actions>
@@ -332,7 +332,6 @@ export default {
         isOpen: false,
         url: '',
       },
-      filteredProjectsBySelectedMeetingTime: this.projects,
       selectedMeetingTimeId: null,
       defaultRating: 8,
       modalItem: {
@@ -366,13 +365,9 @@ export default {
     ...mapState([
       'notes',
       'projects',
-      'standupRatings',
-      'error',
+      'standups',
+      'errors',
       'meetingTimes',
-    ]),
-    ...mapMutations([
-      'clearErrorState',
-      'setErrorState',
     ]),
     headers () {
       const sortedProjects = this.sortProjectsByMeetingTime();
@@ -405,7 +400,7 @@ export default {
       ];
     },
     rows () {
-      return this.standupRatings.map(standup => ({
+      return this.standups.ratings.map(standup => ({
         standup: {
           id: standup.id,
           date: standup.date,
@@ -414,7 +409,7 @@ export default {
       }));
     },
     projectNames () {
-      return this.projects.map(p => ({
+      return this.projects.items.map(p => ({
         text: p.code,
         value: p.id,
       }));
@@ -428,7 +423,7 @@ export default {
     formattedMeetingTimesForSelect () {
       return [
         {text: 'Žádný', value: null},
-        ...this.meetingTimes.map(meetingTime => ({
+        ...this.meetingTimes.items.map(meetingTime => ({
           text: meetingTime.dayAndTime,
           value: meetingTime.id,
         })),
@@ -437,16 +432,16 @@ export default {
   },
   fetch ({ store, params }) {
     return Promise.all([
-      store.dispatch('getStandupData'),
-      store.dispatch('getNotes'),
-      store.dispatch('getMeetingTimes'),
-      store.dispatch('getProjects'),
+      store.dispatch('standups/getStandupData'),
+      store.dispatch('notes/getNotes'),
+      store.dispatch('meetingTimes/getMeetingTimes'),
+      store.dispatch('projects/getProjects'),
     ]);
   },
   methods: {
     sortProjectsByMeetingTime () {
-      const projectsWithoutMeetingTime = this.projects.filter(project => project.meetingTime.time === null);
-      const sortedProjectsWithMeetingTime = this.projects
+      const projectsWithoutMeetingTime = this.projects.items.filter(project => project.meetingTime.time === null);
+      const sortedProjectsWithMeetingTime = this.projects.items
         .filter(project => project.meetingTime.time !== null)
         .sort((a, b) => this.sortByDayAndTime(a.meetingTime, b.meetingTime));
 
@@ -500,9 +495,9 @@ export default {
       const isSameYear = (selectedDate.getFullYear() === actualDate.getFullYear());
 
       if (isSameMonth && isSameYear) {
-        this.$store.dispatch('getStandupData', selectedDate);
+        this.$store.dispatch('standups/getStandupData', selectedDate);
       } else {
-        this.$store.dispatch('getProjectsForMonth', selectedDate);
+        this.$store.dispatch('standups/getProjectsForMonth', selectedDate);
       }
 
       this.monthPickerIsOpen = false;
@@ -520,7 +515,7 @@ export default {
       date = addWeeks(date, 1);
       date = setDay(date, 1);
 
-      this.$store.commit('clearErrorState');
+      this.$store.commit('errors/clearErrorState');
 
       this.noteDialog = {
         ...this.defaultNoteDialog,
@@ -530,7 +525,7 @@ export default {
     resetStandup () {
       const date = new Date();
 
-      this.$store.commit('clearErrorState');
+      this.$store.commit('errors/clearErrorState');
 
       this.standupDialog = {
         isOpen: false,
@@ -539,7 +534,7 @@ export default {
     },
     isMissingNote (projectCode, hasIcon) {
       const date = format(new Date(), 'YYYY-MM-DD 00:00:00');
-      const hasNoteAfterDeadline = this.notes.some(element => {
+      const hasNoteAfterDeadline = this.notes.items.some(element => {
         return element.projectCode === projectCode && element.deadlineDate > date;
       });
       return !hasNoteAfterDeadline && hasIcon;
@@ -560,7 +555,7 @@ export default {
       const resultDate = setHours(deadlineDate, getHours(currentDate));
 
       if (errorMsg) {
-        this.$store.commit('setErrorState', {message: errorMsg});
+        this.$store.commit('errors/setErrorState', {message: errorMsg});
         return;
       }
 
@@ -572,9 +567,9 @@ export default {
       };
 
       if (note.id) {
-        await this.$store.dispatch('editNote', note);
+        await this.$store.dispatch('notes/editNote', note);
       } else {
-        await this.$store.dispatch('createNote', note);
+        await this.$store.dispatch('notes/createNote', note);
       }
 
       this.noteDialog.isOpen = false;
@@ -610,7 +605,7 @@ export default {
       setTimeout(() => this.gifDialog.isOpen = false, this.GIF_ANIMATION_DURATION);
     },
     async save () {
-      const action = this.standupDialog.id ? 'editStandup' : 'createStandup';
+      const action = this.standupDialog.id ? 'standups/editStandup' : 'standups/createStandup';
       const currentDateInMiliSec = new Date().getTime();
       const difference = currentDateInMiliSec - this.standupDialog.date.getTime();
       const isInPast = difference > 6e7; // 1 hour
@@ -623,7 +618,7 @@ export default {
       }
 
       if (errorMsg) {
-        this.$store.commit('setErrorState', {message: errorMsg});
+        this.$store.commit('errors/setErrorState', {message: errorMsg});
         return;
       }
       await this.$store.dispatch(action, this.standupDialog);
@@ -638,7 +633,7 @@ export default {
       };
 
       if (confirmed) {
-        await this.$store.dispatch('deleteStandup', this.standupDialog);
+        await this.$store.dispatch('standups/deleteStandup', this.standupDialog);
       }
     },
   },

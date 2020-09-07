@@ -140,17 +140,18 @@
     computed: {
       ...mapState([
         'costCategories',
+        'officeAbsences',
         'auth',
-        'error',
+        'errors',
       ]),
       costCategoryItems () {
-        return this.costCategories.map(c => ({
+        return this.costCategories.items.map(c => ({
           text: c.name,
           value: c.id,
         }));
       },
       absenceTypeEnumItems () {
-        return this.absenceTypeEnums.map(absenceTypeEnum => ({
+        return this.officeAbsences.absenceTypeEnums.map(absenceTypeEnum => ({
           text: absenceTypeEnum.value,
           value: absenceTypeEnum.id,
         }));
@@ -181,23 +182,23 @@
             authorId: this.dialogData.authorId,
             started: `${this.dialogData.startedDate} ${this.dialogData.startedTime}`,
             timeSpent: this.timeSpentToMs(this.dialogData.timeSpent),
-            costCategory: this.costCategories.find(c => c.id === this.dialogData.costCategoryId),
+            costCategory: this.costCategories.items.find(c => c.id === this.dialogData.costCategoryId),
             description: this.dialogData.description,
           };
 
           if (this.dialogType) {
-            await this.$store.dispatch('createWorkLog', payloads);
+            await this.$store.dispatch('workLogs/createWorkLog', payloads);
           } else {
-            await this.$store.dispatch('editWorkLog', payloads);
+            await this.$store.dispatch('workLogs/editWorkLog', payloads);
           }
-          !this.error.isVisible && this.cancelDialog();
+          !this.errors.error.isVisible && this.cancelDialog();
         }
       },
       cancelDialog () {
         this.dialogData = { ...this.defaultDialogData };
         this.$refs.form.resetValidation();
         this.show = false;
-        this.$store.commit('clearErrorState');
+        this.$store.commit('errors/clearErrorState');
       },
       timeSpentToMs (value) {
         const m = value.substring(value.lastIndexOf(" ") + 1, value.lastIndexOf("m"));

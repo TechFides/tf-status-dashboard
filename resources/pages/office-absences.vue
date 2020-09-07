@@ -48,7 +48,7 @@
       </v-row>
       <v-data-table
         :headers="headers"
-        :items="officeAbsences"
+        :items="officeAbsences.items"
         :items-per-page="10"
         item-key="id"
         fill-height
@@ -151,9 +151,6 @@
     computed: {
       ...mapState([
         'officeAbsences',
-        'error',
-        'absenceTypeEnums',
-        'absenceStateEnums',
       ]),
       headers () {
         return [
@@ -223,16 +220,16 @@
         ];
       },
       officeAbsenceDetailItems () {
-        return this.officeAbsences.find(o => o.id === this.expandedRowId);
+        return this.officeAbsences.items.find(o => o.id === this.expandedRowId);
       },
       absenceTypeEnumItems () {
-        return this.absenceTypeEnums.map(absenceTypeEnum => ({
+        return this.officeAbsences.absenceTypeEnums.map(absenceTypeEnum => ({
           text: absenceTypeEnum.value,
           value: absenceTypeEnum.id,
         }));
       },
       absenceStateEnumItems () {
-        return this.absenceStateEnums.map(absenceStateEnum => ({
+        return this.officeAbsences.absenceStateEnums.map(absenceStateEnum => ({
           text: absenceStateEnum.value,
           value: absenceStateEnum.id,
         }));
@@ -241,21 +238,21 @@
     watch: {
       filter: {
         handler() {
-          this.$store.dispatch('getOfficeAbsences', this.filter);
+          this.$store.dispatch('officeAbsences/getOfficeAbsences', this.filter);
         },
         deep: true,
       },
     },
     async fetch ({ store }) {
       await Promise.all([
-        store.dispatch('getAbsenceTypeEnums'),
-        store.dispatch('getAbsenceStateEnums'),
+        store.dispatch('officeAbsences/getAbsenceTypeEnums'),
+        store.dispatch('officeAbsences/getAbsenceStateEnums'),
       ]);
     },
     async created() {
       await Promise.all([
-        this.$store.dispatch('getOfficeAbsences'),
-        this.$store.dispatch('getApprovers'),
+        this.$store.dispatch('officeAbsences/getOfficeAbsences'),
+        this.$store.dispatch('officeAbsences/getApprovers'),
       ]);
     },
     methods: {
@@ -287,7 +284,7 @@
           const confirmed = confirm(`Opravdu chcete smazat tuhle žádost o nepřítomnost.`);
 
           if (confirmed) {
-            await this.$store.dispatch('deleteOfficeAbsence', item.id);
+            await this.$store.dispatch('officeAbsences/deleteOfficeAbsence', item.id);
           }
         } else {
           this.$refs.cancelAbsenceDialog.openDialog(item);
