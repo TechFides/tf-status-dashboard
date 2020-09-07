@@ -109,7 +109,7 @@
     </v-card>
     <v-row>
       <v-col
-        cols="4"
+        cols="6"
         class="time-spent-sum pl-6"
       >
         Celkem odpracovaný čas za zvolené období: {{ workLogs.timeSpentSum }}
@@ -146,7 +146,6 @@
     computed: {
       ...mapState([
         'workLogs',
-        'error',
         'users',
         'costCategories',
       ]),
@@ -199,13 +198,13 @@
         return headers.filter(h => h.isVisible);
       },
       costCategoryItems () {
-        return this.costCategories.map(c => ({
+        return this.costCategories.items.map(c => ({
           text: c.name,
           value: c.id,
         }));
       },
       authorItems () {
-        return this.users.map(user => ({
+        return this.users.items.map(user => ({
           text: `${user.firstName} ${user.lastName}`,
           value: user.id.toString(),
         }));
@@ -215,7 +214,7 @@
       filter: {
         handler() {
           if (this.filter.dates[0] && this.filter.dates[1]) {
-            this.$store.dispatch('getWorkLogs', this.filter);
+            this.$store.dispatch('workLogs/getWorkLogs', this.filter);
           }
         },
         deep: true,
@@ -223,9 +222,9 @@
     },
     async created() {
       await Promise.all([
-        this.$store.dispatch('getWorkLogs', this.filter),
-        this.$store.dispatch('getUsers'),
-        this.$store.dispatch('getCostCategories'),
+        this.$store.dispatch('workLogs/getWorkLogs', this.filter),
+        this.$store.dispatch('users/getUsers'),
+        this.$store.dispatch('costCategories/getCostCategories'),
       ]);
     },
     methods: {
@@ -233,7 +232,7 @@
         const confirmed = confirm(`Opravdu chcete smazat tento worklog.`);
 
         if (confirmed) {
-          await this.$store.dispatch('deleteWorkLog', item.id);
+          await this.$store.dispatch('workLogs/deleteWorkLog', item.id);
         }
       },
       createNewWorkLog() {

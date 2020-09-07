@@ -41,11 +41,11 @@
       </no-ssr>
     </v-main>
     <v-snackbar
-      :value="snackbar.isVisible"
-      :color="snackbar.color"
+      :value="notification.items.isVisible"
+      :color="notification.items.color"
       :multi-line="true"
     >
-      {{ snackbar.message }}
+      {{ notification.items.message }}
       <v-btn
         dark
         text
@@ -78,10 +78,7 @@ export default {
   },
   computed: {
     ...mapState([
-      'snackbar',
-    ]),
-    ...mapMutations([
-      'clearNotification',
+      'notification',
     ]),
     items () {
       const items = [
@@ -112,7 +109,7 @@ export default {
   },
   methods: {
     closeNotification () {
-      this.$store.commit('clearNotification');
+      this.$store.commit('notification/clearNotification');
     },
   },
 };

@@ -120,11 +120,11 @@
             >
               <v-alert
                 transition="fade-transition"
-                :value="error.isVisible"
+                :value="errors.error.isVisible"
                 type="error"
                 color="red darken-2"
               >
-                {{ error.message }}
+                {{ errors.error.message }}
               </v-alert>
             </v-col>
           </v-row>
@@ -205,10 +205,9 @@
     },
     computed: {
       ...mapState([
-        'absenceTypeEnums',
-        'approvers',
+        'officeAbsences',
         'auth',
-        'error',
+        'errors',
         'gifs',
       ]),
       absenceStart() {
@@ -221,13 +220,13 @@
         return this.dialogData.absenceType;
       },
       approverItems () {
-        return this.approvers.length ? this.approvers.map(approver => ({
+        return this.officeAbsences.approvers.length ? this.officeAbsences.approvers.map(approver => ({
           text: `${approver.firstName} ${approver.lastName}`,
           value: approver.id,
         })): this.defaultSelectItems;
       },
       absenceTypeEnumItems () {
-        return this.absenceTypeEnums.map(absenceTypeEnum => ({
+        return this.officeAbsences.absenceTypeEnums.map(absenceTypeEnum => ({
           text: absenceTypeEnum.value,
           value: absenceTypeEnum.id,
         }));
@@ -246,16 +245,16 @@
           limit: 10,
           api_key: process.env.NUXT_ENV_GIPHY_API_TOKEN,
         };
-        await this.$store.dispatch('getRandomGif', params);
+        await this.$store.dispatch('gifs/getRandomGif', params);
 
-        this.gif = this.gifs[Math.floor(Math.random() * this.gifs.length)];
+        this.gif = this.gifs.items[Math.floor(Math.random() * this.gifs.items.length)];
       },
     },
     methods: {
       openDialog() {
-        if (this.approvers.length) {
-          const priorityApprover = this.approvers.find(a => a.priority);
-          const secondaryApprover = this.approvers.find(a => !a.priority);
+        if (this.officeAbsences.approvers.length) {
+          const priorityApprover = this.officeAbsences.approvers.find(a => a.priority);
+          const secondaryApprover = this.officeAbsences.approvers.find(a => !a.priority);
 
           this.dialogData.approver = priorityApprover ? priorityApprover.id : secondaryApprover.id;
         }
@@ -266,15 +265,16 @@
       },
       async confirmDialog () {
         if (this.$refs.form.validate()) {
-          await this.$store.dispatch('createOfficeAbsence', this.dialogData);
-          !this.error.isVisible && this.cancelDialog();
+          await this.$store.dispatch('officeAbsences/createOfficeAbsence', this.dialogData);
+
+          !this.errors.error.isVisible && this.cancelDialog();
         }
       },
       cancelDialog () {
         this.dialogData = { ...this.defaultDialogData };
         this.$refs.form.resetValidation();
         this.show = false;
-        this.$store.commit('clearErrorState');
+        this.$store.commit('errors/clearErrorState');
       },
       countAbsenceHoursNumber () {
         const startDay = moment(this.dialogData.absenceStart);

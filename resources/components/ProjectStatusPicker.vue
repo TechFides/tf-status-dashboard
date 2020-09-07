@@ -127,7 +127,7 @@ export default {
       return this.getRatingIconFromId(this.projectRating);
     },
     projectName () {
-      return this.projects.find(p => p.id === this.projectId).code;
+      return this.projects.items.find(p => p.id === this.projectId).code;
     },
   },
   methods: {
@@ -165,7 +165,7 @@ export default {
           this.onSubmit();
         }
 
-        await this.$store.dispatch('editRating', ratingData);
+        await this.$store.dispatch('standups/editRating', ratingData);
       } catch (e) {
         // TODO handle error
         console.error(e);

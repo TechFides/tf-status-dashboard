@@ -105,11 +105,11 @@
             </v-container>
             <v-alert
               transition="fade-transition"
-              :value="error.isVisible"
+              :value="errors.error.isVisible"
               type="error"
               color="red darken-2"
             >
-              {{ error.message }}
+              {{ errors.error.message }}
             </v-alert>
           </v-card-text>
 
@@ -253,11 +253,7 @@ export default {
   computed: {
     ...mapState([
       'users',
-      'roles',
-      'error',
-    ]),
-    ...mapMutations([
-      'setErrorState',
+      'errors',
     ]),
     headers: function () {
       return [
@@ -306,7 +302,7 @@ export default {
       ];
     },
     filteredUsers () {
-      return this.users.filter((element) => {
+      return this.users.items.filter((element) => {
         const uppercasedFilterText = this.filteringText.toUpperCase();
 
         return element.username.toUpperCase().match(uppercasedFilterText) ||
@@ -316,13 +312,13 @@ export default {
       });
     },
     roleItems () {
-      return this.roles.map(r => ({
+      return this.users.roles.map(r => ({
         text: roleTranslation[r.slug],
         value: r.slug,
       }));
     },
     absenceApproverItems () {
-      return this.users.map(user => ({
+      return this.users.items.map(user => ({
         text: `${user.firstName} ${user.lastName}`,
         value: user.id,
       }));
@@ -330,8 +326,8 @@ export default {
   },
   async fetch ({ store }) {
     await Promise.all([
-      store.dispatch('getUsers'),
-      store.dispatch('getRoles'),
+      store.dispatch('users/getUsers'),
+      store.dispatch('users/getRoles'),
     ]);
   },
   methods: {
@@ -360,21 +356,21 @@ export default {
       const confirmed = confirm(`Opravdu chcete smazat uživatele ${item.firstName} ${item.lastName}?`);
 
       if (confirmed) {
-        await this.$store.dispatch('deleteUser', item.id);
-        await this.$store.dispatch('getUsers');
+        await this.$store.dispatch('users/deleteUser', item.id);
+        await this.$store.dispatch('users/getUsers');
       }
     },
     close () {
       this.$refs.form.resetValidation();
       this.dialog = false;
       this.modalItem = { ...this.defaultModalItem };
-      this.$store.commit('clearErrorState');
+      this.$store.commit('errors/clearErrorState');
     },
     async save () {
-      const action = this.modalItem.id ? 'editUser' : 'createUser';
+      const action = this.modalItem.id ? 'users/editUser' : 'users/createUser';
 
       await this.$store.dispatch(action, this.modalItem);
-      !this.error.isVisible && this.close();
+      !this.errors.error.isVisible && this.close();
     },
     isUserActive (isActive, toUpper) {
       const result = isActive ? 'ano' : 'ne';
@@ -385,7 +381,7 @@ export default {
       return `${firstName} ${lastName}`;
     },
     userRoles (user) {
-      return this.roles
+      return this.users.roles
         .filter(r => user.roles.includes(r.slug))
         .map(r => roleTranslation[r.slug])
         .join(', ');

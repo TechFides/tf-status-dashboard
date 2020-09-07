@@ -1,7 +1,7 @@
 <template>
   <div class="note-columns mx-3">
     <v-card
-      v-for="item in notes"
+      v-for="item in notes.items"
       :key="item.id"
       color="brown lighten-5"
       class="note-card mt-3"
@@ -94,7 +94,7 @@ export default {
     },
     markNoteCompleted (note) {
       if (confirm('Opravdu chcete označit poznámku za dokončenou?')) {
-        this.$store.dispatch('markNoteCompleted', note.id);
+        this.$store.dispatch('notes/markNoteCompleted', note.id);
       }
     },
   },

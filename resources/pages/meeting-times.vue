@@ -71,11 +71,11 @@
 
             <v-alert
               transition="fade-transition"
-              :value="error.isVisible"
+              :value="errors.error.isVisible"
               type="error"
               color="red darken-2"
             >
-              {{ error.message }}
+              {{ errors.error.message }}
             </v-alert>
           </v-container>
         </v-card-text>
@@ -102,7 +102,7 @@
 
     <v-data-table
       :headers="headers"
-      :items="meetingTimes"
+      :items="meetingTimes.items"
       :items-per-page="999"
       item-key="id"
       hide-default-footer
@@ -129,13 +129,13 @@
             <v-icon
               small
               class="mr-2"
-              @click="toggleDialogVisibility(item)"
+              @click="toggleDialogVisibility(props.item)"
             >
               edit
             </v-icon>
             <v-icon
               small
-              @click="deleteSitDownMeetingTime(item.id)"
+              @click="deleteSitDownMeetingTime(props.item.id)"
             >
               delete
             </v-icon>
@@ -169,12 +169,7 @@
     computed: {
       ...mapState([
         'meetingTimes',
-        'error',
-      ]),
-      ...mapMutations([
-        'createMeetingTime',
-        'editMeetingTime',
-        'deleteMeetingTime',
+        'errors',
       ]),
       headers: function () {
         return [
@@ -207,7 +202,7 @@
       },
     },
     async fetch ({ store }) {
-      await store.dispatch('getMeetingTimes');
+      await store.dispatch('meetingTimes/getMeetingTimes');
     },
     methods: {
       updateName (value) {
@@ -223,7 +218,7 @@
         return `${isEdit ? 'Upravit' : 'Nový'} čas konání sitdownu`;
       },
       closeDialog () {
-        if (!this.error.isVisible) this.dialog.isOpen = false;
+        if (!this.errors.error.isVisible) this.dialog.isOpen = false;
       },
       toggleDialogVisibility (dataForEdit) {
         const isEdit = dataForEdit !== undefined;
@@ -263,18 +258,18 @@
         return this.editId ? Object.assign(dataForRequest, { id: this.editId }) : dataForRequest;
       },
       async createSitDownMeetingTime () {
-        await this.$store.dispatch('createMeetingTime', this.getTransformedDataForRequest());
+        await this.$store.dispatch('meetingTimes/createMeetingTime', this.getTransformedDataForRequest());
         this.closeDialog();
       },
       async editSitDownMeetingTime () {
-        await this.$store.dispatch('editMeetingTime', this.getTransformedDataForRequest());
+        await this.$store.dispatch('meetingTimes/editMeetingTime', this.getTransformedDataForRequest());
         this.closeDialog();
       },
       async deleteSitDownMeetingTime (id) {
         const confirmed = confirm(`Opravdu chcete smazat sitdown (id: ${id})?`);
 
         if (confirmed) {
-          await this.$store.dispatch('deleteMeetingTime', id);
+          await this.$store.dispatch('meetingTimes/deleteMeetingTime', id);
         }
       },
     },

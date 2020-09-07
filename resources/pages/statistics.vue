@@ -37,11 +37,11 @@
               </v-container>
               <v-alert
                 transition="fade-transition"
-                :value="error.isVisible"
+                :value="errors.error.isVisible"
                 type="error"
                 color="red darken-2"
               >
-                {{ error.message }}
+                {{ errors.error.message }}
               </v-alert>
             </v-card-text>
 
@@ -122,7 +122,7 @@
     >
       <v-data-table
         :headers="headers"
-        :items="projectStatistics.userStatistics"
+        :items="statistics.items.userStatistics"
         :items-per-page="999"
         item-key="id"
         hide-default-footer
@@ -265,7 +265,7 @@
     >
       <v-tooltip
         bottom
-        :disabled="!projectStatistics.jiraSynchronization.status"
+        :disabled="!statistics.items.jiraSynchronization.status"
       >
         <template v-slot:activator="{ on, attrs }">
           <div
@@ -276,18 +276,18 @@
               v-show="isAdmin() && checkSyncButton"
               class="my-2 standup-button"
               color="primary"
-              :disabled="!!projectStatistics.jiraSynchronization.status"
+              :disabled="!!statistics.items.jiraSynchronization.status"
               @click="fetchJiraData()"
             >
               <v-progress-circular
-                v-if="projectStatistics.jiraSynchronization.status"
+                v-if="statistics.items.jiraSynchronization.status"
                 :size="25"
                 class="mr-2"
                 color="grey lighten-1"
                 indeterminate
               />
               <v-icon
-                v-if="!projectStatistics.jiraSynchronization.status"
+                v-if="!statistics.items.jiraSynchronization.status"
                 class="mr-2"
               >
                 mdi-download
@@ -302,20 +302,20 @@
       </v-tooltip>
     </v-layout>
     <div
-      v-if="projectStatistics.jiraSynchronization.status"
+      v-if="statistics.items.jiraSynchronization.status"
       class="column-align"
     >
       <div class="synchronization-info-wrapper">
         <div class="row-align blue-color">
           Synchronizece začala:
           <div class="synchronization-info">
-            {{ projectStatistics.jiraSynchronization.startSyncTime }}
+            {{ statistics.items.jiraSynchronization.startSyncTime }}
           </div>
         </div>
         <div class="row-align blue-color">
           Synchronizece naposledy trvala:
           <div class="synchronization-info">
-            {{ projectStatistics.jiraSynchronization.lastDuration }}
+            {{ statistics.items.jiraSynchronization.lastDuration }}
           </div>
         </div>
       </div>
@@ -348,8 +348,8 @@ export default {
   },
   computed: {
     ...mapState([
-      'projectStatistics',
-      'error',
+      'statistics',
+      'errors',
     ]),
     headers: function () {
       const headers = [
@@ -497,7 +497,7 @@ export default {
     },
 
     userDetailItems () {
-      const userDetail = this.projectStatistics.userStatistics.find(u => u.id === this.expandedRowId);
+      const userDetail = this.statistics.items.userStatistics.find(u => u.id === this.expandedRowId);
       return userDetail.userDetail;
     },
 
@@ -519,7 +519,7 @@ export default {
       year: now.getFullYear(),
     };
 
-    await store.dispatch('getProjectStatistics', params);
+    await store.dispatch('statistics/getProjectStatistics', params);
   },
   methods: {
     addExp(user) {
@@ -543,7 +543,7 @@ export default {
         sumHoursWorked: null,
         isOpen: false,
       };
-      this.$store.commit('clearErrorState');
+      this.$store.commit('errors/clearErrorState');
     },
 
     async save () {
@@ -562,16 +562,16 @@ export default {
         date: d,
       };
 
-      await this.$store.dispatch('addUserBonusXp', userBonusXp);
-      !this.error.isVisible && this.close();
+      await this.$store.dispatch('statistics/addUserBonusXp', userBonusXp);
+      !this.errors.error.isVisible && this.close();
     },
 
     isHeroOfMonth(user) {
-      return this.projectStatistics.heroesOfMonth.find(h => h.id === user);
+      return this.statistics.items.heroesOfMonth.find(h => h.id === user);
     },
 
     isHeroOfGame(user) {
-      return this.projectStatistics.heroesOfGame.find(h => h.id === user);
+      return this.statistics.items.heroesOfGame.find(h => h.id === user);
     },
 
     getRowId(row) {
@@ -580,8 +580,8 @@ export default {
 
     getProjectsStandupDates() {
       let standupDates;
-      if (this.projectStatistics.standups.length > 0) {
-        standupDates = this.projectStatistics.standups.map(p => ({
+      if (this.statistics.items.standups.length > 0) {
+        standupDates = this.statistics.items.standups.map(p => ({
           date: this.formatMonth(p.date),
         }));
       }
@@ -599,7 +599,7 @@ export default {
         status: 1,
       };
 
-      await this.$store.dispatch('getJiraData', params);
+      await this.$store.dispatch('statistics/getJiraData', params);
     },
 
     formatMonth (date) {
@@ -623,7 +623,7 @@ export default {
         month: Number(month),
       };
 
-      this.$store.dispatch('getProjectStatistics', selectedDate);
+      this.$store.dispatch('statistics/getProjectStatistics', selectedDate);
       this.statisticsMonthDialog.isOpen = false;
     },
   },
