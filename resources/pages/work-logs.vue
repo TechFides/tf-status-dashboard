@@ -49,7 +49,7 @@
         <v-col cols="2">
           <DatePicker
             v-model="filter.dates"
-            label="Zahájení nepřítomnosti"
+            label="Zahájení práce"
             :clearable="false"
             required
             range
