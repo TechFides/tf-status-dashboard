@@ -7,6 +7,16 @@ const calculateLevel = (totalExp) => {
   return Math.floor(result);
 };
 
+const getBestUsersByMonthXp = (array)  => {
+  const numberOfBestUsers = 4;
+  return array.slice(0, numberOfBestUsers);
+};
+
+const getBestUsersByTotalXp = (array)  => {
+  const numberOfBestUsers = 2;
+  return array.slice(0, numberOfBestUsers);
+};
+
 export const state = () => ({
   items: [],
 });
@@ -15,10 +25,10 @@ export const mutations = {
   setProjectStatistics (state, projectStatistics) {
     state.items = projectStatistics;
     const sortedUsersByMonthXp = projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'monthXp'));
-    state.items.heroesOfMonth = [sortedUsersByMonthXp[0], sortedUsersByMonthXp[1], sortedUsersByMonthXp[2], sortedUsersByMonthXp[3]];
+    state.items.heroesOfMonth = getBestUsersByMonthXp(sortedUsersByMonthXp);
 
     const sortedUsersByTotalXp = projectStatistics.userStatistics.sort(sortDesByProperty.bind(this, 'totalXp'));
-    state.items.heroesOfGame = [sortedUsersByTotalXp[0], sortedUsersByTotalXp[1]];
+    state.items.heroesOfGame = getBestUsersByTotalXp(sortedUsersByMonthXp);
   },
   setJiraSynchronizationStatus (state, syncData) {
     state.items.jiraSynchronization = {
@@ -37,10 +47,10 @@ export const mutations = {
       }
     });
     const sortedUsersByMonthXp = state.items.userStatistics.sort(sortDesByProperty.bind(this, 'monthXp'));
-    state.items.heroesOfMonth = [sortedUsersByMonthXp[0], sortedUsersByMonthXp[1], sortedUsersByMonthXp[2]];
+    state.items.heroesOfMonth = getBestUsersByMonthXp(sortedUsersByMonthXp);
 
     const sortedUsersByTotalXp = state.items.userStatistics.sort(sortDesByProperty.bind(this, 'totalXp'));
-    state.items.heroesOfGame = [sortedUsersByTotalXp[0], sortedUsersByTotalXp[1], sortedUsersByTotalXp[2]];
+    state.items.heroesOfGame = getBestUsersByTotalXp(sortedUsersByMonthXp);
   },
 };
 
