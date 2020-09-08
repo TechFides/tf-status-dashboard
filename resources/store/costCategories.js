@@ -4,18 +4,26 @@ export const state = () => ({
 
 export const mutations = {
   setCostCategories (state, costCategories) {
-    let flat = [];
-    for (let i = 0; i < costCategories.data.length; i++) {
-      flat = flat.concat(costCategories.data[i].subCategories);
+    let flattenArray = [];
+    for (const categorie of costCategories.data) {
+      if (categorie.subCategories.length) {
+        for (const subCategorie of categorie.subCategories) {
+          flattenArray.push({
+            workCategory: subCategorie.workCategory,
+            name: `${categorie.name} -> ${subCategorie.name}`,
+            id: subCategorie.id,
+          });
+        }
+      } else {
+        flattenArray.push({
+          workCategory: categorie.workCategory,
+          name: categorie.name,
+          id: categorie.id,
+        });
+      }
     }
-    const flattenArray = flat.concat(costCategories.data).map(f => ({
-      hasSubCategory: f.subCategories,
-      workCategory: f.workCategory,
-      name: f.name,
-      id: f.id,
-    }));
 
-    state.items = flattenArray.filter(f => !f.hasSubCategory.length && f.workCategory);
+    state.items = flattenArray.filter(f => f.workCategory);
   },
 };
 
