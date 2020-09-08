@@ -47,8 +47,8 @@ class AbsenceRequestApproverService {
         .where('id', officeAbsenceId)
         .first()).toJSON();
 
-      const waitingForApprovalSubject = 'Žádost o nepřítomnost v kanceláři.';
-      const waitingCancellationApprovalSubject = 'Žádost o zrušení nepřítomnosti v kanceláři.';
+      const waitingForApprovalSubject = `Žádost:  ${officeAbsence.user.first_name} ${officeAbsence.user.last_name.charAt(0)}. ${officeAbsence.absenceTypeEnum.short_cut} (${officeAbsence.absence_hours_number}h) ${officeAbsence.general_description}`;
+      const waitingCancellationApprovalSubject = `Žádost:  ${officeAbsence.user.first_name} ${officeAbsence.user.last_name.charAt(0)}. ${officeAbsence.absenceTypeEnum.short_cut} (${officeAbsence.absence_hours_number}h) ${officeAbsence.general_description}`;
       const commonEmailData = {
         text: officeAbsence.absenceStateEnum.id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL ? waitingForApprovalSubject : waitingCancellationApprovalSubject,
         subject: officeAbsence.absenceStateEnum.id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL ? waitingForApprovalSubject : waitingCancellationApprovalSubject,
@@ -75,7 +75,8 @@ class AbsenceRequestApproverService {
             endDate: moment(officeAbsence.absence_end).format('DD.MM.YYYY'),
             type: officeAbsence.absenceTypeEnum.value,
             hoursNumber: officeAbsence.absence_hours_number,
-            description: officeAbsence.description,
+            generalDescription: officeAbsence.general_description,
+            approverDescription: officeAbsence.approver_description,
           },
         }),
       });

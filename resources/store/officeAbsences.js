@@ -9,6 +9,7 @@ export const state = () => ({
 
 export const mutations = {
   setOfficeAbsences (state, officeAbsences) {
+    console.log(officeAbsences);
     state.items = officeAbsences.map(o => ({
       id: o.id,
       author: o.user,

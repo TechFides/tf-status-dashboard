@@ -14,7 +14,7 @@ class GoogleCalendarManager {
     const calendarId = Env.get('GOOGLE_CALENDAR_ID');
     let params = {
       'summary': officeAbsence.calendar_event_title,
-      'description': officeAbsence.description,
+      'description': officeAbsence.general_description,
       'start': {
         'date': moment(officeAbsence.absence_start).format('YYYY-MM-DD'),
       },

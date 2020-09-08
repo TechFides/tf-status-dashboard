@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="show"
-    max-width="720"
+    max-width="770"
     scrollable
     persistent
     @keydown.esc="cancelDialog"
@@ -75,25 +75,25 @@
             </v-col>
           </v-row>
           <v-row class="pr-6">
-            <v-col
-              class="pl-11"
-            >
-              <v-row>
-                <v-textarea
-                  v-model="dialogData.description"
-                  label="Obecný popis - tato informace bude přístupná všem v google kalendáři a ve Slacku"
-                />
-              </v-row>
-              <v-row>
-                <v-textarea
-                  v-model="dialogData.description"
-                  label="Popis pro schvalovatele - tuhle informaci uvidí pouze zvolený schvalovatel"
-                />
-              </v-row>
+            <v-col class="pt-0 pl-11">
+              <v-textarea
+                v-model="dialogData.generalDescription"
+                rows="2"
+                label="Obecný popis - tato informace bude přístupná všem v google kalendáři a ve Slacku"
+              />
             </v-col>
+            <v-col class="pt-0">
+              <v-textarea
+                v-model="dialogData.approverDescription"
+                rows="2"
+                label="Popis pro schvalovatele - tuhle informaci uvidí pouze zvolený schvalovatel"
+              />
+            </v-col>
+          </v-row>
+          <v-row class="pr-6">
             <v-col
               v-if="gif.url"
-              class="pa-0 pl-4 pr-4 pt-5"
+              class="pa-0 pl-4 pr-4 pt-2"
               cols="6"
             >
               <div class="gif">
@@ -189,7 +189,8 @@
           absenceStart: '',
           absenceEnd: '',
           absenceType: DEFAULT_ABSENCE_TYPE,
-          description: '',
+          generalDescription: '',
+          approverDescription: '',
           approver: '',
           absenceHoursNumber: null,
         },
@@ -197,7 +198,8 @@
           absenceStart: '',
           absenceEnd: '',
           absenceType: DEFAULT_ABSENCE_TYPE,
-          description: '',
+          generalDescription: '',
+          approverDescription: '',
           approver: '',
           absenceHoursNumber: null,
         },
@@ -325,5 +327,11 @@
     height:0;
     padding-bottom:50%;
     position:relative;
+  }
+
+  /deep/ .description-text-area .v-label {
+    word-break: break-all;
+    overflow: visible;
+    white-space: normal;
   }
 </style>
