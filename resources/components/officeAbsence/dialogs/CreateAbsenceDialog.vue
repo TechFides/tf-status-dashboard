@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="show"
-    max-width="700"
+    max-width="720"
     scrollable
     persistent
     @keydown.esc="cancelDialog"
@@ -78,10 +78,18 @@
             <v-col
               class="pl-11"
             >
-              <v-textarea
-                v-model="dialogData.description"
-                label="Popis nepřítomnosti (tato informace bude vyplněna v google kalendáři)"
-              />
+              <v-row>
+                <v-textarea
+                  v-model="dialogData.description"
+                  label="Obecný popis - tato informace bude přístupná všem v google kalendáři a ve Slacku"
+                />
+              </v-row>
+              <v-row>
+                <v-textarea
+                  v-model="dialogData.description"
+                  label="Popis pro schvalovatele - tuhle informaci uvidí pouze zvolený schvalovatel"
+                />
+              </v-row>
             </v-col>
             <v-col
               v-if="gif.url"
