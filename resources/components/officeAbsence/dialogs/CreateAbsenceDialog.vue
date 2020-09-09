@@ -64,6 +64,7 @@
             </v-col>
             <v-col
               cols="6"
+              class="pl-9"
             >
               <v-select
                 v-model="dialogData.approver"
@@ -75,25 +76,47 @@
             </v-col>
           </v-row>
           <v-row class="pr-6">
-            <v-col class="pt-0 pl-11">
-              <v-textarea
-                v-model="dialogData.generalDescription"
-                rows="2"
-                label="Obecný popis - tato informace bude přístupná všem v google kalendáři a ve Slacku"
-              />
+            <v-col class="pt-0 pl-11 pr-8">
+              <v-tooltip
+                v-model="showGeneralDescriptionTooltip"
+                top
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-textarea
+                    v-model="dialogData.generalDescription"
+                    v-bind="attrs"
+                    rows="2"
+                    label="Obecný popis"
+                    v-on="on"
+                    @focus="showGeneralDescriptionTooltip = !showGeneralDescriptionTooltip"
+                  />
+                </template>
+                <span>Tato informace bude přístupná všem v google kalendáři a ve Slacku</span>
+              </v-tooltip>
             </v-col>
             <v-col class="pt-0">
-              <v-textarea
-                v-model="dialogData.approverDescription"
-                rows="2"
-                label="Popis pro schvalovatele - tuhle informaci uvidí pouze zvolený schvalovatel"
-              />
+              <v-tooltip
+                v-model="showApproverDescriptionTooltip"
+                top
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-textarea
+                    v-model="dialogData.approverDescription"
+                    v-bind="attrs"
+                    rows="2"
+                    label="Popis pro schvalovatele"
+                    v-on="on"
+                    @focus="showApproverDescriptionTooltip = !showApproverDescriptionTooltip"
+                  />
+                </template>
+                <span>Tuhle informaci uvidí pouze zvolený schvalovatel</span>
+              </v-tooltip>
             </v-col>
           </v-row>
-          <v-row class="pr-6">
+          <v-row justify="center">
             <v-col
               v-if="gif.url"
-              class="pa-0 pl-4 pr-4 pt-2"
+              class="pa-0 pb-8"
               cols="6"
             >
               <div class="gif">
@@ -118,7 +141,7 @@
                 type="error"
                 color="blue darken-1"
               >
-                Nezapomeň si zkontrolovat, jestli sedí počet hodin nepřítomnosti. Ve výpočtu nejsou zahrnuty svátky a jiné nepracovní dny.
+                Nezapomeň si zkontrolovat, jestli sedí počet hodin nepřítomnosti. Ve výpočtu nejsou zahrnuty svátky a jiné nepracovní dny a zkrácené úvazky.
               </v-alert>
             </v-col>
           </v-row>
@@ -174,6 +197,8 @@
     data () {
       return {
         show: false,
+        showApproverDescriptionTooltip: false,
+        showGeneralDescriptionTooltip: false,
         gif: {
           url: '',
         },
@@ -327,11 +352,5 @@
     height:0;
     padding-bottom:50%;
     position:relative;
-  }
-
-  /deep/ .description-text-area .v-label {
-    word-break: break-all;
-    overflow: visible;
-    white-space: normal;
   }
 </style>
