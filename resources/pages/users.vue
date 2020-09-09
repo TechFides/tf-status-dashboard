@@ -210,11 +210,6 @@
 import { mapState, mapMutations } from 'vuex';
 import { EMAIL_REGEX } from '../constants';
 
-const roleTranslation = {
-  user: 'Uživatel',
-  admin: 'Administrátor',
-};
-
 export default {
   data () {
     return {
@@ -313,7 +308,7 @@ export default {
     },
     roleItems () {
       return this.users.roles.map(r => ({
-        text: roleTranslation[r.slug],
+        text: r.name,
         value: r.slug,
       }));
     },
@@ -383,7 +378,7 @@ export default {
     userRoles (user) {
       return this.users.roles
         .filter(r => user.roles.includes(r.slug))
-        .map(r => roleTranslation[r.slug])
+        .map(r => r.name)
         .join(', ');
     },
   },

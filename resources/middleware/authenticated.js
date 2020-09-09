@@ -1,25 +1,45 @@
-// routes accessibled by role 'admin'
-const ADMIN_ROUTES = [
+// routes accessibled by role 'administration'
+const ADMINISTRATION_ROUTES = [
+  'standup',
   'project',
+  'office-absences',
+  'work-logs',
+  'meeting-times',
   'statistics',
   'users',
   'heatmap',
-  'office-absences',
+  'settings',
 ];
 
-// routes accessibled by role 'user'
-const USER_ROUTES = [
-  'statistics',
+// routes accessibled by role 'production'
+const PRODUCTION_ROUTES = [
   'standup',
   'office-absences',
+  'statistics',
+];
+
+// routes accessibled by role 'sales'
+const SALES_ROUTES = [
+  'office-absences',
+  'work-logs',
+];
+
+// routes accessibled by role 'HR'
+const HR_ROUTES = [
+  'office-absences',
+  'work-logs',
 ];
 
 export default function ({ app, store, route, redirect }) {
-  if (!ADMIN_ROUTES.includes(route.name) && !USER_ROUTES.includes(route.name)) {
+  if (!ADMINISTRATION_ROUTES.includes(route.name) && !PRODUCTION_ROUTES.includes(route.name) && !SALES_ROUTES.includes(route.name) && !HR_ROUTES.includes(route.name)) {
     return;
-  } else if (ADMIN_ROUTES.includes(route.name) && app.isAdmin()) {
+  } else if (ADMINISTRATION_ROUTES.includes(route.name) && app.isAdministration()) {
     return;
-  } else if (USER_ROUTES.includes(route.name) && app.isUser()) {
+  } else if (PRODUCTION_ROUTES.includes(route.name) && app.isProduction()) {
+    return;
+  } else if (SALES_ROUTES.includes(route.name) && app.isSales()) {
+    return;
+  } else if (HR_ROUTES.includes(route.name) && app.isHR()) {
     return;
   }
 

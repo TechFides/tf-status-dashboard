@@ -173,7 +173,7 @@
               {{ item.newLevel }}
             </td>
             <td
-              v-if="isAdmin()"
+              v-if="isAdministration()"
               class="text-center px-0"
             >
               <v-icon
@@ -273,7 +273,7 @@
             v-on="on"
           >
             <v-btn
-              v-show="isAdmin() && checkSyncButton"
+              v-show="isAdministration() && checkSyncButton"
               class="my-2 standup-button"
               color="primary"
               :disabled="!!statistics.items.jiraSynchronization.status"
@@ -421,7 +421,7 @@ export default {
           align: 'center',
           sortable: false,
           value: 'addExpAction',
-          isVisible: this.isAdmin(),
+          isVisible: this.isAdministration(),
         },
         {
           text: '',

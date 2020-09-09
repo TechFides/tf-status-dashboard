@@ -15,7 +15,7 @@
 
 const Route = use('Route');
 const AUTH = 'auth';
-const ADMIN = [AUTH, 'is:admin'];
+const ADMIN = [AUTH, 'is:administration'];
 
 /**
  * AUTH

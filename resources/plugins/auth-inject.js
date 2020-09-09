@@ -1,9 +1,17 @@
 export default ({ app }, inject) => {
-  app.isAdmin = function () {
-    return this.$auth.user && this.$auth.user.roles.some(role => role.slug === 'admin');
+  app.isAdministration = function () {
+    return this.$auth.user && this.$auth.user.roles.some(role => role.slug === 'administration');
   };
 
-  app.isUser = function () {
-    return this.$auth.user && this.$auth.user.roles.some(role => role.slug === 'user');
+  app.isProduction = function () {
+    return this.$auth.user && this.$auth.user.roles.some(role => role.slug === 'production');
+  };
+
+  app.isSales = function () {
+    return this.$auth.user && this.$auth.user.roles.some(role => role.slug === 'sales');
+  };
+
+  app.isHR = function () {
+    return this.$auth.user && this.$auth.user.roles.some(role => role.slug === 'HR');
   };
 };

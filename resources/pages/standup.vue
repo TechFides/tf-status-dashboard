@@ -16,7 +16,7 @@
         />
       </div>
       <v-dialog
-        v-show="isAdmin() || isUser()"
+        v-show="isAdministration()"
         v-model="noteDialog.isOpen"
         max-width="500px"
         :persistent="true"
@@ -95,7 +95,7 @@
       </v-dialog>
 
       <v-btn
-        v-show="isAdmin()"
+        v-show="isAdministration()"
         class="standup-button"
         color="light-blue accent-4"
         dark
@@ -282,7 +282,7 @@
                 :project-rating="i.rating"
                 :project-id="i.projectId"
                 :standup-id="i.standupId"
-                :disabled="!isAdmin() && !isUser()"
+                :disabled="!isAdministration()"
                 :date="formatDate(props.item.standup.date)"
                 :on-submit="openGifDialog"
               />
@@ -305,7 +305,7 @@
       </v-data-table>
     </v-layout>
     <note-list
-      :editable="isAdmin() || isUser()"
+      :editable="isAdministration()"
       @edit="editNote"
     />
   </div>
