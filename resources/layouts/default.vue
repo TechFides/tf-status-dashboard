@@ -82,7 +82,7 @@ export default {
     ]),
     items () {
       const items = [
-        { icon: 'apps', title: 'Dashboard', to: '/' },
+        { icon: 'apps', title: 'Dashboard', to: '/', availableFor: ['administration', 'production'] },
         { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup', availableFor: ['administration', 'production']  },
         { icon: 'laptop_windows', title: 'Projekty', to: '/projects', availableFor: ['administration'] },
         { icon: 'mdi-palm-tree -checked', title: 'Nepřítomnosti', to: '/office-absences', availableFor: ['administration', 'production', 'sales', 'HR'] },

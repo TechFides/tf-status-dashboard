@@ -63,7 +63,7 @@ const handleFeedbackError = ({ response }) => {
 };
 
 export default {
-  validate ({ route, redirect }) {
+  validate ({ store, route, redirect }) {
     const { token, feedbackEnumId } = route.query;
     if (!token || !feedbackEnumId) {
       redirect('/');

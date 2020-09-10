@@ -71,7 +71,7 @@
   };
 
   export default {
-    validate ({ route, redirect }) {
+    validate ({ store, route, redirect }) {
       const { token, approverDecisionId, officeAbsenceId } = route.query;
       if (!token || !approverDecisionId || !officeAbsenceId) {
         redirect('/');

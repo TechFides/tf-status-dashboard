@@ -1,3 +1,5 @@
+import { pathRedirect } from '../utils/pathRedirect';
+
 // routes accessibled by role 'administration'
 const ADMINISTRATION_ROUTES = [
   'standup',
@@ -31,6 +33,8 @@ const HR_ROUTES = [
 ];
 
 export default function ({ app, store, route, redirect }) {
+  pathRedirect(app, route, redirect);
+  
   if (!ADMINISTRATION_ROUTES.includes(route.name) && !PRODUCTION_ROUTES.includes(route.name) && !SALES_ROUTES.includes(route.name) && !HR_ROUTES.includes(route.name)) {
     return;
   } else if (ADMINISTRATION_ROUTES.includes(route.name) && app.isAdministration()) {
