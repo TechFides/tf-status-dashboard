@@ -27,9 +27,10 @@ export const mutations = {
         fullName: w.user ? `${w.user .first_name} ${w.user .last_name}` : '',
         id: w.user ? w.user .id : null,
       },
-      started: moment(w.started).format('DD.MM.YYYY HH:mm'),
+      started: moment(w.started).format('DD.MM.YYYY'),
       startedByNumber: moment(w.started).valueOf(),
       timeSpent: getTimeSpent(w.time_spent),
+      timeSpentByNumber: w.time_spent,
       description: w.description,
       costCategory: {
         id: w.costCategory.id,

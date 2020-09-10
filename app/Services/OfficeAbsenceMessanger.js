@@ -71,13 +71,17 @@ class OfficeAbsenceMessanger {
     return isSame ? moment(startOfficeAbsence).format('DD.MM.YYYY') : `od ${moment(startOfficeAbsence).format('DD.MM.YYYY')} do ${moment(endOfficeAbsence).format('DD.MM.YYYY')}`;
   }
 
+  static getDescription (description) {
+    return description ? `Poznámka: ${description}` : '';
+  }
+
   async sendApproveCreateAbsenceMessage (officeAbsenceId) {
     const officeAbsence = await OfficeAbsenceMessanger.getOfficeAbsence(officeAbsenceId);
     const privateMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
       text: `Tvoje žádost o "${officeAbsence.absenceTypeEnum.value}" ${OfficeAbsenceMessanger.getDates(officeAbsence.absence_start, officeAbsence.absence_end)} byla schválena. Nastav si prosím automatickou odpověď na mailu v době nepřítomnosti, viz <https://docs.google.com/document/d/19NslMB1JBY6yvPimD-U34WNiFAS06D57A-SJM-w-dVM/edit#|Automatická odpověď v nepřítomnosti>`,
     });
     const absenceChannelMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
-      text: `${officeAbsence.user.first_name} ${officeAbsence.user.last_name} si bere "${officeAbsence.absenceTypeEnum.value}" ${OfficeAbsenceMessanger.getDates(officeAbsence.absence_start, officeAbsence.absence_end)}.`,
+      text: `${officeAbsence.user.first_name} ${officeAbsence.user.last_name} si bere "${officeAbsence.absenceTypeEnum.value}" ${OfficeAbsenceMessanger.getDates(officeAbsence.absence_start, officeAbsence.absence_end)}. ${OfficeAbsenceMessanger.getDescription(officeAbsence.general_description)}`,
     });
 
     try {

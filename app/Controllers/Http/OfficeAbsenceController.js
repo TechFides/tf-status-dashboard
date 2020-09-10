@@ -24,8 +24,9 @@ class OfficeAbsenceController {
       absenceType,
       approver,
       absenceHoursNumber,
-      description,
-    } = request.only(['userId', 'absenceStart', 'absenceEnd', 'absenceType', 'approver', 'absenceHoursNumber', 'description']);
+      generalDescription,
+      approverDescription,
+    } = request.only(['userId', 'absenceStart', 'absenceEnd', 'absenceType', 'approver', 'absenceHoursNumber', 'description', 'generalDescription', 'approverDescription']);
 
     return {
       user_id: userId,
@@ -36,7 +37,8 @@ class OfficeAbsenceController {
       absence_approver_id: approver,
       absence_hours_number: absenceHoursNumber,
       updated_at: moment().format('YYYY-MM-DD'),
-      description,
+      general_description: generalDescription,
+      approver_description: approverDescription,
     };
   }
 
@@ -180,7 +182,7 @@ class OfficeAbsenceController {
       return response.status(400).send({ name: 'BAD_REQUEST', message: 'Office absence in this date range and absence type already exists' });
     }
 
-    officeAbsenceData.calendar_event_title = `${author.first_name} ${author.last_name.charAt(0)}. ${absenceTypeEnumModel.short_cut} (${officeAbsenceData.absence_hours_number}h)`;
+    officeAbsenceData.calendar_event_title = `${author.first_name.charAt(0)}. ${author.last_name} ${absenceTypeEnumModel.short_cut} (${officeAbsenceData.absence_hours_number}h) ${officeAbsenceData.general_description}`;
 
     const officeAbsence = (await OfficeAbsenceModel.create(officeAbsenceData)).toJSON();
 
