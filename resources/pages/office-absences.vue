@@ -61,7 +61,7 @@
           v-slot:item="{item, expand, isExpanded}"
         >
           <tr
-            :style="{backgroundColor: getRowColor(item.absenceState.name), cursor: item.description ? 'pointer': ''}"
+            :style="{backgroundColor: getRowColor(item.absenceState.name), cursor: item.generalDescription || item.approverDescription ? 'pointer': ''}"
             @click.stop="expand(!isExpanded)"
           >
             <td class="text-right element pr-8">
@@ -96,7 +96,7 @@
             </td>
             <td class="text-left px-0">
               <v-icon
-                v-if="item.description"
+                v-if="item.generalDescription || item.approverDescription"
                 class="mr-2"
               >
                 {{ isExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
@@ -108,17 +108,25 @@
           v-slot:expanded-item="{ headers }"
         >
           <td
-            v-if="officeAbsenceDetailItems.description"
+            v-if="officeAbsenceDetailItems.generalDescription || officeAbsenceDetailItems.approverDescription"
             :colspan="headers.length"
             class="pa-2 pl-4"
             :style="{backgroundColor: getRowColor(officeAbsenceDetailItems.absenceState.name)}"
           >
             <div class="expanded-row">
-              <div class="expanded-column-label">
-                {{ 'Popis nepřítomnosti:' }}
+              <div class="expanded-column-generalLabel">
+                {{ 'Obecný popis:' }}
               </div>
               <div class="expanded-column-text">
-                {{ officeAbsenceDetailItems.description }}
+                {{ officeAbsenceDetailItems.generalDescription }}
+              </div>
+            </div>
+            <div class="expanded-row mt-2">
+              <div class="expanded-column-approverLabel">
+                {{ 'Popis pro schvalovatele:' }}
+              </div>
+              <div class="expanded-column-text">
+                {{ officeAbsenceDetailItems.approverDescription }}
               </div>
             </div>
           </td>
@@ -281,7 +289,7 @@
       },
       async deleteItem(item) {
         if (item.absenceState.name === 'WAITING_FOR_APPROVAL') {
-          const confirmed = confirm(`Opravdu chcete smazat tuhle žádost o nepřítomnost.`);
+          const confirmed = confirm(`Opravdu chcete smazat tuhle žádost o nepřítomnost?`);
 
           if (confirmed) {
             await this.$store.dispatch('officeAbsences/deleteOfficeAbsence', item.id);
@@ -303,11 +311,19 @@
     flex-direction: row;
   }
 
-  .expanded-column-label {
+  .expanded-column-generalLabel {
     color: rgba(0,0,0,.6);
     font-size: 0.8rem;
     font-weight: bold;
-    min-width: 130px;
+    min-width: 85px;
+    padding-top: 1px;
+  }
+
+  .expanded-column-approverLabel {
+    color: rgba(0,0,0,.6);
+    font-size: 0.8rem;
+    font-weight: bold;
+    min-width: 145px;
     padding-top: 1px;
   }
 
