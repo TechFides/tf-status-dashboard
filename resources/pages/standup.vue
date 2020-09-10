@@ -232,7 +232,7 @@
                 :key="h.text"
                 class="text-center header-text"
               >
-                <nav>
+                <span class="project-name">
                   <div class="text-xs-center header align-project">
                     {{ h.text }}
                   </div>
@@ -249,7 +249,7 @@
                     </template>
                     <span>Chybí cíl na další standup</span>
                   </v-tooltip>
-                </nav>
+                </span>
               </th>
             </tr>
           </thead>
@@ -697,5 +697,9 @@ export default {
     height:500px;
     position:absolute;
     z-index: 9999;
+  }
+
+  .project-name {
+    display: flex;
   }
 </style>

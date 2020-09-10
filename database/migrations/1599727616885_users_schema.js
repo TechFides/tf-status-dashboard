@@ -5,7 +5,7 @@ const Schema = use('Schema')
 const Factory = use('Factory');
 const USER_ROLES = {
   ADMINISTRATION: 1,
-  PRODUCTION: 2,
+  REALIZATION: 2,
   SALES: 3,
   HR: 4,
 };
@@ -20,7 +20,7 @@ class UsersSchema extends Schema {
       is_active: 1,
     });
 
-    await user.roles().attach([USER_ROLES.ADMINISTRATION, USER_ROLES.PRODUCTION, USER_ROLES.SALES, USER_ROLES.HR]);
+    await user.roles().attach([USER_ROLES.ADMINISTRATION, USER_ROLES.REALIZATION, USER_ROLES.SALES, USER_ROLES.HR]);
   }
 
   down () {

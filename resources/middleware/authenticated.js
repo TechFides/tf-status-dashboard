@@ -13,8 +13,8 @@ const ADMINISTRATION_ROUTES = [
   'settings',
 ];
 
-// routes accessibled by role 'production'
-const PRODUCTION_ROUTES = [
+// routes accessibled by role 'realization'
+const REALIZATION_ROUTES = [
   'standup',
   'office-absences',
   'statistics',
@@ -34,12 +34,12 @@ const HR_ROUTES = [
 
 export default function ({ app, store, route, redirect }) {
   pathRedirect(app, route, redirect);
-  
-  if (!ADMINISTRATION_ROUTES.includes(route.name) && !PRODUCTION_ROUTES.includes(route.name) && !SALES_ROUTES.includes(route.name) && !HR_ROUTES.includes(route.name)) {
+
+  if (!ADMINISTRATION_ROUTES.includes(route.name) && !REALIZATION_ROUTES.includes(route.name) && !SALES_ROUTES.includes(route.name) && !HR_ROUTES.includes(route.name)) {
     return;
   } else if (ADMINISTRATION_ROUTES.includes(route.name) && app.isAdministration()) {
     return;
-  } else if (PRODUCTION_ROUTES.includes(route.name) && app.isProduction()) {
+  } else if (REALIZATION_ROUTES.includes(route.name) && app.isRealization()) {
     return;
   } else if (SALES_ROUTES.includes(route.name) && app.isSales()) {
     return;

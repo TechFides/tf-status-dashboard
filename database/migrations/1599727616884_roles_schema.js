@@ -18,8 +18,8 @@ class RolesSchema extends Schema {
       },
       {
         id: 2,
-        slug: 'production',
-        name: 'Production'
+        slug: 'realization',
+        name: 'Realization'
       },
       {
         id: 3,
