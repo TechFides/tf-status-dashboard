@@ -59,7 +59,8 @@
       <v-data-table
         :headers="headers"
         :items="workLogs.items"
-        :items-per-page="10"
+        :items-per-page="100"
+        :footer-props="{'items-per-page-options': [20, 50, 100, -1]}"
         item-key="id"
         fill-height
         single-expand
@@ -76,7 +77,7 @@
             >
               {{ item.author.fullName }}
             </td>
-            <td class="text-right element pr-8">
+            <td class="text-left element pr-8">
               {{ item.started }}
             </td>
             <td class="text-right element pr-8">
@@ -155,21 +156,21 @@
             text: 'Autor',
             align: 'left',
             sortable: true,
-            value: 'author',
+            value: 'author.fullName',
             isVisible: this.isAdmin(),
           },
           {
             text: 'Zahájení práce',
-            align: 'right',
+            align: 'left',
             sortable: true,
-            value: 'started',
+            value: 'startedByNumber',
             isVisible: true,
           },
           {
             text: 'Strávený čas',
             align: 'right',
             sortable: true,
-            value: 'timeSpent',
+            value: 'timeSpentByNumber',
             isVisible: true,
           },
           {
@@ -229,7 +230,7 @@
     },
     methods: {
       async deleteItem(item) {
-        const confirmed = confirm(`Opravdu chcete smazat tento worklog.`);
+        const confirmed = confirm(`Opravdu chcete smazat tento worklog?`);
 
         if (confirmed) {
           await this.$store.dispatch('workLogs/deleteWorkLog', item.id);

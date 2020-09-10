@@ -25,15 +25,21 @@
                 v-model="dialogData.startedDate"
                 label="Datum zahájení práce"
                 required
+                :min="getMinDate()"
+                :max="getMaxDate()"
                 :clearable="false"
               />
             </v-col>
-            <v-col cols="6">
-              <TimePicker
-                v-model="dialogData.startedTime"
-                label="Čas zahájení práce"
-                required
-                :clearable="false"
+            <v-col
+              cols="6"
+              class="pl-6 pr-5"
+            >
+              <v-select
+                v-model="dialogData.costCategoryId"
+                :items="costCategoryItems"
+                label="Kategorie"
+                :rules="[rules.required]"
+                no-data-text="Žádná data k dispozici."
               />
             </v-col>
           </v-row>
@@ -45,20 +51,8 @@
               <v-text-field
                 v-model="dialogData.timeSpent"
                 placeholder="například: 1h 30m"
-                :rules="[rules.required, rules.timeSpentFormat]"
+                :rules="[rules.required, rules.timeSpentFormat, rules.maxHoursSpent]"
                 label="Strávený čas"
-              />
-            </v-col>
-            <v-col
-              cols="6"
-              class="pl-6 pr-5 pt-0"
-            >
-              <v-select
-                v-model="dialogData.costCategoryId"
-                :items="costCategoryItems"
-                label="Kategorie"
-                :rules="[rules.required]"
-                no-data-text="Žádná data k dispozici."
               />
             </v-col>
           </v-row>
@@ -69,6 +63,7 @@
               <v-textarea
                 v-model="dialogData.description"
                 label="Popis práce"
+                :rules="[rules.required]"
               />
             </v-col>
           </v-row>
@@ -96,7 +91,6 @@
 </template>
 
 <script>
-  import TimePicker from '../../common/TimePicker';
   import DatePicker from '../../common/DatePicker';
   import { mapState } from 'vuex';
   import moment from 'moment';
@@ -104,7 +98,6 @@
   export default {
     name: 'CreateWorkLogDialog',
     components: {
-      TimePicker,
       DatePicker,
     },
     data () {
@@ -115,7 +108,6 @@
           id: null,
           authorId: null,
           startedDate: moment().format('YYYY-MM-DD'),
-          startedTime: moment().format('HH:mm'),
           timeSpent: '',
           costCategoryId: null,
           description: '',
@@ -124,7 +116,6 @@
           id: null,
           authorId: null,
           startedDate: moment().format('YYYY-MM-DD'),
-          startedTime: moment().format('HH:mm'),
           timeSpent: '',
           costCategoryId: null,
           description: '',
@@ -133,7 +124,8 @@
         rules: {
           required: value => !!value || 'Povinné.',
           minValue: value => value > 0 || 'Hodnota musí být větší jak 0.',
-          timeSpentFormat: value => this.checkTimeSpentFormat(value) || 'Hodnota musí být ve validním formátu, například: 1h 30m',
+          timeSpentFormat: value => this.checkTimeSpentFormat(value) || 'Hodnota musí být ve validním formátu, například: 1h 30m.',
+          maxHoursSpent: value => this.maxHoursSpent(value) || 'Maximálně můžeš zalogovat 3h.',
         },
       };
     },
@@ -165,7 +157,6 @@
           this.dialogData = {
             id: items.id,
             startedDate: moment(items.startedByNumber).format('YYYY-MM-DD'),
-            startedTime: moment(items.startedByNumber).format('HH:mm'),
             timeSpent: items.timeSpent,
             costCategoryId: items.costCategory.id,
             description: items.description,
@@ -180,7 +171,7 @@
           const payloads = {
             id: this.dialogData.id,
             authorId: this.dialogData.authorId,
-            started: `${this.dialogData.startedDate} ${this.dialogData.startedTime}`,
+            started: this.dialogData.startedDate,
             timeSpent: this.timeSpentToMs(this.dialogData.timeSpent),
             costCategory: this.costCategories.items.find(c => c.id === this.dialogData.costCategoryId),
             description: this.dialogData.description,
@@ -207,7 +198,27 @@
         return (m ? parseInt(m) : 0) + (h ? parseInt(h) * 60 : 0);
       },
       checkTimeSpentFormat (value) {
-        return /^(?:\d+[hm](?: +|$))+$/.test(value);
+        const m = value.substring(value.lastIndexOf(" ") + 1, value.lastIndexOf("m"));
+        const MAX_MINUTES_SPENT = 60;
+
+        return m < MAX_MINUTES_SPENT && /^(?:\d+[hm](?: +|$))+$/.test(value);
+      },
+      maxHoursSpent (value) {
+        const h = value.substring(0, value.lastIndexOf("h"));
+        const m = value.substring(value.lastIndexOf(" ") + 1, value.lastIndexOf("m"));
+        const MAX_HOURS_SPENT = 3;
+
+        return (parseInt(h) === MAX_HOURS_SPENT && m === '') || parseInt(h) < MAX_HOURS_SPENT || h === '';
+      },
+      getMinDate () {
+        const actualDate = moment();
+        if (actualDate.day() === 1) {
+          return moment().subtract(3, 'd').format('YYYY-MM-DD');
+        }
+        return moment().subtract(1, 'd').format('YYYY-MM-DD');
+      },
+      getMaxDate () {
+        return moment().format('YYYY-MM-DD');
       },
     },
   };

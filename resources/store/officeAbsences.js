@@ -25,7 +25,8 @@ export const mutations = {
         id: o.absenceApprover ? o.absenceApprover.id : null,
       },
       absenceHoursNumber: o.absence_hours_number,
-      description: o.description,
+      generalDescription: o.general_description,
+      approverDescription: o.approver_description,
     }));
   },
   setAbsenceTypeEnums (state, absenceTypeEnums) {

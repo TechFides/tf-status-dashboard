@@ -182,7 +182,7 @@ class OfficeAbsenceController {
       return response.status(400).send({ name: 'BAD_REQUEST', message: 'Office absence in this date range and absence type already exists' });
     }
 
-    officeAbsenceData.calendar_event_title = `${author.first_name} ${author.last_name.charAt(0)}. ${absenceTypeEnumModel.short_cut} (${officeAbsenceData.absence_hours_number}h) ${officeAbsenceData.general_description}`;
+    officeAbsenceData.calendar_event_title = `${author.first_name.charAt(0)}. ${author.last_name} ${absenceTypeEnumModel.short_cut} (${officeAbsenceData.absence_hours_number}h) ${officeAbsenceData.general_description}`;
 
     const officeAbsence = (await OfficeAbsenceModel.create(officeAbsenceData)).toJSON();
 
