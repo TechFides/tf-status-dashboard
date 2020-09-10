@@ -82,16 +82,16 @@ export default {
     ]),
     items () {
       const items = [
-        { icon: 'apps', title: 'Dashboard', to: '/' },
-        { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup', availableFor: ['admin', 'user']  },
-        { icon: 'laptop_windows', title: 'Projekty', to: '/projects', availableFor: ['admin'] },
-        { icon: 'mdi-palm-tree -checked', title: 'Nepřítomnosti', to: '/office-absences', availableFor: ['admin', 'user'] },
-        { icon: 'bar_chart', title: 'The Game', to: '/statistics', availableFor: ['admin', 'user'] },
-        { icon: 'mdi-timer-outline', title: 'Logování práce', to: '/work-logs', availableFor: ['admin', 'user'] },
-        { icon: 'face', title: 'Uživatelé', to: '/users', availableFor: ['admin'] },
-        { icon: 'tag_faces', title: 'Heatmap', to: '/heatmap', availableFor: ['admin'] },
-        { icon: 'schedule', title: 'Časy konání sitdownu', to: '/meeting-times', availableFor: ['admin'] },
-        { icon: 'settings', title: 'Nastavení', to: '/settings', availableFor: ['admin'] },
+        { icon: 'apps', title: 'Dashboard', to: '/', availableFor: ['administration', 'realization'] },
+        { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup', availableFor: ['administration', 'realization']  },
+        { icon: 'laptop_windows', title: 'Projekty', to: '/projects', availableFor: ['administration'] },
+        { icon: 'mdi-palm-tree -checked', title: 'Nepřítomnosti', to: '/office-absences', availableFor: ['administration', 'realization', 'sales', 'HR'] },
+        { icon: 'bar_chart', title: 'The Game', to: '/statistics', availableFor: ['administration', 'realization'] },
+        { icon: 'mdi-timer-outline', title: 'Logování práce', to: '/work-logs', availableFor: ['administration', 'sales', 'HR'] },
+        { icon: 'face', title: 'Uživatelé', to: '/users', availableFor: ['administration'] },
+        { icon: 'tag_faces', title: 'Heatmap', to: '/heatmap', availableFor: ['administration'] },
+        { icon: 'schedule', title: 'Časy konání sitdownu', to: '/meeting-times', availableFor: ['administration'] },
+        { icon: 'settings', title: 'Nastavení', to: '/settings', availableFor: ['administration'] },
       ];
 
       return items.filter(item => {

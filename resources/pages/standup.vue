@@ -16,7 +16,7 @@
         />
       </div>
       <v-dialog
-        v-show="isAdmin() || isUser()"
+        v-show="isAdministration()"
         v-model="noteDialog.isOpen"
         max-width="500px"
         :persistent="true"
@@ -95,7 +95,7 @@
       </v-dialog>
 
       <v-btn
-        v-show="isAdmin()"
+        v-show="isAdministration()"
         class="standup-button"
         color="light-blue accent-4"
         dark
@@ -232,7 +232,7 @@
                 :key="h.text"
                 class="text-center header-text"
               >
-                <nav>
+                <span class="project-name">
                   <div class="text-xs-center header align-project">
                     {{ h.text }}
                   </div>
@@ -249,7 +249,7 @@
                     </template>
                     <span>Chybí cíl na další standup</span>
                   </v-tooltip>
-                </nav>
+                </span>
               </th>
             </tr>
           </thead>
@@ -282,7 +282,7 @@
                 :project-rating="i.rating"
                 :project-id="i.projectId"
                 :standup-id="i.standupId"
-                :disabled="!isAdmin() && !isUser()"
+                :disabled="!isAdministration()"
                 :date="formatDate(props.item.standup.date)"
                 :on-submit="openGifDialog"
               />
@@ -305,7 +305,7 @@
       </v-data-table>
     </v-layout>
     <note-list
-      :editable="isAdmin() || isUser()"
+      :editable="isAdministration()"
       @edit="editNote"
     />
   </div>
@@ -697,5 +697,9 @@ export default {
     height:500px;
     position:absolute;
     z-index: 9999;
+  }
+
+  .project-name {
+    display: flex;
   }
 </style>

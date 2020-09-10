@@ -24,7 +24,7 @@
         justify="start"
       >
         <v-col
-          v-if="isAdmin()"
+          v-if="isAdministration()"
           cols="2"
           class="ml-5"
         >
@@ -72,7 +72,7 @@
         >
           <tr>
             <td
-              v-if="isAdmin()"
+              v-if="isAdministration()"
               class="text-left element pr-8"
             >
               {{ item.author.fullName }}
@@ -157,7 +157,7 @@
             align: 'left',
             sortable: true,
             value: 'author.fullName',
-            isVisible: this.isAdmin(),
+            isVisible: this.isAdministration(),
           },
           {
             text: 'Zahájení práce',

@@ -21,7 +21,9 @@
     },
     async mounted () {
       try {
-        await this.$auth.loginWith('local', {data: {gToken: this.$route.query.token}}).then(this.$router.push('/'));
+        await this.$auth.loginWith('local', {data: {gToken: this.$route.query.token}}).then(
+          this.$router.push(this.isHR || this.isSales ? '/office-absences': '/')
+        );
       } catch (error) {
         return handleError();
       }
