@@ -13,7 +13,7 @@ RUN npm i --global @adonisjs/cli
 
 RUN npm i
 
-RUN npm run build
+RUN ENV_SILENT=true npm run build
 
 ### Release
 FROM node:12-alpine
@@ -26,4 +26,4 @@ WORKDIR /usr/src/app
 
 EXPOSE 3333 9229
 
-CMD node server.js
+CMD ENV_SILENT=true node server.js
