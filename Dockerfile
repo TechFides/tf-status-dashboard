@@ -11,7 +11,7 @@ WORKDIR /usr/src/app
 
 RUN npm i --global @adonisjs/cli
 
-RUN npm install --production
+RUN npm i
 
 RUN npm run build
 
