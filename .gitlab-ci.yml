@@ -1,6 +1,7 @@
 stages:
   - install
   - lint
+  - build
   - deploy
 
 image: registry.gitlab.techfides.cz/tf-internal/docker-images/node:10
