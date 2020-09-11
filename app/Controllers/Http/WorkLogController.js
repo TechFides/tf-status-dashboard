@@ -49,7 +49,7 @@ class WorkLogController {
       WorkLogModelQuery.where('cost_category_id', costCategoryId);
     }
 
-    const workLogsList = (await WorkLogModelQuery.fetch()).toJSON();
+    const workLogsList = (await WorkLogModelQuery.orderBy('started', 'asc').fetch()).toJSON();
 
     let timeSpentSum = 0;
     for (const workLogs of workLogsList) {
