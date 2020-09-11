@@ -18,6 +18,7 @@
     </v-row>
     <WorkLogDialog
       ref="workLogDialog"
+      :confirm="resetFilters"
     />
     <v-card class="elevation-1">
       <v-row
@@ -141,6 +142,14 @@
             moment().endOf('month').format('YYYY-MM-DD'),
           ],
         },
+        defaultFilter: {
+          authorId: '',
+          costCategoryId: '',
+          dates: [
+            moment().startOf('month').format('YYYY-MM-DD'),
+            moment().endOf('month').format('YYYY-MM-DD'),
+          ],
+        },
         expandedRowId: null,
       };
     },
@@ -235,6 +244,9 @@
         if (confirmed) {
           await this.$store.dispatch('workLogs/deleteWorkLog', item.id);
         }
+      },
+      resetFilters () {
+        this.filter = {...this.defaultFilter};
       },
       createNewWorkLog() {
         this.$refs.workLogDialog.openDialog();

@@ -46,7 +46,7 @@ Route
   .post('/api/feedback', 'FeedbackController.createFeedback');
 Route
   .get('/api/heatmap/feedbacks', 'UserController.getUsersFeedbacks')
-  .middleware(['auth', 'is:admin']);
+  .middleware(ADMIN);
 Route
   .get('/api/heatmap', 'HeatmapController.getHeatmapWeeks')
   .middleware(ADMIN);

@@ -100,6 +100,12 @@
     components: {
       DatePicker,
     },
+    props: {
+      confirm: {
+        type: Function,
+        default: ()=>{},
+      },
+    },
     data () {
       return {
         show: false,
@@ -182,6 +188,7 @@
           } else {
             await this.$store.dispatch('workLogs/editWorkLog', payloads);
           }
+          this.confirm();
           !this.errors.error.isVisible && this.cancelDialog();
         }
       },

@@ -22,10 +22,14 @@
     >
       <v-card>
         <v-card-title>
-          <span class="headline">{{ modalTitle }}</span>
+          <span class="headline">{{ modalType === 'CREATE' ? 'Nový uživatel' : 'Upravit uživatele' }}</span>
         </v-card-title>
 
-        <v-form ref="form">
+        <v-form
+          ref="form"
+          lazy-validation
+          @submit.prevent
+        >
           <v-card-text>
             <v-container>
               <v-row>
@@ -39,6 +43,7 @@
                 <v-col cols="6">
                   <v-text-field
                     v-model="modalItem.password"
+                    :rules="modalType === 'CREATE' ? [rules.required] : []"
                     type="password"
                     label="Heslo"
                   />
@@ -215,7 +220,7 @@ export default {
     return {
       dialog: false,
       persistent: true,
-      modalTitle: '',
+      modalType: null,
       rules: {
         required: value => !!value || 'Povinné.',
         email: value => EMAIL_REGEX.test(value) || 'Neplatný e-mail.',
@@ -229,7 +234,7 @@ export default {
         sendFeedback: true,
         username: '',
         absenceApproverId: null,
-        roles: ['user'],
+        roles: [],
       },
       defaultModalItem: {
         id: null,
@@ -240,7 +245,7 @@ export default {
         sendFeedback: true,
         username: '',
         absenceApproverId: null,
-        roles: ['user'],
+        roles: [],
       },
       filteringText: '',
     };
@@ -328,7 +333,7 @@ export default {
   methods: {
     createNewUser () {
       this.modalItem = { ...this.defaultModalItem };
-      this.modalTitle = 'Nový uživatel';
+      this.modalType = 'CREATE';
       this.dialog = true;
     },
     editItem (item) {
@@ -344,7 +349,7 @@ export default {
         absenceApproverId: item.absenceApprover.id,
       };
 
-      this.modalTitle = 'Upravit uživatele';
+      this.modalType = 'EDIT';
       this.dialog = true;
     },
     async deleteItem (item) {
@@ -362,10 +367,12 @@ export default {
       this.$store.commit('errors/clearErrorState');
     },
     async save () {
-      const action = this.modalItem.id ? 'users/editUser' : 'users/createUser';
+      if (this.$refs.form.validate()) {
+        const action = this.modalItem.id ? 'users/editUser' : 'users/createUser';
 
-      await this.$store.dispatch(action, this.modalItem);
-      !this.errors.error.isVisible && this.close();
+        await this.$store.dispatch(action, this.modalItem);
+        !this.errors.error.isVisible && this.close();
+      }
     },
     isUserActive (isActive, toUpper) {
       const result = isActive ? 'ano' : 'ne';

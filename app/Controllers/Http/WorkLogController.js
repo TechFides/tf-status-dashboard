@@ -29,7 +29,7 @@ class WorkLogController {
       .query()
       .with('roles')
       .first()).toJSON();
-    const isUserRoleAdmin = user.roles.find(r => r.slug === 'admin');
+    const isUserRoleAdmin = user.roles.find(r => r.slug === 'administration');
 
     const WorkLogModelQuery = WorkLogModel
       .query()
