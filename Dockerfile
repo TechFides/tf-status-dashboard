@@ -13,6 +13,8 @@ RUN npm i --global @adonisjs/cli
 
 RUN npm install --production
 
+RUN npm run build
+
 ### Release
 FROM node:12-alpine
 
