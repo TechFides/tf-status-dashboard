@@ -24,4 +24,4 @@ WORKDIR /usr/src/app
 
 EXPOSE 3333 9229
 
-CMD npm start
+CMD node server.js
