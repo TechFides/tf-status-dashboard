@@ -3,6 +3,7 @@
 const UserModel = use('App/Models/User');
 const AbsenceApproverModel = use('App/Models/AbsenceApprover');
 const RoleModel = use('Adonis/Acl/Role');
+const WorkLogModel = use('App/Models/WorkLog');
 
 class UserController {
   static mapToDbEntity (request) {
@@ -96,6 +97,11 @@ class UserController {
         .query()
         .where('approver_id', id)
         .orWhere('user_id', id)
+        .delete();
+
+      await WorkLogModel
+        .query()
+        .where('user_id', id)
         .delete();
 
       response.send();
