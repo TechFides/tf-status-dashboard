@@ -5,7 +5,7 @@
   >
     <v-row justify="end">
       <v-btn
-        color="blue darken-2"
+        color="green darken-2"
         dark
         class="mt-2 mr-5 mb-2"
         @click="createNewWorkLog()"
@@ -55,6 +55,18 @@
             required
             range
           />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-alert
+
+            border="right"
+            color="green lighten-1"
+            class="ma-2"
+          >
+            Celkem odpracovaný čas za zvolené období: <b>{{ workLogs.timeSpentSum }}</b>
+          </v-alert>
         </v-col>
       </v-row>
       <v-data-table
@@ -113,9 +125,7 @@
       <v-col
         cols="6"
         class="time-spent-sum pl-6"
-      >
-        Celkem odpracovaný čas za zvolené období: {{ workLogs.timeSpentSum }}
-      </v-col>
+      />
     </v-row>
   </div>
 </template>

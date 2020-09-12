@@ -138,8 +138,8 @@
             >
               <v-alert
                 icon="mdi-alert-circle-outline"
-                type="error"
-                color="blue darken-1"
+                border="right"
+                color="green lighten-1"
               >
                 Nezapomeň si zkontrolovat, jestli sedí počet hodin nepřítomnosti. Ve výpočtu nejsou zahrnuty svátky a jiné nepracovní dny a zkrácené úvazky.
               </v-alert>
@@ -170,8 +170,8 @@
             Zrušit
           </v-btn>
           <v-btn
-            color="blue darken-1"
-            text
+            color="blue darken-2"
+            dark
             @click.native="confirmDialog"
           >
             Potvrdit
@@ -275,6 +275,11 @@
         this.countAbsenceHoursNumber();
       },
       async absenceType() {
+        await this.loadGif();
+      },
+    },
+    methods: {
+      async loadGif() {
         const params = {
           q: this.gifTagEnum[this.dialogData.absenceType],
           limit: 10,
@@ -284,8 +289,6 @@
 
         this.gif = this.gifs.items[Math.floor(Math.random() * this.gifs.items.length)];
       },
-    },
-    methods: {
       openDialog() {
         if (this.officeAbsences.approvers.length) {
           const priorityApprover = this.officeAbsences.approvers.find(a => a.priority);

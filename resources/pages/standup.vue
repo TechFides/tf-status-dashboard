@@ -23,7 +23,7 @@
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-            color="blue darken-2"
+            color="green darken-2"
             dark
             right
             class="margin button"
