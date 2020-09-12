@@ -1,25 +1,49 @@
-// routes accessibled by role 'admin'
-const ADMIN_ROUTES = [
+import { pathRedirect } from '../utils/pathRedirect';
+
+// routes accessibled by role 'administration'
+const ADMINISTRATION_ROUTES = [
+  'standup',
   'project',
+  'office-absences',
+  'work-logs',
+  'meeting-times',
   'statistics',
   'users',
   'heatmap',
-  'office-absences',
+  'settings',
 ];
 
-// routes accessibled by role 'user'
-const USER_ROUTES = [
-  'statistics',
+// routes accessibled by role 'realization'
+const REALIZATION_ROUTES = [
   'standup',
   'office-absences',
+  'statistics',
+];
+
+// routes accessibled by role 'sales'
+const SALES_ROUTES = [
+  'office-absences',
+  'work-logs',
+];
+
+// routes accessibled by role 'HR'
+const HR_ROUTES = [
+  'office-absences',
+  'work-logs',
 ];
 
 export default function ({ app, store, route, redirect }) {
-  if (!ADMIN_ROUTES.includes(route.name) && !USER_ROUTES.includes(route.name)) {
+  pathRedirect(app, route, redirect);
+
+  if (!ADMINISTRATION_ROUTES.includes(route.name) && !REALIZATION_ROUTES.includes(route.name) && !SALES_ROUTES.includes(route.name) && !HR_ROUTES.includes(route.name)) {
     return;
-  } else if (ADMIN_ROUTES.includes(route.name) && app.isAdmin()) {
+  } else if (ADMINISTRATION_ROUTES.includes(route.name) && app.isAdministration()) {
     return;
-  } else if (USER_ROUTES.includes(route.name) && app.isUser()) {
+  } else if (REALIZATION_ROUTES.includes(route.name) && app.isRealization()) {
+    return;
+  } else if (SALES_ROUTES.includes(route.name) && app.isSales()) {
+    return;
+  } else if (HR_ROUTES.includes(route.name) && app.isHR()) {
     return;
   }
 

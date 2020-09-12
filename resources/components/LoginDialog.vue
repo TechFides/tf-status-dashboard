@@ -1,6 +1,6 @@
 <template>
   <div v-if="$auth.$state.loggedIn">
-    Přihlášen jako {{ $auth.user.first_name }} {{ $auth.user.last_name }}
+    <span v-if="$device.isDesktop">Přihlášen jako {{ $auth.user.first_name }} {{ $auth.user.last_name }}</span>
     <v-btn
       class="ml-8"
       @click="logout"
@@ -37,7 +37,6 @@
                 v-model="data.username"
                 autofocus
                 label="Přihlašovací jméno"
-                :rules="[rules.usernameRequired]"
               />
             </v-flex>
             <v-flex xs12>
@@ -46,7 +45,6 @@
                 v-model="data.password"
                 label="Heslo"
                 type="password"
-                :rules="[rules.passwordRequired]"
                 required
               />
             </v-flex>

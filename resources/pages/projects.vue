@@ -34,11 +34,11 @@
 
             <v-alert
               transition="fade-transition"
-              :value="error.isVisible"
+              :value="errors.error.isVisible"
               type="error"
               color="red darken-2"
             >
-              {{ error.message }}
+              {{ errors.error.message }}
             </v-alert>
           </v-container>
         </v-card-text>
@@ -145,11 +145,11 @@
 
             <v-alert
               transition="fade-transition"
-              :value="error.isVisible"
+              :value="errors.error.isVisible"
               type="error"
               color="red darken-2"
             >
-              {{ error.message }}
+              {{ errors.error.message }}
             </v-alert>
           </v-container>
         </v-card-text>
@@ -296,8 +296,8 @@ export default {
   },
   computed: {
     ...mapState([
-      'allProjects',
-      'error',
+      'projects',
+      'errors',
       'meetingTimes',
       'users',
     ]),
@@ -348,7 +348,7 @@ export default {
       ];
     },
     filteredProject () {
-      return this.allProjects.filter((element) => {
+      return this.projects.all.filter((element) => {
         const description = element.description ? element.description.toUpperCase() : '';
         const teamLeader = element.teamLeader.name.toUpperCase();
         const slackChannelName = element.slackChannelName ? element.slackChannelName.toUpperCase() : '';
@@ -364,7 +364,7 @@ export default {
     formattedMeetingTimesForSelect () {
       return [
         {text: 'Žádný', value: null},
-        ...this.meetingTimes.map(meetingTime => ({
+        ...this.meetingTimes.items.map(meetingTime => ({
           text: meetingTime.dayAndTime,
           value: meetingTime.id,
         })),
@@ -373,7 +373,7 @@ export default {
     formattedTeamleadersForSelect () {
       return [
         {text: 'Žádný', value: 0},
-        ...this.users.map(user => ({
+        ...this.users.items.map(user => ({
           text: `${user.firstName} ${user.lastName}`,
           value: user.id,
         })),
@@ -382,9 +382,9 @@ export default {
   },
   async fetch ({ store, params }) {
     await Promise.all([
-      store.dispatch('getMeetingTimes'),
-      store.dispatch('getAllProjects'),
-      store.dispatch('getUsers'),
+      store.dispatch('meetingTimes/getMeetingTimes'),
+      store.dispatch('projects/getAllProjects'),
+      store.dispatch('users/getUsers'),
     ]);
   },
   methods: {
@@ -418,31 +418,31 @@ export default {
       const confirmed = confirm(`Opravdu chcete smazat projekt ${item.code}?`);
 
       if (confirmed) {
-        await this.$store.dispatch('deleteProject', item.id);
-        await this.$store.dispatch('getAllProjects');
+        await this.$store.dispatch('projects/deleteProject', item.id);
+        await this.$store.dispatch('projects/getAllProjects');
       }
     },
     close () {
       this.modalItem.isOpen = false;
       this.modalItem = { ...this.defaultModalItem };
-      this.$store.commit('clearErrorState');
+      this.$store.commit('errors/clearErrorState');
     },
     async save () {
-      const action = this.modalItem.id ? 'editProject' : 'createProject';
+      const action = this.modalItem.id ? 'projects/editProject' : 'projects/createProject';
       await this.$store.dispatch(action, this.modalItem);
-      await this.$store.dispatch('getProjects');
-      await this.$store.dispatch('getAllProjects');
-      !this.error.isVisible && this.close();
+      await this.$store.dispatch('projects/getProjects');
+      await this.$store.dispatch('projects/getAllProjects');
+      !this.errors.error.isVisible && this.close();
     },
     closeTeamleaderModal () {
       this.defaultTeamLeaderModalItem.isOpen = false;
       this.teamleaderModalItem = {...this.defaultTeamLeaderModalItem};
-      this.$store.commit('clearErrorState');
+      this.$store.commit('errors/clearErrorState');
     },
     async saveTeamleaderModal() {
       const teamLeader = this.teamLeaderModalItem;
-      await this.$store.dispatch('addTeamLeader', teamLeader);
-      !this.error.isVisible && this.closeTeamleaderModal();
+      await this.$store.dispatch('projects/addTeamLeader', teamLeader);
+      !this.errors.error.isVisible && this.closeTeamleaderModal();
     },
     formatDate (date) {
       if (!date) {

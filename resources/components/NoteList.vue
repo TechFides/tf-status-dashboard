@@ -1,7 +1,7 @@
 <template>
   <div class="note-columns mx-3">
     <v-card
-      v-for="item in notes"
+      v-for="item in notes.items"
       :key="item.id"
       color="brown lighten-5"
       class="note-card mt-3"
@@ -94,7 +94,7 @@ export default {
     },
     markNoteCompleted (note) {
       if (confirm('Opravdu chcete označit poznámku za dokončenou?')) {
-        this.$store.dispatch('markNoteCompleted', note.id);
+        this.$store.dispatch('notes/markNoteCompleted', note.id);
       }
     },
   },
@@ -110,6 +110,12 @@ export default {
     column-count: 5;
     column-gap: 20px;
     column-fill: balance;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .note-columns {
+      column-count: auto;
+    }
   }
 
   .note-card {

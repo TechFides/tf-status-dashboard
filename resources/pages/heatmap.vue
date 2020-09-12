@@ -57,10 +57,10 @@ export default {
   computed: {
     ...mapState([
       'usersFeedbacks',
-      'heatmapWeeks',
+      'heatmap',
     ]),
     headers () {
-      const heatmapWeeks = this.heatmapWeeks.map(h => ({
+      const heatmapWeeks = this.heatmap.items.map(h => ({
         text: this.formatDate(h.date),
         align: 'center',
         sortable: true,
@@ -78,14 +78,14 @@ export default {
       ];
     },
     rows () {
-      return this.usersFeedbacks.map(element => ({
+      return this.heatmap.usersFeedbacks.map(element => ({
         fullName: `${element.first_name} ${element.last_name}`,
         feedbacks: this.getFeedbacks(element),
       }));
     },
   },
   fetch ({ store, params }) {
-    return store.dispatch('getFeedbackData');
+    return store.dispatch('heatmap/getFeedbackData');
   },
   methods: {
     formatDate (date) {
@@ -94,7 +94,7 @@ export default {
       return format(d, 'DD/MM/YYYY');
     },
     getFeedbacks (userFeedback) {
-      return this.heatmapWeeks.map(w => ({
+      return this.heatmap.items.map(w => ({
         userFeedbackId: userFeedback.id,
         weekId: w.id,
         value: userFeedback.feedback[w.id] || 0,

@@ -1,5 +1,5 @@
 {
-  "name": "dashboard",
+  "name": "tf-hub",
   "version": "1.1.0",
   "author": "",
   "description": "",
@@ -66,6 +66,7 @@
   },
   "devDependencies": {
     "@mdi/font": "^4.7.95",
+    "@nuxtjs/device": "^1.2.7",
     "@nuxtjs/vuetify": "^1.11.2",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",

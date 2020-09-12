@@ -5,14 +5,14 @@
   >
     <v-row justify="end">
       <v-btn
-        color="blue darken-2"
+        color="green darken-2"
         dark
         class="mt-2 mr-5 mb-2"
         @click="createNewAbsence()"
       >
         <i class="material-icons">add</i>
         <span class="pl-2">
-          Vytvořit žádost o nepřítomnost
+          Nová žádost
         </span>
       </v-btn>
     </v-row>
@@ -48,7 +48,7 @@
       </v-row>
       <v-data-table
         :headers="headers"
-        :items="officeAbsences"
+        :items="officeAbsences.items"
         :items-per-page="10"
         item-key="id"
         fill-height
@@ -61,7 +61,7 @@
           v-slot:item="{item, expand, isExpanded}"
         >
           <tr
-            :style="{backgroundColor: getRowColor(item.absenceState.name), cursor: item.description ? 'pointer': ''}"
+            :style="{backgroundColor: getRowColor(item.absenceState.name), cursor: item.generalDescription || item.approverDescription ? 'pointer': ''}"
             @click.stop="expand(!isExpanded)"
           >
             <td class="text-right element pr-8">
@@ -96,7 +96,7 @@
             </td>
             <td class="text-left px-0">
               <v-icon
-                v-if="item.description"
+                v-if="item.generalDescription || item.approverDescription"
                 class="mr-2"
               >
                 {{ isExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
@@ -108,17 +108,25 @@
           v-slot:expanded-item="{ headers }"
         >
           <td
-            v-if="officeAbsenceDetailItems.description"
+            v-if="officeAbsenceDetailItems.generalDescription || officeAbsenceDetailItems.approverDescription"
             :colspan="headers.length"
             class="pa-2 pl-4"
             :style="{backgroundColor: getRowColor(officeAbsenceDetailItems.absenceState.name)}"
           >
             <div class="expanded-row">
-              <div class="expanded-column-label">
-                {{ 'Popis nepřítomnosti:' }}
+              <div class="expanded-column-generalLabel">
+                {{ 'Obecný popis:' }}
               </div>
               <div class="expanded-column-text">
-                {{ officeAbsenceDetailItems.description }}
+                {{ officeAbsenceDetailItems.generalDescription }}
+              </div>
+            </div>
+            <div class="expanded-row mt-2">
+              <div class="expanded-column-approverLabel">
+                {{ 'Popis pro schvalovatele:' }}
+              </div>
+              <div class="expanded-column-text">
+                {{ officeAbsenceDetailItems.approverDescription }}
               </div>
             </div>
           </td>
@@ -145,28 +153,12 @@
           absenceType: '',
           absenceState: '',
         },
-        statisticsMonthDialog: {
-          isOpen: false,
-          month: `${new Date().getFullYear()}-${new Date().getMonth() + 1}`,
-        },
-        userInfoDialog: {
-          id: null,
-          previousXp: null,
-          bonusXp: null,
-          isOpen: false,
-          sumXpProjects: null,
-          sumHoursWorked: null,
-        },
         expandedRowId: null,
-        selectedDate: new Date(),
       };
     },
     computed: {
       ...mapState([
         'officeAbsences',
-        'error',
-        'absenceTypeEnums',
-        'absenceStateEnums',
       ]),
       headers () {
         return [
@@ -236,16 +228,16 @@
         ];
       },
       officeAbsenceDetailItems () {
-        return this.officeAbsences.find(o => o.id === this.expandedRowId);
+        return this.officeAbsences.items.find(o => o.id === this.expandedRowId);
       },
       absenceTypeEnumItems () {
-        return this.absenceTypeEnums.map(absenceTypeEnum => ({
+        return this.officeAbsences.absenceTypeEnums.map(absenceTypeEnum => ({
           text: absenceTypeEnum.value,
           value: absenceTypeEnum.id,
         }));
       },
       absenceStateEnumItems () {
-        return this.absenceStateEnums.map(absenceStateEnum => ({
+        return this.officeAbsences.absenceStateEnums.map(absenceStateEnum => ({
           text: absenceStateEnum.value,
           value: absenceStateEnum.id,
         }));
@@ -254,21 +246,21 @@
     watch: {
       filter: {
         handler() {
-          this.$store.dispatch('getOfficeAbsences', this.filter);
+          this.$store.dispatch('officeAbsences/getOfficeAbsences', this.filter);
         },
         deep: true,
       },
     },
     async fetch ({ store }) {
       await Promise.all([
-        store.dispatch('getAbsenceTypeEnums'),
-        store.dispatch('getAbsenceStateEnums'),
+        store.dispatch('officeAbsences/getAbsenceTypeEnums'),
+        store.dispatch('officeAbsences/getAbsenceStateEnums'),
       ]);
     },
     async created() {
       await Promise.all([
-        this.$store.dispatch('getOfficeAbsences'),
-        this.$store.dispatch('getApprovers'),
+        this.$store.dispatch('officeAbsences/getOfficeAbsences'),
+        this.$store.dispatch('officeAbsences/getApprovers'),
       ]);
     },
     methods: {
@@ -297,7 +289,11 @@
       },
       async deleteItem(item) {
         if (item.absenceState.name === 'WAITING_FOR_APPROVAL') {
-          await this.$store.dispatch('deleteOfficeAbsence', item.id);
+          const confirmed = confirm(`Opravdu chcete smazat tuhle žádost o nepřítomnost?`);
+
+          if (confirmed) {
+            await this.$store.dispatch('officeAbsences/deleteOfficeAbsence', item.id);
+          }
         } else {
           this.$refs.cancelAbsenceDialog.openDialog(item);
         }
@@ -315,11 +311,19 @@
     flex-direction: row;
   }
 
-  .expanded-column-label {
+  .expanded-column-generalLabel {
     color: rgba(0,0,0,.6);
     font-size: 0.8rem;
     font-weight: bold;
-    min-width: 130px;
+    min-width: 85px;
+    padding-top: 1px;
+  }
+
+  .expanded-column-approverLabel {
+    color: rgba(0,0,0,.6);
+    font-size: 0.8rem;
+    font-weight: bold;
+    min-width: 145px;
     padding-top: 1px;
   }
 

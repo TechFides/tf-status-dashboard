@@ -65,13 +65,23 @@ class OfficeAbsenceMessanger {
     ];
   }
 
+  static getDates (startOfficeAbsence, endOfficeAbsence) {
+    const isSame = moment(startOfficeAbsence).isSame(endOfficeAbsence);
+
+    return isSame ? moment(startOfficeAbsence).format('DD.MM.YYYY') : `od ${moment(startOfficeAbsence).format('DD.MM.YYYY')} do ${moment(endOfficeAbsence).format('DD.MM.YYYY')}`;
+  }
+
+  static getDescription (description) {
+    return description ? `Poznámka: ${description}` : '';
+  }
+
   async sendApproveCreateAbsenceMessage (officeAbsenceId) {
     const officeAbsence = await OfficeAbsenceMessanger.getOfficeAbsence(officeAbsenceId);
     const privateMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
-      text: `Tvoje žádost o "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla schválena. Nastav si prosím automatickou odpověď na mailu v době nepřítomnosti, viz <https://docs.google.com/document/d/19NslMB1JBY6yvPimD-U34WNiFAS06D57A-SJM-w-dVM/edit#|Automatická odpověď v nepřítomnosti>`,
+      text: `Tvoje žádost o "${officeAbsence.absenceTypeEnum.value}" ${OfficeAbsenceMessanger.getDates(officeAbsence.absence_start, officeAbsence.absence_end)} byla schválena. Nastav si prosím automatickou odpověď na mailu v době nepřítomnosti, viz <https://docs.google.com/document/d/19NslMB1JBY6yvPimD-U34WNiFAS06D57A-SJM-w-dVM/edit#|Automatická odpověď v nepřítomnosti>`,
     });
     const absenceChannelMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
-      text: `${officeAbsence.user.first_name} ${officeAbsence.user.last_name} si bere "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')}.`,
+      text: `${officeAbsence.user.first_name} ${officeAbsence.user.last_name} si bere "${officeAbsence.absenceTypeEnum.value}" ${OfficeAbsenceMessanger.getDates(officeAbsence.absence_start, officeAbsence.absence_end)}. ${OfficeAbsenceMessanger.getDescription(officeAbsence.general_description)}`,
     });
 
     try {
@@ -84,10 +94,10 @@ class OfficeAbsenceMessanger {
   async sendApproveCancelAbsenceMessage (officeAbsenceId) {
     const officeAbsence = await OfficeAbsenceMessanger.getOfficeAbsence(officeAbsenceId);
     const privateMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
-      text: `Tvoje nepřítomnost "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla zrušena.`,
+      text: `Tvoje nepřítomnost "${officeAbsence.absenceTypeEnum.value}" ${OfficeAbsenceMessanger.getDates(officeAbsence.absence_start, officeAbsence.absence_end)} byla zrušena.`,
     });
     const absenceChannelMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
-      text: `${officeAbsence.user.first_name} ${officeAbsence.user.last_name} si ruší "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')}.`,
+      text: `${officeAbsence.user.first_name} ${officeAbsence.user.last_name} si ruší "${officeAbsence.absenceTypeEnum.value}" ${OfficeAbsenceMessanger.getDates(officeAbsence.absence_start, officeAbsence.absence_end)}.`,
     });
 
     try {
@@ -101,7 +111,7 @@ class OfficeAbsenceMessanger {
     const officeAbsence = await OfficeAbsenceMessanger.getOfficeAbsence(officeAbsenceId);
     const privateMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
       color: '#c62828',
-      text: `Tvoje žádost o "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla bohužel zamítnuta. Pro bližší informace se poptej u ${officeAbsence.absenceApprover.first_name} ${officeAbsence.absenceApprover.last_name}`,
+      text: `Tvoje žádost o "${officeAbsence.absenceTypeEnum.value}" ${OfficeAbsenceMessanger.getDates(officeAbsence.absence_start, officeAbsence.absence_end)} byla bohužel zamítnuta. Pro bližší informace se poptej u ${officeAbsence.absenceApprover.first_name} ${officeAbsence.absenceApprover.last_name}`,
     });
 
     try {
@@ -115,7 +125,7 @@ class OfficeAbsenceMessanger {
     const officeAbsence = await OfficeAbsenceMessanger.getOfficeAbsence(officeAbsenceId);
     const privateMessageAttachments = OfficeAbsenceMessanger.attachmentsFactory({
       color: '#c62828',
-      text: `Tvoje žádost o zrušení "${officeAbsence.absenceTypeEnum.value}" od ${moment(officeAbsence.absence_start).format('DD.MM.YYYY')} do ${moment(officeAbsence.absence_end).format('DD.MM.YYYY')} byla bohužel zamítnuta. Pro bližší informace se poptej u ${officeAbsence.absenceApprover.first_name} ${officeAbsence.absenceApprover.last_name}`,
+      text: `Tvoje žádost o zrušení "${officeAbsence.absenceTypeEnum.value}" ${OfficeAbsenceMessanger.getDates(officeAbsence.absence_start, officeAbsence.absence_end)} byla bohužel zamítnuta. Pro bližší informace se poptej u ${officeAbsence.absenceApprover.first_name} ${officeAbsence.absenceApprover.last_name}`,
     });
 
     try {

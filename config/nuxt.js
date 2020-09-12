@@ -7,7 +7,7 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: 'TechFides Dashboard',
+    title: 'TF-Hub',
     htmlAttrs: {
       lang: 'cs',
     },
@@ -29,6 +29,7 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/auth',
     '@nuxtjs/vuetify',
+    '@nuxtjs/device',
   ],
   auth: {
     redirect: {

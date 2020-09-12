@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="show"
-    max-width="700"
+    max-width="770"
     scrollable
     persistent
     @keydown.esc="cancelDialog"
@@ -64,24 +64,72 @@
             </v-col>
             <v-col
               cols="6"
+              class="pl-9"
             >
               <v-select
                 v-model="dialogData.approver"
                 :items="approverItems"
                 label="Schvalovatel"
                 :rules="[rules.required]"
-                no-data-text="Žádný data k dispozici."
+                no-data-text="Žádná data k dispozici."
               />
             </v-col>
           </v-row>
           <v-row class="pr-6">
+            <v-col class="pt-0 pl-11 pr-8">
+              <v-tooltip
+                v-model="showGeneralDescriptionTooltip"
+                top
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-textarea
+                    v-model="dialogData.generalDescription"
+                    v-bind="attrs"
+                    rows="2"
+                    label="Obecný popis"
+                    v-on="on"
+                    @focus="showGeneralDescriptionTooltip = !showGeneralDescriptionTooltip"
+                  />
+                </template>
+                <span>Tato informace bude přístupná všem v google kalendáři a ve Slacku</span>
+              </v-tooltip>
+            </v-col>
+            <v-col class="pt-0">
+              <v-tooltip
+                v-model="showApproverDescriptionTooltip"
+                top
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-textarea
+                    v-model="dialogData.approverDescription"
+                    v-bind="attrs"
+                    rows="2"
+                    label="Popis pro schvalovatele"
+                    v-on="on"
+                    @focus="showApproverDescriptionTooltip = !showApproverDescriptionTooltip"
+                  />
+                </template>
+                <span>Tuhle informaci uvidí pouze zvolený schvalovatel</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+          <v-row justify="center">
             <v-col
-              class="pl-11"
+              v-if="gif.url"
+              class="pa-0 pb-8"
+              cols="6"
             >
-              <v-textarea
-                v-model="dialogData.description"
-                label="Popis nepřítomnosti (tato informace bude vyplněna v google kalendáři)"
-              />
+              <div class="gif">
+                <iframe
+                  :src="gif.url"
+                  width="100%"
+                  height="100%"
+                  style="position:absolute"
+                  frameBorder="0"
+                  class="giphy-embed"
+                  allowFullScreen
+                />
+              </div>
             </v-col>
           </v-row>
           <v-row class="pr-6">
@@ -90,10 +138,10 @@
             >
               <v-alert
                 icon="mdi-alert-circle-outline"
-                type="error"
-                color="blue darken-1"
+                border="right"
+                color="green lighten-1"
               >
-                Nezapomeň si zkontrolovat, jestli sedí počet hodin nepřítomnosti. Ve výpočtu nejsou zahrnuty svátky a jiné nepracovní dny.
+                Nezapomeň si zkontrolovat, jestli sedí počet hodin nepřítomnosti. Ve výpočtu nejsou zahrnuty svátky a jiné nepracovní dny a zkrácené úvazky.
               </v-alert>
             </v-col>
           </v-row>
@@ -103,11 +151,11 @@
             >
               <v-alert
                 transition="fade-transition"
-                :value="error.isVisible"
+                :value="errors.error.isVisible"
                 type="error"
                 color="red darken-2"
               >
-                {{ error.message }}
+                {{ errors.error.message }}
               </v-alert>
             </v-col>
           </v-row>
@@ -122,8 +170,8 @@
             Zrušit
           </v-btn>
           <v-btn
-            color="blue darken-1"
-            text
+            color="blue darken-2"
+            dark
             @click.native="confirmDialog"
           >
             Potvrdit
@@ -149,12 +197,25 @@
     data () {
       return {
         show: false,
+        showApproverDescriptionTooltip: false,
+        showGeneralDescriptionTooltip: false,
+        gif: {
+          url: '',
+        },
+        gifTagEnum: [
+          '',
+          'home office',
+          'holiday',
+          'work trip',
+          'holiday',
+        ],
         dialogData: {
           userId: null,
           absenceStart: '',
           absenceEnd: '',
           absenceType: DEFAULT_ABSENCE_TYPE,
-          description: '',
+          generalDescription: '',
+          approverDescription: '',
           approver: '',
           absenceHoursNumber: null,
         },
@@ -162,9 +223,13 @@
           absenceStart: '',
           absenceEnd: '',
           absenceType: DEFAULT_ABSENCE_TYPE,
-          description: '',
+          generalDescription: '',
+          approverDescription: '',
           approver: '',
           absenceHoursNumber: null,
+        },
+        defaultGif: {
+          url: '',
         },
         defaultSelectItems: [],
         rules: {
@@ -175,10 +240,10 @@
     },
     computed: {
       ...mapState([
-        'absenceTypeEnums',
-        'approvers',
+        'officeAbsences',
         'auth',
-        'error',
+        'errors',
+        'gifs',
       ]),
       absenceStart() {
         return this.dialogData.absenceStart;
@@ -186,14 +251,17 @@
       absenceEnd() {
         return this.dialogData.absenceEnd;
       },
+      absenceType() {
+        return this.dialogData.absenceType;
+      },
       approverItems () {
-        return this.approvers.length ? this.approvers.map(approver => ({
+        return this.officeAbsences.approvers.length ? this.officeAbsences.approvers.map(approver => ({
           text: `${approver.firstName} ${approver.lastName}`,
           value: approver.id,
         })): this.defaultSelectItems;
       },
       absenceTypeEnumItems () {
-        return this.absenceTypeEnums.map(absenceTypeEnum => ({
+        return this.officeAbsences.absenceTypeEnums.map(absenceTypeEnum => ({
           text: absenceTypeEnum.value,
           value: absenceTypeEnum.id,
         }));
@@ -206,30 +274,45 @@
       absenceEnd() {
         this.countAbsenceHoursNumber();
       },
+      async absenceType() {
+        await this.loadGif();
+      },
     },
     methods: {
+      async loadGif() {
+        const params = {
+          q: this.gifTagEnum[this.dialogData.absenceType],
+          limit: 10,
+          api_key: process.env.NUXT_ENV_GIPHY_API_TOKEN,
+        };
+        await this.$store.dispatch('gifs/getRandomGif', params);
+
+        this.gif = this.gifs.items[Math.floor(Math.random() * this.gifs.items.length)];
+      },
       openDialog() {
-        if (this.approvers.length) {
-          const priorityApprover = this.approvers.find(a => a.priority);
-          const secondaryApprover = this.approvers.find(a => !a.priority);
+        if (this.officeAbsences.approvers.length) {
+          const priorityApprover = this.officeAbsences.approvers.find(a => a.priority);
+          const secondaryApprover = this.officeAbsences.approvers.find(a => !a.priority);
 
           this.dialogData.approver = priorityApprover ? priorityApprover.id : secondaryApprover.id;
         }
 
         this.dialogData.userId = this.auth.user.id;
         this.show = true;
+        this.gif = this.defaultGif;
       },
       async confirmDialog () {
         if (this.$refs.form.validate()) {
-          await this.$store.dispatch('createOfficeAbsence', this.dialogData);
-          !this.error.isVisible && this.cancelDialog();
+          await this.$store.dispatch('officeAbsences/createOfficeAbsence', this.dialogData);
+
+          !this.errors.error.isVisible && this.cancelDialog();
         }
       },
       cancelDialog () {
         this.dialogData = { ...this.defaultDialogData };
         this.$refs.form.resetValidation();
         this.show = false;
-        this.$store.commit('clearErrorState');
+        this.$store.commit('errors/clearErrorState');
       },
       countAbsenceHoursNumber () {
         const startDay = moment(this.dialogData.absenceStart);
@@ -267,5 +350,10 @@
 </script>
 
 <style scoped>
-
+  .gif {
+    width:100%;
+    height:0;
+    padding-bottom:50%;
+    position:relative;
+  }
 </style>

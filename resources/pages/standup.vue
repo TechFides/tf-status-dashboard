@@ -4,15 +4,26 @@
       row
       reverse
     >
+      <div
+        v-if="gifDialog.isOpen"
+        class="gif"
+      >
+        <v-img
+          width="100%"
+          height="100%"
+          style="position:absolute"
+          :src="gifDialog.url"
+        />
+      </div>
       <v-dialog
-        v-show="isAdmin() || isUser()"
+        v-show="isAdministration()"
         v-model="noteDialog.isOpen"
         max-width="500px"
         :persistent="true"
       >
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-            color="blue darken-2"
+            color="green darken-2"
             dark
             right
             class="margin button"
@@ -55,11 +66,11 @@
               </v-layout>
               <v-alert
                 transition="fade-transition"
-                :value="error.isVisible"
+                :value="errors.error.isVisible"
                 type="error"
                 color="red darken-2"
               >
-                {{ error.message }}
+                {{ errors.error.message }}
               </v-alert>
             </div>
             <v-card-actions>
@@ -84,7 +95,7 @@
       </v-dialog>
 
       <v-btn
-        v-show="isAdmin()"
+        v-show="isAdministration()"
         class="standup-button"
         color="light-blue accent-4"
         dark
@@ -113,11 +124,11 @@
             </v-layout>
             <v-alert
               transition="fade-transition"
-              :value="error.isVisible"
+              :value="errors.error.isVisible"
               type="error"
               color="red darken-2"
             >
-              {{ error.message }}
+              {{ errors.error.message }}
             </v-alert>
           </div>
           <v-card-actions>
@@ -221,7 +232,7 @@
                 :key="h.text"
                 class="text-center header-text"
               >
-                <nav>
+                <span class="project-name">
                   <div class="text-xs-center header align-project">
                     {{ h.text }}
                   </div>
@@ -238,7 +249,7 @@
                     </template>
                     <span>Chybí cíl na další standup</span>
                   </v-tooltip>
-                </nav>
+                </span>
               </th>
             </tr>
           </thead>
@@ -271,8 +282,9 @@
                 :project-rating="i.rating"
                 :project-id="i.projectId"
                 :standup-id="i.standupId"
-                :disabled="!isAdmin() && !isUser()"
+                :disabled="!isAdministration()"
                 :date="formatDate(props.item.standup.date)"
+                :on-submit="openGifDialog"
               />
             </td>
             <td class="text-center px-0">
@@ -293,7 +305,7 @@
       </v-data-table>
     </v-layout>
     <note-list
-      :editable="isAdmin() || isUser()"
+      :editable="isAdministration()"
       @edit="editNote"
     />
   </div>
@@ -315,7 +327,11 @@ export default {
   },
   data () {
     return {
-      filteredProjectsBySelectedMeetingTime: this.projects,
+      GIF_ANIMATION_DURATION: 5500,
+      gifDialog: {
+        isOpen: false,
+        url: '',
+      },
       selectedMeetingTimeId: null,
       defaultRating: 8,
       modalItem: {
@@ -349,13 +365,9 @@ export default {
     ...mapState([
       'notes',
       'projects',
-      'standupRatings',
-      'error',
+      'standups',
+      'errors',
       'meetingTimes',
-    ]),
-    ...mapMutations([
-      'clearErrorState',
-      'setErrorState',
     ]),
     headers () {
       const sortedProjects = this.sortProjectsByMeetingTime();
@@ -388,7 +400,7 @@ export default {
       ];
     },
     rows () {
-      return this.standupRatings.map(standup => ({
+      return this.standups.ratings.map(standup => ({
         standup: {
           id: standup.id,
           date: standup.date,
@@ -397,7 +409,7 @@ export default {
       }));
     },
     projectNames () {
-      return this.projects.map(p => ({
+      return this.projects.items.map(p => ({
         text: p.code,
         value: p.id,
       }));
@@ -411,7 +423,7 @@ export default {
     formattedMeetingTimesForSelect () {
       return [
         {text: 'Žádný', value: null},
-        ...this.meetingTimes.map(meetingTime => ({
+        ...this.meetingTimes.items.map(meetingTime => ({
           text: meetingTime.dayAndTime,
           value: meetingTime.id,
         })),
@@ -420,16 +432,16 @@ export default {
   },
   fetch ({ store, params }) {
     return Promise.all([
-      store.dispatch('getStandupData'),
-      store.dispatch('getNotes'),
-      store.dispatch('getMeetingTimes'),
-      store.dispatch('getProjects'),
+      store.dispatch('standups/getStandupData'),
+      store.dispatch('notes/getNotes'),
+      store.dispatch('meetingTimes/getMeetingTimes'),
+      store.dispatch('projects/getProjects'),
     ]);
   },
   methods: {
     sortProjectsByMeetingTime () {
-      const projectsWithoutMeetingTime = this.projects.filter(project => project.meetingTime.time === null);
-      const sortedProjectsWithMeetingTime = this.projects
+      const projectsWithoutMeetingTime = this.projects.items.filter(project => project.meetingTime.time === null);
+      const sortedProjectsWithMeetingTime = this.projects.items
         .filter(project => project.meetingTime.time !== null)
         .sort((a, b) => this.sortByDayAndTime(a.meetingTime, b.meetingTime));
 
@@ -483,9 +495,9 @@ export default {
       const isSameYear = (selectedDate.getFullYear() === actualDate.getFullYear());
 
       if (isSameMonth && isSameYear) {
-        this.$store.dispatch('getStandupData', selectedDate);
+        this.$store.dispatch('standups/getStandupData', selectedDate);
       } else {
-        this.$store.dispatch('getProjectsForMonth', selectedDate);
+        this.$store.dispatch('standups/getProjectsForMonth', selectedDate);
       }
 
       this.monthPickerIsOpen = false;
@@ -503,7 +515,7 @@ export default {
       date = addWeeks(date, 1);
       date = setDay(date, 1);
 
-      this.$store.commit('clearErrorState');
+      this.$store.commit('errors/clearErrorState');
 
       this.noteDialog = {
         ...this.defaultNoteDialog,
@@ -513,7 +525,7 @@ export default {
     resetStandup () {
       const date = new Date();
 
-      this.$store.commit('clearErrorState');
+      this.$store.commit('errors/clearErrorState');
 
       this.standupDialog = {
         isOpen: false,
@@ -522,7 +534,7 @@ export default {
     },
     isMissingNote (projectCode, hasIcon) {
       const date = format(new Date(), 'YYYY-MM-DD 00:00:00');
-      const hasNoteAfterDeadline = this.notes.some(element => {
+      const hasNoteAfterDeadline = this.notes.items.some(element => {
         return element.projectCode === projectCode && element.deadlineDate > date;
       });
       return !hasNoteAfterDeadline && hasIcon;
@@ -543,7 +555,7 @@ export default {
       const resultDate = setHours(deadlineDate, getHours(currentDate));
 
       if (errorMsg) {
-        this.$store.commit('setErrorState', {message: errorMsg});
+        this.$store.commit('errors/setErrorState', {message: errorMsg});
         return;
       }
 
@@ -555,9 +567,9 @@ export default {
       };
 
       if (note.id) {
-        await this.$store.dispatch('editNote', note);
+        await this.$store.dispatch('notes/editNote', note);
       } else {
-        await this.$store.dispatch('createNote', note);
+        await this.$store.dispatch('notes/createNote', note);
       }
 
       this.noteDialog.isOpen = false;
@@ -586,8 +598,14 @@ export default {
         selectedDate: this.selectedDate,
       };
     },
+    openGifDialog () {
+      this.gifDialog.isOpen = true;
+      this.gifDialog.url = "/giphy.gif"+"?a="+Math.random();
+
+      setTimeout(() => this.gifDialog.isOpen = false, this.GIF_ANIMATION_DURATION);
+    },
     async save () {
-      const action = this.standupDialog.id ? 'editStandup' : 'createStandup';
+      const action = this.standupDialog.id ? 'standups/editStandup' : 'standups/createStandup';
       const currentDateInMiliSec = new Date().getTime();
       const difference = currentDateInMiliSec - this.standupDialog.date.getTime();
       const isInPast = difference > 6e7; // 1 hour
@@ -600,7 +618,7 @@ export default {
       }
 
       if (errorMsg) {
-        this.$store.commit('setErrorState', {message: errorMsg});
+        this.$store.commit('errors/setErrorState', {message: errorMsg});
         return;
       }
       await this.$store.dispatch(action, this.standupDialog);
@@ -615,7 +633,7 @@ export default {
       };
 
       if (confirmed) {
-        await this.$store.dispatch('deleteStandup', this.standupDialog);
+        await this.$store.dispatch('standups/deleteStandup', this.standupDialog);
       }
     },
   },
@@ -672,5 +690,16 @@ export default {
 
   .button {
     margin-top: 6px;
+  }
+
+  .gif {
+    width:600px;
+    height:500px;
+    position:absolute;
+    z-index: 9999;
+  }
+
+  .project-name {
+    display: flex;
   }
 </style>

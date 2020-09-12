@@ -73,10 +73,10 @@
     },
     computed: {
       ...mapState([
-        'approvers',
+        'officeAbsences',
       ]),
       approverItems () {
-        return this.approvers.length ? this.approvers.map(approver => ({
+        return this.officeAbsences.approvers.length ? this.officeAbsences.approvers.map(approver => ({
           text: `${approver.firstName} ${approver.lastName}`,
           value: approver.id,
         })): this.defaultSelectItems;
@@ -91,7 +91,7 @@
       async confirmDialog () {
         if (this.$refs.form.validate()) {
           this.cancelDialog();
-          await this.$store.dispatch('cancelOfficeAbsence', this.dialogData);
+          await this.$store.dispatch('officeAbsences/cancelOfficeAbsence', this.dialogData);
         }
       },
       cancelDialog () {

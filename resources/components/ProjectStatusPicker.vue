@@ -100,6 +100,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    onSubmit: {
+      type: Function,
+      default: () => {},
+    },
   },
   data () {
     return {
@@ -123,7 +127,7 @@ export default {
       return this.getRatingIconFromId(this.projectRating);
     },
     projectName () {
-      return this.projects.find(p => p.id === this.projectId).code;
+      return this.projects.items.find(p => p.id === this.projectId).code;
     },
   },
   methods: {
@@ -157,7 +161,11 @@ export default {
           standupId: this.standupId,
         };
 
-        await this.$store.dispatch('editRating', ratingData);
+        if (this.getRatingId(icon) === this.RATING_ENUM.AMAZING) {
+          this.onSubmit();
+        }
+
+        await this.$store.dispatch('standups/editRating', ratingData);
       } catch (e) {
         // TODO handle error
         console.error(e);
@@ -212,6 +220,10 @@ export default {
 </script>
 
 <style scoped>
+/deep/ .v-dialog {
+  overflow: hidden !important;
+}
+
 .myicon {
   display: flex;
   flex-direction: row;

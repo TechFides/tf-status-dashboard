@@ -172,7 +172,7 @@ export default {
       }));
     },
     approvers () {
-      return this.users.map(user => ({
+      return this.users.items.map(user => ({
         text: `${user.firstName} ${user.lastName}`,
         value: user.id.toString(),
       }));
@@ -197,7 +197,7 @@ export default {
     }
   },
   async fetch ({ store }) {
-    await store.dispatch('getUsers');
+    await store.dispatch('users/getUsers');
   },
   methods: {
     async saveSettings () {
