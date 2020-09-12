@@ -76,7 +76,7 @@ deploy:staging:
     name: bitnami/kubectl:latest
     entrypoint: [""]
   script:
-    - kubectl -n tf-erp-staging set image deployment/tf-hub tf-hub=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - kubectl -n tf-platform-staging set image deployment/tf-hub tf-hub=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
   environment:
     name: staging
     url: https://hub-staging.techfides.services
