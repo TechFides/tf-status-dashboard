@@ -47,7 +47,7 @@
             clearable
           />
         </v-col>
-        <v-col cols="2">
+        <v-col cols="3">
           <DatePicker
             v-model="filter.dates"
             label="Zahájení práce"

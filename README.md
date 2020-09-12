@@ -10,6 +10,11 @@ Dev stack is Adonis with Nuxt and MySQL.
 1. Run `npm i --global @adonisjs/cli`.
 2. Copy `.env.example` to `.env` and setup proper values.
 3. Run `npm install`.
+4. Run `npm run dev`
+
+## Production run
+1. Run `npm run build`
+2. Run `node server.js` (if env is setted by container use `ENV_SILENT=true node server.js`)
 
 ## Database
 * Run `init_database.sh` inside docker (otherwise it will fail).
