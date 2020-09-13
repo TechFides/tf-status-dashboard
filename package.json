@@ -10,7 +10,6 @@
     "serve:dev": "npm run dev",
     "dev": "node ./node_modules/nodemon/bin/nodemon.js --inspect --watch app --watch bootstrap --watch config --watch .env -x node server.js",
     "build": "node ./ace nuxtbuild",
-    "build:prod": "node ace build --production",
     "start": "nodemon --inspect --watch app --watch bootstrap --watch config --watch .env -x node server.js",
     "precommit": "npm run lint",
     "lint": "eslint --max-warnings 0 --ext .js,.vue resources/ app/",
