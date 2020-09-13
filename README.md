@@ -13,7 +13,7 @@ Dev stack is Adonis with Nuxt and MySQL.
 4. Run `npm run dev`
 
 ## Production run
-1. Run `npm run build`
+1. Run `npm run build:prod`
 2. Run `node server.js` (if env is setted by container use `ENV_SILENT=true node server.js`)
 
 ## Database

@@ -13,7 +13,7 @@ RUN npm i --global @adonisjs/cli
 
 RUN npm i
 
-RUN ENV_SILENT=true npm run build
+RUN ENV_SILENT=true npm run build:prod
 
 ### Release
 FROM node:12-alpine
