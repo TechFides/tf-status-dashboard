@@ -4,65 +4,6 @@
     justify-center
     align-end
   >
-    <v-dialog
-      v-model="defaultTeamLeaderModalItem.isOpen"
-      max-width="500px"
-    >
-      <v-card>
-        <v-card-title>
-          <span class="headline">{{ modalTitle }}</span>
-        </v-card-title>
-
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout
-              wrap
-              column
-            >
-              <v-flex
-                xs12
-                sm6
-                md4
-              >
-                <v-select
-                  v-model="teamLeaderModalItem.userId"
-                  :items="formattedTeamleadersForSelect"
-                  label="Vyberte vedoucího projektu"
-                />
-              </v-flex>
-            </v-layout>
-
-            <v-alert
-              transition="fade-transition"
-              :value="errors.error.isVisible"
-              type="error"
-              color="red darken-2"
-            >
-              {{ errors.error.message }}
-            </v-alert>
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="blue darken-1"
-            text
-            @click.native="closeTeamleaderModal"
-          >
-            Zrušit
-          </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click.native="saveTeamleaderModal"
-          >
-            Uložit
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <v-btn
       color="blue darken-2"
       dark
@@ -72,107 +13,6 @@
       <i class="material-icons">add</i>
       Nový projekt
     </v-btn>
-
-    <v-dialog
-      v-model="modalItem.isOpen"
-      max-width="500px"
-    >
-      <v-card>
-        <v-card-title>
-          <span class="headline">{{ modalTitle }}</span>
-        </v-card-title>
-
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout
-              wrap
-              column
-            >
-              <v-flex
-                xs12
-                sm6
-                md4
-              >
-                <v-text-field
-                  v-model="modalItem.code"
-                  :rules="[rules.required]"
-                  label="Projekt"
-                />
-              </v-flex>
-              <v-flex
-                xs12
-                sm6
-                md4
-              >
-                <v-text-field
-                  v-model="modalItem.description"
-                  label="Popis"
-                />
-              </v-flex>
-              <v-flex
-                xs12
-                sm6
-                md4
-              >
-                <v-text-field
-                  v-model="modalItem.slackChannelName"
-                  :rules="[rules.required]"
-                  label="Název slack kanálu"
-                />
-              </v-flex>
-              <v-flex
-                xs12
-                sm6
-                md4
-              >
-                <v-checkbox
-                  v-model="modalItem.isActive"
-                  label="Aktivní"
-                />
-              </v-flex>
-              <v-flex
-                xs12
-                sm6
-                md4
-              >
-                <v-select
-                  v-model="modalItem.meetingTimeId"
-                  :items="formattedMeetingTimesForSelect"
-                  label="Vyberte čas konání sitdownu"
-                />
-              </v-flex>
-            </v-layout>
-
-            <v-alert
-              transition="fade-transition"
-              :value="errors.error.isVisible"
-              type="error"
-              color="red darken-2"
-            >
-              {{ errors.error.message }}
-            </v-alert>
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="blue darken-1"
-            text
-            @click.native="close"
-          >
-            Zrušit
-          </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click.native="save"
-          >
-            Uložit
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <v-card class="elevation-1 fullscreen">
       <v-layout
@@ -233,13 +73,13 @@
               <v-icon
                 small
                 class="mr-2"
-                @click="editItem(props.item)"
+                @click="editProject(props.item)"
               >
                 edit
               </v-icon>
               <v-icon
                 small
-                @click="deleteItem(props.item)"
+                @click="deleteProject(props.item)"
               >
                 delete
               </v-icon>
@@ -247,6 +87,12 @@
           </tr>
         </template>
       </v-data-table>
+      <ProjectDialog
+        ref="refProjectDialog"
+      />
+      <TeamLeaderDialog
+        ref="refTeamLeaderDialog"
+      />
     </v-card>
   </v-layout>
 </template>
@@ -254,43 +100,17 @@
 <script>
 import { mapState } from 'vuex';
 import format from 'date-fns/format';
+import ProjectDialog from '../components/project/dialogs/ProjectDialog';
+import TeamLeaderDialog from '../components/project/dialogs/TeamLeaderDialog';
 
 export default {
+  components: {
+    ProjectDialog,
+    TeamLeaderDialog,
+  },
   data () {
     return {
       pagination: { sortBy: 'code' },
-      modalTitle: '',
-      rules: {
-        required: value => !!value || 'Povinné.',
-      },
-      modalItem: {
-        id: null,
-        code: '',
-        description: '',
-        isActive: true,
-        meetingTimeId: null,
-        slackChannelName: null,
-        isOpen: false,
-      },
-      defaultModalItem: {
-        id: null,
-        code: '',
-        description: '',
-        isActive: true,
-        meetingTimeId: null,
-        slackChannelName: null,
-        isOpen: false,
-      },
-      teamLeaderModalItem: {
-        projectId: null,
-        userId: 0,
-        isOpen: false,
-      },
-      defaultTeamLeaderModalItem: {
-        projectId: null,
-        userId: 0,
-        isOpen: false,
-      },
       filteringText: '',
     };
   },
@@ -298,8 +118,6 @@ export default {
     ...mapState([
       'projects',
       'errors',
-      'meetingTimes',
-      'users',
     ]),
     headers: function () {
       return [
@@ -361,24 +179,6 @@ export default {
           slackChannelName.match(uppercasedFilterText);
       });
     },
-    formattedMeetingTimesForSelect () {
-      return [
-        {text: 'Žádný', value: null},
-        ...this.meetingTimes.items.map(meetingTime => ({
-          text: meetingTime.dayAndTime,
-          value: meetingTime.id,
-        })),
-      ];
-    },
-    formattedTeamleadersForSelect () {
-      return [
-        {text: 'Žádný', value: 0},
-        ...this.users.items.map(user => ({
-          text: `${user.firstName} ${user.lastName}`,
-          value: user.id,
-        })),
-      ];
-    },
   },
   async fetch ({ store, params }) {
     await Promise.all([
@@ -389,32 +189,12 @@ export default {
   },
   methods: {
     createNewProject () {
-      this.modalTitle = 'Nový projekt';
-      this.modalItem.isOpen = true;
+      this.$refs.refProjectDialog.openDialog();
     },
-    addTeamleader(item) {
-      this.teamLeaderModalItem = {
-        projectId: item.id,
-        userId: item.teamLeader.id ? item.teamLeader.id : this.defaultTeamLeaderModalItem.userId,
-      };
-
-      this.modalTitle = 'Nastavit vedoucího projektu';
-      this.defaultTeamLeaderModalItem.isOpen = true;
+    editProject (project) {
+      this.$refs.refProjectDialog.openDialog(project);
     },
-    editItem (item) {
-      this.modalItem = {
-        id: item.id,
-        code: item.code,
-        description: item.description,
-        isActive: item.isActive,
-        meetingTimeId: item.meetingTime.value,
-        slackChannelName: item.slackChannelName,
-      };
-
-      this.modalTitle = 'Upravit projekt';
-      this.modalItem.isOpen = true;
-    },
-    async deleteItem (item) {
+    async deleteProject (item) {
       const confirmed = confirm(`Opravdu chcete smazat projekt ${item.code}?`);
 
       if (confirmed) {
@@ -422,27 +202,8 @@ export default {
         await this.$store.dispatch('projects/getAllProjects');
       }
     },
-    close () {
-      this.modalItem.isOpen = false;
-      this.modalItem = { ...this.defaultModalItem };
-      this.$store.commit('errors/clearErrorState');
-    },
-    async save () {
-      const action = this.modalItem.id ? 'projects/editProject' : 'projects/createProject';
-      await this.$store.dispatch(action, this.modalItem);
-      await this.$store.dispatch('projects/getProjects');
-      await this.$store.dispatch('projects/getAllProjects');
-      !this.errors.error.isVisible && this.close();
-    },
-    closeTeamleaderModal () {
-      this.defaultTeamLeaderModalItem.isOpen = false;
-      this.teamleaderModalItem = {...this.defaultTeamLeaderModalItem};
-      this.$store.commit('errors/clearErrorState');
-    },
-    async saveTeamleaderModal() {
-      const teamLeader = this.teamLeaderModalItem;
-      await this.$store.dispatch('projects/addTeamLeader', teamLeader);
-      !this.errors.error.isVisible && this.closeTeamleaderModal();
+    addTeamleader(teamLeader) {
+      this.$refs.refTeamLeaderDialog.openDialog(teamLeader);
     },
     formatDate (date) {
       if (!date) {

@@ -3,7 +3,7 @@
     <v-dialog
       v-model="dialog"
       :disabled="disabled"
-      width="1080"
+      max-width="1080"
     >
       <template v-slot:activator="{ on, attrs }">
         <div
@@ -220,9 +220,6 @@ export default {
 </script>
 
 <style scoped>
-/deep/ .v-dialog {
-  overflow: hidden !important;
-}
 
 .myicon {
   display: flex;
