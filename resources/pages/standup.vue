@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <v-layout
-      row
-      reverse
-    >
+  <div
+    width="100%"
+    class="fill-height"
+  >
+    <v-row justify="end">
       <div
         v-if="gifDialog.isOpen"
         class="gif"
@@ -15,203 +15,51 @@
           :src="gifDialog.url"
         />
       </div>
-      <v-dialog
-        v-show="isAdministration()"
-        v-model="noteDialog.isOpen"
-        max-width="500px"
-        :persistent="true"
+      <v-col
+        cols="2"
+        class="pt-0"
       >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            color="blue darken-2"
-            dark
-            right
-            class="margin button"
-            v-bind="attrs"
-            v-on="on"
-            @click="resetNote"
-          >
-            <i class="material-icons">add</i>
-            Přidat cíl
-          </v-btn>
-        </template>
-        <v-form @submit.prevent="createNote">
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ noteDialogTitle }}</span>
-            </v-card-title>
-            <div class="mx-3">
-              <v-layout column>
-                <v-flex>
-                  <v-combobox
-                    v-model="noteDialog.selectedProject"
-                    :items="projectNames"
-                    required
-                    label="Projekt"
-                  />
-                </v-flex>
-                <v-flex>
-                  <date-picker-field
-                    v-model="noteDialog.deadlineDate"
-                    label="Deadline"
-                  />
-                </v-flex>
-                <v-flex>
-                  <v-textarea
-                    v-model="noteDialog.note"
-                    label="Poznámka"
-                    required
-                  />
-                </v-flex>
-              </v-layout>
-              <v-alert
-                transition="fade-transition"
-                :value="errors.error.isVisible"
-                type="error"
-                color="red darken-2"
-              >
-                {{ errors.error.message }}
-              </v-alert>
-            </div>
-            <v-card-actions>
-              <v-spacer />
-              <v-btn
-                color="blue darken-1"
-                text
-                @click.native="resetNote"
-              >
-                Zavřít
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                type="submit"
-              >
-                Uložit
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-form>
-      </v-dialog>
-
+        <v-select
+          v-model="selectedMeetingTimeId"
+          :items="formattedMeetingTimesForSelect"
+          label="Vyberte čas konání sitdownu"
+        />
+      </v-col>
+      <v-col
+        cols="1"
+        class="pt-0"
+      >
+        <DatePicker
+          v-model="filter.standupMonth"
+          label="Měsíc"
+          :clearable="false"
+          type="month"
+          date-format="YYYY-MM"
+        />
+      </v-col>
+      <v-btn
+        color="blue darken-2"
+        dark
+        right
+        class="mt-2 ml-4"
+        @click="createNote"
+      >
+        <i class="material-icons">add</i>
+        Přidat cíl
+      </v-btn>
       <v-btn
         v-show="isAdministration()"
-        class="standup-button"
+        class="mt-2 ml-4 mr-6"
         color="light-blue accent-4"
         dark
-        @click="createStandup()"
+        @click="createStandup"
       >
         <i class="material-icons">add</i>
         Přidat standup
       </v-btn>
-      <v-dialog
-        v-model="standupDialog.isOpen"
-        max-width="500px"
-        :persistent="true"
-      >
-        <v-card>
-          <v-card-title>
-            <span class="headline">{{ standupDialogTitle }}</span>
-          </v-card-title>
-          <div class="mx-3">
-            <v-layout column>
-              <v-flex>
-                <date-picker-field
-                  v-model="standupDialog.date"
-                  label="Datum standupu"
-                />
-              </v-flex>
-            </v-layout>
-            <v-alert
-              transition="fade-transition"
-              :value="errors.error.isVisible"
-              type="error"
-              color="red darken-2"
-            >
-              {{ errors.error.message }}
-            </v-alert>
-          </div>
-          <v-card-actions>
-            <v-spacer />
-            <v-btn
-              color="blue darken-1"
-              text
-              @click.native="resetStandup"
-            >
-              Zavřít
-            </v-btn>
-            <v-btn
-              color="blue darken-1"
-              text
-              @click.native="save"
-            >
-              Uložit
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+    </v-row>
 
-      <v-flex
-        md1
-        class="pad"
-      >
-        <v-dialog
-          ref="dialogMonth"
-          v-model="monthPickerIsOpen"
-          :return-value.sync="modalItem.standupMonth"
-          persistent
-          width="290px"
-          light
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="modalItem.standupMonth"
-              label="Měsíc"
-              append-icon="event"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-            />
-          </template>
-          <v-date-picker
-            v-model="modalItem.standupMonth"
-            scrollable
-            type="month"
-            header-color="blue darken-2"
-            color="blue darken-2"
-          >
-            <v-spacer />
-            <v-btn
-              text
-              color="primary"
-              @click="monthPickerIsOpen = false"
-            >
-              Zrušit
-            </v-btn>
-            <v-btn
-              text
-              color="primary"
-              @click="updateStandup($refs.dialogMonth)"
-            >
-              OK
-            </v-btn>
-          </v-date-picker>
-        </v-dialog>
-      </v-flex>
-
-      <v-select
-        v-model="selectedMeetingTimeId"
-        class="margin select-wrapper"
-        :items="formattedMeetingTimesForSelect"
-        label="Vyberte čas konání sitdownu"
-      />
-    </v-layout>
-
-    <v-layout
-      column
-      justify-center
-      align-center
-    >
+    <v-card class="elevation-1">
       <v-data-table
         :headers="headers"
         :items="rows"
@@ -303,27 +151,36 @@
           </tr>
         </template>
       </v-data-table>
-    </v-layout>
+    </v-card>
     <note-list
       :editable="isAdministration()"
       @edit="editNote"
+    />
+    <note-dialog
+      ref="refNoteDialog"
+    />
+    <StandupDialog
+      ref="refStandupDialog"
     />
   </div>
 </template>
 
 <script>
-import NoteList from '../components/NoteList';
-import ProjectStatusPicker from '../components/ProjectStatusPicker';
-import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
-import { mapState, mapMutations } from 'vuex';
-import DatePickerField from '../components/DatePickerField';
-import { WEEK_DAYS_SHORTHAND } from '../constants';
+import NoteList from '../components/standup/NoteList';
+import NoteDialog from '../components/standup/dialogs/NoteDialog';
+import StandupDialog from '../components/standup/dialogs/StandupDialog';
+import ProjectStatusPicker from '../components/standup/dialogs/ProjectStatusPicker';
+import { parse, format } from 'date-fns';
+import { mapState } from 'vuex';
+import DatePicker from '../../resources/components/common/DatePicker';
 
 export default {
   components: {
-    DatePickerField,
     ProjectStatusPicker,
     NoteList,
+    NoteDialog,
+    DatePicker,
+    StandupDialog,
   },
   data () {
     return {
@@ -334,30 +191,8 @@ export default {
       },
       selectedMeetingTimeId: null,
       defaultRating: 8,
-      modalItem: {
+      filter: {
         standupMonth: null,
-      },
-      selectedDate: new Date(),
-      monthPickerIsOpen: false,
-      noteDialog: {
-        isOpen: false,
-        id: null,
-        selectedProject: null,
-        deadlineDate: null,
-        note: '',
-      },
-      defaultNoteDialog: {
-        isOpen: false,
-        id: null,
-        project: '',
-        note: '',
-        deadlineDate: null,
-      },
-      standupDialog: {
-        id: null,
-        isOpen: false,
-        date: null,
-        selectedDate: null,
       },
     };
   },
@@ -408,18 +243,6 @@ export default {
         ratings: this.getRatings(standup),
       }));
     },
-    projectNames () {
-      return this.projects.items.map(p => ({
-        text: p.code,
-        value: p.id,
-      }));
-    },
-    noteDialogTitle () {
-      return this.noteDialog.id ? 'Upravení cíle' : 'Vytvoření cíle';
-    },
-    standupDialogTitle () {
-      return this.standupDialog.id ? 'Upravení standupu' : 'Přidání standupu';
-    },
     formattedMeetingTimesForSelect () {
       return [
         {text: 'Žádný', value: null},
@@ -428,6 +251,14 @@ export default {
           value: meetingTime.id,
         })),
       ];
+    },
+  },
+  watch: {
+    filter: {
+      handler() {
+        this.updateStandup();
+      },
+      deep: true,
     },
   },
   fetch ({ store, params }) {
@@ -476,20 +307,12 @@ export default {
 
       return format(d, 'MM-YYYY');
     },
-    updateStandup (monthInput) {
-      if (!this.modalItem.standupMonth) {
-        this.monthPickerIsOpen = false;
-        return;
-      }
-
-      monthInput.save(this.modalItem.standupMonth);
-
+    updateStandup () {
       const actualDate = new Date();
 
       const selectedDate = new Date();
-      const [year, month] = this.modalItem.standupMonth.split('-');
+      const [year, month] = this.filter.standupMonth.split('-');
       selectedDate.setFullYear(Number(year), Number(month) - 1);
-      this.selectedDate = selectedDate;
 
       const isSameMonth = (selectedDate.getMonth() === actualDate.getMonth());
       const isSameYear = (selectedDate.getFullYear() === actualDate.getFullYear());
@@ -499,8 +322,6 @@ export default {
       } else {
         this.$store.dispatch('standups/getProjectsForMonth', selectedDate);
       }
-
-      this.monthPickerIsOpen = false;
     },
     getRatings (standup) {
       return this.getFilteredProjectsBySelectedMeetingTime(this.sortProjectsByMeetingTime()).map(p => ({
@@ -509,29 +330,6 @@ export default {
         rating: standup.standupProjectRating[p.id] >= 0 ? standup.standupProjectRating[p.id] : this.defaultRating,
       }));
     },
-    resetNote () {
-      // set deadline to next monday
-      let date = new Date();
-      date = addWeeks(date, 1);
-      date = setDay(date, 1);
-
-      this.$store.commit('errors/clearErrorState');
-
-      this.noteDialog = {
-        ...this.defaultNoteDialog,
-        deadlineDate: date,
-      };
-    },
-    resetStandup () {
-      const date = new Date();
-
-      this.$store.commit('errors/clearErrorState');
-
-      this.standupDialog = {
-        isOpen: false,
-        date: date,
-      };
-    },
     isMissingNote (projectCode, hasIcon) {
       const date = format(new Date(), 'YYYY-MM-DD 00:00:00');
       const hasNoteAfterDeadline = this.notes.items.some(element => {
@@ -539,90 +337,23 @@ export default {
       });
       return !hasNoteAfterDeadline && hasIcon;
     },
-    async createNote () {
-      let errorMsg = null;
-
-      if (!this.noteDialog.selectedProject || !this.noteDialog.selectedProject.value) {
-        errorMsg = 'Neni zvolen žádný projekt.';
-      } else if (!this.noteDialog.deadlineDate) {
-        errorMsg = 'Koncový termín je povinný.';
-      } else if (!this.noteDialog.note) {
-        errorMsg = 'Poznámka je povinná.';
-      }
-
-      const currentDate = new Date();
-      const { deadlineDate } = this.noteDialog;
-      const resultDate = setHours(deadlineDate, getHours(currentDate));
-
-      if (errorMsg) {
-        this.$store.commit('errors/setErrorState', {message: errorMsg});
-        return;
-      }
-
-      const note = {
-        id: this.noteDialog.id,
-        projectId: this.noteDialog.selectedProject.value,
-        deadlineDate: resultDate.toISOString(),
-        note: this.noteDialog.note,
-      };
-
-      if (note.id) {
-        await this.$store.dispatch('notes/editNote', note);
-      } else {
-        await this.$store.dispatch('notes/createNote', note);
-      }
-
-      this.noteDialog.isOpen = false;
-    },
     async editNote (note) {
-      this.noteDialog = {
-        isOpen: true,
-        id: note.id,
-        selectedProject: this.projectNames.find(v => v.value === note.projectId),
-        deadlineDate: parse(note.deadlineDate),
-        note: note.text,
-      };
+      this.$refs.refNoteDialog.openDialog(note);
+    },
+    createNote () {
+      this.$refs.refNoteDialog.openDialog();
     },
     editStandup (standup) {
-      this.standupDialog = {
-        id: standup.id,
-        isOpen: true,
-        date: parse(standup.date),
-        selectedDate: this.selectedDate,
-      };
+      this.$refs.refStandupDialog.openDialog(standup);
     },
     createStandup () {
-      this.standupDialog = {
-        isOpen: true,
-        date: new Date(),
-        selectedDate: this.selectedDate,
-      };
+      this.$refs.refStandupDialog.openDialog();
     },
     openGifDialog () {
       this.gifDialog.isOpen = true;
       this.gifDialog.url = "/giphy.gif"+"?a="+Math.random();
 
       setTimeout(() => this.gifDialog.isOpen = false, this.GIF_ANIMATION_DURATION);
-    },
-    async save () {
-      const action = this.standupDialog.id ? 'standups/editStandup' : 'standups/createStandup';
-      const currentDateInMiliSec = new Date().getTime();
-      const difference = currentDateInMiliSec - this.standupDialog.date.getTime();
-      const isInPast = difference > 6e7; // 1 hour
-      let errorMsg = null;
-
-      if (!this.standupDialog.date) {
-        errorMsg = 'Chybí datum standupu.';
-      } else if (isInPast) {
-        errorMsg = 'Datum standupu je v minulosti.';
-      }
-
-      if (errorMsg) {
-        this.$store.commit('errors/setErrorState', {message: errorMsg});
-        return;
-      }
-      await this.$store.dispatch(action, this.standupDialog);
-      this.resetStandup();
     },
     async deleteStandup(standup) {
       const confirmed = confirm(`Opravdu chcete smazat standup ${this.formatDate(standup.date)}?`);
@@ -646,21 +377,8 @@ export default {
     height: 100%;
   }
 
-  .standup-button {
-    margin-right: 20px;
-    margin-top: 6px;
-  }
-
   .element {
     font-size: 1.5em !important;
-  }
-
-  .pad {
-    padding-right: 2%;
-  }
-
-  .margin {
-    margin-right: 2%;
   }
 
   .header {
@@ -676,20 +394,12 @@ export default {
     display: inline-block;
   }
 
-  .select-wrapper {
-    max-width: 350px;
-  }
-
   .header-text {
     color: rgba(0,0,0,.54) !important;
     font-weight: 500 !important;
     font-size: 1.2em !important;
     padding: 0;
     min-width: 150px;
-  }
-
-  .button {
-    margin-top: 6px;
   }
 
   .gif {
