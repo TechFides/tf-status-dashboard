@@ -5,7 +5,7 @@
   >
     <v-row justify="end">
       <v-btn
-        color="blue darken-2"
+        color="green darken-2"
         dark
         class="mt-2 mr-5 mb-2"
         @click="createNewWorkLog()"
@@ -18,6 +18,7 @@
     </v-row>
     <WorkLogDialog
       ref="workLogDialog"
+      :confirm="resetFilters"
     />
     <v-card class="elevation-1">
       <v-row
@@ -46,7 +47,7 @@
             clearable
           />
         </v-col>
-        <v-col cols="2">
+        <v-col cols="3">
           <DatePicker
             v-model="filter.dates"
             label="Zahájení práce"
@@ -54,6 +55,18 @@
             required
             range
           />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-alert
+
+            border="right"
+            color="green lighten-1"
+            class="ma-2"
+          >
+            Celkem odpracovaný čas za zvolené období: <b>{{ workLogs.timeSpentSum }}</b>
+          </v-alert>
         </v-col>
       </v-row>
       <v-data-table
@@ -112,9 +125,7 @@
       <v-col
         cols="6"
         class="time-spent-sum pl-6"
-      >
-        Celkem odpracovaný čas za zvolené období: {{ workLogs.timeSpentSum }}
-      </v-col>
+      />
     </v-row>
   </div>
 </template>
@@ -134,6 +145,14 @@
     data () {
       return {
         filter: {
+          authorId: '',
+          costCategoryId: '',
+          dates: [
+            moment().startOf('month').format('YYYY-MM-DD'),
+            moment().endOf('month').format('YYYY-MM-DD'),
+          ],
+        },
+        defaultFilter: {
           authorId: '',
           costCategoryId: '',
           dates: [
@@ -235,6 +254,9 @@
         if (confirmed) {
           await this.$store.dispatch('workLogs/deleteWorkLog', item.id);
         }
+      },
+      resetFilters () {
+        this.filter = {...this.defaultFilter};
       },
       createNewWorkLog() {
         this.$refs.workLogDialog.openDialog();

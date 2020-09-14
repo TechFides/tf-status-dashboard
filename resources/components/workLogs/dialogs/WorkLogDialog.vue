@@ -32,7 +32,18 @@
             </v-col>
             <v-col
               cols="6"
-              class="pl-6 pr-5"
+            >
+              <v-text-field
+                v-model="dialogData.timeSpent"
+                placeholder="např: 1h 30m"
+                :rules="[rules.required, rules.timeSpentFormat, rules.maxHoursSpent]"
+                label="Strávený čas"
+              />
+            </v-col>
+          </v-row>
+          <v-row class="pl-8 pr-6">
+            <v-col
+              cols="12"
             >
               <v-select
                 v-model="dialogData.costCategoryId"
@@ -40,19 +51,6 @@
                 label="Kategorie"
                 :rules="[rules.required]"
                 no-data-text="Žádná data k dispozici."
-              />
-            </v-col>
-          </v-row>
-          <v-row class="pl-8 pr-6">
-            <v-col
-              cols="6"
-              class="pr-8 pt-0"
-            >
-              <v-text-field
-                v-model="dialogData.timeSpent"
-                placeholder="například: 1h 30m"
-                :rules="[rules.required, rules.timeSpentFormat, rules.maxHoursSpent]"
-                label="Strávený čas"
               />
             </v-col>
           </v-row>
@@ -99,6 +97,12 @@
     name: 'CreateWorkLogDialog',
     components: {
       DatePicker,
+    },
+    props: {
+      confirm: {
+        type: Function,
+        default: ()=>{},
+      },
     },
     data () {
       return {
@@ -182,6 +186,7 @@
           } else {
             await this.$store.dispatch('workLogs/editWorkLog', payloads);
           }
+          this.confirm();
           !this.errors.error.isVisible && this.cancelDialog();
         }
       },

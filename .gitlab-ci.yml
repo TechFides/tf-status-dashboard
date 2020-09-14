@@ -1,6 +1,7 @@
 stages:
   - install
   - lint
+  - build
   - deploy
 
 image: registry.gitlab.techfides.cz/tf-internal/docker-images/node:10
@@ -47,6 +48,39 @@ lint:
       "$TARGET_USER@$TARGET_SERVER:$TARGET_SOURCES_PATH/"
     - ssh "$TARGET_USER@$TARGET_SERVER" sudo tf-projects-status-operations $TARGET_INSTANCE update
     - ssh "$TARGET_USER@$TARGET_SERVER" sudo tf-projects-status-operations $TARGET_INSTANCE restart
+  tags:
+    - docker
+
+build:
+  stage: build
+  only:
+    - develop
+  image: docker:latest
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest --build-arg CI_COMMIT_SHA=$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker rmi $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker rmi $(docker images --filter "label=server-builder=$CI_COMMIT_SHA" -q)
+  tags:
+    - docker
+
+deploy:staging:
+  stage: deploy
+  only:
+    - develop
+  image:
+    name: bitnami/kubectl:latest
+    entrypoint: [""]
+  script:
+    - kubectl -n tf-platform-staging set image deployment/tf-hub tf-hub=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  environment:
+    name: staging
+    url: https://hub-staging.techfides.services
+  dependencies: []
   tags:
     - docker
 

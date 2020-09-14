@@ -38,24 +38,24 @@
         />
       </v-col>
       <v-btn
-        color="blue darken-2"
-        dark
-        right
-        :class="$device.isDesktop ? 'mt-2 ml-4' : 'mb-4'"
-        @click="createNote"
-      >
-        <i class="material-icons">add</i>
-        Přidat cíl
-      </v-btn>
-      <v-btn
         v-show="isAdministration()"
-        :class="$device.isDesktop ? 'mt-2 ml-4 mr-6' : 'mr-3 mb-4 ml-2'"
+        :class="$device.isDesktop ? 'mt-2 ml-4' : 'mb-4'"
         color="light-blue accent-4"
         dark
         @click="createStandup"
       >
         <i class="material-icons">add</i>
         Přidat standup
+      </v-btn>
+      <v-btn
+        color="green darken-2"
+        dark
+        right
+        :class="$device.isDesktop ? 'mt-2 ml-4 mr-6' : 'mr-3 mb-4 ml-2'"
+        @click="createNote"
+      >
+        <i class="material-icons">add</i>
+        Přidat cíl
       </v-btn>
     </v-row>
 
@@ -168,6 +168,7 @@
 <script>
 import NoteList from '../components/standup/NoteList';
 import NoteDialog from '../components/standup/dialogs/NoteDialog';
+import StandupDialog from '../components/standup/dialogs/StandupDialog';
 import ProjectStatusPicker from '../components/standup/dialogs/ProjectStatusPicker';
 import { parse, format } from 'date-fns';
 import { mapState } from 'vuex';
@@ -292,9 +293,6 @@ export default {
       return this.selectedMeetingTimeId !== null
         ? allProjects.filter(project => project.meetingTime.id === this.selectedMeetingTimeId)
         : allProjects;
-    },
-    getTimeInMinutes (time) {
-      return parseInt(time.substring(0, 2), 10) * 60 + parseInt(time.substring(3, 4), 10);
     },
     formatDate (date) {
       const d = new Date(date);

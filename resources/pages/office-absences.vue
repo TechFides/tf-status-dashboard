@@ -5,14 +5,14 @@
   >
     <v-row justify="end">
       <v-btn
-        color="blue darken-2"
+        color="green darken-2"
         dark
         class="mt-2 mr-5 mb-2"
         @click="createNewAbsence()"
       >
         <i class="material-icons">add</i>
         <span class="pl-2">
-          Vytvořit žádost o nepřítomnost
+          Nová žádost
         </span>
       </v-btn>
     </v-row>
