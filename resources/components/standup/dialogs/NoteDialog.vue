@@ -2,49 +2,51 @@
   <v-dialog
     v-show="isAdministration()"
     v-model="isOpen"
+    scrollable
     max-width="500px"
-    :persistent="true"
   >
     <v-form @submit.prevent="createNote">
       <v-card>
         <v-card-title>
           <span class="headline">{{ noteDialogTitle() }}</span>
         </v-card-title>
-        <div class="mx-3">
-          <v-layout column>
-            <v-flex>
-              <v-combobox
-                v-model="noteDialog.selectedProject"
-                :items="projectNames"
-                required
-                label="Projekt"
-              />
-            </v-flex>
-            <v-flex>
-              <DatePicker
-                v-model="noteDialog.deadlineDate"
-                label="Deadline"
-                required
-                :clearable="false"
-              />
-            </v-flex>
-            <v-flex>
-              <v-textarea
-                v-model="noteDialog.note"
-                label="Poznámka"
-                required
-              />
-            </v-flex>
-          </v-layout>
-          <v-alert
-            transition="fade-transition"
-            :value="errors.error.isVisible"
-            type="error"
-            color="red darken-2"
-          >
-            {{ errors.error.message }}
-          </v-alert>
-        </div>
+        <v-card-text
+          style="max-height: 800px"
+        >
+          <v-row class="pl-4 pr-4">
+            <v-combobox
+              v-model="noteDialog.selectedProject"
+              :items="projectNames"
+              required
+              label="Projekt"
+            />
+          </v-row>
+          <v-row class="pl-4 pr-4">
+            <DatePicker
+              v-model="noteDialog.deadlineDate"
+              label="Deadline"
+              required
+              :clearable="false"
+            />
+          </v-row>
+          <v-row class="pl-4 pr-4">
+            <v-textarea
+              v-model="noteDialog.note"
+              label="Poznámka"
+              required
+            />
+          </v-row>
+          <v-row class="pl-4 pr-4">
+            <v-alert
+              transition="fade-transition"
+              :value="errors.error.isVisible"
+              type="error"
+              color="red darken-2"
+            >
+              {{ errors.error.message }}
+            </v-alert>
+          </v-row>
+        </v-card-text>
         <v-card-actions>
           <v-spacer />
           <v-btn

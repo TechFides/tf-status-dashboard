@@ -8,27 +8,29 @@
       <v-card-title>
         <span class="headline">{{ standupDialogTitle }}</span>
       </v-card-title>
-      <div class="mx-3">
-        <v-layout column>
-          <v-flex>
-            <DatePicker
-              v-model="standupDialog.date"
-              label="Datum standupu"
-              required
-              :min="getMinDate()"
-              :clearable="false"
-            />
-          </v-flex>
-        </v-layout>
-        <v-alert
-          transition="fade-transition"
-          :value="errors.error.isVisible"
-          type="error"
-          color="red darken-2"
-        >
-          {{ errors.error.message }}
-        </v-alert>
-      </div>
+      <v-card-text
+        style="max-height: 800px"
+      >
+        <v-row class="pl-2 pr-4">
+          <DatePicker
+            v-model="standupDialog.date"
+            label="Datum standupu"
+            required
+            :min="getMinDate()"
+            :clearable="false"
+          />
+        </v-row>
+        <v-row class="pl-2 pr-4">
+          <v-alert
+            transition="fade-transition"
+            :value="errors.error.isVisible"
+            type="error"
+            color="red darken-2"
+          >
+            {{ errors.error.message }}
+          </v-alert>
+        </v-row>
+      </v-card-text>
       <v-card-actions>
         <v-spacer />
         <v-btn

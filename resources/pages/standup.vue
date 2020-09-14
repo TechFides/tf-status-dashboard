@@ -16,8 +16,8 @@
         />
       </div>
       <v-col
-        cols="2"
-        class="pt-0"
+        :cols="$device.isDesktop ? 2 : 12"
+        class="pt-0 pl-6"
       >
         <v-select
           v-model="selectedMeetingTimeId"
@@ -26,8 +26,8 @@
         />
       </v-col>
       <v-col
-        cols="1"
-        class="pt-0"
+        :cols="$device.isDesktop ? 1 : 12"
+        :class="$device.isDesktop ? 'pt-0' : 'pt-0 pl-6 pb-0'"
       >
         <DatePicker
           v-model="filter.standupMonth"
@@ -41,7 +41,7 @@
         color="blue darken-2"
         dark
         right
-        class="mt-2 ml-4"
+        :class="$device.isDesktop ? 'mt-2 ml-4' : 'mb-4'"
         @click="createNote"
       >
         <i class="material-icons">add</i>
@@ -49,7 +49,7 @@
       </v-btn>
       <v-btn
         v-show="isAdministration()"
-        class="mt-2 ml-4 mr-6"
+        :class="$device.isDesktop ? 'mt-2 ml-4 mr-6' : 'mr-3 mb-4 ml-2'"
         color="light-blue accent-4"
         dark
         @click="createStandup"
@@ -168,7 +168,6 @@
 <script>
 import NoteList from '../components/standup/NoteList';
 import NoteDialog from '../components/standup/dialogs/NoteDialog';
-import StandupDialog from '../components/standup/dialogs/StandupDialog';
 import ProjectStatusPicker from '../components/standup/dialogs/ProjectStatusPicker';
 import { parse, format } from 'date-fns';
 import { mapState } from 'vuex';
