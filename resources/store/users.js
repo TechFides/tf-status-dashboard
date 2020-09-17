@@ -1,5 +1,3 @@
-import { sortAscByProperty } from '../utils/sorts';
-
 export const state = () => ({
   items: [],
   roles: [],
@@ -11,9 +9,9 @@ export const mutations = {
       firstName: u.first_name,
       id: u.id,
       isActive: u.is_active,
+      isAdmin: u.is_admin,
       sendFeedback: u.send_feedback,
       lastName: u.last_name,
-      username: u.username,
       email: u.email,
       absenceApprover: {
         id: u.user ? u.user.approver.id : null,
@@ -28,14 +26,30 @@ export const mutations = {
 };
 
 export const actions = {
+  async usersSynchronizations ({ dispatch, commit }) {
+    try {
+      const employees = await this.$axios({ url: '/api/employees', baseURL: process.env.NUXT_ENV_TF_ERP_API_URL, headers: {
+          apitoken: process.env.NUXT_ENV_TF_ERP_API_TOKEN,
+          Authorization: '',
+        },
+      });
+      await this.$axios.post('/api/users/synchronization', employees.data.data);
+      dispatch('getUsers');
+      commit('errors/clearNotification', null, { root: true });
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data[0]) {
+        commit('errors/setNotification', error.response.data[0], { root: true });
+      }
+    }
+  },
   async getUsers ({ commit }) {
     const users = await this.$axios.$get('/api/users');
 
     commit('setUsers', users);
   },
-  async createUser ({ dispatch, commit }, user) {
+  async setAdmin ({ dispatch, commit }, user) {
     try {
-      await this.$axios.$post('/api/users', user);
+      await this.$axios.$post(`/api/users/set-admin/${user.id}`, { isAdmin: user.isAdmin });
       dispatch('getUsers');
       commit('errors/clearErrorState', null, { root: true });
     } catch (error) {
@@ -44,24 +58,15 @@ export const actions = {
       }
     }
   },
-  async editUser ({ dispatch, commit }, user) {
+  async setApprover ({ dispatch, commit }, user) {
     try {
-      await this.$axios.$put(`/api/users/${user.id}`, user);
+      await this.$axios.$post(`/api/users/set-approver/${user.userId}`, { approverId: user.approverId });
       dispatch('getUsers');
       commit('errors/clearErrorState', null, { root: true });
     } catch (error) {
       if (error && error.response && error.response.data && error.response.data[0]) {
         commit('errors/setErrorState', error.response.data[0], { root: true });
       }
-    }
-  },
-  async deleteUser ({ dispatch, commit }, userId) {
-    try {
-      await this.$axios.$delete(`/api/users/${userId}`);
-      dispatch('getUsers');
-      commit('notification/clearNotification', null, { root: true });
-    } catch (error) {
-      commit('notification/setNotification', { color: 'error', message: `Uživatela se nepodařilo odstranit.` }, { root: true });
     }
   },
   async getRoles ({ commit }) {

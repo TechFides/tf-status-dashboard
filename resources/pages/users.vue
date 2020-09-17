@@ -6,138 +6,17 @@
   >
     <v-btn
       color="blue darken-2"
-      dark
       class="mb-2 button"
-      @click="createNewUser()"
+      :dark="!loading"
+      :loading="loading"
+      :disabled="loading"
+      @click="userSynchronization()"
     >
-      <i class="material-icons pad"> person_add</i>
-      Nový uživatel
+      <v-icon class="mr-2">
+        mdi-autorenew
+      </v-icon>
+      Synchronizace uživatelů
     </v-btn>
-
-    <v-dialog
-      v-model="dialog"
-      max-width="750px"
-      transition="scale-transition"
-      :persistent="true"
-    >
-      <v-card>
-        <v-card-title>
-          <span class="headline">{{ modalType === 'CREATE' ? 'Nový uživatel' : 'Upravit uživatele' }}</span>
-        </v-card-title>
-
-        <v-form
-          ref="form"
-          lazy-validation
-          @submit.prevent
-        >
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="modalItem.username"
-                    :rules="[rules.required]"
-                    label="Přihlašovací jméno"
-                  />
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="modalItem.password"
-                    :rules="modalType === 'CREATE' ? [rules.required] : []"
-                    type="password"
-                    label="Heslo"
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="modalItem.firstName"
-                    :rules="[rules.required]"
-                    label="Jméno"
-                  />
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="modalItem.lastName"
-                    :rules="[rules.required]"
-                    label="Příjmení"
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="6">
-                  <v-text-field
-                    v-model="modalItem.email"
-                    :rules="[rules.required, rules.email]"
-                    type="email"
-                    label="E-mail"
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="6">
-                  <v-select
-                    v-model="modalItem.roles"
-                    label="Role"
-                    :items="roleItems"
-                    multiple
-                  />
-                </v-col>
-                <v-col cols="6">
-                  <v-select
-                    v-model="modalItem.absenceApproverId"
-                    label="Schvalovatel"
-                    :rules="[rules.required]"
-                    :items="absenceApproverItems"
-                  />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col>
-                  <v-checkbox
-                    v-model="modalItem.isActive"
-                    label="Aktivní"
-                  />
-                </v-col>
-                <v-col>
-                  <v-checkbox
-                    v-model="modalItem.sendFeedback"
-                    label="Posílat feedback"
-                  />
-                </v-col>
-              </v-row>
-            </v-container>
-            <v-alert
-              transition="fade-transition"
-              :value="errors.error.isVisible"
-              type="error"
-              color="red darken-2"
-            >
-              {{ errors.error.message }}
-            </v-alert>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer />
-            <v-btn
-              color="blue darken-1"
-              text
-              @click.native="close"
-            >
-              Zrušit
-            </v-btn>
-            <v-btn
-              color="blue darken-1"
-              text
-              @click.native="save"
-            >
-              Uložit
-            </v-btn>
-          </v-card-actions>
-        </v-form>
-      </v-card>
-    </v-dialog>
 
     <v-card class="elevation-1 fullscreen">
       <v-row
@@ -175,9 +54,6 @@
               {{ getFullName(props.item.firstName, props.item.lastName) }}
             </td>
             <td class="text-left element">
-              {{ props.item.username }}
-            </td>
-            <td class="text-left element">
               {{ props.item.email }}
             </td>
             <td class="text-left element">
@@ -186,68 +62,44 @@
             <td class="text-left element">
               {{ userRoles(props.item) }}
             </td>
-            <td class="text-center element">
-              {{ isUserActive(props.item.isActive, false) }}
+            <td class="justify-center align-center layout px-0">
+              <v-checkbox
+                :input-value="props.item.isAdmin"
+                @change="setIsAdmin(props.item, !props.item.isAdmin)"
+              />
             </td>
-            <td class="justify-center layout px-0">
+            <td>
               <v-icon
                 small
-                class="mr-2"
-                @click="editItem(props.item)"
+                class="ml-2"
+                @click="setApprover(props.item)"
               >
-                edit
-              </v-icon>
-              <v-icon
-                small
-                @click="deleteItem(props.item)"
-              >
-                delete
+                mdi-account-plus
               </v-icon>
             </td>
           </tr>
         </template>
       </v-data-table>
+      <ApproverDialog
+        ref="refApproverDialog"
+      />
     </v-card>
   </v-layout>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
-import { EMAIL_REGEX } from '../constants';
+import { mapState } from 'vuex';
+import ApproverDialog from '../components/user/dialogs/ApproverDialog';
 
 export default {
+  components: {
+    ApproverDialog,
+  },
   data () {
     return {
-      dialog: false,
-      persistent: true,
-      modalType: null,
-      rules: {
-        required: value => !!value || 'Povinné.',
-        email: value => EMAIL_REGEX.test(value) || 'Neplatný e-mail.',
-      },
-      modalItem: {
-        id: null,
-        firstName: '',
-        lastName: '',
-        password: '',
-        isActive: true,
-        sendFeedback: true,
-        username: '',
-        absenceApproverId: null,
-        roles: [],
-      },
-      defaultModalItem: {
-        id: null,
-        firstName: '',
-        lastName: '',
-        password: '',
-        isActive: true,
-        sendFeedback: true,
-        username: '',
-        absenceApproverId: null,
-        roles: [],
-      },
+      isAdmin: false,
       filteringText: '',
+      loading: false,
     };
   },
   computed: {
@@ -262,12 +114,6 @@ export default {
           align: 'left',
           sortable: true,
           value: 'firstName',
-        },
-        {
-          text: 'Přihlašovací jméno',
-          align: 'left',
-          sortable: true,
-          value: 'username',
         },
         {
           text: 'E-mail',
@@ -288,16 +134,16 @@ export default {
           value: 'roles',
         },
         {
-          text: 'Aktivní',
+          text: 'Admin',
           align: 'center',
           sortable: true,
-          value: 'isActive',
+          value: 'isAdmin',
         },
         {
           text: 'Akce',
           align: 'center',
-          sortable: false,
-          value: 'actions',
+          sortable: true,
+          value: 'action',
         },
       ];
     },
@@ -305,23 +151,10 @@ export default {
       return this.users.items.filter((element) => {
         const uppercasedFilterText = this.filteringText.toUpperCase();
 
-        return element.username.toUpperCase().match(uppercasedFilterText) ||
-          this.getFullName(element.firstName, element.lastName).toUpperCase().match(uppercasedFilterText) ||
+        return this.getFullName(element.firstName, element.lastName).toUpperCase().match(uppercasedFilterText) ||
           this.isUserActive(element.isActive, true).match(uppercasedFilterText) ||
           this.userRoles(element).toUpperCase().match(uppercasedFilterText);
       });
-    },
-    roleItems () {
-      return this.users.roles.map(r => ({
-        text: r.name,
-        value: r.slug,
-      }));
-    },
-    absenceApproverItems () {
-      return this.users.items.map(user => ({
-        text: `${user.firstName} ${user.lastName}`,
-        value: user.id,
-      }));
     },
   },
   async fetch ({ store }) {
@@ -331,48 +164,21 @@ export default {
     ]);
   },
   methods: {
-    createNewUser () {
-      this.modalItem = { ...this.defaultModalItem };
-      this.modalType = 'CREATE';
-      this.dialog = true;
-    },
-    editItem (item) {
-      this.modalItem = {
+    async setIsAdmin (item, isAdmin) {
+      const user = {
         id: item.id,
-        email: item.email,
-        firstName: item.firstName,
-        lastName: item.lastName,
-        isActive: item.isActive === 1,
-        sendFeedback: item.sendFeedback === 1,
-        username: item.username,
-        roles: item.roles,
-        absenceApproverId: item.absenceApprover.id,
+        isAdmin,
       };
 
-      this.modalType = 'EDIT';
-      this.dialog = true;
+      await this.$store.dispatch('users/setAdmin', user);
     },
-    async deleteItem (item) {
-      const confirmed = confirm(`Opravdu chcete smazat uživatele ${item.firstName} ${item.lastName}?`);
-
-      if (confirmed) {
-        await this.$store.dispatch('users/deleteUser', item.id);
-        await this.$store.dispatch('users/getUsers');
-      }
+    async setApprover (user) {
+      this.$refs.refApproverDialog.openDialog(user);
     },
-    close () {
-      this.$refs.form.resetValidation();
-      this.dialog = false;
-      this.modalItem = { ...this.defaultModalItem };
-      this.$store.commit('errors/clearErrorState');
-    },
-    async save () {
-      if (this.$refs.form.validate()) {
-        const action = this.modalItem.id ? 'users/editUser' : 'users/createUser';
-
-        await this.$store.dispatch(action, this.modalItem);
-        !this.errors.error.isVisible && this.close();
-      }
+    async userSynchronization () {
+      this.loading = true;
+      await this.$store.dispatch('users/usersSynchronizations');
+      this.loading = false;
     },
     isUserActive (isActive, toUpper) {
       const result = isActive ? 'ano' : 'ne';

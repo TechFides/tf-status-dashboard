@@ -217,16 +217,34 @@ Route
   .get('/api/users', 'UserController.getUsers')
   .middleware(AUTH);
 Route
-  .post('/api/users', 'UserController.createUser')
-  .validator('StoreUserValidator')
+  .post('/api/users/synchronization', 'UserController.userSynchronization')
   .middleware(ADMIN);
 Route
-  .put('/api/users/:id', 'UserController.editUser')
-  .validator('StoreUserValidator')
+  .post('/api/users/set-admin/:id', 'UserController.setAdmin')
   .middleware(ADMIN);
 Route
-  .delete('/api/users/:id', 'UserController.deleteUser')
+  .post('/api/users/set-approver/:id', 'UserController.setApprover')
   .middleware(ADMIN);
+
+/**
+ * POSITIONS
+ */
+Route
+  .get('/api/positions', 'PositionController.getPositions')
+  .middleware(AUTH);
+Route
+  .post('/api/positions/synchronization', 'PositionController.positionSynchronization')
+  .middleware(ADMIN);
+Route
+  .post('/api/positions/set-permissions/:id', 'PositionController.setPermissions')
+  .middleware(AUTH);
+
+/**
+ * PERMISSIONS
+ */
+Route
+  .get('/api/permissions', 'PermissionController.getPermissions')
+  .middleware(AUTH);
 
 /**
  * ROLES

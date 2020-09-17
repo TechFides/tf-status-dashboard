@@ -141,7 +141,7 @@
                 border="right"
                 color="green lighten-1"
               >
-                Nezapomeň si zkontrolovat, jestli sedí počet hodin nepřítomnosti. Ve výpočtu nejsou zahrnuty svátky a jiné nepracovní dny a zkrácené úvazky.
+                Nezapomeň si zkontrolovat, jestli sedí počet hodin nepřítomnosti. Ve výpočtu nejsou zahrnuty svátky, jiné nepracovní dny a zkrácené úvazky.
               </v-alert>
             </v-col>
           </v-row>
