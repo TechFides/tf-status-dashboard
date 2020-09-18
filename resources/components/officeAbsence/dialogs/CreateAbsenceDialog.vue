@@ -2,7 +2,6 @@
   <v-dialog
     v-model="show"
     max-width="770"
-    scrollable
     persistent
     @keydown.esc="cancelDialog"
   >
@@ -17,7 +16,6 @@
       >
         <v-card-text
           class="card-text"
-          style="max-height: 800px"
         >
           <v-row class="pr-6">
             <v-col cols="4">
@@ -355,5 +353,10 @@
     height:0;
     padding-bottom:50%;
     position:relative;
+  }
+
+  .card-text {
+    height: 560px;
+    overflow: auto;
   }
 </style>

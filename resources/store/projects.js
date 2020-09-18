@@ -40,8 +40,8 @@ export const mutations = {
       isActive: p.is_active === 1,
       slackChannelName: p.slackChannel ? p.slackChannel.channel_name : '',
       teamLeader: {
-        id: p.projectUser ? p.projectUser.user.id : null,
-        name: p.projectUser ? `${p.projectUser.user.first_name} ${p.projectUser.user.last_name}` : '',
+        id: p.projectUser && p.projectUser.user ? p.projectUser.user.id : null,
+        name: p.projectUser && p.projectUser.user ? `${p.projectUser.user.first_name} ${p.projectUser.user.last_name}` : '',
       },
       meetingTime: {
         text: findAndFormatMeetingTimeTextForSelect(data.meetingTimes, p.meeting_time_id),
