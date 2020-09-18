@@ -45,13 +45,32 @@
                 class="cost-category-wrapper"
               >
                 <div
-                  v-for="c in item.permissions"
-                  :key="c.id"
+                  v-for="n in item.permissions.length < chipsNumber ? item.permissions.length : chipsNumber"
+                  :key="item.permissions[n-1].id"
                   class="cost-category"
                 >
-                  {{ c.name }}
+                  {{ item.permissions[n-1].name }}
                 </div>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <div
+                      v-if="item.permissions.length > chipsNumber"
+                      class="cost-category"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      {{ `+ ${item.permissions.length - chipsNumber } dalších ` }}
+                    </div>
+                  </template>
+                  <span>{{ getRestChipsPermissions(item.permissions) }}</span>
+                </v-tooltip>
               </div>
+            </td>
+            <td class="justify-center align-center layout px-0">
+              <v-checkbox
+                :input-value="item.isPlayer"
+                @change="setPlayer(item, !item.isPlayer)"
+              />
             </td>
             <td class="text-left element">
               <div
@@ -59,17 +78,37 @@
                 class="cost-category-wrapper"
               >
                 <div
-                  v-for="c in item.costCategories"
-                  :key="c.id"
+                  v-for="c in item.costCategories.length < chipsNumber ? item.costCategories.length : chipsNumber"
+                  :key="item.costCategories[c-1].id"
                   class="cost-category"
                 >
-                  {{ positionCostCategories(c.name) }}
+                  {{ positionCostCategories(item.costCategories[c-1].name) }}
                 </div>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <div
+                      v-if="item.costCategories.length > chipsNumber"
+                      class="cost-category"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      {{ `+ ${item.costCategories.length - chipsNumber } dalších ` }}
+                    </div>
+                  </template>
+                  <span>{{ getRestChipsCostCategories(item.costCategories) }}</span>
+                </v-tooltip>
               </div>
             </td>
-            <td class="justify-center layout px-0">
+            <td class="justify-center align-center layout px-0">
+              <v-checkbox
+                :input-value="item.sendFeeback"
+                @change="setFeedback(item, !item.sendFeeback)"
+              />
+            </td>
+            <td>
               <v-icon
                 small
+                class="ml-3"
                 @click.stop="addPermissions(item)"
               >
                 edit
@@ -97,6 +136,7 @@
     data () {
       return {
         loading: false,
+        chipsNumber: 5,
       };
     },
     computed: {
@@ -118,10 +158,22 @@
             value: 'permissions',
           },
           {
+            text: 'Hráč',
+            align: 'center',
+            sortable: true,
+            value: 'isPlayer',
+          },
+          {
             text: 'Kategorie',
             align: 'left',
             sortable: true,
             value: 'costCategories',
+          },
+          {
+            text: 'Posílat feedback',
+            align: 'center',
+            sortable: true,
+            value: 'sendFeedback',
           },
           {
             text: 'Akce',
@@ -138,6 +190,18 @@
       await this.$store.dispatch('permissions/getPermissions');
     },
     methods: {
+      getRestChipsPermissions (permissions) {
+        return permissions
+          .slice(this.chipsNumber, permissions.length)
+          .map(p => p.name)
+          .join(', ');
+      },
+      getRestChipsCostCategories (costCategories) {
+        return costCategories
+          .slice(this.chipsNumber, costCategories.length)
+          .map(p => this.positionCostCategories(p.name))
+          .join(', ');
+      },
       addPermissions (item) {
         this.$refs.refAddPermissionDialog.openDialog(item);
       },
@@ -149,11 +213,31 @@
       positionCostCategories (costCategory) {
         return costCategory.substring(costCategory.lastIndexOf(">") + 2, costCategory.length);
       },
+      async setFeedback (item, sendFeedback) {
+        const position = {
+          id: item.id,
+          sendFeedback,
+        };
+
+        await this.$store.dispatch('positions/setFeedback', position);
+      },
+      async setPlayer (item, isPlayer) {
+        const position = {
+          id: item.id,
+          isPlayer,
+        };
+
+        await this.$store.dispatch('positions/setPlayer', position);
+      },
     },
   };
 </script>
 
 <style scoped>
+  .checkbox {
+    display: flex;
+  }
+
   .cost-category-wrapper {
     display: flex;
   }
@@ -163,5 +247,8 @@
     padding: 0.3rem 0.5rem;
     margin-right: 0.5rem;
     border-radius: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 </style>

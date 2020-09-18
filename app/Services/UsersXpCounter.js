@@ -16,6 +16,7 @@ class UsersXpCounter {
     const fetchedUserStatistics = (await UserModel
       .query()
       .where('is_active', true)
+      .with('position')
       .with('bonusExps', (builder) => {
         builder
           .where('date', '>=', currentMonth)
@@ -63,7 +64,7 @@ class UsersXpCounter {
       .where('date', '<', nextMonth)
       .fetch()).toJSON();
 
-    const userDetailStatistics =  fetchedUserStatistics.map(s => ({
+    const userDetailStatistics =  fetchedUserStatistics.filter(f => f.position.is_player).map(s => ({
         id: s.id,
         userName: `${s.first_name} ${s.last_name}`,
         previousXp: s.userTotalExp[0] ? s.userTotalExp[0].total_exp : 0,

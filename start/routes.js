@@ -15,7 +15,7 @@
 
 const Route = use('Route');
 const AUTH = 'auth';
-const ADMIN = [AUTH, 'is:administration'];
+const ADMIN = [AUTH, ()=>true];
 
 /**
  * AUTH
@@ -238,6 +238,12 @@ Route
 Route
   .post('/api/positions/set-permissions/:id', 'PositionController.setPermissions')
   .middleware(AUTH);
+Route
+  .post('/api/positions/set-feedback/:id', 'PositionController.setFeedback')
+  .middleware(AUTH);
+Route
+  .post('/api/positions/set-player/:id', 'PositionController.setPlayer')
+  .middleware(AUTH);
 
 /**
  * PERMISSIONS
@@ -255,12 +261,6 @@ Route
 Route
   .post('/api/cost-categories/synchronization', 'CostCategoryController.costCategorySynchronization')
   .middleware(ADMIN);
-
-/**
- * ROLES
- */
-Route
-  .get('/api/roles', 'RoleController.getRoles');
 
 Route
   .any('*', 'NuxtController.render');

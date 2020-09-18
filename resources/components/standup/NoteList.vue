@@ -57,7 +57,10 @@ import { mapState } from 'vuex';
 export default {
   name: 'NoteList',
   props: {
-    editable: Boolean,
+    editable: {
+      type: Number,
+      default: 0,
+    },
   },
   data () {
     return {};

@@ -97,6 +97,32 @@ class PositionController {
       response.status(500).send({message: e.message});
     }
   }
+
+  async setFeedback ({ request, response, params }) {
+    const { id } = params;
+    const { sendFeedback } = request.body;
+
+    try {
+      const position = await PositionModel.find(id);
+      position.send_feedback = sendFeedback;
+      await position.save();
+    } catch (e) {
+      response.status(500).send({message: e.message});
+    }
+  }
+
+  async setPlayer ({ request, response, params }) {
+    const { id } = params;
+    const { isPlayer } = request.body;
+
+    try {
+      const position = await PositionModel.find(id);
+      position.is_player = isPlayer;
+      await position.save();
+    } catch (e) {
+      response.status(500).send({message: e.message});
+    }
+  }
 }
 
 module.exports = PositionController;

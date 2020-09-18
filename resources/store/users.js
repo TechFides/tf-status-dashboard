@@ -69,9 +69,4 @@ export const actions = {
       }
     }
   },
-  async getRoles ({ commit }) {
-    const roles = await this.$axios.$get('/api/roles');
-
-    commit('setRoles', roles);
-  },
 };

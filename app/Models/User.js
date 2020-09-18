@@ -13,12 +13,6 @@ class User extends Model {
     return ['password', 'created_at'];
   }
 
-  static get traits () {
-    return [
-      '@provider:Adonis/Acl/HasRole',
-    ];
-  }
-
   bonusExps () {
     return this.hasMany('App/Models/BonusExp');
   }

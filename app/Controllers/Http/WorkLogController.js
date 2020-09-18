@@ -27,9 +27,7 @@ class WorkLogController {
     const { startDate, endDate, authorId, costCategoryId, loggedInUserId } = request.get();
     const user = (await UserModel
       .query()
-      .with('roles')
       .first()).toJSON();
-    const isUserRoleAdmin = user.roles.find(r => r.slug === 'administration');
 
     const WorkLogModelQuery = WorkLogModel
       .query()
@@ -37,7 +35,7 @@ class WorkLogController {
       .with('costCategory')
       .whereBetween('started',[startDate, endDate]);
 
-    if (!isUserRoleAdmin) {
+    if (!user.is_admin) {
       WorkLogModelQuery.where('user_id', loggedInUserId);
     }
 

@@ -37,7 +37,7 @@ class FeedbackSchedulerService {
   }
 
   static async getUsersWithEmailAddress () {
-    const users = await UserModel.query().whereNotNull('email').fetch();
+    const users = await UserModel.query().with('position').whereNotNull('email').fetch();
     return users.toJSON();
   }
 
@@ -101,7 +101,7 @@ class FeedbackSchedulerService {
         };
 
         users.forEach(async (user) => {
-          if(user.send_feedback){
+          if(user.position.send_feedback){
             const token = await FeedbackTokenModel.create({
               user_id: user.id,
               heatmap_week_id: heatmapWeek.id,

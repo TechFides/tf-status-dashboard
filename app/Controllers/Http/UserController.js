@@ -51,7 +51,7 @@ class UserController {
         const user = await UserModel.findBy('email', employee.workEmail);
         if (!user && employee.active) {
           await UserController.createUser(employee);
-        } else if (user && !employee.active && user.username !== 'superAdmin') {
+        } else if (user && !employee.active && !user.is_admin) {
           await UserController.deleteUser(user.id);
         } else if (user && moment(employee._updated).isAfter(moment(user.updated_at))) {
           await UserController.editUser(user, employee);
@@ -108,14 +108,7 @@ class UserController {
   }
 
   async getUsersFeedbacks ({ request }) {
-    const { isActive } = request.get();
-    const query = UserModel.query().with('feedback');
-
-    if (isActive === 'true') {
-      query.where('is_active', true);
-    }
-
-    return (await query.fetch()).toJSON();
+    return (await UserModel.query().with('feedback').fetch()).toJSON();
   }
 }
 
