@@ -60,32 +60,19 @@ class WorkLogController {
   }
 
   async createWorkLog ({ request, response, params }) {
-    const { costCategory } = request.only(['costCategory']);
-
     const workLog = new WorkLogModel();
     workLog.fill(WorkLogController.mapToDbEntity(request));
     await workLog.save();
-
-    await CostCategoryModel.findOrCreate(
-      { id: costCategory.id },
-      { id: costCategory.id, name: costCategory.name }
-    );
 
     return workLog.toJSON();
   }
 
   async editWorkLog ({ request, response, params }) {
-    const { costCategory } = request.only(['costCategory']);
     const { id } = params;
     const workLog = await WorkLogModel.find(id);
 
     workLog.merge(WorkLogController.mapToDbEntity(request));
     await workLog.save();
-
-    await CostCategoryModel.findOrCreate(
-      { id: costCategory.id },
-      { id: costCategory.id, name: costCategory.name }
-    );
 
     return workLog.toJSON();
   }

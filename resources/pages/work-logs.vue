@@ -241,6 +241,7 @@
       },
     },
     async created() {
+      await this.$store.dispatch('costCategories/costCategoriesSynchronizations');
       await Promise.all([
         this.$store.dispatch('workLogs/getWorkLogs', this.filter),
         this.$store.dispatch('users/getUsers'),

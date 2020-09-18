@@ -247,6 +247,16 @@ Route
   .middleware(AUTH);
 
 /**
+ * COST CATEGORIES
+ */
+Route
+  .get('/api/cost-categories', 'CostCategoryController.getCostCategories')
+  .middleware(AUTH);
+Route
+  .post('/api/cost-categories/synchronization', 'CostCategoryController.costCategorySynchronization')
+  .middleware(ADMIN);
+
+/**
  * ROLES
  */
 Route

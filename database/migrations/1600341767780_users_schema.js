@@ -7,6 +7,8 @@ class UsersSchema extends Schema {
   up () {
     this.alter('users', (table) => {
       table.boolean('is_admin').defaultTo(0).notNullable();
+      table.integer('position_id').unsigned().index();
+      table.foreign('position_id').references('positions');
     })
   }
 

@@ -17,7 +17,7 @@ export const mutations = {
         id: u.user ? u.user.approver.id : null,
         fullName: u.user ? `${u.user.approver.first_name} ${u.user.approver.last_name}` : '',
       },
-      roles: u.roles.map(r => r.slug),
+      position: u.position ? u.position.name: '',
     }));
   },
   setRoles (state, roles) {
@@ -35,10 +35,10 @@ export const actions = {
       });
       await this.$axios.post('/api/users/synchronization', employees.data.data);
       dispatch('getUsers');
-      commit('errors/clearNotification', null, { root: true });
+      commit('notification/clearNotification', null, { root: true });
     } catch (error) {
       if (error && error.response && error.response.data && error.response.data[0]) {
-        commit('errors/setNotification', error.response.data[0], { root: true });
+        commit('notification/setNotification', error.response.data[0], { root: true });
       }
     }
   },

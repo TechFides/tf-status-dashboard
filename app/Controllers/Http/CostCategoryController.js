@@ -2,6 +2,7 @@
 const moment = require('moment');
 
 const CostCategoryModel = use('App/Models/CostCategory');
+const PositionModel = use('App/Models/Position');
 
 class CostCategoryController {
   static async createCostCategory (data) {
@@ -37,11 +38,24 @@ class CostCategoryController {
     }
   }
 
-  async costCategorySynchronization ({ request, response, params }) {
-    const costCategoryData = request.body;
-    await CostCategoryController.checkDeletedPositions(costCategoryData);
+  async getCostCategories ({ request, response, params }) {
+    const { positionId } = request.get();
 
-    for (const costCategory of costCategoryData) {
+    const position = (await PositionModel
+      .query()
+      .with('costCategories')
+      .where('id', positionId)
+      .orderBy('name', 'asc')
+      .first()).toJSON();
+
+    return position.costCategories;
+  }
+
+  async costCategorySynchronization ({ request, response, params }) {
+    const { costCategoriesData } = request.body;
+    await CostCategoryController.checkDeletedCostCategory(costCategoriesData);
+
+    for (const costCategory of costCategoriesData) {
       const hubCostCategory = await CostCategoryModel.find(costCategory.id);
       if (!hubCostCategory) {
         await CostCategoryController.createCostCategory(costCategory);

@@ -60,7 +60,7 @@
               {{ props.item.absenceApprover.fullName }}
             </td>
             <td class="text-left element">
-              {{ userRoles(props.item) }}
+              {{ props.item.position }}
             </td>
             <td class="justify-center align-center layout px-0">
               <v-checkbox
@@ -128,7 +128,7 @@ export default {
           value: 'absenceAprrover',
         },
         {
-          text: 'Role',
+          text: 'Pozice',
           align: 'left',
           sortable: true,
           value: 'roles',
@@ -187,12 +187,6 @@ export default {
     },
     getFullName (firstName, lastName) {
       return `${firstName} ${lastName}`;
-    },
-    userRoles (user) {
-      return this.users.roles
-        .filter(r => user.roles.includes(r.slug))
-        .map(r => r.name)
-        .join(', ');
     },
   },
 };

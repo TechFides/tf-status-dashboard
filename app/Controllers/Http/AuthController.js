@@ -19,7 +19,10 @@ class AuthController {
 
         user = await UserModel
           .query()
-          .with('roles')
+          .with('position', (builder) => {
+            builder
+              .with('permissions');
+          })
           .where({ id: googleTokenQuery.user_id })
           .first();
         const { token } = await auth.generate(user);
@@ -35,7 +38,10 @@ class AuthController {
         newToken = token;
         user = await UserModel
           .query()
-          .with('roles')
+          .with('position', (builder) => {
+            builder
+              .with('permissions');
+          })
           .where({ username: username, is_active: true })
           .first();
       }
@@ -60,7 +66,10 @@ class AuthController {
 
       const data = await UserModel
         .query()
-        .with('roles')
+        .with('position', (builder) => {
+          builder
+            .with('permissions');
+        })
         .where('username', user.username)
         .first();
 

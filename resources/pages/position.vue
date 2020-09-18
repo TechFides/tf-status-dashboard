@@ -40,10 +40,32 @@
               {{ item.name }}
             </td>
             <td class="text-left element">
-              {{ positionPermissions(item) }}
+              <div
+                v-if="item.permissions.length"
+                class="cost-category-wrapper"
+              >
+                <div
+                  v-for="c in item.permissions"
+                  :key="c.id"
+                  class="cost-category"
+                >
+                  {{ c.name }}
+                </div>
+              </div>
             </td>
             <td class="text-left element">
-              {{ positionCostCategories(item) }}
+              <div
+                v-if="item.costCategories.length"
+                class="cost-category-wrapper"
+              >
+                <div
+                  v-for="c in item.costCategories"
+                  :key="c.id"
+                  class="cost-category"
+                >
+                  {{ positionCostCategories(c.name) }}
+                </div>
+              </div>
             </td>
             <td class="justify-center layout px-0">
               <v-icon
@@ -111,6 +133,7 @@
       },
     },
     async created() {
+      await this.$store.dispatch('costCategories/costCategoriesSynchronizations');
       await this.$store.dispatch('positions/getPositions');
       await this.$store.dispatch('permissions/getPermissions');
     },
@@ -123,23 +146,22 @@
         await this.$store.dispatch('positions/positionSynchronizations');
         this.loading = false;
       },
-      positionPermissions (position) {
-        return position.permissions ? position.permissions
-          .map(p => p.name)
-          .join(', ') : '';
-      },
-      positionCostCategories (position) {
-        return position.costCategories ? position.costCategories
-          .map(p => p.name)
-          .join(', ') : '';
+      positionCostCategories (costCategory) {
+        return costCategory.substring(costCategory.lastIndexOf(">") + 2, costCategory.length);
       },
     },
   };
 </script>
 
 <style scoped>
-  .time-spent-sum {
-    font-weight: bold;
-    font-size: 1.3rem;
+  .cost-category-wrapper {
+    display: flex;
+  }
+
+  .cost-category {
+    background-color: #e0e0e0;
+    padding: 0.3rem 0.5rem;
+    margin-right: 0.5rem;
+    border-radius: 16px;
   }
 </style>

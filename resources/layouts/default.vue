@@ -82,21 +82,21 @@ export default {
     ]),
     items () {
       const items = [
-        { icon: 'apps', title: 'Dashboard', to: '/', availableFor: ['a'] },
-        { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup', availableFor: ['a']  },
-        { icon: 'laptop_windows', title: 'Projekty', to: '/projects', availableFor: ['a'] },
-        { icon: 'mdi-palm-tree -checked', title: 'Nepřítomnosti', to: '/office-absences', availableFor: ['a'] },
-        { icon: 'bar_chart', title: 'The Game', to: '/statistics', availableFor: ['a'] },
-        { icon: 'mdi-timer-outline', title: 'Logování práce', to: '/work-logs', availableFor: ['a'] },
-        { icon: 'face', title: 'Uživatelé', to: '/users', availableFor: ['a'] },
-        { icon: 'mdi-account-hard-hat ', title: 'Pozice', to: '/position', availableFor: ['a'] },
-        { icon: 'tag_faces', title: 'Heatmap', to: '/heatmap', availableFor: ['a'] },
-        { icon: 'schedule', title: 'Časy konání sitdownu', to: '/meeting-times', availableFor: ['a'] },
-        { icon: 'settings', title: 'Nastavení', to: '/settings', availableFor: ['a'] },
+        { icon: 'apps', title: 'Dashboard', to: '/', name: 'dashboard' },
+        { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup', name: 'standup'  },
+        { icon: 'laptop_windows', title: 'Projekty', to: '/projects', name: 'projects' },
+        { icon: 'mdi-palm-tree -checked', title: 'Nepřítomnosti', to: '/office-absences', name: 'office-absences' },
+        { icon: 'bar_chart', title: 'The Game', to: '/statistics', name: 'statistics' },
+        { icon: 'mdi-timer-outline', title: 'Logování práce', to: '/work-logs', name: 'work-logs' },
+        { icon: 'face', title: 'Uživatelé', to: '/users', name: 'users' },
+        { icon: 'mdi-account-hard-hat ', title: 'Pozice', to: '/position', name: 'position' },
+        { icon: 'tag_faces', title: 'Heatmap', to: '/heatmap', name: 'heatmap' },
+        { icon: 'schedule', title: 'Časy konání sitdownu', to: '/meeting-times', name: 'meeting-times' },
+        { icon: 'settings', title: 'Nastavení', to: '/settings', name: 'settings' },
       ];
 
       return items.filter(item => {
-        if (typeof item.availableFor === 'undefined') {
+        if (typeof item.name === 'undefined') {
           return true;
         }
 
@@ -104,8 +104,8 @@ export default {
           return true;
         }
 
-        if (this.$auth.user) {
-          return this.$auth.user.roles.some(role => item.availableFor.includes(role.slug));
+        if (this.$auth.user && this.$auth.user.position && this.$auth.user.position.permissions.length) {
+          return this.$auth.user.position.permissions.some(permission => item.name === permission.value);
         }
 
         return false;

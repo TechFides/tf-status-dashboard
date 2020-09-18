@@ -13,6 +13,7 @@ class UserController {
       last_name: data.lastName,
       is_active: 1,
       send_feedback: 1,
+      position_id: data.position.id,
     };
     await UserModel.create(user);
   }
@@ -35,6 +36,7 @@ class UserController {
       last_name: data.lastName,
       is_active: 1,
       send_feedback: 1,
+      position_id: data.position.id,
     };
 
     user.merge(userData);
@@ -49,7 +51,7 @@ class UserController {
         const user = await UserModel.findBy('email', employee.workEmail);
         if (!user && employee.active) {
           await UserController.createUser(employee);
-        } else if (user && !employee.active) {
+        } else if (user && !employee.active && user.username !== 'superAdmin') {
           await UserController.deleteUser(user.id);
         } else if (user && moment(employee._updated).isAfter(moment(user.updated_at))) {
           await UserController.editUser(user, employee);
@@ -93,7 +95,7 @@ class UserController {
   async getUsers () {
     const users = (await UserModel
       .query()
-      .with('roles')
+      .with('position')
       .with('user', (builder) => {
         builder
           .with('approver');

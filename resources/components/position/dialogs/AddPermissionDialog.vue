@@ -84,7 +84,6 @@
     methods: {
       openDialog(position) {
         if (position.permissions.length) {
-          console.log(position.permissions);
           position.permissions.forEach(p => this.dialogData.permissionIds.push(p.id));
         }
         this.show = true;
