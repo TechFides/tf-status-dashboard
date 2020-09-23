@@ -24,6 +24,7 @@ class UserSeeder {
       last_name: 'admin',
       username: 'admin',
       password: 'admin',
+      is_admin: 1,
       is_active: 1,
     });
   }
