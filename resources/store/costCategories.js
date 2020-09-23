@@ -2,7 +2,7 @@ export const state = () => ({
   items: [],
 });
 
-const formatCostCategories = (costCategories) => {
+const formatCostCategories = costCategories => {
   let flattenArray = [];
   for (const category of costCategories) {
     if (category.subCategories.length) {
@@ -26,22 +26,25 @@ const formatCostCategories = (costCategories) => {
 };
 
 export const mutations = {
-  setCostCategories (state, costCategories) {
+  setCostCategories(state, costCategories) {
     state.items = costCategories;
   },
 };
 
 export const actions = {
-  async getCostCategories ({ commit }) {
+  async getCostCategories({ commit }) {
     const positionId = this.$auth.user.position_id;
     const costCategories = await this.$axios.$get('/api/cost-categories', { params: { positionId } });
 
     commit('setCostCategories', costCategories);
   },
-  async costCategoriesSynchronizations ({ dispatch, commit }) {
+  async costCategoriesSynchronizations({ dispatch, commit }) {
     const positionId = this.$auth.user.position_id;
     try {
-      const costCategories = await this.$axios({ url: '/api/cost-categories/tree', baseURL: process.env.NUXT_ENV_TF_ERP_API_URL, headers: {
+      const costCategories = await this.$axios({
+        url: '/api/cost-categories/tree',
+        baseURL: process.env.NUXT_ENV_TF_ERP_API_URL,
+        headers: {
           apitoken: process.env.NUXT_ENV_TF_ERP_API_TOKEN,
           Authorization: '',
         },

@@ -1,15 +1,15 @@
-'use strict'
+'use strict';
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
-const Schema = use('Schema')
+const Schema = use('Schema');
 
 class RoleUserSchema extends Schema {
-  up () {
-    this.drop('role_user')
+  up() {
+    this.drop('role_user');
   }
 
-  down () {
-    this.create('role_user', (table) => {
+  down() {
+    this.create('role_user', table => {
       table.increments();
       table.integer('role_id').unsigned().index();
       table.foreign('role_id').references('id').on('roles').onDelete('cascade');
@@ -20,4 +20,4 @@ class RoleUserSchema extends Schema {
   }
 }
 
-module.exports = RoleUserSchema
+module.exports = RoleUserSchema;

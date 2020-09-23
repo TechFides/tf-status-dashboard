@@ -1,10 +1,10 @@
-'use strict'
+'use strict';
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
-const Schema = use('Schema')
+const Schema = use('Schema');
 
 class SystemParamSchema extends Schema {
-  async up () {
+  async up() {
     const enumData = [
       {
         key: 'slackErrorChannel',
@@ -21,8 +21,7 @@ class SystemParamSchema extends Schema {
     await use('App/Models/SystemParam').createMany(enumData);
   }
 
-  async down () {
-  }
+  async down() {}
 }
 
-module.exports = SystemParamSchema
+module.exports = SystemParamSchema;

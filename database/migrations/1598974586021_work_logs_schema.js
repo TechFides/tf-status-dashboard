@@ -1,12 +1,12 @@
-'use strict'
+'use strict';
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
-const Schema = use('Schema')
+const Schema = use('Schema');
 
 class WorkLogsSchema extends Schema {
-  up () {
-    this.create('work_logs', (table) => {
-      table.increments()
+  up() {
+    this.create('work_logs', table => {
+      table.increments();
       table.dateTime('started').notNullable();
       table.integer('time_spent').notNullable();
       table.integer('user_id').notNullable();
@@ -15,12 +15,12 @@ class WorkLogsSchema extends Schema {
       table.foreign('cost_category_id').references('cost_categories');
       table.text('description');
       table.timestamps();
-    })
+    });
   }
 
-  down () {
-    this.drop('work_logs')
+  down() {
+    this.drop('work_logs');
   }
 }
 
-module.exports = WorkLogsSchema
+module.exports = WorkLogsSchema;

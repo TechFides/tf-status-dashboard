@@ -1,12 +1,12 @@
-'use strict'
+'use strict';
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
-const Schema = use('Schema')
+const Schema = use('Schema');
 
 class OfficeAbsenceSchema extends Schema {
-  up () {
-    this.create('office_absences', (table) => {
-      table.increments()
+  up() {
+    this.create('office_absences', table => {
+      table.increments();
       table.date('absence_start').notNullable();
       table.date('absence_end').notNullable();
       table.integer('absence_type_enum_id').notNullable();
@@ -21,12 +21,12 @@ class OfficeAbsenceSchema extends Schema {
       table.string('calendar_event_title').notNullable();
       table.text('description');
       table.timestamps();
-    })
+    });
   }
 
-  down () {
-    this.drop('office_absences')
+  down() {
+    this.drop('office_absences');
   }
 }
 
-module.exports = OfficeAbsenceSchema
+module.exports = OfficeAbsenceSchema;

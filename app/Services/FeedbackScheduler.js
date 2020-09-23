@@ -17,7 +17,7 @@ const SystemParamModel = use('App/Models/SystemParam');
 const FeedbackTokenModel = use('App/Models/FeedbackToken');
 
 class FeedbackSchedulerService {
-  static getFeedbackOptions (token) {
+  static getFeedbackOptions(token) {
     const feedbackOptions = [
       { text: 'Pohodička', type: 'good', id: 1 },
       { text: 'OK', type: 'ok', id: 2 },
@@ -31,26 +31,26 @@ class FeedbackSchedulerService {
     }));
   }
 
-  static loadEmailTemplate () {
+  static loadEmailTemplate() {
     const html = fs.readFileSync(path.resolve(__dirname, '../../assets/email-templates/feedback.html'), 'utf-8');
     return Handlebars.compile(html);
   }
 
-  static async getUsersWithEmailAddress () {
+  static async getUsersWithEmailAddress() {
     const users = await UserModel.query().with('position').whereNotNull('email').fetch();
     return users.toJSON();
   }
 
-  static async expireAllFeedbackTokens () {
+  static async expireAllFeedbackTokens() {
     return await FeedbackTokenModel.query().update({ expired: true });
   }
 
-  static async getFeedbackCrontab () {
+  static async getFeedbackCrontab() {
     const feedbackCrontab = await SystemParamModel.find(SYSTEM_PARAMS.FEEDBACK_CRONTAB);
     return feedbackCrontab.value;
   }
 
-  static getCurrentWeekBoundaries () {
+  static getCurrentWeekBoundaries() {
     const now = new Date();
     const start = now.getDate() - now.getDay() + 1;
     const end = start + 6;
@@ -63,69 +63,65 @@ class FeedbackSchedulerService {
     return [monday, sunday];
   }
 
-  constructor () {
+  constructor() {
     this.job = null;
     this.template = FeedbackSchedulerService.loadEmailTemplate();
   }
 
-  async schedule () {
+  async schedule() {
     this.cancel();
 
     const crontab = await FeedbackSchedulerService.getFeedbackCrontab();
 
-    this.job = Schedule.scheduleJob(
-      'feedback_email_job',
-      crontab,
-      async () => {
-        await FeedbackSchedulerService.expireAllFeedbackTokens();
+    this.job = Schedule.scheduleJob('feedback_email_job', crontab, async () => {
+      await FeedbackSchedulerService.expireAllFeedbackTokens();
 
-        const users = await FeedbackSchedulerService.getUsersWithEmailAddress();
-        const week = FeedbackSchedulerService.getCurrentWeekBoundaries();
-        const heatmapWeek = await HeatmapWeekModel.findOrCreate(
-          function () {
-            this.where('date', '>=', week[0]);
-            this.where('date', '<=', week[1]);
-          },
-          { date: week[0] },
-        );
+      const users = await FeedbackSchedulerService.getUsersWithEmailAddress();
+      const week = FeedbackSchedulerService.getCurrentWeekBoundaries();
+      const heatmapWeek = await HeatmapWeekModel.findOrCreate(
+        function () {
+          this.where('date', '>=', week[0]);
+          this.where('date', '<=', week[1]);
+        },
+        { date: week[0] },
+      );
 
-        const weekData = {
-          number: heatmapWeek.id,
-          from: format(week[0], 'DD/MM/YYYY'),
-          to: format(week[1], 'DD/MM/YYYY'),
-        };
+      const weekData = {
+        number: heatmapWeek.id,
+        from: format(week[0], 'DD/MM/YYYY'),
+        to: format(week[1], 'DD/MM/YYYY'),
+      };
 
-        const commonEmailData = {
-          text: `Jaký jsi měl tento týden v práci?`,
-          subject: `Jaký jsi měl tento týden v práci?`,
-        };
+      const commonEmailData = {
+        text: `Jaký jsi měl tento týden v práci?`,
+        subject: `Jaký jsi měl tento týden v práci?`,
+      };
 
-        users.forEach(async (user) => {
-          if(user.position.send_feedback){
-            const token = await FeedbackTokenModel.create({
-              user_id: user.id,
-              heatmap_week_id: heatmapWeek.id,
-              token: crypto.randomBytes(16).toString('hex'),
-            });
+      users.forEach(async user => {
+        if (user.position.send_feedback) {
+          const token = await FeedbackTokenModel.create({
+            user_id: user.id,
+            heatmap_week_id: heatmapWeek.id,
+            token: crypto.randomBytes(16).toString('hex'),
+          });
 
-            EmailService.sendEmail({
-              ...commonEmailData,
-              toAddresses: [user.email],
-              html: this.template({
-                week: weekData,
-                feedbackOptions: FeedbackSchedulerService.getFeedbackOptions(token.token),
-              }),
-            });
-          }
-        });
+          EmailService.sendEmail({
+            ...commonEmailData,
+            toAddresses: [user.email],
+            html: this.template({
+              week: weekData,
+              feedbackOptions: FeedbackSchedulerService.getFeedbackOptions(token.token),
+            }),
+          });
+        }
+      });
 
-        Logger.debug('FeedbackScheduler: feedback email has been sent to every employee');
-      },
-    );
+      Logger.debug('FeedbackScheduler: feedback email has been sent to every employee');
+    });
     Logger.debug('FeedbackScheduler: new feedback job has been scheduled');
   }
 
-  cancel () {
+  cancel() {
     if (this.job) {
       this.job.cancel();
       Logger.debug('FeedbackScheduler: scheduled feedback job has been canceled');

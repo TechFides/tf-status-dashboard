@@ -3,7 +3,7 @@ export const state = () => ({
 });
 
 export const mutations = {
-  setPermissions (state, permissions) {
+  setPermissions(state, permissions) {
     state.items = permissions.map(p => ({
       id: p.id,
       name: p.name,
@@ -13,7 +13,7 @@ export const mutations = {
 };
 
 export const actions = {
-  async getPermissions ({ commit }) {
+  async getPermissions({ commit }) {
     const permissions = await this.$axios.$get('/api/permissions');
 
     commit('setPermissions', permissions);

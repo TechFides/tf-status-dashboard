@@ -1,7 +1,7 @@
 'use strict';
 
 class StoreMeetingTimeValidator {
-  get rules () {
+  get rules() {
     return {
       weekDay: 'required|number',
       time: 'required',

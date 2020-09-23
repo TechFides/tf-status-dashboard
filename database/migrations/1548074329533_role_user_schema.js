@@ -4,8 +4,8 @@
 const Schema = use('Schema');
 
 class RoleUserSchema extends Schema {
-  up () {
-    this.create('role_user', (table) => {
+  up() {
+    this.create('role_user', table => {
       table.increments();
       table.integer('role_id').unsigned().index();
       table.foreign('role_id').references('id').on('roles').onDelete('cascade');
@@ -15,7 +15,7 @@ class RoleUserSchema extends Schema {
     });
   }
 
-  down () {
+  down() {
     this.drop('role_user');
   }
 }

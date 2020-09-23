@@ -4,7 +4,7 @@ export const state = () => ({
 });
 
 export const mutations = {
-  setUsers (state, users) {
+  setUsers(state, users) {
     state.items = users.map(u => ({
       firstName: u.first_name,
       id: u.id,
@@ -17,18 +17,21 @@ export const mutations = {
         id: u.user ? u.user.approver.id : null,
         fullName: u.user ? `${u.user.approver.first_name} ${u.user.approver.last_name}` : '',
       },
-      position: u.position ? u.position.name: '',
+      position: u.position ? u.position.name : '',
     }));
   },
-  setRoles (state, roles) {
+  setRoles(state, roles) {
     state.roles = roles;
   },
 };
 
 export const actions = {
-  async usersSynchronizations ({ dispatch, commit }) {
+  async usersSynchronizations({ dispatch, commit }) {
     try {
-      const employees = await this.$axios({ url: '/api/employees', baseURL: process.env.NUXT_ENV_TF_ERP_API_URL, headers: {
+      const employees = await this.$axios({
+        url: '/api/employees',
+        baseURL: process.env.NUXT_ENV_TF_ERP_API_URL,
+        headers: {
           apitoken: process.env.NUXT_ENV_TF_ERP_API_TOKEN,
           Authorization: '',
         },
@@ -42,12 +45,12 @@ export const actions = {
       }
     }
   },
-  async getUsers ({ commit }) {
+  async getUsers({ commit }) {
     const users = await this.$axios.$get('/api/users');
 
     commit('setUsers', users);
   },
-  async setAdmin ({ dispatch, commit }, user) {
+  async setAdmin({ dispatch, commit }, user) {
     try {
       await this.$axios.$post(`/api/users/set-admin/${user.id}`, { isAdmin: user.isAdmin });
       dispatch('getUsers');
@@ -58,7 +61,7 @@ export const actions = {
       }
     }
   },
-  async setApprover ({ dispatch, commit }, user) {
+  async setApprover({ dispatch, commit }, user) {
     try {
       await this.$axios.$post(`/api/users/set-approver/${user.userId}`, { approverId: user.approverId });
       dispatch('getUsers');

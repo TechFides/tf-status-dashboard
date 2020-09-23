@@ -29,7 +29,7 @@ export const state = () => ({
 });
 
 export const mutations = {
-  updateRating (state, { projectId, ratingValueId, standupId }) {
+  updateRating(state, { projectId, ratingValueId, standupId }) {
     const standupIndex = getStandupIndex(state, standupId);
     const newStandupRatings = [...state.ratings];
     const newRatings = { ...newStandupRatings[standupIndex].standupProjectRating };
@@ -38,7 +38,7 @@ export const mutations = {
 
     state.ratings = newStandupRatings;
   },
-  setProjectRatings (state, standupRatings) {
+  setProjectRatings(state, standupRatings) {
     const newStandupRatings = standupRatings.sort(sortAscByProperty.bind(this, 'date'));
     for (const [index, { standupProjectRating }] of newStandupRatings.entries()) {
       const newRatings = {};
@@ -54,11 +54,11 @@ export const mutations = {
 };
 
 export const actions = {
-  async editRating ({ commit }, ratingData) {
+  async editRating({ commit }, ratingData) {
     await this.$axios.$post('/api/projectRatings', ratingData);
     commit('updateRating', ratingData);
   },
-  async createStandup ({ dispatch, commit }, standup) {
+  async createStandup({ dispatch, commit }, standup) {
     try {
       await this.$axios.$post('/api/standups', standup);
       dispatch('getProjectRating', standup.selectedDate);
@@ -69,16 +69,20 @@ export const actions = {
       }
     }
   },
-  async deleteStandup ({ dispatch, commit }, standup) {
+  async deleteStandup({ dispatch, commit }, standup) {
     try {
       await this.$axios.$delete(`/api/standups/${standup.id}`);
       dispatch('getProjectRating', standup.selectedDate);
       commit('notification/clearNotification', null, { root: true });
     } catch (error) {
-      commit('notification/setNotification', { color: 'error', message: 'Smazat standup se nezdařilo.' }, { root: true });
+      commit(
+        'notification/setNotification',
+        { color: 'error', message: 'Smazat standup se nezdařilo.' },
+        { root: true },
+      );
     }
   },
-  async editStandup ({ dispatch, commit }, standup) {
+  async editStandup({ dispatch, commit }, standup) {
     try {
       await this.$axios.$put(`/api/standups/${standup.id}`, standup);
       dispatch('getProjectRating', standup.selectedDate);
@@ -89,16 +93,20 @@ export const actions = {
       }
     }
   },
-  async getProjectRating ({ commit }, date) {
+  async getProjectRating({ commit }, date) {
     try {
       const res = await this.$axios.$get('/api/projectRatings', getDateParams(date));
       commit('setProjectRatings', res);
       commit('notification/clearNotification', null, { root: true });
     } catch (error) {
-      commit('notification/setNotification', { color: 'error', message: 'Získat hodnocení projektu se nezdařilo.' }, { root: true });
+      commit(
+        'notification/setNotification',
+        { color: 'error', message: 'Získat hodnocení projektu se nezdařilo.' },
+        { root: true },
+      );
     }
   },
-  async getProjectsForMonth ({ commit }, date) {
+  async getProjectsForMonth({ commit }, date) {
     const dateParams = getDateParams(date);
     const [projectData, ratingsData] = await Promise.all([
       this.$axios.$get('/api/projects'),
@@ -109,13 +117,13 @@ export const actions = {
     commit('projects/setProjects', projects, { root: true });
     commit('setProjectRatings', ratingsData);
   },
-  async getStandupData ({ commit, rootState }) {
+  async getStandupData({ commit, rootState }) {
     const meetingTimes = rootState.meetingTimes.items;
     const [projects, ratingsData] = await Promise.all([
       this.$axios.$get('/api/projects', getActiveParams()),
       this.$axios.$get('/api/projectRatings', getDateParams()),
     ]);
-    commit('projects/setProjects', {projects, meetingTimes}, { root: true });
+    commit('projects/setProjects', { projects, meetingTimes }, { root: true });
     commit('setProjectRatings', ratingsData);
   },
 };

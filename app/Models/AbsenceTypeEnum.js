@@ -4,11 +4,11 @@
 const Model = use('Model');
 
 class AbsenceTypeEnum extends Model {
-  static get hidden () {
+  static get hidden() {
     return ['created_at', 'updated_at'];
   }
 
-  officeAbsence () {
+  officeAbsence() {
     return this.hasOne('App/Models/OfficeAbsence');
   }
 }

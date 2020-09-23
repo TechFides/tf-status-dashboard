@@ -11,7 +11,7 @@ function initialization() {
   client = new JWT({
     email: process.env.GOOGLE_SERVICE_EMAIL,
     key: process.env.GOOGLE_PRIVATE_KEY,
-    scopes: "https://www.googleapis.com/auth/admin.directory.user.readonly",
+    scopes: 'https://www.googleapis.com/auth/admin.directory.user.readonly',
     subject: process.env.GOOGLE_ADMIN_EMAIL,
   });
 
@@ -26,28 +26,30 @@ function initialization() {
 
 async function isUserExists(email) {
   const url = `https://www.googleapis.com/admin/directory/v1/users?domain=techfides.cz&query=email%3A${email}`;
-  const res = await client.request({url});
+  const res = await client.request({ url });
 
   return !!res.data.users;
 }
 
-function fetchUsersEmail () {
-  return new Promise(function(resolve, reject) {
+function fetchUsersEmail() {
+  return new Promise(function (resolve, reject) {
     connection.query('SELECT email FROM users', (err, data) => (err ? reject(err) : resolve(data)));
   });
 }
 
-function deleteUser (email) {
-  return new Promise(function(resolve, reject) {
-    connection.query(`DELETE FROM users WHERE email = "${email}" or email IS NULL`, (err, data) => (err ? reject(err) : resolve(data)));
+function deleteUser(email) {
+  return new Promise(function (resolve, reject) {
+    connection.query(`DELETE FROM users WHERE email = "${email}" or email IS NULL`, (err, data) =>
+      err ? reject(err) : resolve(data),
+    );
   });
 }
 
-async function synchronizeAccounts () {
+async function synchronizeAccounts() {
   await client.authorize();
 
   for (const user of usersEmail) {
-    if (!await isUserExists(user.email)) {
+    if (!(await isUserExists(user.email))) {
       await deleteUser(user.email);
     }
   }

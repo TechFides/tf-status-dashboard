@@ -3,7 +3,7 @@
 const Model = use('Model');
 
 class Permission extends Model {
-  position () {
+  position() {
     return this.belongsToMany('App/Models/Position');
   }
 }

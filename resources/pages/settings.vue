@@ -181,7 +181,9 @@ export default {
   async asyncData ({ $axios }) {
     try {
       const response = await $axios.$get('/api/configuration');
-      let form = {};
+      let form = {
+        feedbackCrontab: {},
+      };
       if (response) {
         form = {
           feedbackCrontab: fromCrontab(response.feedbackCrontab),

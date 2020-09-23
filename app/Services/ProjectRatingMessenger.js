@@ -8,20 +8,14 @@ const systemParamModel = use('App/Models/SystemParam');
 const Env = use('Env');
 
 class ProjectRatingMessenger {
-  async sendRatingMessage (projectId, ratingValue, ratingValueId) {
-
+  async sendRatingMessage(projectId, ratingValue, ratingValueId) {
     const slackWebClient = new WebClient(Env.get('SLACK_TOKEN'));
 
-    const project = (await ProjectModel
-      .query()
-      .with('slackChannel')
-      .where('id', '=', projectId)
-      .fetch()).toJSON();
+    const project = (await ProjectModel.query().with('slackChannel').where('id', '=', projectId).fetch()).toJSON();
 
-    const slackErrorName = (await systemParamModel
-      .query()
-      .where('key', '=', SYSTEM_PARAMS.SLACK_ERROR_CHANNEL)
-      .fetch()).toJSON();
+    const slackErrorName = (
+      await systemParamModel.query().where('key', '=', SYSTEM_PARAMS.SLACK_ERROR_CHANNEL).fetch()
+    ).toJSON();
 
     let attachments = '';
     switch (ratingValueId) {

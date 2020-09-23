@@ -1,12 +1,12 @@
-'use strict'
+'use strict';
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema');
 const Database = use('Database');
 
 class PermissionsSchema extends Schema {
-  async up () {
-    await Database.raw('SET FOREIGN_KEY_CHECKS = 0;')
+  async up() {
+    await Database.raw('SET FOREIGN_KEY_CHECKS = 0;');
     await use('App/Models/Permission').truncate();
 
     const enumData = [
@@ -68,11 +68,10 @@ class PermissionsSchema extends Schema {
     ];
 
     await use('App/Models/Permission').createMany(enumData);
-    await Database.raw('SET FOREIGN_KEY_CHECKS = 1;')
+    await Database.raw('SET FOREIGN_KEY_CHECKS = 1;');
   }
 
-  down () {
-  }
+  down() {}
 }
 
-module.exports = PermissionsSchema
+module.exports = PermissionsSchema;

@@ -3,11 +3,11 @@
 const Schema = use('Schema');
 
 class ProjectMonthInstanceSchema extends Schema {
-  up () {
+  up() {
     this.dropIfExists('project_month_instances');
   }
 
-  down () {
+  down() {
     this.createIfNotExists('project_month_instances');
   }
 }

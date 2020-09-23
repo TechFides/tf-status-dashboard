@@ -3,15 +3,15 @@
 const Model = use('Model');
 
 class Feedback extends Model {
-  static get hidden () {
+  static get hidden() {
     return ['updated_at'];
   }
 
-  static get dates () {
+  static get dates() {
     return super.dates.concat(['date']);
   }
 
-  user () {
+  user() {
     return this.belongsTo('App/Models/User');
   }
 }
