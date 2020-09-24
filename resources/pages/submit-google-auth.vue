@@ -20,9 +20,10 @@
       };
     },
     async mounted () {
+      console.log('redirected from google');
       try {
         await this.$auth.loginWith('local', {data: {gToken: this.$route.query.token}}).then(
-          this.$router.push(this.isHR || this.isSales ? '/office-absences': '/')
+          this.$router.push('/')
         );
       } catch (error) {
         return handleError();

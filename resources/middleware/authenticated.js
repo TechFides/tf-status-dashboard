@@ -1,5 +1,9 @@
-export default function ({ app, store, route, redirect }) {
+export default function({ app, store, route, redirect }) {
   // pathRedirect(app, route, redirect);
+
+  if (route.name === 'submit-google-auth') {
+    return;
+  }
   if (app.isAdministration()) {
     return;
   } else if (

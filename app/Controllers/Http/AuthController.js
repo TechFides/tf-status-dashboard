@@ -17,9 +17,6 @@ class AuthController {
           .first();
 
         user = await UserModel.query()
-          .with('position', builder => {
-            builder.with('permissions');
-          })
           .where({ id: googleTokenQuery.user_id })
           .first();
         const { token } = await auth.generate(user);
@@ -39,7 +36,10 @@ class AuthController {
           .where({ username: username, is_active: true })
           .first();
       }
-      console.log(user.toJSON());
+      console.log({
+        newToken,
+        ...user.toJSON(),
+      });
       return {
         newToken,
         ...user.toJSON(),
