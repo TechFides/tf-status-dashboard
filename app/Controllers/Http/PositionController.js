@@ -1,21 +1,22 @@
 'use strict';
 const moment = require('moment');
+const Logger = use('Logger');
 
 const PositionModel = use('App/Models/Position');
 const PositionPermissionModel = use('App/Models/PositionPermission');
 const PositionCostCategory = use('App/Models/PositionCostCategory');
 
 class PositionController {
-  static async createPosition (data) {
-    const position =  {
+  static async createPosition(data) {
+    const position = {
       id: data.id,
       name: data.name,
     };
     await PositionModel.create(position);
   }
 
-  static async editPosition (hubPosition, data) {
-    const position =  {
+  static async editPosition(hubPosition, data) {
+    const position = {
       name: data.name,
     };
 
@@ -23,19 +24,18 @@ class PositionController {
     await hubPosition.save();
   }
 
-  async getPositions ({ request, response, params }) {
-    return (await PositionModel
-      .query()
-      .with('permissions')
-      .with('costCategories')
-      .orderBy('name', 'asc')
-      .fetch()).toJSON();
+  async getPositions({ request, response, params }) {
+    return (
+      await PositionModel.query()
+        .with('permissions')
+        .with('costCategories')
+        .orderBy('name', 'asc')
+        .fetch()
+    ).toJSON();
   }
 
-  static async checkDeletedPositions (data) {
-    const hubPositionList = (await PositionModel
-      .query()
-      .fetch()).toJSON();
+  static async checkDeletedPositions(data) {
+    const hubPositionList = (await PositionModel.query().fetch()).toJSON();
 
     if (hubPositionList.length !== data.length) {
       for (const hubPosition of hubPositionList) {
@@ -48,9 +48,8 @@ class PositionController {
     }
   }
 
-  static async setCostCategories (positionData) {
-    await PositionCostCategory
-      .query()
+  static async setCostCategories(positionData) {
+    await PositionCostCategory.query()
       .where('position_id', '=', positionData.id)
       .delete();
 
@@ -62,7 +61,7 @@ class PositionController {
     await PositionCostCategory.createMany(payload);
   }
 
-  async positionSynchronization ({ request, response, params }) {
+  async positionSynchronization({ request, response, params }) {
     const positionsData = request.body;
     await PositionController.checkDeletedPositions(positionsData);
 
@@ -77,13 +76,12 @@ class PositionController {
     }
   }
 
-  async setPermissions ({ request, response, params }) {
+  async setPermissions({ request, response, params }) {
     const { id } = params;
     const permissionIds = request.body;
 
     try {
-      await PositionPermissionModel
-        .query()
+      await PositionPermissionModel.query()
         .where('position_id', '=', id)
         .delete();
 
@@ -94,11 +92,11 @@ class PositionController {
 
       await PositionPermissionModel.createMany(payload);
     } catch (e) {
-      response.status(500).send({message: e.message});
+      response.status(500).send({ message: e.message });
     }
   }
 
-  async setFeedback ({ request, response, params }) {
+  async setFeedback({ request, response, params }) {
     const { id } = params;
     const { sendFeedback } = request.body;
 
@@ -107,11 +105,11 @@ class PositionController {
       position.send_feedback = sendFeedback;
       await position.save();
     } catch (e) {
-      response.status(500).send({message: e.message});
+      response.status(500).send({ message: e.message });
     }
   }
 
-  async setPlayer ({ request, response, params }) {
+  async setPlayer({ request, response, params }) {
     const { id } = params;
     const { isPlayer } = request.body;
 
@@ -120,7 +118,7 @@ class PositionController {
       position.is_player = isPlayer;
       await position.save();
     } catch (e) {
-      response.status(500).send({message: e.message});
+      response.status(500).send({ message: e.message });
     }
   }
 }

@@ -95,7 +95,10 @@ export default {
         { icon: 'settings', title: 'Nastavení', to: '/settings', name: 'settings' },
       ];
 
+      console.log('logged user in vue:');
+      console.log(this.$auth.user);
       return items.filter(item => {
+
         if (typeof item.name === 'undefined') {
           return true;
         }

@@ -6,31 +6,29 @@ const UserModel = use('App/Models/User');
 const AbsenceApproverModel = use('App/Models/AbsenceApprover');
 
 class UserController {
-  static async createUser (data) {
-    const user =  {
+  static async createUser(data) {
+    const user = {
       email: data.workEmail,
       first_name: data.firstName,
       last_name: data.lastName,
       is_active: 1,
-      send_feedback: 1,
       position_id: data.position.id,
     };
     await UserModel.create(user);
   }
 
-  static async deleteUser (id) {
+  static async deleteUser(id) {
     const user = await UserModel.find(id);
 
     await user.delete();
-    await AbsenceApproverModel
-      .query()
+    await AbsenceApproverModel.query()
       .where('approver_id', id)
       .orWhere('user_id', id)
       .delete();
   }
 
-  static async editUser (user, data) {
-    const userData =  {
+  static async editUser(user, data) {
+    const userData = {
       email: data.workEmail,
       first_name: data.firstName,
       last_name: data.lastName,
@@ -43,7 +41,7 @@ class UserController {
     await user.save();
   }
 
-  async userSynchronization ({ request, response }) {
+  async userSynchronization({ request, response }) {
     const employeesData = request.body;
 
     try {
@@ -58,11 +56,11 @@ class UserController {
         }
       }
     } catch (e) {
-      response.status(500).send({message: e.message});
+      response.status(500).send({ message: e.message });
     }
   }
 
-  async setAdmin ({ request, response, params }) {
+  async setAdmin({ request, response, params }) {
     const { id } = params;
     const { isAdmin } = request.body;
 
@@ -71,11 +69,11 @@ class UserController {
       user.is_admin = isAdmin;
       await user.save();
     } catch (e) {
-      response.status(500).send({message: e.message});
+      response.status(500).send({ message: e.message });
     }
   }
 
-  async setApprover ({ request, response, params }) {
+  async setApprover({ request, response, params }) {
     const { id } = params;
     const { approverId } = request.body;
     const absenceApproverModel = await AbsenceApproverModel.findBy('user_id', id);
@@ -85,30 +83,34 @@ class UserController {
         absenceApproverModel.approver_id = approverId;
         await absenceApproverModel.save();
       } else {
-        await AbsenceApproverModel.create({user_id: id, approver_id: approverId});
+        await AbsenceApproverModel.create({ user_id: id, approver_id: approverId });
       }
     } catch (e) {
-      response.status(500).send({message: e.message});
+      response.status(500).send({ message: e.message });
     }
   }
 
-  async getUsers () {
-    const users = (await UserModel
-      .query()
-      .with('position')
-      .with('user', (builder) => {
-        builder
-          .with('approver');
-      })
-      .orderBy('first_name', 'asc')
-      .orderBy('last_name', 'asc')
-      .fetch()).toJSON();
+  async getUsers() {
+    const users = (
+      await UserModel.query()
+        .with('position')
+        .with('user', builder => {
+          builder.with('approver');
+        })
+        .orderBy('first_name', 'asc')
+        .orderBy('last_name', 'asc')
+        .fetch()
+    ).toJSON();
 
     return users;
   }
 
-  async getUsersFeedbacks ({ request }) {
-    return (await UserModel.query().with('feedback').fetch()).toJSON();
+  async getUsersFeedbacks({ request }) {
+    return (
+      await UserModel.query()
+        .with('feedback')
+        .fetch()
+    ).toJSON();
   }
 }
 

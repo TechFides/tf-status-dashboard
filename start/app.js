@@ -34,10 +34,7 @@ const providers = [
 | Providers for migrations, tests etc.
 |
 */
-const aceProviders = [
-  '@adonisjs/lucid/providers/MigrationsProvider',
-  'adonis-acl/providers/CommandsProvider',
-];
+const aceProviders = ['@adonisjs/lucid/providers/MigrationsProvider', 'adonis-acl/providers/CommandsProvider'];
 
 /*
 |--------------------------------------------------------------------------
@@ -65,8 +62,6 @@ const aliases = {
 | Here you store ace commands for your package
 |
 */
-const commands = [
-  'App/Commands/NuxtBuild',
-];
+const commands = ['App/Commands/NuxtBuild'];
 
 module.exports = { providers, aceProviders, aliases, commands };
