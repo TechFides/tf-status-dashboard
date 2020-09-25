@@ -1,24 +1,9 @@
 <template>
-  <v-dialog
-    v-model="show"
-    max-width="500"
-    scrollable
-    persistent
-    @keydown.esc="cancelDialog"
-  >
+  <v-dialog v-model="show" max-width="500" scrollable persistent @keydown.esc="cancelDialog">
     <v-card>
-      <v-card-title class="headline pl-5 systemPrimary">
-        Nastavit schvalovatele
-      </v-card-title>
-      <v-form
-        ref="form"
-        lazy-validation
-        @submit.prevent
-      >
-        <v-card-text
-          class="card-text"
-          style="max-height: 800px"
-        >
+      <v-card-title class="headline pl-5 systemPrimary"> Nastavit schvalovatele </v-card-title>
+      <v-form ref="form" lazy-validation @submit.prevent>
+        <v-card-text class="card-text" style="max-height: 800px">
           <v-row class="pl-4 pr-4">
             <v-select
               v-model="dialogData.approverId"
@@ -31,20 +16,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            color="blue darken-1"
-            text
-            @click.native="cancelDialog"
-          >
-            Zrušit
-          </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click.native="confirmDialog"
-          >
-            Potvrdit
-          </v-btn>
+          <v-btn color="blue darken-1" text @click.native="cancelDialog"> Zrušit </v-btn>
+          <v-btn color="blue darken-1" text @click.native="confirmDialog"> Potvrdit </v-btn>
         </v-card-actions>
       </v-form>
     </v-card>

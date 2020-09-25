@@ -1,19 +1,8 @@
 <template>
-  <v-dialog
-    v-model="show"
-    max-width="770"
-    persistent
-    @keydown.esc="cancelDialog"
-  >
+  <v-dialog v-model="show" max-width="770" persistent @keydown.esc="cancelDialog">
     <v-card>
-      <v-card-title class="headline pl-5 systemPrimary">
-        Vytvořit novou žádost o nepřítomnost
-      </v-card-title>
-      <v-form
-        ref="form"
-        lazy-validation
-        @submit.prevent
-      >
+      <v-card-title class="headline pl-5 systemPrimary"> Vytvořit novou žádost o nepřítomnost </v-card-title>
+      <v-form ref="form" lazy-validation @submit.prevent>
         <v-card-text class="card-text">
           <v-row class="pr-6">
             <v-col cols="4">
@@ -45,10 +34,7 @@
             </v-col>
           </v-row>
           <v-row class="pr-6">
-            <v-col
-              cols="6"
-              class="pl-11"
-            >
+            <v-col cols="6" class="pl-11">
               <v-select
                 v-model="dialogData.absenceType"
                 :items="absenceTypeEnumItems"
@@ -56,10 +42,7 @@
                 :rules="[rules.required]"
               />
             </v-col>
-            <v-col
-              cols="6"
-              class="pl-9"
-            >
+            <v-col cols="6" class="pl-9">
               <v-select
                 v-model="dialogData.approver"
                 :items="approverItems"
@@ -71,10 +54,7 @@
           </v-row>
           <v-row class="pr-6">
             <v-col class="pt-0 pl-11 pr-8">
-              <v-tooltip
-                v-model="showGeneralDescriptionTooltip"
-                top
-              >
+              <v-tooltip v-model="showGeneralDescriptionTooltip" top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-textarea
                     v-model="dialogData.generalDescription"
@@ -89,10 +69,7 @@
               </v-tooltip>
             </v-col>
             <v-col class="pt-0">
-              <v-tooltip
-                v-model="showApproverDescriptionTooltip"
-                top
-              >
+              <v-tooltip v-model="showApproverDescriptionTooltip" top>
                 <template v-slot:activator="{ on, attrs }">
                   <v-textarea
                     v-model="dialogData.approverDescription"
@@ -108,11 +85,7 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col
-              v-if="gif.url"
-              class="pa-0 pb-8"
-              cols="6"
-            >
+            <v-col v-if="gif.url" class="pa-0 pb-8" cols="6">
               <div class="gif">
                 <iframe
                   :src="gif.url"
@@ -128,11 +101,7 @@
           </v-row>
           <v-row class="pr-6">
             <v-col class="pl-11 pt-0 pb-0">
-              <v-alert
-                icon="mdi-alert-circle-outline"
-                border="right"
-                color="green lighten-1"
-              >
+              <v-alert icon="mdi-alert-circle-outline" border="right" color="green lighten-1">
                 Nezapomeň si zkontrolovat, jestli sedí počet hodin nepřítomnosti. Ve výpočtu nejsou zahrnuty svátky,
                 jiné nepracovní dny a zkrácené úvazky.
               </v-alert>
@@ -140,12 +109,7 @@
           </v-row>
           <v-row class="pr-6">
             <v-col class="pl-11 pt-0 pb-0">
-              <v-alert
-                transition="fade-transition"
-                :value="errors.error.isVisible"
-                type="error"
-                color="red darken-2"
-              >
+              <v-alert transition="fade-transition" :value="errors.error.isVisible" type="error" color="red darken-2">
                 {{ errors.error.message }}
               </v-alert>
             </v-col>
@@ -153,20 +117,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            color="blue darken-1"
-            text
-            @click.native="cancelDialog"
-          >
-            Zrušit
-          </v-btn>
-          <v-btn
-            color="blue darken-2"
-            dark
-            @click.native="confirmDialog"
-          >
-            Potvrdit
-          </v-btn>
+          <v-btn color="blue darken-1" text @click.native="cancelDialog"> Zrušit </v-btn>
+          <v-btn color="blue darken-2" dark @click.native="confirmDialog"> Potvrdit </v-btn>
         </v-card-actions>
       </v-form>
     </v-card>

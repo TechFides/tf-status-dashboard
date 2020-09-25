@@ -1,35 +1,20 @@
 <template>
-  <v-layout
-    column
-    justify-center
-    align-center
-  >
+  <v-layout column justify-center align-center>
     <v-flex>
-      <div
-        v-if="submitted"
-        class="submit-feedback__message"
-      >
-        <v-img
-          class="thumb-up"
-          src="/thumbs_up.gif"
-          max-height="125"
-          max-width="125"
-        />
+      <div v-if="submitted" class="submit-feedback__message">
+        <v-img class="thumb-up" src="/thumbs_up.gif" max-height="125" max-width="125" />
         <h2>
           <strong>Díky moc za zpětnou vazbu!</strong>
         </h2>
         <div>
-          Pomůže nám tvořit takové prostředí, které tě bude bavit, a ve kterém budeš rád. <br>
-          Btw. pokud chceš být konkrétnější, neváhej se kdykoliv obrátit přímo na Matouše nebo Vaška <br>
+          Pomůže nám tvořit takové prostředí, které tě bude bavit, a ve kterém budeš rád. <br />
+          Btw. pokud chceš být konkrétnější, neváhej se kdykoliv obrátit přímo na Matouše nebo Vaška <br />
           - spokojenost lidí v TechFides je a bude vždy naší důležitou prioritou.
         </div>
       </div>
-      <div
-        v-if="error"
-        class="redirect-message"
-      >
-        <br>
-        <br>
+      <div v-if="error" class="redirect-message">
+        <br />
+        <br />
         {{ error }}
       </div>
     </v-flex>

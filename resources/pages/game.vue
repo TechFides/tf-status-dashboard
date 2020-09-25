@@ -1,16 +1,7 @@
 <template>
   <div class="full-height">
-    <v-layout
-      row
-      reverse
-      align-end
-    >
-      <v-dialog
-        v-model="userInfoDialog.isOpen"
-        max-width="450px"
-        transition="scale-transition"
-        :persistent="true"
-      >
+    <v-layout row reverse align-end>
+      <v-dialog v-model="userInfoDialog.isOpen" max-width="450px" transition="scale-transition" :persistent="true">
         <v-card>
           <v-card-title>
             <span class="headline">Přidat bonus XP</span>
@@ -21,48 +12,24 @@
               <v-container grid-list-md>
                 <v-layout wrap>
                   <v-flex xs12>
-                    <v-text-field
-                      v-model="userInfoDialog.bonusXp"
-                      type="number"
-                      label="Bonus Xp"
-                    />
+                    <v-text-field v-model="userInfoDialog.bonusXp" type="number" label="Bonus Xp" />
                   </v-flex>
                 </v-layout>
               </v-container>
-              <v-alert
-                transition="fade-transition"
-                :value="errors.error.isVisible"
-                type="error"
-                color="red darken-2"
-              >
+              <v-alert transition="fade-transition" :value="errors.error.isVisible" type="error" color="red darken-2">
                 {{ errors.error.message }}
               </v-alert>
             </v-card-text>
 
             <v-card-actions>
               <v-spacer />
-              <v-btn
-                color="blue darken-1"
-                text
-                @click.native="close"
-              >
-                Zrušit
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click.native="save"
-              >
-                Uložit
-              </v-btn>
+              <v-btn color="blue darken-1" text @click.native="close"> Zrušit </v-btn>
+              <v-btn color="blue darken-1" text @click.native="save"> Uložit </v-btn>
             </v-card-actions>
           </v-form>
         </v-card>
       </v-dialog>
-      <v-flex
-        md1
-        class="pad"
-      >
+      <v-flex md1 class="pad">
         <v-dialog
           ref="dialogMonth"
           v-model="statisticsMonthDialog.isOpen"
@@ -90,30 +57,14 @@
             color="blue darken-2"
           >
             <v-spacer />
-            <v-btn
-              text
-              color="primary"
-              @click="statisticsMonthDialog.isOpen = false"
-            >
-              Zrušit
-            </v-btn>
-            <v-btn
-              text
-              color="primary"
-              @click="updateMonth($refs.dialogMonth)"
-            >
-              OK
-            </v-btn>
+            <v-btn text color="primary" @click="statisticsMonthDialog.isOpen = false"> Zrušit </v-btn>
+            <v-btn text color="primary" @click="updateMonth($refs.dialogMonth)"> OK </v-btn>
           </v-date-picker>
         </v-dialog>
       </v-flex>
     </v-layout>
 
-    <v-layout
-      column
-      justify-center
-      align-end
-    >
+    <v-layout column justify-center align-end>
       <v-data-table
         :headers="headers"
         :items="statistics.items.userStatistics"
@@ -127,10 +78,7 @@
         @item-expanded="getRowId"
       >
         <template v-slot:item="{ item, expand, isExpanded }">
-          <tr
-            class="expanded-row"
-            @click.stop="expand(!isExpanded)"
-          >
+          <tr class="expanded-row" @click.stop="expand(!isExpanded)">
             <td class="text-left element">
               {{ item.userName }}
             </td>
@@ -143,19 +91,13 @@
             <td class="text-right element pr-8">
               {{ item.sumHoursWorked }}
             </td>
-            <td
-              class="text-right element pr-8"
-              :class="{ 'hero-element': isHeroOfMonth(item.id) }"
-            >
+            <td class="text-right element pr-8" :class="{ 'hero-element': isHeroOfMonth(item.id) }">
               {{ item.monthXp }}
             </td>
             <td class="text-right element pr-8">
               {{ item.previousXp }}
             </td>
-            <td
-              class="text-right element pr-8"
-              :class="{ 'hero-element': isHeroOfGame(item.id) }"
-            >
+            <td class="text-right element pr-8" :class="{ 'hero-element': isHeroOfGame(item.id) }">
               {{ item.totalXp }}
             </td>
             <td class="text-right element pr-8">
@@ -164,15 +106,8 @@
             <td class="text-right element pr-8">
               {{ item.newLevel }}
             </td>
-            <td
-              v-if="isAdministration()"
-              class="text-center px-0"
-            >
-              <v-icon
-                color="green lighten-1"
-                class="justify-center"
-                @click.stop="addExp(item)"
-              >
+            <td v-if="isAdministration()" class="text-center px-0">
+              <v-icon color="green lighten-1" class="justify-center" @click.stop="addExp(item)">
                 mdi-plus-circle-outline
               </v-icon>
             </td>
@@ -184,38 +119,20 @@
           </tr>
         </template>
         <template v-slot:expanded-item="{ headers }">
-          <td
-            :colspan="headers.length"
-            class="pr-0 pl-0"
-          >
-            <div
-              v-if="userDetailItems.length === 0"
-              class="no-available-data"
-            >
+          <td :colspan="headers.length" class="pr-0 pl-0">
+            <div v-if="userDetailItems.length === 0" class="no-available-data">
               {{ 'Žádná data k dispozici' }}
             </div>
-            <table
-              v-if="userDetailItems.length"
-              class="expanded-row-body"
-            >
+            <table v-if="userDetailItems.length" class="expanded-row-body">
               <thead>
                 <tr class="expanded-header">
-                  <th
-                    v-for="h in expandedHeaders"
-                    :key="h.text"
-                    :class="h.align"
-                    class="pl-4 pr-6 border-bottom"
-                  >
+                  <th v-for="h in expandedHeaders" :key="h.text" :class="h.align" class="pl-4 pr-6 border-bottom">
                     {{ h.text }}
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  v-for="(item, itemIndex) in userDetailItems"
-                  :key="itemIndex"
-                  class="expanded-row-text"
-                >
+                <tr v-for="(item, itemIndex) in userDetailItems" :key="itemIndex" class="expanded-row-text">
                   <td class="text-left border-bottom pl-4">
                     {{ item.code }}
                   </td>
@@ -225,14 +142,8 @@
                   <td class="text-left border-bottom pl-4">
                     {{ item.projectExpModifierName }}
                   </td>
-                  <td class="text-right border-bottom pr-6">
-                    {{ item.coefficient }}%
-                  </td>
-                  <td
-                    v-for="(i, index) in item.projectRatings"
-                    :key="index"
-                    class="text-right border-bottom pr-6"
-                  >
+                  <td class="text-right border-bottom pr-6">{{ item.coefficient }}%</td>
+                  <td v-for="(i, index) in item.projectRatings" :key="index" class="text-right border-bottom pr-6">
                     {{ i.rating }}
                   </td>
                   <td class="text-right border-bottom pr-6">
@@ -245,19 +156,10 @@
         </template>
       </v-data-table>
     </v-layout>
-    <v-layout
-      row
-      justify-center
-    >
-      <v-tooltip
-        bottom
-        :disabled="!statistics.items.jiraSynchronization.status"
-      >
+    <v-layout row justify-center>
+      <v-tooltip bottom :disabled="!statistics.items.jiraSynchronization.status">
         <template v-slot:activator="{ on, attrs }">
-          <div
-            v-bind="attrs"
-            v-on="on"
-          >
+          <div v-bind="attrs" v-on="on">
             <v-btn
               v-show="isAdministration() && checkSyncButton"
               class="my-2 standup-button"
@@ -272,12 +174,7 @@
                 color="grey lighten-1"
                 indeterminate
               />
-              <v-icon
-                v-if="!statistics.items.jiraSynchronization.status"
-                class="mr-2"
-              >
-                mdi-download
-              </v-icon>
+              <v-icon v-if="!statistics.items.jiraSynchronization.status" class="mr-2"> mdi-download </v-icon>
               Synchronizace dat
             </v-btn>
           </div>
@@ -285,10 +182,7 @@
         <span> Probíhá synchronizace. Počkejte prosím... </span>
       </v-tooltip>
     </v-layout>
-    <div
-      v-if="statistics.items.jiraSynchronization.status"
-      class="column-align"
-    >
+    <div v-if="statistics.items.jiraSynchronization.status" class="column-align">
       <div class="synchronization-info-wrapper">
         <div class="row-align blue-color">
           Synchronizece začala:

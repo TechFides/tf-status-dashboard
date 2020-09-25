@@ -1,12 +1,7 @@
 <template>
   <div v-if="$auth.$state.loggedIn">
     <span v-if="$device.isDesktop">Přihlášen jako {{ $auth.user.first_name }} {{ $auth.user.last_name }}</span>
-    <v-btn
-      class="ml-8"
-      @click="logout"
-    >
-      Odhlásit
-    </v-btn>
+    <v-btn class="ml-8" @click="logout"> Odhlásit </v-btn>
   </div>
   <v-dialog
     v-else
@@ -17,12 +12,7 @@
     @keydown.esc="close"
   >
     <template v-slot:activator="{ on, attrs }">
-      <v-btn
-        v-bind="attrs"
-        v-on="on"
-      >
-        Přihlásit
-      </v-btn>
+      <v-btn v-bind="attrs" v-on="on"> Přihlásit </v-btn>
     </template>
     <v-card ref="form">
       <v-card-title>
@@ -32,41 +22,19 @@
         <v-container grid-list-md>
           <v-layout wrap>
             <v-flex xs12>
-              <v-text-field
-                ref="username"
-                v-model="data.username"
-                autofocus
-                label="Přihlašovací jméno"
-              />
+              <v-text-field ref="username" v-model="data.username" autofocus label="Přihlašovací jméno" />
             </v-flex>
             <v-flex xs12>
-              <v-text-field
-                ref="password"
-                v-model="data.password"
-                label="Heslo"
-                type="password"
-                required
-              />
+              <v-text-field ref="password" v-model="data.password" label="Heslo" type="password" required />
             </v-flex>
             <v-flex xs12>
               <div>Přihlásit se přes</div>
-              <v-btn
-                href="/auth/google"
-                class="google-button"
-                color="light-blue lighten-1"
-              >
-                <v-icon left>
-                  mdi-google
-                </v-icon> Google
+              <v-btn href="/auth/google" class="google-button" color="light-blue lighten-1">
+                <v-icon left> mdi-google </v-icon> Google
               </v-btn>
             </v-flex>
           </v-layout>
-          <v-alert
-            transition="fade-transition"
-            :value="error.isVisible"
-            type="error"
-            color="red darken-2"
-          >
+          <v-alert transition="fade-transition" :value="error.isVisible" type="error" color="red darken-2">
             {{ error.message }}
           </v-alert>
         </v-container>
@@ -74,20 +42,8 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="blue darken-1"
-          text
-          @click="close"
-        >
-          Zavřít
-        </v-btn>
-        <v-btn
-          color="blue darken-1"
-          text
-          @click="submit"
-        >
-          Přihlásit
-        </v-btn>
+        <v-btn color="blue darken-1" text @click="close"> Zavřít </v-btn>
+        <v-btn color="blue darken-1" text @click="submit"> Přihlásit </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

@@ -1,28 +1,13 @@
 <template>
-  <v-layout
-    column
-    align-start
-    class="padding-content"
-  >
-    <v-form
-      v-model="valid"
-      class="settings-form"
-      @submit.prevent="saveSettings"
-    >
+  <v-layout column align-start class="padding-content">
+    <v-form v-model="valid" class="settings-form" @submit.prevent="saveSettings">
       <v-container>
         <v-row justify="start">
-          <h3 class="section-header">
-            E-mail pro zpětnou vazbu
-          </h3>
+          <h3 class="section-header">E-mail pro zpětnou vazbu</h3>
         </v-row>
         <v-row justify="space-between">
           <v-col>
-            <v-select
-              v-model="form.feedbackCrontab.weekday"
-              :items="weekdays"
-              label="Den v týdnu"
-              required
-            />
+            <v-select v-model="form.feedbackCrontab.weekday" :items="weekdays" label="Den v týdnu" required />
           </v-col>
           <v-col>
             <v-menu
@@ -59,24 +44,14 @@
           </v-col>
         </v-row>
         <v-row justify="start">
-          <h3 class="section-header">
-            Slack kanály
-          </h3>
+          <h3 class="section-header">Slack kanály</h3>
         </v-row>
         <v-row>
           <v-col cols="4">
-            <v-text-field
-              v-model="form.slackErrorChannel"
-              type="string"
-              label="Slack kanál pro chybové hlášky"
-            />
+            <v-text-field v-model="form.slackErrorChannel" type="string" label="Slack kanál pro chybové hlášky" />
           </v-col>
           <v-col cols="4">
-            <v-text-field
-              v-model="form.slackSchedulerChannel"
-              type="string"
-              label="Slack kanál pro sitdown"
-            />
+            <v-text-field v-model="form.slackSchedulerChannel" type="string" label="Slack kanál pro sitdown" />
           </v-col>
           <v-col cols="4">
             <v-text-field
@@ -87,9 +62,7 @@
           </v-col>
         </v-row>
         <v-row justify="start">
-          <h3 class="section-header">
-            Nepřítomnosti v kanceláři
-          </h3>
+          <h3 class="section-header">Nepřítomnosti v kanceláři</h3>
         </v-row>
         <v-row justify="start">
           <v-col cols="4">
@@ -101,18 +74,8 @@
             />
           </v-col>
         </v-row>
-        <v-row
-          row
-          justify="end"
-        >
-          <v-btn
-            color="blue darken-2"
-            dark
-            type="submit"
-            :loading="loading"
-          >
-            Uložit nastavení
-          </v-btn>
+        <v-row row justify="end">
+          <v-btn color="blue darken-2" dark type="submit" :loading="loading"> Uložit nastavení </v-btn>
         </v-row>
       </v-container>
     </v-form>
@@ -195,7 +158,7 @@ export default {
         this.loading = true;
 
         const { weekday, time } = this.form.feedbackCrontab;
-        const settings = {
+        const configuration = {
           feedbackCrontab: toCrontab(weekday, time),
           slackErrorChannel: this.form.slackErrorChannel,
           slackSchedulerChannel: this.form.slackSchedulerChannel,

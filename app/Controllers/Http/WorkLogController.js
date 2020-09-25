@@ -5,14 +5,14 @@ const UserModel = use('App/Models/User');
 const CostCategoryModel = use('App/Models/CostCategory');
 
 class WorkLogController {
-  static mapToDbEntity (request) {
-    const {
-      authorId,
-      started,
-      timeSpent,
-      description,
-      costCategory,
-    } = request.only(['authorId', 'started', 'timeSpent', 'description', 'costCategory']);
+  static mapToDbEntity(request) {
+    const { authorId, started, timeSpent, description, costCategory } = request.only([
+      'authorId',
+      'started',
+      'timeSpent',
+      'description',
+      'costCategory',
+    ]);
 
     return {
       user_id: authorId,
@@ -23,17 +23,14 @@ class WorkLogController {
     };
   }
 
-  async getWorkLogList ({ request, response, params }) {
+  async getWorkLogList({ request, response, params }) {
     const { startDate, endDate, authorId, costCategoryId, loggedInUserId } = request.get();
-    const user = (await UserModel
-      .query()
-      .first()).toJSON();
+    const user = (await UserModel.query().first()).toJSON();
 
-    const WorkLogModelQuery = WorkLogModel
-      .query()
+    const WorkLogModelQuery = WorkLogModel.query()
       .with('user')
       .with('costCategory')
-      .whereBetween('started',[startDate, endDate]);
+      .whereBetween('started', [startDate, endDate]);
 
     if (!user.is_admin) {
       WorkLogModelQuery.where('user_id', loggedInUserId);
@@ -54,10 +51,10 @@ class WorkLogController {
       timeSpentSum += workLogs.time_spent;
     }
 
-    return { items: workLogsList, timeSpentSum: timeSpentSum};
+    return { items: workLogsList, timeSpentSum: timeSpentSum };
   }
 
-  async createWorkLog ({ request, response, params }) {
+  async createWorkLog({ request, response, params }) {
     const workLog = new WorkLogModel();
     workLog.fill(WorkLogController.mapToDbEntity(request));
     await workLog.save();
@@ -65,7 +62,7 @@ class WorkLogController {
     return workLog.toJSON();
   }
 
-  async editWorkLog ({ request, response, params }) {
+  async editWorkLog({ request, response, params }) {
     const { id } = params;
     const workLog = await WorkLogModel.find(id);
 
@@ -75,7 +72,7 @@ class WorkLogController {
     return workLog.toJSON();
   }
 
-  async deleteWorkLog ({ request, response, params }) {
+  async deleteWorkLog({ request, response, params }) {
     const { id } = params;
     const workLog = await WorkLogModel.find(id);
 
@@ -83,7 +80,7 @@ class WorkLogController {
       await workLog.delete();
       response.send();
     } catch (e) {
-      response.status(500).send({message: e.message});
+      response.status(500).send({ message: e.message });
     }
   }
 }

@@ -1,43 +1,22 @@
 <template>
-  <v-dialog
-    v-model="isOpen"
-    max-width="500px"
-  >
+  <v-dialog v-model="isOpen" max-width="500px">
     <v-card>
       <v-card-title>
         <span class="headline">{{ projectDialogTitle }}</span>
       </v-card-title>
-      <v-form
-        ref="form"
-        lazy-validation
-        @submit.prevent
-      >
+      <v-form ref="form" lazy-validation @submit.prevent>
         <v-card-text>
           <v-row class="pl-4 pr-4">
-            <v-text-field
-              v-model="modalItem.code"
-              :rules="[rules.required]"
-              label="Projekt"
-            />
+            <v-text-field v-model="modalItem.code" :rules="[rules.required]" label="Projekt" />
           </v-row>
           <v-row class="pl-4 pr-4">
-            <v-text-field
-              v-model="modalItem.slackChannelName"
-              :rules="[rules.required]"
-              label="Název slack kanálu"
-            />
+            <v-text-field v-model="modalItem.slackChannelName" :rules="[rules.required]" label="Název slack kanálu" />
           </v-row>
           <v-row class="pl-4 pr-4">
-            <v-text-field
-              v-model="modalItem.description"
-              label="Popis"
-            />
+            <v-text-field v-model="modalItem.description" label="Popis" />
           </v-row>
           <v-row class="pl-4 pr-4">
-            <v-checkbox
-              v-model="modalItem.isActive"
-              label="Aktivní"
-            />
+            <v-checkbox v-model="modalItem.isActive" label="Aktivní" />
           </v-row>
           <v-row class="pl-4 pr-4">
             <v-select
@@ -47,12 +26,7 @@
             />
           </v-row>
           <v-row class="pl-4 pr-4">
-            <v-alert
-              transition="fade-transition"
-              :value="errors.error.isVisible"
-              type="error"
-              color="red darken-2"
-            >
+            <v-alert transition="fade-transition" :value="errors.error.isVisible" type="error" color="red darken-2">
               {{ errors.error.message }}
             </v-alert>
           </v-row>
@@ -60,20 +34,8 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            color="blue darken-1"
-            text
-            @click.native="close"
-          >
-            Zrušit
-          </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click.native="save"
-          >
-            Uložit
-          </v-btn>
+          <v-btn color="blue darken-1" text @click.native="close"> Zrušit </v-btn>
+          <v-btn color="blue darken-1" text @click.native="save"> Uložit </v-btn>
         </v-card-actions>
       </v-form>
     </v-card>

@@ -1,8 +1,5 @@
 <template>
-  <div
-    width="100%"
-    class="fill-height"
-  >
+  <div width="100%" class="fill-height">
     <v-row justify="end">
       <v-btn
         color="blue darken-2"
@@ -12,9 +9,7 @@
         :disabled="loading"
         @click="positionSynchronization()"
       >
-        <v-icon class="mr-2">
-          mdi-autorenew
-        </v-icon>
+        <v-icon class="mr-2"> mdi-autorenew </v-icon>
         Synchronizace pozic
       </v-btn>
     </v-row>
@@ -36,10 +31,7 @@
               {{ item.name }}
             </td>
             <td class="text-left element">
-              <div
-                v-if="item.permissions.length"
-                class="cost-category-wrapper"
-              >
+              <div v-if="item.permissions.length" class="cost-category-wrapper">
                 <div
                   v-for="n in item.permissions.length < chipsNumber ? item.permissions.length : chipsNumber"
                   :key="item.permissions[n - 1].id"
@@ -49,12 +41,7 @@
                 </div>
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
-                    <div
-                      v-if="item.permissions.length > chipsNumber"
-                      class="cost-category"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
+                    <div v-if="item.permissions.length > chipsNumber" class="cost-category" v-bind="attrs" v-on="on">
                       {{ `+ ${item.permissions.length - chipsNumber} dalších ` }}
                     </div>
                   </template>
@@ -63,16 +50,10 @@
               </div>
             </td>
             <td class="justify-center align-center layout px-0">
-              <v-checkbox
-                :input-value="item.isPlayer"
-                @change="setPlayer(item, !item.isPlayer)"
-              />
+              <v-checkbox :input-value="item.isPlayer" @change="setPlayer(item, !item.isPlayer)" />
             </td>
             <td class="text-left element">
-              <div
-                v-if="item.costCategories.length"
-                class="cost-category-wrapper"
-              >
+              <div v-if="item.costCategories.length" class="cost-category-wrapper">
                 <div
                   v-for="c in item.costCategories.length < chipsNumber ? item.costCategories.length : chipsNumber"
                   :key="item.costCategories[c - 1].id"
@@ -82,12 +63,7 @@
                 </div>
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
-                    <div
-                      v-if="item.costCategories.length > chipsNumber"
-                      class="cost-category"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
+                    <div v-if="item.costCategories.length > chipsNumber" class="cost-category" v-bind="attrs" v-on="on">
                       {{ `+ ${item.costCategories.length - chipsNumber} dalších ` }}
                     </div>
                   </template>
@@ -96,19 +72,10 @@
               </div>
             </td>
             <td class="justify-center align-center layout px-0">
-              <v-checkbox
-                :input-value="item.sendFeeback"
-                @change="setFeedback(item, !item.sendFeeback)"
-              />
+              <v-checkbox :input-value="item.sendFeeback" @change="setFeedback(item, !item.sendFeeback)" />
             </td>
             <td>
-              <v-icon
-                small
-                class="ml-3"
-                @click.stop="addPermissions(item)"
-              >
-                edit
-              </v-icon>
+              <v-icon small class="ml-3" @click.stop="addPermissions(item)"> edit </v-icon>
             </td>
           </tr>
         </template>
@@ -211,7 +178,7 @@ export default {
         sendFeedback,
       };
 
-      await this.$store.dispatch('positions/setFeedback', positions);
+      await this.$store.dispatch('positions/setFeedback', position);
     },
     async setPlayer(item, isPlayer) {
       const position = {
@@ -219,7 +186,7 @@ export default {
         isPlayer,
       };
 
-      await this.$store.dispatch('positions/setPlayer', positions);
+      await this.$store.dispatch('positions/setPlayer', position);
     },
   },
 };

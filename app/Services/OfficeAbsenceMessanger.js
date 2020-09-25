@@ -17,7 +17,7 @@ class OfficeAbsenceMessanger {
     const attachments = [
       {
         color: '#c62828',
-        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: \*${error}\*.`,
+        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: *${error}*.`,
       },
     ];
 

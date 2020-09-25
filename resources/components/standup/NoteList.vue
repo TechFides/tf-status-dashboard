@@ -1,31 +1,12 @@
 <template>
   <div class="note-columns mx-3">
-    <v-card
-      v-for="item in notes.items"
-      :key="item.id"
-      color="brown lighten-5"
-      class="note-card mt-3"
-    >
+    <v-card v-for="item in notes.items" :key="item.id" color="brown lighten-5" class="note-card mt-3">
       <div class="pa-2">
         <div class="note-text-alignment">
           <h2>{{ item.projectCode }}</h2>
           <v-spacer />
-          <v-icon
-            v-if="editable"
-            class="mr-1"
-            size="20"
-            @click="$emit('edit', item)"
-          >
-            edit
-          </v-icon>
-          <v-icon
-            v-if="editable"
-            size="20"
-            color="green"
-            @click="markNoteCompleted(item)"
-          >
-            done
-          </v-icon>
+          <v-icon v-if="editable" class="mr-1" size="20" @click="$emit('edit', item)"> edit </v-icon>
+          <v-icon v-if="editable" size="20" color="green" @click="markNoteCompleted(item)"> done </v-icon>
         </div>
         <div class="note-text mb-2">
           {{ item.text }}
@@ -36,12 +17,7 @@
             {{ formatDate(item.created) }}
           </v-flex>
           <v-flex :class="getNoteDeadlineClass(item)">
-            <v-icon
-              :color="getNoteDeadlineIconColor(item)"
-              size="16"
-            >
-              schedule
-            </v-icon>
+            <v-icon :color="getNoteDeadlineIconColor(item)" size="16"> schedule </v-icon>
             {{ formatDate(item.deadlineDate) }}
           </v-flex>
         </div>

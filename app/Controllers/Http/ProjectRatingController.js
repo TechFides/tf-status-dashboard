@@ -6,7 +6,7 @@ const StandupProjectRating = use('App/Models/StandupProjectRating');
 const ProjectRatingMessenger = use('App/Services/ProjectRatingMessenger');
 
 class ProjectRatingController {
-  async setProjectRating ({ request, response, session }) {
+  async setProjectRating({ request, response, session }) {
     const { projectId, standupId, ratingValueId } = request.body;
 
     try {
@@ -16,9 +16,7 @@ class ProjectRatingController {
         StandupProjectRatingEnumModel.find(ratingValueId),
       ]);
 
-      rating
-        .projectRating()
-        .associate(ratingValue);
+      rating.projectRating().associate(ratingValue);
 
       await ProjectRatingMessenger.sendRatingMessage(projectId, ratingValue.toJSON(), ratingValueId);
 
@@ -30,15 +28,14 @@ class ProjectRatingController {
     }
   }
 
-  async getProjectRatings ({ request, response, session }) {
+  async getProjectRatings({ request, response, session }) {
     let { month, year } = request.get();
     month = Number(month);
     year = Number(year);
     const currentMonth = new Date(year, month, 1);
     const nextMonth = new Date(year, month + 1, 1);
 
-    const projects = await StandupModel
-      .query()
+    const projects = await StandupModel.query()
       .where('date', '>=', currentMonth)
       .where('date', '<', nextMonth)
       .with('standupProjectRating')

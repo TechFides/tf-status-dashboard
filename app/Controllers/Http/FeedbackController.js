@@ -5,14 +5,18 @@ const FeedbackEnumModel = use('App/Models/FeedbackEnum');
 const FeedbackTokenModel = use('App/Models/FeedbackToken');
 
 class FeedbackController {
-  async createFeedback ({ request, response }) {
+  async createFeedback({ request, response }) {
     const { token, feedbackEnumId } = request.only(['token', 'feedbackEnumId']);
 
     if (!token || !feedbackEnumId) {
       return response.status(400).send({ message: 'Bad request: token and feedbackEnumId are required' });
     }
 
-    const feedbackToken = await FeedbackTokenModel.query().where('token', token).with('user').with('heatmapWeek').first();
+    const feedbackToken = await FeedbackTokenModel.query()
+      .where('token', token)
+      .with('user')
+      .with('heatmapWeek')
+      .first();
 
     if (!feedbackToken) {
       return response.status(404).send({ message: 'Not found: token is invalid' });

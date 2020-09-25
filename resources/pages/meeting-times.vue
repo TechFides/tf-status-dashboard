@@ -1,23 +1,11 @@
 <template>
-  <v-layout
-    column
-    justify-center
-    align-end
-  >
-    <v-btn
-      color="blue darken-2"
-      dark
-      class="button"
-      @click="toggleDialogVisibility"
-    >
+  <v-layout column justify-center align-end>
+    <v-btn color="blue darken-2" dark class="button" @click="toggleDialogVisibility">
       <i class="material-icons">add</i>
       NOVÝ ČAS KONÁNÍ SITDOWNU
     </v-btn>
 
-    <v-dialog
-      v-model="dialog.isOpen"
-      max-width="550px"
-    >
+    <v-dialog v-model="dialog.isOpen" max-width="550px">
       <v-card>
         <v-card-title>
           <span class="headline">{{ dialog.title }}</span>
@@ -25,39 +13,14 @@
 
         <v-card-text>
           <v-container grid-list-md>
-            <v-layout
-              wrap
-              column
-            >
-              <v-flex
-                xs12
-                sm6
-                md4
-              >
-                <v-text-field
-                  :value="formData.name"
-                  label="Název"
-                  @input="updateName"
-                />
+            <v-layout wrap column>
+              <v-flex xs12 sm6 md4>
+                <v-text-field :value="formData.name" label="Název" @input="updateName" />
               </v-flex>
-              <v-flex
-                xs12
-                sm6
-                md4
-              >
-                <v-select
-                  :items="weekDays"
-                  :value="formData.weekDay"
-                  label="Den v týdnu"
-                  @input="updateWeekDay"
-                />
+              <v-flex xs12 sm6 md4>
+                <v-select :items="weekDays" :value="formData.weekDay" label="Den v týdnu" @input="updateWeekDay" />
               </v-flex>
-              <v-flex
-                xs12
-                sm6
-                md4
-                class="time-picker"
-              >
+              <v-flex xs12 sm6 md4 class="time-picker">
                 <v-time-picker
                   landscape
                   format="24hr"
@@ -69,12 +32,7 @@
               </v-flex>
             </v-layout>
 
-            <v-alert
-              transition="fade-transition"
-              :value="errors.error.isVisible"
-              type="error"
-              color="red darken-2"
-            >
+            <v-alert transition="fade-transition" :value="errors.error.isVisible" type="error" color="red darken-2">
               {{ errors.error.message }}
             </v-alert>
           </v-container>
@@ -82,20 +40,8 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="toggleDialogVisibility"
-          >
-            Zrušit
-          </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="submit"
-          >
-            Uložit
-          </v-btn>
+          <v-btn color="blue darken-1" text @click="toggleDialogVisibility"> Zrušit </v-btn>
+          <v-btn color="blue darken-1" text @click="submit"> Uložit </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -124,19 +70,8 @@
             {{ props.item.projects }}
           </td>
           <td class="justify-center layout px-0">
-            <v-icon
-              small
-              class="mr-2"
-              @click="toggleDialogVisibility(props.item)"
-            >
-              edit
-            </v-icon>
-            <v-icon
-              small
-              @click="deleteSitDownMeetingTime(props.item.id)"
-            >
-              delete
-            </v-icon>
+            <v-icon small class="mr-2" @click="toggleDialogVisibility(props.item)"> edit </v-icon>
+            <v-icon small @click="deleteSitDownMeetingTime(props.item.id)"> delete </v-icon>
           </td>
         </tr>
       </template>

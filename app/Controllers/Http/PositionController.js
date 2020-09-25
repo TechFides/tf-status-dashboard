@@ -26,11 +26,7 @@ class PositionController {
 
   async getPositions({ request, response, params }) {
     return (
-      await PositionModel.query()
-        .with('permissions')
-        .with('costCategories')
-        .orderBy('name', 'asc')
-        .fetch()
+      await PositionModel.query().with('permissions').with('costCategories').orderBy('name', 'asc').fetch()
     ).toJSON();
   }
 
@@ -49,9 +45,7 @@ class PositionController {
   }
 
   static async setCostCategories(positionData) {
-    await PositionCostCategory.query()
-      .where('position_id', '=', positionData.id)
-      .delete();
+    await PositionCostCategory.query().where('position_id', '=', positionData.id).delete();
 
     const payload = positionData.costCategories.map(c => ({
       position_id: positionData.id,
@@ -81,9 +75,7 @@ class PositionController {
     const permissionIds = request.body;
 
     try {
-      await PositionPermissionModel.query()
-        .where('position_id', '=', id)
-        .delete();
+      await PositionPermissionModel.query().where('position_id', '=', id).delete();
 
       const payload = permissionIds.map(p => ({
         position_id: id,

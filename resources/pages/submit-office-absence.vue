@@ -1,14 +1,7 @@
 <template>
-  <v-layout
-    column
-    justify-center
-    align-center
-  >
+  <v-layout column justify-center align-center>
     <v-flex>
-      <div
-        v-if="submitted"
-        class="submit-feedback__message"
-      >
+      <div v-if="submitted" class="submit-feedback__message">
         <v-img
           v-if="approverDecisionId === '1'"
           class="thumb-up"
@@ -16,13 +9,7 @@
           max-height="125"
           max-width="125"
         />
-        <v-img
-          v-else
-          class="thumb-up"
-          src="/reject_absence.png"
-          max-height="125"
-          max-width="125"
-        />
+        <v-img v-else class="thumb-up" src="/reject_absence.png" max-height="125" max-width="125" />
         <h2 v-if="approverDecisionId === '1'">
           <strong>Žádost nepřítomnosti byla schválena</strong>
         </h2>
@@ -30,12 +17,9 @@
           <strong>Žádost nepřítomnosti byla zamítnuta</strong>
         </h2>
       </div>
-      <div
-        v-if="error"
-        class="redirect-message"
-      >
-        <br>
-        <br>
+      <div v-if="error" class="redirect-message">
+        <br />
+        <br />
         {{ error }}
       </div>
     </v-flex>

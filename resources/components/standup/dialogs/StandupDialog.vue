@@ -1,9 +1,5 @@
 <template>
-  <v-dialog
-    v-model="isOpen"
-    max-width="500px"
-    :persistent="true"
-  >
+  <v-dialog v-model="isOpen" max-width="500px" :persistent="true">
     <v-card>
       <v-card-title>
         <span class="headline">{{ standupDialogTitle }}</span>
@@ -19,32 +15,15 @@
           />
         </v-row>
         <v-row class="pl-2 pr-4">
-          <v-alert
-            transition="fade-transition"
-            :value="errors.error.isVisible"
-            type="error"
-            color="red darken-2"
-          >
+          <v-alert transition="fade-transition" :value="errors.error.isVisible" type="error" color="red darken-2">
             {{ errors.error.message }}
           </v-alert>
         </v-row>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="blue darken-1"
-          text
-          @click.native="resetStandup"
-        >
-          Zavřít
-        </v-btn>
-        <v-btn
-          color="blue darken-1"
-          text
-          @click.native="save"
-        >
-          Uložit
-        </v-btn>
+        <v-btn color="blue darken-1" text @click.native="resetStandup"> Zavřít </v-btn>
+        <v-btn color="blue darken-1" text @click.native="save"> Uložit </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

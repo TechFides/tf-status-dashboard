@@ -1,15 +1,7 @@
 <template>
-  <div
-    width="100%"
-    class="fill-height"
-  >
+  <div width="100%" class="fill-height">
     <v-row justify="end">
-      <v-btn
-        color="green darken-2"
-        dark
-        class="mt-2 mr-5 mb-2"
-        @click="createNewAbsence()"
-      >
+      <v-btn color="green darken-2" dark class="mt-2 mr-5 mb-2" @click="createNewAbsence()">
         <i class="material-icons">add</i>
         <span class="pl-2"> Nová žádost </span>
       </v-btn>
@@ -18,24 +10,11 @@
     <CancelAbsenceDialog ref="cancelAbsenceDialog" />
     <v-card class="elevation-1">
       <v-row justify="start">
-        <v-col
-          cols="2"
-          class="ml-5"
-        >
-          <v-select
-            v-model="filter.absenceState"
-            :items="absenceStateEnumItems"
-            label="Stav nepřítomnosti"
-            clearable
-          />
+        <v-col cols="2" class="ml-5">
+          <v-select v-model="filter.absenceState" :items="absenceStateEnumItems" label="Stav nepřítomnosti" clearable />
         </v-col>
         <v-col cols="2">
-          <v-select
-            v-model="filter.absenceType"
-            :items="absenceTypeEnumItems"
-            label="Typ nepřítomnosti"
-            clearable
-          />
+          <v-select v-model="filter.absenceType" :items="absenceTypeEnumItems" label="Typ nepřítomnosti" clearable />
         </v-col>
       </v-row>
       <v-data-table
@@ -88,10 +67,7 @@
               </v-icon>
             </td>
             <td class="text-left px-0">
-              <v-icon
-                v-if="item.generalDescription || item.approverDescription"
-                class="mr-2"
-              >
+              <v-icon v-if="item.generalDescription || item.approverDescription" class="mr-2">
                 {{ isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
               </v-icon>
             </td>

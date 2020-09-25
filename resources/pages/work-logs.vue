@@ -1,65 +1,27 @@
 <template>
-  <div
-    width="100%"
-    class="fill-height"
-  >
+  <div width="100%" class="fill-height">
     <v-row justify="end">
-      <v-btn
-        color="green darken-2"
-        dark
-        class="mt-2 mr-5 mb-2"
-        @click="createNewWorkLog()"
-      >
+      <v-btn color="green darken-2" dark class="mt-2 mr-5 mb-2" @click="createNewWorkLog()">
         <i class="material-icons">add</i>
         <span class="pl-2"> Zalogovat čas </span>
       </v-btn>
     </v-row>
-    <WorkLogDialog
-      ref="workLogDialog"
-      :confirm="resetFilters"
-    />
+    <WorkLogDialog ref="workLogDialog" :confirm="resetFilters" />
     <v-card class="elevation-1">
       <v-row justify="start">
-        <v-col
-          v-if="isAdministration()"
-          cols="2"
-          class="ml-5"
-        >
-          <v-select
-            v-model="filter.authorId"
-            :items="authorItems"
-            label="Autor"
-            clearable
-          />
+        <v-col v-if="isAdministration()" cols="2" class="ml-5">
+          <v-select v-model="filter.authorId" :items="authorItems" label="Autor" clearable />
         </v-col>
-        <v-col
-          cols="2"
-          class="ml-5"
-        >
-          <v-select
-            v-model="filter.costCategoryId"
-            :items="costCategoryItems"
-            label="Kategorie"
-            clearable
-          />
+        <v-col cols="2" class="ml-5">
+          <v-select v-model="filter.costCategoryId" :items="costCategoryItems" label="Kategorie" clearable />
         </v-col>
         <v-col cols="3">
-          <DatePicker
-            v-model="filter.dates"
-            label="Zahájení práce"
-            :clearable="false"
-            required
-            range
-          />
+          <DatePicker v-model="filter.dates" label="Zahájení práce" :clearable="false" required range />
         </v-col>
       </v-row>
       <v-row>
         <v-col>
-          <v-alert
-            border="right"
-            color="green lighten-1"
-            class="ma-2"
-          >
+          <v-alert border="right" color="green lighten-1" class="ma-2">
             Celkem odpracovaný čas za zvolené období: <b>{{ workLogs.timeSpentSum }}</b>
           </v-alert>
         </v-col>
@@ -77,10 +39,7 @@
       >
         <template v-slot:item="{ item }">
           <tr>
-            <td
-              v-if="isAdministration()"
-              class="text-left element pr-8"
-            >
+            <td v-if="isAdministration()" class="text-left element pr-8">
               {{ item.author.fullName }}
             </td>
             <td class="text-left element pr-8">
@@ -96,29 +55,15 @@
               {{ item.costCategory.name }}
             </td>
             <td class="justify-center layout px-0">
-              <v-icon
-                small
-                @click.stop="editItem(item)"
-              >
-                edit
-              </v-icon>
-              <v-icon
-                small
-                class="ml-2"
-                @click.stop="deleteItem(item)"
-              >
-                delete
-              </v-icon>
+              <v-icon small @click.stop="editItem(item)"> edit </v-icon>
+              <v-icon small class="ml-2" @click.stop="deleteItem(item)"> delete </v-icon>
             </td>
           </tr>
         </template>
       </v-data-table>
     </v-card>
     <v-row>
-      <v-col
-        cols="6"
-        class="time-spent-sum pl-6"
-      />
+      <v-col cols="6" class="time-spent-sum pl-6" />
     </v-row>
   </div>
 </template>

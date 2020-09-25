@@ -1,72 +1,31 @@
 <template>
   <div class="text-xs-center">
-    <v-dialog
-      v-model="dialog"
-      :disabled="disabled"
-      max-width="1080"
-    >
+    <v-dialog v-model="dialog" :disabled="disabled" max-width="1080">
       <template v-slot:activator="{ on, attrs }">
-        <div
-          color="red lighten-2"
-          v-bind="attrs"
-          v-on="on"
-        >
+        <div color="red lighten-2" v-bind="attrs" v-on="on">
           <v-icon :class="getClassName()">
             {{ icon }}
           </v-icon>
         </div>
       </template>
       <v-card>
-        <v-card-title
-          class="headline grey lighten-2"
-          primary-title
-        >
+        <v-card-title class="headline grey lighten-2" primary-title>
           <div class="flex-container">
             {{ `${date} - Vyberte hodnocení: ${projectName}` }}
-            <v-icon
-              x-large
-              class="material-icons"
-              @click="dialog = false"
-            >
-              remove
-            </v-icon>
+            <v-icon x-large class="material-icons" @click="dialog = false"> remove </v-icon>
           </div>
         </v-card-title>
 
         <v-card-text class="myicon">
-          <v-icon
-            large
-            class="material-icons custom-picker-font-size"
-            @click="submit('HIATUS')"
-          >
-            remove
-          </v-icon>
-          <v-icon
-            large
-            class="material-icons red800 custom-picker-font-size"
-            @click="submit('FAIL')"
-          >
-            close
-          </v-icon>
-          <v-icon
-            large
-            class="material-icons blue500 custom-picker-font-size"
-            @click="submit('STANDARD')"
-          >
+          <v-icon large class="material-icons custom-picker-font-size" @click="submit('HIATUS')"> remove </v-icon>
+          <v-icon large class="material-icons red800 custom-picker-font-size" @click="submit('FAIL')"> close </v-icon>
+          <v-icon large class="material-icons blue500 custom-picker-font-size" @click="submit('STANDARD')">
             radio_button_unchecked
           </v-icon>
-          <v-icon
-            large
-            class="material-icons green500 custom-picker-font-size"
-            @click="submit('GOOD')"
-          >
+          <v-icon large class="material-icons green500 custom-picker-font-size" @click="submit('GOOD')">
             radio_button_unchecked
           </v-icon>
-          <v-icon
-            large
-            class="material-icons green500 custom-picker-font-size"
-            @click="submit('AMAZING')"
-          >
+          <v-icon large class="material-icons green500 custom-picker-font-size" @click="submit('AMAZING')">
             done
           </v-icon>
         </v-card-text>

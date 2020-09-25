@@ -1,41 +1,18 @@
 <template>
-  <div
-    width="100%"
-    class="fill-height"
-  >
+  <div width="100%" class="fill-height">
     <v-row justify="end">
-      <div
-        v-if="gifDialog.isOpen"
-        class="gif"
-      >
-        <v-img
-          width="100%"
-          height="100%"
-          style="position: absolute"
-          :src="gifDialog.url"
-        />
+      <div v-if="gifDialog.isOpen" class="gif">
+        <v-img width="100%" height="100%" style="position: absolute" :src="gifDialog.url" />
       </div>
-      <v-col
-        :cols="$device.isDesktop ? 2 : 12"
-        class="pt-0 pl-6"
-      >
+      <v-col :cols="$device.isDesktop ? 2 : 12" class="pt-0 pl-6">
         <v-select
           v-model="selectedMeetingTimeId"
           :items="formattedMeetingTimesForSelect"
           label="Vyberte čas konání sitdownu"
         />
       </v-col>
-      <v-col
-        :cols="$device.isDesktop ? 1 : 12"
-        :class="$device.isDesktop ? 'pt-0' : 'pt-0 pl-6 pb-0'"
-      >
-        <DatePicker
-          v-model="filter.standupMonth"
-          label="Měsíc"
-          :clearable="false"
-          type="month"
-          date-format="YYYY-MM"
-        />
+      <v-col :cols="$device.isDesktop ? 1 : 12" :class="$device.isDesktop ? 'pt-0' : 'pt-0 pl-6 pb-0'">
+        <DatePicker v-model="filter.standupMonth" label="Měsíc" :clearable="false" type="month" date-format="YYYY-MM" />
       </v-col>
       <v-btn
         v-show="isAdministration()"
@@ -73,11 +50,7 @@
         <template v-slot:header="{ props }">
           <thead>
             <tr>
-              <th
-                v-for="h in props.headers"
-                :key="h.text"
-                class="text-center header-text"
-              >
+              <th v-for="h in props.headers" :key="h.text" class="text-center header-text">
                 <span class="project-name">
                   <div class="text-xs-center header align-project">
                     {{ h.text }}
@@ -101,11 +74,7 @@
           </thead>
           <thead>
             <tr>
-              <th
-                v-for="h in props.headers"
-                :key="h.text"
-                class="text-center header-text"
-              >
+              <th v-for="h in props.headers" :key="h.text" class="text-center header-text">
                 {{ h.meetingTime ? h.meetingTime.dayAndTime : '' }}
               </th>
             </tr>
@@ -117,11 +86,7 @@
               {{ formatDate(props.item.standup.date) }}
             </td>
 
-            <td
-              v-for="(i, itemIndex) in props.item.ratings"
-              :key="itemIndex"
-              class="text-center"
-            >
+            <td v-for="(i, itemIndex) in props.item.ratings" :key="itemIndex" class="text-center">
               <project-status-picker
                 :project-rating="i.rating"
                 :project-id="i.projectId"
@@ -132,24 +97,14 @@
               />
             </td>
             <td class="text-center px-0">
-              <v-icon
-                class="mr-2"
-                @click="editStandup(props.item.standup)"
-              >
-                edit
-              </v-icon>
-              <v-icon @click="deleteStandup(props.item.standup)">
-                delete
-              </v-icon>
+              <v-icon class="mr-2" @click="editStandup(props.item.standup)"> edit </v-icon>
+              <v-icon @click="deleteStandup(props.item.standup)"> delete </v-icon>
             </td>
           </tr>
         </template>
       </v-data-table>
     </v-card>
-    <note-list
-      :editable="isAdministration()"
-      @edit="editNote"
-    />
+    <note-list :editable="isAdministration()" @edit="editNote" />
     <note-dialog ref="refNoteDialog" />
     <StandupDialog ref="refStandupDialog" />
   </div>
@@ -221,10 +176,10 @@ export default {
     rows() {
       return this.standups.ratings.map(standup => ({
         standup: {
-          id: sitdown.id,
-          date: sitdown.date,
+          id: standup.id,
+          date: standup.date,
         },
-        ratings: this.getRatings(sitdown),
+        ratings: this.getRatings(standup),
       }));
     },
     formattedMeetingTimesForSelect() {
@@ -306,9 +261,9 @@ export default {
     },
     getRatings(standup) {
       return this.getFilteredProjectsBySelectedMeetingTime(this.sortProjectsByMeetingTime()).map(p => ({
-        standupId: sitdown.id,
+        standupId: standup.id,
         projectId: p.id,
-        rating: sitdown.standupProjectRating[p.id] >= 0 ? sitdown.standupProjectRating[p.id] : this.defaultRating,
+        rating: standup.standupProjectRating[p.id] >= 0 ? standup.standupProjectRating[p.id] : this.defaultRating,
       }));
     },
     isMissingNote(projectCode, hasIcon) {
@@ -325,7 +280,7 @@ export default {
       this.$refs.refNoteDialog.openDialog();
     },
     editStandup(standup) {
-      this.$refs.refStandupDialog.openDialog(sitdown);
+      this.$refs.refStandupDialog.openDialog(standup);
     },
     createStandup() {
       this.$refs.refStandupDialog.openDialog();
@@ -337,10 +292,10 @@ export default {
       setTimeout(() => (this.gifDialog.isOpen = false), this.GIF_ANIMATION_DURATION);
     },
     async deleteStandup(standup) {
-      const confirmed = confirm(`Opravdu chcete smazat standup ${this.formatDate(sitdown.date)}?`);
+      const confirmed = confirm(`Opravdu chcete smazat standup ${this.formatDate(standup.date)}?`);
       this.standupDialog = {
-        id: sitdown.id,
-        date: parse(sitdown.date),
+        id: standup.id,
+        date: parse(standup.date),
         selectedDate: this.selectedDate,
       };
 

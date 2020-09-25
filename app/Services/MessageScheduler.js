@@ -52,7 +52,7 @@ async function sendNotificationOfStandup(slackChannel, time, projects) {
     const attachments = [
       {
         color: '#c62828',
-        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: \*${error.data.error}\*.`,
+        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: *${error.data.error}*.`,
       },
     ];
 
@@ -69,9 +69,9 @@ function transformProjectsToString(projects) {
     .join(', ');
 
   if (projects.length === 1) {
-    text = `Za 15 minut začne sitdown pro projekt \*${stringOfProjects}\*. Připravte si, co jste za poslední týden dělali a co budete dělat následující týden.`;
+    text = `Za 15 minut začne sitdown pro projekt *${stringOfProjects}*. Připravte si, co jste za poslední týden dělali a co budete dělat následující týden.`;
   } else {
-    text = `Za 15 minut začne sitdown pro projekty: \*${stringOfProjects}\*. Připravte si, co jste za poslední týden dělali a co budete dělat následující týden.`;
+    text = `Za 15 minut začne sitdown pro projekty: *${stringOfProjects}*. Připravte si, co jste za poslední týden dělali a co budete dělat následující týden.`;
   }
 
   return text;

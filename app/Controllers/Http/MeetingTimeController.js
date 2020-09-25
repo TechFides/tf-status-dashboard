@@ -3,12 +3,8 @@
 const MeetingTimeModel = use('App/Models/MeetingTime');
 
 class MeetingTimeController {
-  static mapToDbEntity (request) {
-    const {
-      weekDay,
-      time,
-      name,
-    } = request.only(['weekDay', 'time', 'name']);
+  static mapToDbEntity(request) {
+    const { weekDay, time, name } = request.only(['weekDay', 'time', 'name']);
 
     return {
       week_day: weekDay,
@@ -17,17 +13,15 @@ class MeetingTimeController {
     };
   }
 
-  async getMeetingTimes ({ request, response, params }) {
-    const query = MeetingTimeModel
-      .query()
-      .with('projects');
+  async getMeetingTimes({ request, response, params }) {
+    const query = MeetingTimeModel.query().with('projects');
 
     const meetingTimes = await query.fetch();
 
     return meetingTimes.toJSON();
   }
 
-  async createMeetingTime ({ request, response, params }) {
+  async createMeetingTime({ request, response, params }) {
     const meetingTime = new MeetingTimeModel();
     meetingTime.fill(MeetingTimeController.mapToDbEntity(request));
     await meetingTime.save();
@@ -35,7 +29,7 @@ class MeetingTimeController {
     return meetingTime.toJSON();
   }
 
-  async editMeetingTime ({ request, response, params }) {
+  async editMeetingTime({ request, response, params }) {
     const { id } = params;
     const meetingTime = await MeetingTimeModel.find(id);
     meetingTime.merge(MeetingTimeController.mapToDbEntity(request));
@@ -44,7 +38,7 @@ class MeetingTimeController {
     return meetingTime.toJSON();
   }
 
-  async deleteMeetingTime ({ request, response, params }) {
+  async deleteMeetingTime({ request, response, params }) {
     const { id } = params;
     const meetingTime = await MeetingTimeModel.find(id);
 
@@ -52,7 +46,7 @@ class MeetingTimeController {
       await meetingTime.delete();
       response.send();
     } catch (e) {
-      response.status(500).send({message: e.message});
+      response.status(500).send({ message: e.message });
     }
   }
 }

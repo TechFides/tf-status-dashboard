@@ -48,7 +48,7 @@ async function sendMessage(conversationId, timeSpentSum) {
   const attachments = [
     {
       color: '#0091EA',
-      pretext: `Za minulý měsíc máš zalogováno \*${getTimeSpentInHours(timeSpentSum)}h\*, souhlasí to?`,
+      pretext: `Za minulý měsíc máš zalogováno *${getTimeSpentInHours(timeSpentSum)}h*, souhlasí to?`,
       title: 'Dashboard',
       title_link: `${process.env.VUE_APP_URL}/statistics`,
       image_url: `${process.env.VUE_APP_URL}/images/techfides_logo.png`,
@@ -90,7 +90,7 @@ async function main() {
       const attachments = [
         {
           color: '#c62828',
-          text: `Jeejda, u uživatele \*${dUser.email}\* se něco porouchalo :exclamation: \n Chyba: \*${error.data.error}\*.`,
+          text: `Jeejda, u uživatele *${dUser.email}* se něco porouchalo :exclamation: \n Chyba: *${error.data.error}*.`,
         },
       ];
 

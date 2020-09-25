@@ -1,33 +1,15 @@
 <template>
-  <v-layout
-    column
-    justify-center
-    align-end
-  >
-    <v-btn
-      color="blue darken-2"
-      dark
-      class="button"
-      @click="createNewProject()"
-    >
+  <v-layout column justify-center align-end>
+    <v-btn color="blue darken-2" dark class="button" @click="createNewProject()">
       <i class="material-icons">add</i>
       Nový projekt
     </v-btn>
 
     <v-card class="elevation-1 fullscreen">
-      <v-layout
-        align-center
-        justify-end
-      >
+      <v-layout align-center justify-end>
         <v-flex xs4>
           <v-card-title>
-            <v-text-field
-              v-model="filteringText"
-              append-icon="search"
-              label="Hledej..."
-              single-line
-              hide-details
-            />
+            <v-text-field v-model="filteringText" append-icon="search" label="Hledej..." single-line hide-details />
           </v-card-title>
         </v-flex>
       </v-layout>
@@ -61,26 +43,9 @@
               {{ props.item.slackChannelName }}
             </td>
             <td class="justify-center layout px-0">
-              <v-icon
-                small
-                class="mr-2"
-                @click="addTeamleader(props.item)"
-              >
-                mdi-account-plus
-              </v-icon>
-              <v-icon
-                small
-                class="mr-2"
-                @click="editProject(props.item)"
-              >
-                edit
-              </v-icon>
-              <v-icon
-                small
-                @click="deleteProject(props.item)"
-              >
-                delete
-              </v-icon>
+              <v-icon small class="mr-2" @click="addTeamleader(props.item)"> mdi-account-plus </v-icon>
+              <v-icon small class="mr-2" @click="editProject(props.item)"> edit </v-icon>
+              <v-icon small @click="deleteProject(props.item)"> delete </v-icon>
             </td>
           </tr>
         </template>

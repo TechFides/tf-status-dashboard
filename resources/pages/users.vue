@@ -1,9 +1,5 @@
 <template>
-  <v-layout
-    column
-    justify-center
-    align-end
-  >
+  <v-layout column justify-center align-end>
     <v-btn
       color="blue darken-2"
       class="mb-2 button"
@@ -12,26 +8,15 @@
       :disabled="loading"
       @click="userSynchronization()"
     >
-      <v-icon class="mr-2">
-        mdi-autorenew
-      </v-icon>
+      <v-icon class="mr-2"> mdi-autorenew </v-icon>
       Synchronizace uživatelů
     </v-btn>
 
     <v-card class="elevation-1 fullscreen">
-      <v-row
-        align="center"
-        justify="end"
-      >
+      <v-row align="center" justify="end">
         <v-col cols="4">
           <v-card-title>
-            <v-text-field
-              v-model="filteringText"
-              append-icon="search"
-              label="Hledej..."
-              single-line
-              hide-details
-            />
+            <v-text-field v-model="filteringText" append-icon="search" label="Hledej..." single-line hide-details />
           </v-card-title>
         </v-col>
       </v-row>
@@ -61,19 +46,10 @@
               {{ props.item.position }}
             </td>
             <td class="justify-center align-center layout px-0">
-              <v-checkbox
-                :input-value="props.item.isAdmin"
-                @change="setIsAdmin(props.item, !props.item.isAdmin)"
-              />
+              <v-checkbox :input-value="props.item.isAdmin" @change="setIsAdmin(props.item, !props.item.isAdmin)" />
             </td>
             <td>
-              <v-icon
-                small
-                class="ml-2"
-                @click="setApprover(props.item)"
-              >
-                mdi-account-plus
-              </v-icon>
+              <v-icon small class="ml-2" @click="setApprover(props.item)"> mdi-account-plus </v-icon>
             </td>
           </tr>
         </template>

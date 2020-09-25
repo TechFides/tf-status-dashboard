@@ -1,10 +1,6 @@
 <template>
   <div>
-    <v-layout
-      column
-      justify-center
-      align-center
-    >
+    <v-layout column justify-center align-center>
       <v-data-table
         :headers="headers"
         :items="rows"
@@ -16,10 +12,7 @@
       >
         <template v-slot:item="props">
           <tr>
-            <th
-              v-for="h in props.headers"
-              :key="h.text"
-            >
+            <th v-for="h in props.headers" :key="h.text">
               <div class="text-center header align-project">
                 {{ h.text }}
               </div>
@@ -32,11 +25,7 @@
               {{ props.item.fullName }}
             </td>
 
-            <td
-              v-for="(i, itemIndex) in props.item.feedbacks"
-              :key="itemIndex"
-              :class="getClassName(i.value)"
-            />
+            <td v-for="(i, itemIndex) in props.item.feedbacks" :key="itemIndex" :class="getClassName(i.value)" />
           </tr>
         </template>
       </v-data-table>

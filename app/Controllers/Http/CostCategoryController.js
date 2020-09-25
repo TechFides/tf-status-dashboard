@@ -5,16 +5,16 @@ const CostCategoryModel = use('App/Models/CostCategory');
 const PositionModel = use('App/Models/Position');
 
 class CostCategoryController {
-  static async createCostCategory (data) {
-    const costCategory =  {
+  static async createCostCategory(data) {
+    const costCategory = {
       id: data.id,
       name: data.name,
     };
     await CostCategoryModel.create(costCategory);
   }
 
-  static async editCostCategory (hubCostCategory, data) {
-    const costCategory =  {
+  static async editCostCategory(hubCostCategory, data) {
+    const costCategory = {
       name: data.name,
     };
 
@@ -22,10 +22,8 @@ class CostCategoryController {
     await hubCostCategory.save();
   }
 
-  static async checkDeletedCostCategory (data) {
-    const hubCostCategoryList = (await CostCategoryModel
-      .query()
-      .fetch()).toJSON();
+  static async checkDeletedCostCategory(data) {
+    const hubCostCategoryList = (await CostCategoryModel.query().fetch()).toJSON();
 
     if (hubCostCategoryList.length !== data.length) {
       for (const hubCostCategory of hubCostCategoryList) {
@@ -38,20 +36,17 @@ class CostCategoryController {
     }
   }
 
-  async getCostCategories ({ request, response, params }) {
+  async getCostCategories({ request, response, params }) {
     const { positionId } = request.get();
 
-    const position = (await PositionModel
-      .query()
-      .with('costCategories')
-      .where('id', positionId)
-      .orderBy('name', 'asc')
-      .first()).toJSON();
+    const position = (
+      await PositionModel.query().with('costCategories').where('id', positionId).orderBy('name', 'asc').first()
+    ).toJSON();
 
     return position.costCategories;
   }
 
-  async costCategorySynchronization ({ request, response, params }) {
+  async costCategorySynchronization({ request, response, params }) {
     const { costCategoriesData } = request.body;
     await CostCategoryController.checkDeletedCostCategory(costCategoriesData);
 

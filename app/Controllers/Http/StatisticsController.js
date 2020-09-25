@@ -4,8 +4,7 @@ const UsersXpCounter = use('App/Services/UsersXpCounter');
 const BonusExpModel = use('App/Models/BonusExp');
 
 class StatisticsController {
-
-  async getProjectStatistics ({ request, response, params }) {
+  async getProjectStatistics({ request, response, params }) {
     let { month, year } = request.get();
     month = Number(month);
     year = Number(year);
@@ -15,21 +14,19 @@ class StatisticsController {
     return UsersXpCounter.countUsersXp(currentMonth, nextMonth);
   }
 
-  async addUserBonusXp ({ request, response, params }) {
-    const { id, date, totalXp,  bonusXp } = request.only(['id', 'date', 'totalXp', 'bonusXp']);
-    const currentMonth = new Date(Number(date.year), Number(date.month) -1, 1);
+  async addUserBonusXp({ request, response, params }) {
+    const { id, date, totalXp, bonusXp } = request.only(['id', 'date', 'totalXp', 'bonusXp']);
+    const currentMonth = new Date(Number(date.year), Number(date.month) - 1, 1);
     const nextMonth = new Date(Number(date.year), Number(date.month), 1);
 
-    const userBonusExp = await BonusExpModel
-      .query()
+    const userBonusExp = await BonusExpModel.query()
       .where('date', '>=', currentMonth)
       .where('date', '<', nextMonth)
       .where('user_id', '=', id)
       .fetch();
 
     if (userBonusExp.rows.length > 0) {
-      await BonusExpModel
-        .query()
+      await BonusExpModel.query()
         .where('date', '>=', currentMonth)
         .where('date', '<', nextMonth)
         .where('user_id', '=', id)
@@ -43,7 +40,7 @@ class StatisticsController {
       });
     }
 
-    const user = [{id: id, totalXp: totalXp}];
+    const user = [{ id: id, totalXp: totalXp }];
     await UsersXpCounter.setUserExperience(currentMonth, nextMonth, user);
   }
 }

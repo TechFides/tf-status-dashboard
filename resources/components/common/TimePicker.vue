@@ -38,13 +38,7 @@
       @change="timeSelected"
     >
       <div class="time-picker-action">
-        <v-btn
-          color="blue darken-1"
-          text
-          @click.native="menu = false"
-        >
-          Potvrdit
-        </v-btn>
+        <v-btn color="blue darken-1" text @click.native="menu = false"> Potvrdit </v-btn>
       </div>
     </v-time-picker>
   </v-menu>
