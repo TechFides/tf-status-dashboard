@@ -215,7 +215,7 @@ export default {
           absenceApproverId: this.form.absenceApproverId,
         };
 
-        await this.$axios.$post('/api/configuration', settings);
+        await this.$axios.$post('/api/configuration', configuration);
       } catch (e) {
         this.$store.commit('setNotification', { color: 'error', message: 'Aktualizace nastavení se nezdařila.' });
       } finally {

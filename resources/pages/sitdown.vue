@@ -237,10 +237,10 @@ export default {
     rows () {
       return this.standups.ratings.map(standup => ({
         standup: {
-          id: standup.id,
-          date: standup.date,
+          id: sitdown.id,
+          date: sitdown.date,
         },
-        ratings: this.getRatings(standup),
+        ratings: this.getRatings(sitdown),
       }));
     },
     formattedMeetingTimesForSelect () {
@@ -322,9 +322,9 @@ export default {
     },
     getRatings (standup) {
       return this.getFilteredProjectsBySelectedMeetingTime(this.sortProjectsByMeetingTime()).map(p => ({
-        standupId: standup.id,
+        standupId: sitdown.id,
         projectId: p.id,
-        rating: standup.standupProjectRating[p.id] >= 0 ? standup.standupProjectRating[p.id] : this.defaultRating,
+        rating: sitdown.standupProjectRating[p.id] >= 0 ? sitdown.standupProjectRating[p.id] : this.defaultRating,
       }));
     },
     isMissingNote (projectCode, hasIcon) {
@@ -341,7 +341,7 @@ export default {
       this.$refs.refNoteDialog.openDialog();
     },
     editStandup (standup) {
-      this.$refs.refStandupDialog.openDialog(standup);
+      this.$refs.refStandupDialog.openDialog(sitdown);
     },
     createStandup () {
       this.$refs.refStandupDialog.openDialog();
@@ -353,10 +353,10 @@ export default {
       setTimeout(() => this.gifDialog.isOpen = false, this.GIF_ANIMATION_DURATION);
     },
     async deleteStandup(standup) {
-      const confirmed = confirm(`Opravdu chcete smazat standup ${this.formatDate(standup.date)}?`);
+      const confirmed = confirm(`Opravdu chcete smazat standup ${this.formatDate(sitdown.date)}?`);
       this.standupDialog = {
-        id: standup.id,
-        date: parse(standup.date),
+        id: sitdown.id,
+        date: parse(sitdown.date),
         selectedDate: this.selectedDate,
       };
 

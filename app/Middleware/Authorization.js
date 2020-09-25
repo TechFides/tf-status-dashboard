@@ -1,23 +1,30 @@
 'use strict';
-const Logger = use('Logger');
-
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
+const UserModel = use('App/Models/User');
 
 class Authorization {
   async handle({ request, response, auth }, next, properties) {
     // call next to advance the request
-    const user = auth.user.toJSON();
-    const isAdmin = user.is_admin;
-    Logger.debug(JSON.stringify(user, null, 2));
-    Logger.debug(`[Authorization] user is admin: ${isAdmin}`);
-    Logger.info(JSON.stringify(properties, null, 2));
-    if (properties[0] === 'admin' && isAdmin) {
+    const userModel = await UserModel.query()
+      .with('position', builder => {
+        builder.with('permissions');
+      })
+      .where('id', auth.user.id)
+      .first();
+    const userData = userModel.toJSON();
+    let userPermissions = [];
+    if (userData.position) {
+      userPermissions = userData.position.permissions.map(p => p.value);
+    }
+
+    const requiredPermission = properties[0];
+
+    const hasUserRequiredPermission = userPermissions.includes(requiredPermission);
+    if (userData.is_admin) {
+      await next();
+    } else if (hasUserRequiredPermission) {
       await next();
     } else {
-      await next();
-      response.status(403).send('Forbidden');
+      throw new Error('Forbidden');
     }
   }
 }

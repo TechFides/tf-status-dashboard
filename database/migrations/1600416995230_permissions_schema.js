@@ -17,8 +17,8 @@ class PermissionsSchema extends Schema {
       },
       {
         id: 2,
-        name: 'Standup',
-        value: 'standup',
+        name: 'Sitdown',
+        value: 'sitdown',
       },
       {
         id: 3,
@@ -33,7 +33,7 @@ class PermissionsSchema extends Schema {
       {
         id: 5,
         name: 'The Game',
-        value: 'statistics',
+        value: 'game',
       },
       {
         id: 6,
@@ -48,7 +48,7 @@ class PermissionsSchema extends Schema {
       {
         id: 8,
         name: 'Pozice',
-        value: 'position',
+        value: 'positions',
       },
       {
         id: 9,
@@ -63,7 +63,7 @@ class PermissionsSchema extends Schema {
       {
         id: 11,
         name: 'Nastavení',
-        value: 'settings',
+        value: 'configuration',
       },
     ];
 

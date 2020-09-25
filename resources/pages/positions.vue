@@ -219,7 +219,7 @@
           sendFeedback,
         };
 
-        await this.$store.dispatch('positions/setFeedback', position);
+        await this.$store.dispatch('positions/setFeedback', positions);
       },
       async setPlayer (item, isPlayer) {
         const position = {
@@ -227,7 +227,7 @@
           isPlayer,
         };
 
-        await this.$store.dispatch('positions/setPlayer', position);
+        await this.$store.dispatch('positions/setPlayer', positions);
       },
     },
   };

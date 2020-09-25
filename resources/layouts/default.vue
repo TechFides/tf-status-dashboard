@@ -83,16 +83,16 @@ export default {
     items () {
       const items = [
         { icon: 'apps', title: 'Dashboard', to: '/', name: 'dashboard' },
-        { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup', name: 'standup'  },
+        { icon: 'radio_button_unchecked', title: 'Sitdown', to: '/sitdown', name: 'sitdown'  },
         { icon: 'laptop_windows', title: 'Projekty', to: '/projects', name: 'projects' },
         { icon: 'mdi-palm-tree -checked', title: 'Nepřítomnosti', to: '/office-absences', name: 'office-absences' },
-        { icon: 'bar_chart', title: 'The Game', to: '/statistics', name: 'statistics' },
+        { icon: 'bar_chart', title: 'The Game', to: '/game', name: 'game' },
         { icon: 'mdi-timer-outline', title: 'Logování práce', to: '/work-logs', name: 'work-logs' },
         { icon: 'face', title: 'Uživatelé', to: '/users', name: 'users' },
-        { icon: 'mdi-account-hard-hat ', title: 'Pozice', to: '/position', name: 'position' },
+        { icon: 'mdi-account-hard-hat ', title: 'Pozice', to: '/positions', name: 'positions' },
         { icon: 'tag_faces', title: 'Heatmap', to: '/heatmap', name: 'heatmap' },
         { icon: 'schedule', title: 'Časy konání sitdownu', to: '/meeting-times', name: 'meeting-times' },
-        { icon: 'settings', title: 'Nastavení', to: '/settings', name: 'settings' },
+        { icon: 'settings', title: 'Nastavení', to: '/configuration', name: 'configuration' },
       ];
 
       return items.filter(item => {
