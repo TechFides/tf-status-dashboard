@@ -4,8 +4,8 @@
 const Schema = use('Schema');
 
 class RoleSchema extends Schema {
-  up () {
-    this.create('roles', (table) => {
+  up() {
+    this.create('roles', table => {
       table.increments();
       table.string('slug').notNullable().unique();
       table.string('name').notNullable().unique();
@@ -14,7 +14,7 @@ class RoleSchema extends Schema {
     });
   }
 
-  down () {
+  down() {
     this.drop('roles');
   }
 }

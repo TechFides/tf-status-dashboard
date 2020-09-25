@@ -4,8 +4,8 @@
 const Schema = use('Schema');
 
 class FeedbackTokenSchema extends Schema {
-  up () {
-    this.create('feedback_tokens', (table) => {
+  up() {
+    this.create('feedback_tokens', table => {
       table.increments();
       table.integer('user_id').unsigned().notNullable();
       table.foreign('user_id').references('users');
@@ -17,7 +17,7 @@ class FeedbackTokenSchema extends Schema {
     });
   }
 
-  down () {
+  down() {
     this.drop('feedback_tokens');
   }
 }

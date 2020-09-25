@@ -10,16 +10,16 @@ const OfficeAbsenceMessanger = use('App/Services/OfficeAbsenceMessanger');
 let cal = new CalendarAPI(CONFIG);
 
 class GoogleCalendarManager {
-  async createEvent (officeAbsence) {
+  async createEvent(officeAbsence) {
     const calendarId = Env.get('GOOGLE_CALENDAR_ID');
     let params = {
-      'summary': officeAbsence.calendar_event_title,
-      'description': officeAbsence.general_description,
-      'start': {
-        'date': moment(officeAbsence.absence_start).format('YYYY-MM-DD'),
+      summary: officeAbsence.calendar_event_title,
+      description: officeAbsence.general_description,
+      start: {
+        date: moment(officeAbsence.absence_start).format('YYYY-MM-DD'),
       },
-      'end': {
-        'date': moment(officeAbsence.absence_end).add(1, 'day').format('YYYY-MM-DD'),
+      end: {
+        date: moment(officeAbsence.absence_end).add(1, 'day').format('YYYY-MM-DD'),
       },
     };
 
@@ -34,7 +34,7 @@ class GoogleCalendarManager {
     }
   }
 
-  async deleteEvent (officeAbsence) {
+  async deleteEvent(officeAbsence) {
     const calendarId = Env.get('GOOGLE_CALENDAR_ID');
 
     try {

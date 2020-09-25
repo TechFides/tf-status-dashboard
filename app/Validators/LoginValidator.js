@@ -1,7 +1,7 @@
 'use strict';
 
 class LoginValidator {
-  get rules () {
+  get rules() {
     return {
       username: `max:255|min:1`,
       password: 'max:255|min:1',

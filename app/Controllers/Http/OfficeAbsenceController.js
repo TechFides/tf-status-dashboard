@@ -16,7 +16,7 @@ const GoogleCalendarManager = use('App/Services/GoogleCalendarManager/GoogleCale
 const { ABSENCE_STATE_ENUM, SYSTEM_PARAMS } = require('../../../constants');
 
 class OfficeAbsenceController {
-  static mapToDbEntity (request) {
+  static mapToDbEntity(request) {
     const {
       userId,
       absenceStart,
@@ -26,7 +26,17 @@ class OfficeAbsenceController {
       absenceHoursNumber,
       generalDescription,
       approverDescription,
-    } = request.only(['userId', 'absenceStart', 'absenceEnd', 'absenceType', 'approver', 'absenceHoursNumber', 'description', 'generalDescription', 'approverDescription']);
+    } = request.only([
+      'userId',
+      'absenceStart',
+      'absenceEnd',
+      'absenceType',
+      'approver',
+      'absenceHoursNumber',
+      'description',
+      'generalDescription',
+      'approverDescription',
+    ]);
 
     return {
       user_id: userId,
@@ -42,17 +52,16 @@ class OfficeAbsenceController {
     };
   }
 
-  static async setOfficeAbsenceState (officeAbsenceId, stateId) {
+  static async setOfficeAbsenceState(officeAbsenceId, stateId) {
     const officeAbsence = await OfficeAbsenceModel.find(officeAbsenceId);
 
     officeAbsence.absence_state_enum_id = stateId;
     await officeAbsence.save();
   }
 
-  async getOfficeAbsenceList ({ request, response, params }) {
+  async getOfficeAbsenceList({ request, response, params }) {
     let { absenceType, absenceState, userId } = request.get();
-    const officeAbsenceQuery = OfficeAbsenceModel
-      .query()
+    const officeAbsenceQuery = OfficeAbsenceModel.query()
       .with('user')
       .with('absenceApprover')
       .with('absenceTypeEnum')
@@ -70,7 +79,10 @@ class OfficeAbsenceController {
     const officeAbsenceList = (await officeAbsenceQuery.fetch()).toJSON();
 
     for (const officeAbsence of officeAbsenceList) {
-      if (moment().isAfter(moment(officeAbsence.absence_end).add(1, 'day')) && officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.APPROVED) {
+      if (
+        moment().isAfter(moment(officeAbsence.absence_end).add(1, 'day')) &&
+        officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.APPROVED
+      ) {
         officeAbsence.absenceStateEnum = await AbsenceStateEnumModel.find(ABSENCE_STATE_ENUM.DONE);
         await OfficeAbsenceController.setOfficeAbsenceState(officeAbsence.id, ABSENCE_STATE_ENUM.DONE);
       }
@@ -79,60 +91,49 @@ class OfficeAbsenceController {
     return officeAbsenceList;
   }
 
-  async getOfficeAbsence ({ request, response, params }) {
+  async getOfficeAbsence({ request, response, params }) {
     const { id } = params;
-    const officeAbsence = (await OfficeAbsenceModel
-      .query()
-      .with('user')
-      .with('absenceApprover')
-      .with('absenceTypeEnum')
-      .with('absenceStateEnum')
-      .where('id', id)
-      .first()).toJSON();
+    const officeAbsence = (
+      await OfficeAbsenceModel.query()
+        .with('user')
+        .with('absenceApprover')
+        .with('absenceTypeEnum')
+        .with('absenceStateEnum')
+        .where('id', id)
+        .first()
+    ).toJSON();
 
     return officeAbsence;
   }
 
-  async getOfficeAbsenceChanges ({ request, response, params }) {
-    const {
-      date,
-    } = request.only(['date']);
-    const officeAbsence = (await OfficeAbsenceModel
-      .query()
-      .where('updated_at', '>=', date)
-      .select('id', 'created_at', 'updated_at')
-      .fetch()).toJSON();
+  async getOfficeAbsenceChanges({ request, response, params }) {
+    const { date } = request.only(['date']);
+    const officeAbsence = (
+      await OfficeAbsenceModel.query().where('updated_at', '>=', date).select('id', 'created_at', 'updated_at').fetch()
+    ).toJSON();
 
     return officeAbsence;
   }
 
-  async getAbsenceTypeEnums ({ request, response, params }) {
-    const absenceTypeEnumModel = await AbsenceTypeEnumModel
-      .query()
-      .orderBy('value', 'asc')
-      .fetch();
+  async getAbsenceTypeEnums({ request, response, params }) {
+    const absenceTypeEnumModel = await AbsenceTypeEnumModel.query().orderBy('value', 'asc').fetch();
 
     return absenceTypeEnumModel.toJSON();
   }
 
-  async getAbsenceStateEnums ({ request, response, params }) {
-    const absenceStateEnumModel = await AbsenceStateEnumModel
-      .query()
-      .orderBy('value', 'asc')
-      .fetch();
+  async getAbsenceStateEnums({ request, response, params }) {
+    const absenceStateEnumModel = await AbsenceStateEnumModel.query().orderBy('value', 'asc').fetch();
 
     return absenceStateEnumModel.toJSON();
   }
 
-  async getApprovers ({ request, response, params }) {
+  async getApprovers({ request, response, params }) {
     const { userId } = request.get();
     const absenceApproverList = [];
 
-    const userApprovers = (await AbsenceApproverModel
-      .query()
-      .where('user_id', userId)
-      .with('approver')
-      .fetch()).toJSON();
+    const userApprovers = (
+      await AbsenceApproverModel.query().where('user_id', userId).with('approver').fetch()
+    ).toJSON();
     if (userApprovers.length) {
       for (const userApprover of userApprovers) {
         userApprover.approver.priority = true;
@@ -154,24 +155,23 @@ class OfficeAbsenceController {
     return absenceApproverList;
   }
 
-  async createOfficeAbsence ({ request, response, params }) {
-    const {
-      absenceStart,
-      absenceEnd,
-      absenceType,
-      userId,
-    } = request.only(['absenceStart', 'absenceEnd', 'absenceType', 'userId']);
+  async createOfficeAbsence({ request, response, params }) {
+    const { absenceStart, absenceEnd, absenceType, userId } = request.only([
+      'absenceStart',
+      'absenceEnd',
+      'absenceType',
+      'userId',
+    ]);
     const officeAbsenceData = OfficeAbsenceController.mapToDbEntity(request);
     const absenceTypeEnumModel = (await AbsenceTypeEnumModel.find(officeAbsenceData.absence_type_enum_id)).toJSON();
     const author = (await UserModel.find(officeAbsenceData.user_id)).toJSON();
-    const foundedOfficeAbsence = await OfficeAbsenceModel
-      .query()
+    const foundedOfficeAbsence = await OfficeAbsenceModel.query()
       .where('absence_type_enum_id', absenceType)
       .where('user_id', userId)
       .whereNot('absence_state_enum_id', ABSENCE_STATE_ENUM.CANCELED)
       .whereNot('absence_state_enum_id', ABSENCE_STATE_ENUM.REJECTED)
-      .whereBetween('absence_start',[absenceStart,absenceEnd])
-      .orWhereBetween('absence_end',[absenceStart,absenceEnd])
+      .whereBetween('absence_start', [absenceStart, absenceEnd])
+      .orWhereBetween('absence_end', [absenceStart, absenceEnd])
       .andWhere('absence_type_enum_id', absenceType)
       .andWhere('user_id', userId)
       .andWhereNot('absence_state_enum_id', ABSENCE_STATE_ENUM.CANCELED)
@@ -179,10 +179,14 @@ class OfficeAbsenceController {
       .first();
 
     if (foundedOfficeAbsence) {
-      return response.status(400).send({ name: 'BAD_REQUEST', message: 'Office absence in this date range and absence type already exists' });
+      return response
+        .status(400)
+        .send({ name: 'BAD_REQUEST', message: 'Office absence in this date range and absence type already exists' });
     }
 
-    officeAbsenceData.calendar_event_title = `${author.first_name.charAt(0)}. ${author.last_name} ${absenceTypeEnumModel.short_cut} (${officeAbsenceData.absence_hours_number}h) ${officeAbsenceData.general_description}`;
+    officeAbsenceData.calendar_event_title = `${author.first_name.charAt(0)}. ${author.last_name} ${
+      absenceTypeEnumModel.short_cut
+    } (${officeAbsenceData.absence_hours_number}h) ${officeAbsenceData.general_description}`;
 
     const officeAbsence = (await OfficeAbsenceModel.create(officeAbsenceData)).toJSON();
 
@@ -190,11 +194,8 @@ class OfficeAbsenceController {
     return officeAbsence;
   }
 
-  async cancelOfficeAbsence ({ request, response, params }) {
-    const {
-      approverId,
-      absenceId,
-    } = request.only(['approverId', 'absenceId']);
+  async cancelOfficeAbsence({ request, response, params }) {
+    const { approverId, absenceId } = request.only(['approverId', 'absenceId']);
     const officeAbsence = await OfficeAbsenceModel.find(absenceId);
     officeAbsence.absence_approver_id = approverId;
     officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL;
@@ -205,7 +206,7 @@ class OfficeAbsenceController {
     return officeAbsence.toJSON();
   }
 
-  async deleteOfficeAbsence ({ request, response, params }) {
+  async deleteOfficeAbsence({ request, response, params }) {
     const { id } = params;
     const officeAbsence = await OfficeAbsenceModel.find(id);
 
@@ -213,15 +214,12 @@ class OfficeAbsenceController {
       await officeAbsence.delete();
       response.send();
     } catch (e) {
-      response.status(500).send({message: e.message});
+      response.status(500).send({ message: e.message });
     }
   }
 
-  async approveAbsenceState ({ request, response, params }) {
-    const {
-      token,
-      officeAbsenceId,
-    } = request.only(['token', 'officeAbsenceId']);
+  async approveAbsenceState({ request, response, params }) {
+    const { token, officeAbsenceId } = request.only(['token', 'officeAbsenceId']);
     if (!token) {
       return response.status(400).send({ name: 'BAD_REQUEST', message: 'Token is required' });
     }
@@ -236,13 +234,17 @@ class OfficeAbsenceController {
       return response.status(404).send({ name: 'OFFICE_ABSENCE_NOT_FOUND', message: 'Office absence does not exists' });
     }
 
-    if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL
-      || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.REJECTED) {
+    if (
+      officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL ||
+      officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.REJECTED
+    ) {
       officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.APPROVED;
       OfficeAbsenceMessanger.sendApproveCreateAbsenceMessage(officeAbsenceId);
       GoogleCalendarManager.createEvent(officeAbsence);
-    } else if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL
-      || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.REJECT_CANCELLATION) {
+    } else if (
+      officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL ||
+      officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.REJECT_CANCELLATION
+    ) {
       officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.CANCELED;
       OfficeAbsenceMessanger.sendApproveCancelAbsenceMessage(officeAbsenceId);
       GoogleCalendarManager.deleteEvent(officeAbsence);
@@ -252,11 +254,8 @@ class OfficeAbsenceController {
     return response.send();
   }
 
-  async rejectAbsenceState ({ request, response, params }) {
-    const {
-      token,
-      officeAbsenceId,
-    } = request.only(['token', 'officeAbsenceId']);
+  async rejectAbsenceState({ request, response, params }) {
+    const { token, officeAbsenceId } = request.only(['token', 'officeAbsenceId']);
     if (!token) {
       return response.status(400).send({ name: 'BAD_REQUEST', message: 'Token is required' });
     }
@@ -271,13 +270,17 @@ class OfficeAbsenceController {
       return response.status(404).send({ name: 'OFFICE_ABSENCE_NOT_FOUND', message: 'Office absence does not exists' });
     }
 
-    if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL
-      || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.APPROVED){
+    if (
+      officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL ||
+      officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.APPROVED
+    ) {
       officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.REJECTED;
       OfficeAbsenceMessanger.sendRejectCreateAbsenceMessage(officeAbsenceId);
       GoogleCalendarManager.deleteEvent(officeAbsence);
-    } else if (officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL
-      || officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.CANCELED) {
+    } else if (
+      officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL ||
+      officeAbsence.absence_state_enum_id === ABSENCE_STATE_ENUM.CANCELED
+    ) {
       officeAbsence.absence_state_enum_id = ABSENCE_STATE_ENUM.REJECT_CANCELLATION;
       OfficeAbsenceMessanger.sendRejectCancelAbsenceMessage(officeAbsenceId);
       GoogleCalendarManager.createEvent(officeAbsence);

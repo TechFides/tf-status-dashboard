@@ -15,7 +15,7 @@ const AbsenceRequestTokenModel = use('App/Models/AbsenceRequestToken');
 const { ABSENCE_STATE_ENUM, APPROVER_DECISION_ENUM } = require('../../constants');
 
 class AbsenceRequestApproverService {
-  static getApproverDecisionOptions (token, officeAbsenceId) {
+  static getApproverDecisionOptions(token, officeAbsenceId) {
     const approverDecisionOptions = [
       { text: 'Schválit', type: 'approved', id: APPROVER_DECISION_ENUM.APPROVED },
       { text: 'Zamítnout', type: 'reject', id: APPROVER_DECISION_ENUM.REJECTED },
@@ -27,31 +27,46 @@ class AbsenceRequestApproverService {
     }));
   }
 
-  static loadEmailTemplate () {
+  static loadEmailTemplate() {
     const html = fs.readFileSync(path.resolve(__dirname, '../../assets/email-templates/absenceAprrover.html'), 'utf-8');
     return Handlebars.compile(html);
   }
 
-  constructor () {
+  constructor() {
     this.template = AbsenceRequestApproverService.loadEmailTemplate();
   }
 
-  async requestAbsence (officeAbsenceId) {
+  async requestAbsence(officeAbsenceId) {
     try {
-      const officeAbsence = (await OfficeAbsenceModel
-        .query()
-        .with('user')
-        .with('absenceApprover')
-        .with('absenceTypeEnum')
-        .with('absenceStateEnum')
-        .where('id', officeAbsenceId)
-        .first()).toJSON();
+      const officeAbsence = (
+        await OfficeAbsenceModel.query()
+          .with('user')
+          .with('absenceApprover')
+          .with('absenceTypeEnum')
+          .with('absenceStateEnum')
+          .where('id', officeAbsenceId)
+          .first()
+      ).toJSON();
 
-      const waitingForApprovalSubject = `Žádost:  ${officeAbsence.user.first_name.charAt(0)}. ${officeAbsence.user.last_name} ${officeAbsence.absenceTypeEnum.short_cut} (${officeAbsence.absence_hours_number}h) ${officeAbsence.general_description}`;
-      const waitingCancellationApprovalSubject = `Žádost:  ${officeAbsence.user.first_name.charAt(0)}. ${officeAbsence.user.last_name} ${officeAbsence.absenceTypeEnum.short_cut} (${officeAbsence.absence_hours_number}h) ${officeAbsence.general_description}`;
+      const waitingForApprovalSubject = `Žádost:  ${officeAbsence.user.first_name.charAt(0)}. ${
+        officeAbsence.user.last_name
+      } ${officeAbsence.absenceTypeEnum.short_cut} (${officeAbsence.absence_hours_number}h) ${
+        officeAbsence.general_description
+      }`;
+      const waitingCancellationApprovalSubject = `Žádost:  ${officeAbsence.user.first_name.charAt(0)}. ${
+        officeAbsence.user.last_name
+      } ${officeAbsence.absenceTypeEnum.short_cut} (${officeAbsence.absence_hours_number}h) ${
+        officeAbsence.general_description
+      }`;
       const commonEmailData = {
-        text: officeAbsence.absenceStateEnum.id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL ? waitingForApprovalSubject : waitingCancellationApprovalSubject,
-        subject: officeAbsence.absenceStateEnum.id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL ? waitingForApprovalSubject : waitingCancellationApprovalSubject,
+        text:
+          officeAbsence.absenceStateEnum.id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL
+            ? waitingForApprovalSubject
+            : waitingCancellationApprovalSubject,
+        subject:
+          officeAbsence.absenceStateEnum.id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL
+            ? waitingForApprovalSubject
+            : waitingCancellationApprovalSubject,
       };
 
       const token = await AbsenceRequestTokenModel.create({
@@ -68,8 +83,14 @@ class AbsenceRequestApproverService {
         toAddresses: [officeAbsence.absenceApprover.email],
         html: this.template({
           absenceType: officeAbsence.absenceTypeEnum,
-          approverDecisionOptions: AbsenceRequestApproverService.getApproverDecisionOptions(token.token, officeAbsenceId),
-          absenceText: officeAbsence.absenceStateEnum.id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL ? waitingForApprovalText : waitingCancellationApprovalText,
+          approverDecisionOptions: AbsenceRequestApproverService.getApproverDecisionOptions(
+            token.token,
+            officeAbsenceId,
+          ),
+          absenceText:
+            officeAbsence.absenceStateEnum.id === ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL
+              ? waitingForApprovalText
+              : waitingCancellationApprovalText,
           absenceProps: {
             startDate: moment(officeAbsence.absence_start).format('DD.MM.YYYY'),
             endDate: moment(officeAbsence.absence_end).format('DD.MM.YYYY'),

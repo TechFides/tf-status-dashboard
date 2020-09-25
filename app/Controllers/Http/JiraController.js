@@ -12,19 +12,17 @@ class JiraController {
     return (minutes > 0 ? minutes + 'm ' : '') + (seconds < 10 ? '0' : '') + seconds + 's';
   }
 
-  async fetchData ({ request, response, params }) {
-    let {month, year} = request.get();
+  async fetchData({ request, response, params }) {
+    let { month, year } = request.get();
     month = Number(month);
     year = Number(year);
-    const currentMonth = new Date(year, month -1, 1);
+    const currentMonth = new Date(year, month - 1, 1);
     const nextMonth = new Date(year, month, 1);
 
-    const jiraSyncData = (await JiraSynchronizationModel
-      .query()
-      .orderBy('start_date', 'desc')
-      .fetch()).toJSON();
+    const jiraSyncData = (await JiraSynchronizationModel.query().orderBy('start_date', 'desc').fetch()).toJSON();
 
-    const syncDuration = jiraSyncData.length > 0 ? new Date(jiraSyncData[0].finish_date) - new Date(jiraSyncData[0].start_date) : 0;
+    const syncDuration =
+      jiraSyncData.length > 0 ? new Date(jiraSyncData[0].finish_date) - new Date(jiraSyncData[0].start_date) : 0;
 
     const syncDates = {
       startSyncTime: format(new Date(), 'HH:mm:ss'),

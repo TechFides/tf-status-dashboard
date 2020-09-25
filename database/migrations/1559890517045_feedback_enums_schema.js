@@ -5,13 +5,13 @@ const Schema = use('Schema');
 const FeedbackEnumModel = use('App/Models/FeedbackEnum');
 
 class FeedbackEnumsSchema extends Schema {
-  async up () {
+  async up() {
     const feedbackEnum = await FeedbackEnumModel.find(4);
     feedbackEnum.description = 'HORRIBLE';
     await feedbackEnum.save();
   }
 
-  async down () {
+  async down() {
     const feedbackEnum = await FeedbackEnumModel.find(4);
     feedbackEnum.description = 'HORRIBLE';
     await feedbackEnum.save();

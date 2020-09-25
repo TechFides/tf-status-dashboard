@@ -3,15 +3,15 @@
 const Schema = use('Schema');
 
 class StandupSchema extends Schema {
-  up () {
-    this.create('standups', (table) => {
+  up() {
+    this.create('standups', table => {
       table.increments();
       table.dateTime('date').notNullable();
       table.timestamps();
     });
   }
 
-  down () {
+  down() {
     this.drop('standups');
   }
 }

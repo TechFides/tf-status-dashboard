@@ -1,7 +1,7 @@
 'use strict';
 
 class StoreUserValidator {
-  get rules () {
+  get rules() {
     const userId = this.ctx.params.id;
 
     return {

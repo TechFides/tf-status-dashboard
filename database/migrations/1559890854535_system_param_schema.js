@@ -5,7 +5,7 @@ const Schema = use('Schema');
 const SystemParamModel = use('App/Models/SystemParam');
 
 class SystemParamSchema extends Schema {
-  async up () {
+  async up() {
     const feedbackCrontab = {
       key: 'feedbackCrontab',
       value: '30 9 * * 5', // FRIDAY at 9:30
@@ -15,7 +15,7 @@ class SystemParamSchema extends Schema {
     await SystemParamModel.create(feedbackCrontab);
   }
 
-  async down () {
+  async down() {
     await SystemParamModel.truncate();
   }
 }

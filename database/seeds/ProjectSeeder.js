@@ -13,12 +13,11 @@
 const Database = use('Database');
 
 class ProjectSeeder {
-  async run () {
-    await Database.table('projects')
-      .insert(ProjectSeeder.getInitialData());
+  async run() {
+    await Database.table('projects').insert(ProjectSeeder.getInitialData());
   }
 
-  static getInitialData () {
+  static getInitialData() {
     return [
       {
         code: 'ETS',

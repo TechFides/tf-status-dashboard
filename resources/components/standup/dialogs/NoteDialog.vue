@@ -1,68 +1,30 @@
 <template>
-  <v-dialog
-    v-show="isAdministration()"
-    v-model="isOpen"
-    scrollable
-    max-width="500px"
-  >
+  <v-dialog v-show="isAdministration()" v-model="isOpen" scrollable max-width="500px">
     <v-form @submit.prevent="createNote">
       <v-card>
         <v-card-title>
           <span class="headline">{{ noteDialogTitle() }}</span>
         </v-card-title>
-        <v-card-text
-          style="max-height: 800px"
-        >
+        <v-card-text style="max-height: 800px">
           <v-row class="pl-4 pr-4">
-            <v-combobox
-              v-model="noteDialog.selectedProject"
-              :items="projectNames"
-              required
-              label="Projekt"
-            />
+            <v-combobox v-model="noteDialog.selectedProject" :items="projectNames" required label="Projekt" />
           </v-row>
           <v-row class="pl-4 pr-4">
-            <DatePicker
-              v-model="noteDialog.deadlineDate"
-              label="Deadline"
-              required
-              :clearable="false"
-            />
+            <DatePicker v-model="noteDialog.deadlineDate" label="Deadline" required :clearable="false" />
           </v-row>
           <v-row class="pl-4 pr-4">
-            <v-textarea
-              v-model="noteDialog.note"
-              label="Poznámka"
-              required
-            />
+            <v-textarea v-model="noteDialog.note" label="Poznámka" required />
           </v-row>
           <v-row class="pl-4 pr-4">
-            <v-alert
-              transition="fade-transition"
-              :value="errors.error.isVisible"
-              type="error"
-              color="red darken-2"
-            >
+            <v-alert transition="fade-transition" :value="errors.error.isVisible" type="error" color="red darken-2">
               {{ errors.error.message }}
             </v-alert>
           </v-row>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            color="blue darken-1"
-            text
-            @click.native="resetNote"
-          >
-            Zavřít
-          </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            type="submit"
-          >
-            Uložit
-          </v-btn>
+          <v-btn color="blue darken-1" text @click.native="resetNote"> Zavřít </v-btn>
+          <v-btn color="blue darken-1" text type="submit"> Uložit </v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -80,7 +42,7 @@ export default {
   components: {
     DatePicker,
   },
-  data () {
+  data() {
     return {
       isOpen: false,
       noteDialog: {
@@ -98,11 +60,8 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'errors',
-      'projects',
-    ]),
-    projectNames () {
+    ...mapState(['errors', 'projects']),
+    projectNames() {
       return this.projects.items.map(p => ({
         text: p.code,
         value: p.id,
@@ -124,10 +83,10 @@ export default {
       }
       this.isOpen = true;
     },
-    noteDialogTitle () {
+    noteDialogTitle() {
       return this.noteDialog.id ? 'Upravení cíle' : 'Vytvoření cíle';
     },
-    resetNote () {
+    resetNote() {
       // set deadline to next monday
       let date = new moment();
       date = date.add(1, 'w');
@@ -141,7 +100,7 @@ export default {
       };
       this.isOpen = false;
     },
-    async createNote () {
+    async createNote() {
       let errorMsg = null;
 
       if (!this.noteDialog.selectedProject || !this.noteDialog.selectedProject.value) {
@@ -157,7 +116,7 @@ export default {
       const resultDate = setHours(deadlineDate, getHours(currentDate));
 
       if (errorMsg) {
-        this.$store.commit('errors/setErrorState', {message: errorMsg});
+        this.$store.commit('errors/setErrorState', { message: errorMsg });
         return;
       }
 
@@ -180,6 +139,4 @@ export default {
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

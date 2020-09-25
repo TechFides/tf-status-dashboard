@@ -3,79 +3,58 @@
 const Model = use('Model');
 
 class User extends Model {
-/**
- *  @swagger
- *  definitions:
- *    User:
- *      type: object
- *      properties:
- *        id:
- *          type: integer
- *        username:
- *          type: string
- *        email:
- *          type: string
- *        password:
- *          type: string
- *      required:
- *        - username
- *        - email
- *        - password
- */
-  static boot () {
+  static boot() {
     super.boot();
     this.addHook('beforeCreate', 'UserHook.hashPassword');
     this.addHook('beforeUpdate', 'UserHook.hashPassword');
   }
 
-  static get hidden () {
-    return ['password', 'created_at', 'updated_at'];
+  static get hidden() {
+    return ['password', 'created_at'];
   }
 
-  static get traits () {
-    return [
-      '@provider:Adonis/Acl/HasRole',
-    ];
-  }
-
-  bonusExps () {
+  bonusExps() {
     return this.hasMany('App/Models/BonusExp');
   }
 
-  userTotalExp () {
+  userTotalExp() {
     return this.hasMany('App/Models/UserTotalExp');
   }
 
-  projectParticipations () {
+  projectParticipations() {
     return this.hasMany('App/Models/UserProjectParticipation');
   }
 
-  feedback () {
+  feedback() {
     return this.hasMany('App/Models/Feedback');
   }
 
-  projectUser () {
+  projectUser() {
     return this.hasMany('App/Models/ProjectUser');
   }
 
-  feedbackValue () {
+  feedbackValue() {
     return this.hasOne('App/Models/FeedbackEnum');
   }
 
-  user () {
-    return this.hasOne('App/Models/AbsenceApprover','id','user_id');
+  user() {
+    return this.hasOne('App/Models/AbsenceApprover', 'id', 'user_id');
   }
 
-  approver () {
-    return this.hasOne('App/Models/AbsenceApprover','id','approver_id');
+  approver() {
+    return this.hasOne('App/Models/AbsenceApprover', 'id', 'approver_id');
   }
 
-  officeAbsence () {
+  officeAbsence() {
     return this.hasMany('App/Models/OfficeAbsence');
   }
 
-  absence_approver () {
-    return this.hasOne('App/Models/OfficeAbsence','id','absence_approver_id');
+  absence_approver() {
+    return this.hasOne('App/Models/OfficeAbsence', 'id', 'absence_approver_id');
+  }
+
+  position() {
+    return this.belongsTo('App/Models/Position');
   }
 }
 

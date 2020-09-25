@@ -3,8 +3,8 @@
 const Schema = use('Schema');
 
 class UserSchema extends Schema {
-  up () {
-    this.alter('users', (table) => {
+  up() {
+    this.alter('users', table => {
       table.dropColumn('alias');
       table.dropColumn('name');
       table.string('first_name');
@@ -13,8 +13,8 @@ class UserSchema extends Schema {
     });
   }
 
-  down () {
-    this.table('users', (table) => {
+  down() {
+    this.table('users', table => {
       // reverse alternations
     });
   }

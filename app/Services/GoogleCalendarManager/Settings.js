@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const SERVICE_ACCT_ID = process.env.GOOGLE_SERVICE_EMAIL;
 const CALENDAR_ID = {
-  'primary': 'c_7o4420u4f1rftv0r740mn3ids0@group.calendar.google.com',
+  primary: 'c_7o4420u4f1rftv0r740mn3ids0@group.calendar.google.com',
 };
 const TIMEZONE = 'UTC+02:00';
 

@@ -4,8 +4,8 @@
 const Schema = use('Schema');
 
 class SystemParamSchema extends Schema {
-  up () {
-    this.create('system_params', (table) => {
+  up() {
+    this.create('system_params', table => {
       table.string('key').primary();
       table.string('value');
       table.integer('type').defaultTo(1);
@@ -13,7 +13,7 @@ class SystemParamSchema extends Schema {
     });
   }
 
-  down () {
+  down() {
     this.drop('system_params');
   }
 }

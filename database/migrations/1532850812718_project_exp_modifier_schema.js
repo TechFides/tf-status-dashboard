@@ -3,8 +3,8 @@
 const Schema = use('Schema');
 
 class ProjectExpModifierSchema extends Schema {
-  up () {
-    this.create('project_exp_modifiers', (table) => {
+  up() {
+    this.create('project_exp_modifiers', table => {
       table.integer('id').primary().unsigned();
       table.string('name').notNullable();
       table.string('description').notNullable();
@@ -12,7 +12,7 @@ class ProjectExpModifierSchema extends Schema {
     });
   }
 
-  down () {
+  down() {
     this.drop('project_exp_modifiers');
   }
 }

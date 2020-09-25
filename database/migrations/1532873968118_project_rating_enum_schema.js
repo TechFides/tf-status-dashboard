@@ -3,8 +3,8 @@
 const Schema = use('Schema');
 
 class StandupProjectRatingEnumSchema extends Schema {
-  up () {
-    this.create('standup_project_rating_enums', (table) => {
+  up() {
+    this.create('standup_project_rating_enums', table => {
       table.integer('id').unsigned().primary();
       table.string('name').notNullable();
       table.string('description').notNullable();
@@ -13,7 +13,7 @@ class StandupProjectRatingEnumSchema extends Schema {
     });
   }
 
-  down () {
+  down() {
     this.drop('standup_project_rating_enums');
   }
 }

@@ -1,23 +1,15 @@
 version: '3'
 services:
-  app:
-    build: docker/app
-    ports:
-      - 127.0.0.1:3333:3333
-      - 9229:9229
-    depends_on:
-      - db
-    volumes:
-      - .:/app
+
   db:
     build: docker/db
     volumes:
-      - tom-dashboard-db-data:/var/lib/mysql
+      - tf-hub-db-data:/var/lib/mysql
     ports:
       - 3310:3306
     environment:
       - MYSQL_ROOT_PASSWORD=devdatabase
-      - MYSQL_DATABASE=tomdashboard
+      - MYSQL_DATABASE=tfhub
 
 volumes:
-  tom-dashboard-db-data:
+  tf-hub-db-data:

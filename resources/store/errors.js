@@ -8,13 +8,13 @@ export const state = () => ({
 });
 
 export const mutations = {
-  setErrorState (state, errorObj) {
+  setErrorState(state, errorObj) {
     state.error = {
       isVisible: true,
       message: errorObj.message ? errorObj.message : '',
     };
   },
-  clearErrorState (state) {
+  clearErrorState(state) {
     state.error = {
       isVisible: false,
       message: '',

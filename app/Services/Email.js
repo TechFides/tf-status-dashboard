@@ -5,11 +5,11 @@ const Env = use('Env');
 const Logger = use('Logger');
 
 class EmailService {
-  constructor () {
+  constructor() {
     sgMail.setApiKey(Env.get('SENDGRID_API_KEY'));
   }
 
-  async sendEmail ({ toAddresses, html, text, subject }) {
+  async sendEmail({ toAddresses, html, text, subject }) {
     const msg = {
       to: toAddresses,
       from: Env.get('EMAIL_ADDRESS'),

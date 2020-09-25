@@ -4,14 +4,14 @@
 const Schema = use('Schema');
 
 class UsersSchema extends Schema {
-  up () {
-    this.table('users', (table) => {
+  up() {
+    this.table('users', table => {
       table.string('email');
     });
   }
 
-  down () {
-    this.table('users', (table) => {
+  down() {
+    this.table('users', table => {
       table.dropColumn('email');
     });
   }

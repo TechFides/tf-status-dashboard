@@ -3,7 +3,7 @@
 const Model = use('Model');
 
 class StandupProjectRatingEnum extends Model {
-  static get hidden () {
+  static get hidden() {
     return ['created_at', 'updated_at'];
   }
 }

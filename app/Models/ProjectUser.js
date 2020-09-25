@@ -3,19 +3,19 @@
 const Model = use('Model');
 
 class ProjectUser extends Model {
-  static get hidden () {
+  static get hidden() {
     return ['created_at', 'updated_at'];
   }
 
-  project () {
+  project() {
     return this.belongsTo('App/Models/Project');
   }
 
-  user () {
+  user() {
     return this.belongsTo('App/Models/User');
   }
 
-  projectExpModifier () {
+  projectExpModifier() {
     return this.belongsTo('App/Models/ProjectExpModifier');
   }
 }

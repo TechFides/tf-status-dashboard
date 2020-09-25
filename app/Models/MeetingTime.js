@@ -3,11 +3,11 @@
 const Model = use('Model');
 
 class MeetingTime extends Model {
-  static get hidden () {
+  static get hidden() {
     return ['updated_at', 'created_at'];
   }
 
-  projects () {
+  projects() {
     return this.hasMany('App/Models/Project');
   }
 }

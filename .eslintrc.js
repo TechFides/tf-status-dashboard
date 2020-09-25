@@ -4,9 +4,7 @@ module.exports = {
     browser: true,
     node: true,
   },
-  extends: [
-    'plugin:vue/recommended',
-  ],
+  extends: ['plugin:vue/essential', 'plugin:prettier/recommended', 'eslint:recommended'],
   parserOptions: {
     parser: 'babel-eslint',
   },
@@ -20,13 +18,13 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
     // do not allow console.logs etc...
     'no-console': 0,
-    'semi': ['error', 'always'],
+    semi: ['error', 'always'],
     'comma-dangle': ['error', 'always-multiline'],
     'no-unused-vars': 0,
     'space-before-function-paren': 0,
     'comma-spacing': 0,
   },
   globals: {
-    'use': true,
+    use: true,
   },
 };

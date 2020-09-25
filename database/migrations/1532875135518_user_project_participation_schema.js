@@ -3,8 +3,8 @@
 const Schema = use('Schema');
 
 class UserProjectParticipationSchema extends Schema {
-  up () {
-    this.create('user_project_participations', (table) => {
+  up() {
+    this.create('user_project_participations', table => {
       table.increments();
       table.integer('user_id').unsigned().notNullable();
       table.foreign('user_id').references('users');
@@ -16,7 +16,7 @@ class UserProjectParticipationSchema extends Schema {
     });
   }
 
-  down () {
+  down() {
     this.drop('user_project_participations');
   }
 }
