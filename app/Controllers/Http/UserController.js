@@ -21,10 +21,7 @@ class UserController {
     const user = await UserModel.find(id);
 
     await user.delete();
-    await AbsenceApproverModel.query()
-      .where('approver_id', id)
-      .orWhere('user_id', id)
-      .delete();
+    await AbsenceApproverModel.query().where('approver_id', id).orWhere('user_id', id).delete();
   }
 
   static async editUser(user, data) {
@@ -33,7 +30,6 @@ class UserController {
       first_name: data.firstName,
       last_name: data.lastName,
       is_active: 1,
-      send_feedback: 1,
       position_id: data.position.id,
     };
 
@@ -106,11 +102,7 @@ class UserController {
   }
 
   async getUsersFeedbacks({ request }) {
-    return (
-      await UserModel.query()
-        .with('feedback')
-        .fetch()
-    ).toJSON();
+    return (await UserModel.query().with('feedback').fetch()).toJSON();
   }
 }
 
