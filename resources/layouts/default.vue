@@ -65,7 +65,7 @@ export default {
   components: {
     LoginDialog,
   },
-  data () {
+  data() {
     return {
       clipped: true,
       drawer: false,
@@ -77,13 +77,11 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'notification',
-    ]),
-    items () {
+    ...mapState(['notification']),
+    items() {
       const items = [
         { icon: 'apps', title: 'Dashboard', to: '/', name: 'dashboard' },
-        { icon: 'radio_button_unchecked', title: 'Sitdown', to: '/sitdown', name: 'sitdown'  },
+        { icon: 'radio_button_unchecked', title: 'Sitdown', to: '/sitdown', name: 'sitdown' },
         { icon: 'laptop_windows', title: 'Projekty', to: '/projects', name: 'projects' },
         { icon: 'mdi-palm-tree -checked', title: 'Nepřítomnosti', to: '/office-absences', name: 'office-absences' },
         { icon: 'bar_chart', title: 'The Game', to: '/game', name: 'game' },
@@ -96,7 +94,6 @@ export default {
       ];
 
       return items.filter(item => {
-
         if (typeof item.name === 'undefined') {
           return true;
         }
@@ -114,7 +111,7 @@ export default {
     },
   },
   methods: {
-    closeNotification () {
+    closeNotification() {
       this.$store.commit('notification/clearNotification');
     },
   },

@@ -49,17 +49,13 @@
               />
             </v-flex>
             <v-flex xs12>
-              <div>
-                Přihlásit se přes
-              </div>
+              <div>Přihlásit se přes</div>
               <v-btn
                 href="/auth/google"
                 class="google-button"
                 color="light-blue lighten-1"
               >
-                <v-icon
-                  left
-                >
+                <v-icon left>
                   mdi-google
                 </v-icon> Google
               </v-btn>
@@ -98,70 +94,69 @@
 </template>
 
 <script>
-  export default {
-    name: 'LoginDialog',
-    data () {
-      return {
-        isOpen: false,
-        data: {
-          username: '',
-          password: '',
-        },
-        rules: {
-          usernameRequired: value => !!value || 'Username is required',
-          passwordRequired: value => !!value || 'Password is required',
-        },
-        error: {
-          isVisible: false,
-          message: '',
-        },
-      };
-    },
-    methods: {
-      async login () {
-        try {
-          await this.$auth.loginWith('local', {data: this.data});
-          this.reset();
-        } catch (error) {
-          this.error.isVisible = true;
-          this.error.message = error.response && error.response.data && error.response.data.message;
-        }
+export default {
+  name: 'LoginDialog',
+  data() {
+    return {
+      isOpen: false,
+      data: {
+        username: '',
+        password: '',
       },
-      submit () {
-        let arrayOfValidationStatuses = [];
-
-        Object.keys(this.data).forEach(field => {
-          arrayOfValidationStatuses.push(this.$refs[field].validate(true)); // Will also validate all fields.
-        });
-
-        if (!arrayOfValidationStatuses.includes(false)) {
-          this.login();
-        }
+      rules: {
+        usernameRequired: value => !!value || 'Username is required',
+        passwordRequired: value => !!value || 'Password is required',
       },
-      reset () {
-        this.data.username = '';
-        this.data.password = '';
-        this.error.status = false;
-        this.error.message = '';
+      error: {
+        isVisible: false,
+        message: '',
       },
-      close () {
-        this.isOpen = false;
+    };
+  },
+  methods: {
+    async login() {
+      try {
+        await this.$auth.loginWith('local', { data: this.data });
         this.reset();
-      },
-      logout () {
-        this.close();
-        this.$auth.logout();
-      },
+      } catch (error) {
+        this.error.isVisible = true;
+        this.error.message = error.response && error.response.data && error.response.data.message;
+      }
     },
-  };
+    submit() {
+      let arrayOfValidationStatuses = [];
+
+      Object.keys(this.data).forEach(field => {
+        arrayOfValidationStatuses.push(this.$refs[field].validate(true)); // Will also validate all fields.
+      });
+
+      if (!arrayOfValidationStatuses.includes(false)) {
+        this.login();
+      }
+    },
+    reset() {
+      this.data.username = '';
+      this.data.password = '';
+      this.error.status = false;
+      this.error.message = '';
+    },
+    close() {
+      this.isOpen = false;
+      this.reset();
+    },
+    logout() {
+      this.close();
+      this.$auth.logout();
+    },
+  },
+};
 </script>
 
 <style scoped>
-  .google-button {
-    margin: 0.5rem 0 0 0;
-    width: 100%;
-    min-height: 45px;
-    color: white;
-  }
-
+.google-button {
+  margin: 0.5rem 0 0 0;
+  width: 100%;
+  min-height: 45px;
+  color: white;
+}
 </style>

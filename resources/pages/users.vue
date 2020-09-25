@@ -46,9 +46,7 @@
         must-sort
         class="elevation-1 fullscreen"
       >
-        <template
-          v-slot:item="props"
-        >
+        <template v-slot:item="props">
           <tr>
             <td class="text-left element">
               {{ getFullName(props.item.firstName, props.item.lastName) }}
@@ -80,9 +78,7 @@
           </tr>
         </template>
       </v-data-table>
-      <ApproverDialog
-        ref="refApproverDialog"
-      />
+      <ApproverDialog ref="refApproverDialog" />
     </v-card>
   </v-layout>
 </template>
@@ -95,7 +91,7 @@ export default {
   components: {
     ApproverDialog,
   },
-  data () {
+  data() {
     return {
       isAdmin: false,
       filteringText: '',
@@ -103,10 +99,7 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'users',
-      'errors',
-    ]),
+    ...mapState(['users', 'errors']),
     headers: function () {
       return [
         {
@@ -147,23 +140,23 @@ export default {
         },
       ];
     },
-    filteredUsers () {
-      return this.users.items.filter((element) => {
+    filteredUsers() {
+      return this.users.items.filter(element => {
         const uppercasedFilterText = this.filteringText.toUpperCase();
 
-        return this.getFullName(element.firstName, element.lastName).toUpperCase().match(uppercasedFilterText) ||
+        return (
+          this.getFullName(element.firstName, element.lastName).toUpperCase().match(uppercasedFilterText) ||
           this.isUserActive(element.isActive, true).match(uppercasedFilterText) ||
-          this.userRoles(element).toUpperCase().match(uppercasedFilterText);
+          this.userRoles(element).toUpperCase().match(uppercasedFilterText)
+        );
       });
     },
   },
-  async fetch ({ store }) {
-    await Promise.all([
-      store.dispatch('users/getUsers'),
-    ]);
+  async fetch({ store }) {
+    await Promise.all([store.dispatch('users/getUsers')]);
   },
   methods: {
-    async setIsAdmin (item, isAdmin) {
+    async setIsAdmin(item, isAdmin) {
       const user = {
         id: item.id,
         isAdmin,
@@ -171,20 +164,20 @@ export default {
 
       await this.$store.dispatch('users/setAdmin', user);
     },
-    async setApprover (user) {
+    async setApprover(user) {
       this.$refs.refApproverDialog.openDialog(user);
     },
-    async userSynchronization () {
+    async userSynchronization() {
       this.loading = true;
       await this.$store.dispatch('users/usersSynchronizations');
       this.loading = false;
     },
-    isUserActive (isActive, toUpper) {
+    isUserActive(isActive, toUpper) {
       const result = isActive ? 'ano' : 'ne';
 
       return toUpper ? result.toUpperCase() : result.toLowerCase();
     },
-    getFullName (firstName, lastName) {
+    getFullName(firstName, lastName) {
       return `${firstName} ${lastName}`;
     },
   },

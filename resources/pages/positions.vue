@@ -23,20 +23,16 @@
         :headers="headers"
         :items="positions.items"
         :items-per-page="100"
-        :footer-props="{'items-per-page-options': [20, 50, 100, -1]}"
+        :footer-props="{ 'items-per-page-options': [20, 50, 100, -1] }"
         item-key="id"
         fill-height
         single-expand
         must-sort
         class="elevation-1 fullscreen"
       >
-        <template
-          v-slot:item="{item}"
-        >
+        <template v-slot:item="{ item }">
           <tr>
-            <td
-              class="text-left element pr-8"
-            >
+            <td class="text-left element pr-8">
               {{ item.name }}
             </td>
             <td class="text-left element">
@@ -46,10 +42,10 @@
               >
                 <div
                   v-for="n in item.permissions.length < chipsNumber ? item.permissions.length : chipsNumber"
-                  :key="item.permissions[n-1].id"
+                  :key="item.permissions[n - 1].id"
                   class="cost-category"
                 >
-                  {{ item.permissions[n-1].name }}
+                  {{ item.permissions[n - 1].name }}
                 </div>
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
@@ -59,7 +55,7 @@
                       v-bind="attrs"
                       v-on="on"
                     >
-                      {{ `+ ${item.permissions.length - chipsNumber } dalších ` }}
+                      {{ `+ ${item.permissions.length - chipsNumber} dalších ` }}
                     </div>
                   </template>
                   <span>{{ getRestChipsPermissions(item.permissions) }}</span>
@@ -79,10 +75,10 @@
               >
                 <div
                   v-for="c in item.costCategories.length < chipsNumber ? item.costCategories.length : chipsNumber"
-                  :key="item.costCategories[c-1].id"
+                  :key="item.costCategories[c - 1].id"
                   class="cost-category"
                 >
-                  {{ positionCostCategories(item.costCategories[c-1].name) }}
+                  {{ positionCostCategories(item.costCategories[c - 1].name) }}
                 </div>
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
@@ -92,7 +88,7 @@
                       v-bind="attrs"
                       v-on="on"
                     >
-                      {{ `+ ${item.costCategories.length - chipsNumber } dalších ` }}
+                      {{ `+ ${item.costCategories.length - chipsNumber} dalších ` }}
                     </div>
                   </template>
                   <span>{{ getRestChipsCostCategories(item.costCategories) }}</span>
@@ -117,138 +113,134 @@
           </tr>
         </template>
       </v-data-table>
-      <AddPermissionDialog
-        ref="refAddPermissionDialog"
-      />
+      <AddPermissionDialog ref="refAddPermissionDialog" />
     </v-card>
   </div>
 </template>
 
 <script>
-  import { mapState } from 'vuex';
-  import AddPermissionDialog from '../components/position/dialogs/AddPermissionDialog';
+import { mapState } from 'vuex';
+import AddPermissionDialog from '../components/position/dialogs/AddPermissionDialog';
 
-  export default {
-    name: 'Posiction',
-    components: {
-      AddPermissionDialog,
+export default {
+  name: 'Posiction',
+  components: {
+    AddPermissionDialog,
+  },
+  data() {
+    return {
+      loading: false,
+      chipsNumber: 5,
+    };
+  },
+  computed: {
+    ...mapState(['positions']),
+    headers: function () {
+      return [
+        {
+          text: 'Název pozice',
+          align: 'left',
+          sortable: true,
+          value: 'name',
+        },
+        {
+          text: 'Oprávnění',
+          align: 'left',
+          sortable: true,
+          value: 'permissions',
+        },
+        {
+          text: 'Hráč',
+          align: 'center',
+          sortable: true,
+          value: 'isPlayer',
+        },
+        {
+          text: 'Kategorie',
+          align: 'left',
+          sortable: true,
+          value: 'costCategories',
+        },
+        {
+          text: 'Posílat feedback',
+          align: 'center',
+          sortable: true,
+          value: 'sendFeedback',
+        },
+        {
+          text: 'Akce',
+          align: 'center',
+          sortable: true,
+          value: 'action',
+        },
+      ];
     },
-    data () {
-      return {
-        loading: false,
-        chipsNumber: 5,
+  },
+  async created() {
+    await this.$store.dispatch('costCategories/costCategoriesSynchronizations');
+    await this.$store.dispatch('positions/getPositions');
+    await this.$store.dispatch('permissions/getPermissions');
+  },
+  methods: {
+    getRestChipsPermissions(permissions) {
+      return permissions
+        .slice(this.chipsNumber, permissions.length)
+        .map(p => p.name)
+        .join(', ');
+    },
+    getRestChipsCostCategories(costCategories) {
+      return costCategories
+        .slice(this.chipsNumber, costCategories.length)
+        .map(p => this.positionCostCategories(p.name))
+        .join(', ');
+    },
+    addPermissions(item) {
+      this.$refs.refAddPermissionDialog.openDialog(item);
+    },
+    async positionSynchronization() {
+      this.loading = true;
+      await this.$store.dispatch('positions/positionSynchronizations');
+      this.loading = false;
+    },
+    positionCostCategories(costCategory) {
+      return costCategory.substring(costCategory.lastIndexOf('>') + 2, costCategory.length);
+    },
+    async setFeedback(item, sendFeedback) {
+      const position = {
+        id: item.id,
+        sendFeedback,
       };
-    },
-    computed: {
-      ...mapState([
-        'positions',
-      ]),
-      headers: function () {
-        return [
-          {
-            text: 'Název pozice',
-            align: 'left',
-            sortable: true,
-            value: 'name',
-          },
-          {
-            text: 'Oprávnění',
-            align: 'left',
-            sortable: true,
-            value: 'permissions',
-          },
-          {
-            text: 'Hráč',
-            align: 'center',
-            sortable: true,
-            value: 'isPlayer',
-          },
-          {
-            text: 'Kategorie',
-            align: 'left',
-            sortable: true,
-            value: 'costCategories',
-          },
-          {
-            text: 'Posílat feedback',
-            align: 'center',
-            sortable: true,
-            value: 'sendFeedback',
-          },
-          {
-            text: 'Akce',
-            align: 'center',
-            sortable: true,
-            value: 'action',
-          },
-        ];
-      },
-    },
-    async created() {
-      await this.$store.dispatch('costCategories/costCategoriesSynchronizations');
-      await this.$store.dispatch('positions/getPositions');
-      await this.$store.dispatch('permissions/getPermissions');
-    },
-    methods: {
-      getRestChipsPermissions (permissions) {
-        return permissions
-          .slice(this.chipsNumber, permissions.length)
-          .map(p => p.name)
-          .join(', ');
-      },
-      getRestChipsCostCategories (costCategories) {
-        return costCategories
-          .slice(this.chipsNumber, costCategories.length)
-          .map(p => this.positionCostCategories(p.name))
-          .join(', ');
-      },
-      addPermissions (item) {
-        this.$refs.refAddPermissionDialog.openDialog(item);
-      },
-      async positionSynchronization () {
-        this.loading = true;
-        await this.$store.dispatch('positions/positionSynchronizations');
-        this.loading = false;
-      },
-      positionCostCategories (costCategory) {
-        return costCategory.substring(costCategory.lastIndexOf(">") + 2, costCategory.length);
-      },
-      async setFeedback (item, sendFeedback) {
-        const position = {
-          id: item.id,
-          sendFeedback,
-        };
 
-        await this.$store.dispatch('positions/setFeedback', positions);
-      },
-      async setPlayer (item, isPlayer) {
-        const position = {
-          id: item.id,
-          isPlayer,
-        };
-
-        await this.$store.dispatch('positions/setPlayer', positions);
-      },
+      await this.$store.dispatch('positions/setFeedback', positions);
     },
-  };
+    async setPlayer(item, isPlayer) {
+      const position = {
+        id: item.id,
+        isPlayer,
+      };
+
+      await this.$store.dispatch('positions/setPlayer', positions);
+    },
+  },
+};
 </script>
 
 <style scoped>
-  .checkbox {
-    display: flex;
-  }
+.checkbox {
+  display: flex;
+}
 
-  .cost-category-wrapper {
-    display: flex;
-  }
+.cost-category-wrapper {
+  display: flex;
+}
 
-  .cost-category {
-    background-color: #e0e0e0;
-    padding: 0.3rem 0.5rem;
-    margin-right: 0.5rem;
-    border-radius: 16px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+.cost-category {
+  background-color: #e0e0e0;
+  padding: 0.3rem 0.5rem;
+  margin-right: 0.5rem;
+  border-radius: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>

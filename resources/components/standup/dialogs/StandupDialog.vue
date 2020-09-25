@@ -8,9 +8,7 @@
       <v-card-title>
         <span class="headline">{{ standupDialogTitle }}</span>
       </v-card-title>
-      <v-card-text
-        style="max-height: 800px"
-      >
+      <v-card-text style="max-height: 800px">
         <v-row class="pl-2 pr-4">
           <DatePicker
             v-model="standupDialog.date"
@@ -52,81 +50,77 @@
   </v-dialog>
 </template>
 <script>
-  import DatePicker from '../../common/DatePicker';
-  import { mapState } from 'vuex';
-  import moment from 'moment';
+import DatePicker from '../../common/DatePicker';
+import { mapState } from 'vuex';
+import moment from 'moment';
 
-  export default {
-    name: 'StandupDialog',
-    components: {
-      DatePicker,
+export default {
+  name: 'StandupDialog',
+  components: {
+    DatePicker,
+  },
+  data() {
+    return {
+      isOpen: false,
+      standupDialog: {
+        id: null,
+        date: null,
+        selectedDate: null,
+      },
+    };
+  },
+  computed: {
+    ...mapState(['errors']),
+    standupDialogTitle() {
+      return this.standupDialog.id ? 'Upravení standupu' : 'Přidání standupu';
     },
-    data () {
-      return {
-        isOpen: false,
-        standupDialog: {
-          id: null,
-          date: null,
-          selectedDate: null,
-        },
+  },
+  methods: {
+    openDialog(standup) {
+      this.isOpen = true;
+      if (standup) {
+        this.standupDialog = {
+          id: standup.id,
+          date: moment(standup.date).format('YYYY-MM-DD'),
+          selectedDate: this.selectedDate,
+        };
+      } else {
+        this.standupDialog = {
+          isOpen: true,
+          date: moment().format('YYYY-MM-DD'),
+          selectedDate: this.selectedDate,
+        };
+      }
+    },
+    async save() {
+      const action = this.standupDialog.id ? 'standups/editStandup' : 'standups/createStandup';
+      let errorMsg = null;
+
+      if (!this.standupDialog.date) {
+        errorMsg = 'Chybí datum standupu.';
+      } else if (moment().isAfter(moment(this.standupDialog.date).add(1, 'day'))) {
+        errorMsg = 'Datum standupu je v minulosti.';
+      }
+
+      if (errorMsg) {
+        this.$store.commit('errors/setErrorState', { message: errorMsg });
+        return;
+      }
+      await this.$store.dispatch(action, this.standupDialog);
+      this.resetStandup();
+    },
+    resetStandup() {
+      this.$store.commit('errors/clearErrorState');
+      this.isOpen = false;
+      this.standupDialog = {
+        date: null,
       };
     },
-    computed: {
-      ...mapState([
-        'errors',
-      ]),
-      standupDialogTitle () {
-        return this.standupDialog.id ? 'Upravení standupu' : 'Přidání standupu';
-      },
+    getMinDate() {
+      return moment().format('YYYY-MM-DD');
     },
-    methods: {
-      openDialog (standup) {
-        this.isOpen = true;
-        if (standup) {
-          this.standupDialog = {
-            id: standup.id,
-            date: moment(standup.date).format('YYYY-MM-DD'),
-            selectedDate: this.selectedDate,
-          };
-        } else {
-          this.standupDialog = {
-            isOpen: true,
-            date: moment().format('YYYY-MM-DD'),
-            selectedDate: this.selectedDate,
-          };
-        }
-      },
-      async save () {
-        const action = this.standupDialog.id ? 'standups/editStandup' : 'standups/createStandup';
-        let errorMsg = null;
-
-        if (!this.standupDialog.date) {
-          errorMsg = 'Chybí datum standupu.';
-        } else if ((moment().isAfter(moment(this.standupDialog.date).add(1, 'day')))) {
-          errorMsg = 'Datum standupu je v minulosti.';
-        }
-
-        if (errorMsg) {
-          this.$store.commit('errors/setErrorState', {message: errorMsg});
-          return;
-        }
-        await this.$store.dispatch(action, this.standupDialog);
-        this.resetStandup();
-      },
-      resetStandup () {
-        this.$store.commit('errors/clearErrorState');
-        this.isOpen = false;
-        this.standupDialog = {
-          date: null,
-        };
-      },
-      getMinDate () {
-        return moment().format('YYYY-MM-DD');
-      },
-    },
-  };
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

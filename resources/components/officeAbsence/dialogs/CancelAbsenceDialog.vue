@@ -54,54 +54,52 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+import { mapState } from 'vuex';
 
-  export default {
-    name: 'CancelAbsenceDialog',
-    data () {
-      return {
-        show: false,
-        dialogData: {
-          approverId: null,
-          absenceId: null,
-        },
-        defaultSelectItems: [],
-        rules: {
-          required: value => !!value || 'Povinné.',
-        },
-      };
+export default {
+  name: 'CancelAbsenceDialog',
+  data() {
+    return {
+      show: false,
+      dialogData: {
+        approverId: null,
+        absenceId: null,
+      },
+      defaultSelectItems: [],
+      rules: {
+        required: value => !!value || 'Povinné.',
+      },
+    };
+  },
+  computed: {
+    ...mapState(['officeAbsences']),
+    approverItems() {
+      return this.officeAbsences.approvers.length
+        ? this.officeAbsences.approvers.map(approver => ({
+            text: `${approver.firstName} ${approver.lastName}`,
+            value: approver.id,
+          }))
+        : this.defaultSelectItems;
     },
-    computed: {
-      ...mapState([
-        'officeAbsences',
-      ]),
-      approverItems () {
-        return this.officeAbsences.approvers.length ? this.officeAbsences.approvers.map(approver => ({
-          text: `${approver.firstName} ${approver.lastName}`,
-          value: approver.id,
-        })): this.defaultSelectItems;
-      },
+  },
+  methods: {
+    async openDialog(officeAbsence) {
+      this.show = true;
+      this.dialogData.absenceId = officeAbsence.id;
+      this.dialogData.approverId = officeAbsence.absenceApprover.id;
     },
-    methods: {
-      async openDialog(officeAbsence) {
-        this.show = true;
-        this.dialogData.absenceId = officeAbsence.id;
-        this.dialogData.approverId = officeAbsence.absenceApprover.id;
-      },
-      async confirmDialog () {
-        if (this.$refs.form.validate()) {
-          this.cancelDialog();
-          await this.$store.dispatch('officeAbsences/cancelOfficeAbsence', this.dialogData);
-        }
-      },
-      cancelDialog () {
-        this.$refs.form.resetValidation();
-        this.show = false;
-      },
+    async confirmDialog() {
+      if (this.$refs.form.validate()) {
+        this.cancelDialog();
+        await this.$store.dispatch('officeAbsences/cancelOfficeAbsence', this.dialogData);
+      }
     },
-  };
+    cancelDialog() {
+      this.$refs.form.resetValidation();
+      this.show = false;
+    },
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

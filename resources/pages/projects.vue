@@ -40,9 +40,7 @@
         hide-default-footer
         fill-height
       >
-        <template
-          v-slot:item="props"
-        >
+        <template v-slot:item="props">
           <tr>
             <td class="text-center element">
               {{ props.item.code }}
@@ -87,12 +85,8 @@
           </tr>
         </template>
       </v-data-table>
-      <ProjectDialog
-        ref="refProjectDialog"
-      />
-      <TeamLeaderDialog
-        ref="refTeamLeaderDialog"
-      />
+      <ProjectDialog ref="refProjectDialog" />
+      <TeamLeaderDialog ref="refTeamLeaderDialog" />
     </v-card>
   </v-layout>
 </template>
@@ -108,17 +102,14 @@ export default {
     ProjectDialog,
     TeamLeaderDialog,
   },
-  data () {
+  data() {
     return {
       pagination: { sortBy: 'code' },
       filteringText: '',
     };
   },
   computed: {
-    ...mapState([
-      'projects',
-      'errors',
-    ]),
+    ...mapState(['projects', 'errors']),
     headers: function () {
       return [
         {
@@ -165,22 +156,24 @@ export default {
         },
       ];
     },
-    filteredProject () {
-      return this.projects.all.filter((element) => {
+    filteredProject() {
+      return this.projects.all.filter(element => {
         const description = element.description ? element.description.toUpperCase() : '';
         const teamLeader = element.teamLeader.name.toUpperCase();
         const slackChannelName = element.slackChannelName ? element.slackChannelName.toUpperCase() : '';
         const uppercasedFilterText = this.filteringText.toUpperCase();
 
-        return element.code.match(uppercasedFilterText) ||
+        return (
+          element.code.match(uppercasedFilterText) ||
           this.isProjectActive(element.isActive, true).match(uppercasedFilterText) ||
           description.match(uppercasedFilterText) ||
           teamLeader.match(uppercasedFilterText) ||
-          slackChannelName.match(uppercasedFilterText);
+          slackChannelName.match(uppercasedFilterText)
+        );
       });
     },
   },
-  async fetch ({ store, params }) {
+  async fetch({ store, params }) {
     await Promise.all([
       store.dispatch('meetingTimes/getMeetingTimes'),
       store.dispatch('projects/getAllProjects'),
@@ -188,13 +181,13 @@ export default {
     ]);
   },
   methods: {
-    createNewProject () {
+    createNewProject() {
       this.$refs.refProjectDialog.openDialog();
     },
-    editProject (project) {
+    editProject(project) {
       this.$refs.refProjectDialog.openDialog(project);
     },
-    async deleteProject (item) {
+    async deleteProject(item) {
       const confirmed = confirm(`Opravdu chcete smazat projekt ${item.code}?`);
 
       if (confirmed) {
@@ -205,7 +198,7 @@ export default {
     addTeamleader(teamLeader) {
       this.$refs.refTeamLeaderDialog.openDialog(teamLeader);
     },
-    formatDate (date) {
+    formatDate(date) {
       if (!date) {
         return '';
       }
@@ -214,7 +207,7 @@ export default {
 
       return format(d, 'DD/MM/YYYY');
     },
-    isProjectActive (isActive, toUpper) {
+    isProjectActive(isActive, toUpper) {
       const result = isActive ? 'ano' : 'ne';
 
       return toUpper ? result.toUpperCase() : result.toLowerCase();
@@ -224,20 +217,20 @@ export default {
 </script>
 
 <style scoped>
-  .fullscreen {
-    width: 100%;
-    height: 100%;
-  }
+.fullscreen {
+  width: 100%;
+  height: 100%;
+}
 
-  .element {
-    font-size: 1.3em !important;
-  }
+.element {
+  font-size: 1.3em !important;
+}
 
-  .button {
-    margin: 6px 8px;
-  }
+.button {
+  margin: 6px 8px;
+}
 
-  .header {
-    font-size: 2em !important;
-  }
+.header {
+  font-size: 2em !important;
+}
 </style>

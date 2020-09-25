@@ -10,9 +10,7 @@
         <v-card-title>
           <span class="headline">{{ noteDialogTitle() }}</span>
         </v-card-title>
-        <v-card-text
-          style="max-height: 800px"
-        >
+        <v-card-text style="max-height: 800px">
           <v-row class="pl-4 pr-4">
             <v-combobox
               v-model="noteDialog.selectedProject"
@@ -80,7 +78,7 @@ export default {
   components: {
     DatePicker,
   },
-  data () {
+  data() {
     return {
       isOpen: false,
       noteDialog: {
@@ -98,11 +96,8 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'errors',
-      'projects',
-    ]),
-    projectNames () {
+    ...mapState(['errors', 'projects']),
+    projectNames() {
       return this.projects.items.map(p => ({
         text: p.code,
         value: p.id,
@@ -124,10 +119,10 @@ export default {
       }
       this.isOpen = true;
     },
-    noteDialogTitle () {
+    noteDialogTitle() {
       return this.noteDialog.id ? 'Upravení cíle' : 'Vytvoření cíle';
     },
-    resetNote () {
+    resetNote() {
       // set deadline to next monday
       let date = new moment();
       date = date.add(1, 'w');
@@ -141,7 +136,7 @@ export default {
       };
       this.isOpen = false;
     },
-    async createNote () {
+    async createNote() {
       let errorMsg = null;
 
       if (!this.noteDialog.selectedProject || !this.noteDialog.selectedProject.value) {
@@ -157,7 +152,7 @@ export default {
       const resultDate = setHours(deadlineDate, getHours(currentDate));
 
       if (errorMsg) {
-        this.$store.commit('errors/setErrorState', {message: errorMsg});
+        this.$store.commit('errors/setErrorState', { message: errorMsg });
         return;
       }
 
@@ -180,6 +175,4 @@ export default {
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

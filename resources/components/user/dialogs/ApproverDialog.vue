@@ -52,58 +52,55 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+import { mapState } from 'vuex';
 
-  export default {
-    name: 'ApproverDialog',
-    data () {
-      return {
-        show: false,
-        dialogData: {
-          userId: null,
-          approverId: null,
-        },
-        defaultDialogDate: {
-          userId: null,
-          approver: null,
-        },
-        rules: {
-          required: value => !!value || 'Povinné.',
-        },
-      };
+export default {
+  name: 'ApproverDialog',
+  data() {
+    return {
+      show: false,
+      dialogData: {
+        userId: null,
+        approverId: null,
+      },
+      defaultDialogDate: {
+        userId: null,
+        approver: null,
+      },
+      rules: {
+        required: value => !!value || 'Povinné.',
+      },
+    };
+  },
+  computed: {
+    ...mapState(['errors', 'users']),
+    approverItems() {
+      return this.users.items.map(user => ({
+        text: `${user.firstName} ${user.lastName}`,
+        value: user.id,
+      }));
     },
-    computed: {
-      ...mapState([
-        'errors',
-        'users',
-      ]),
-      approverItems () {
-        return this.users.items.map(user => ({
-          text: `${user.firstName} ${user.lastName}`,
-          value: user.id,
-        }));
-      },
+  },
+  methods: {
+    openDialog(user) {
+      if (user.absenceApprover) {
+        this.dialogData.approverId = user.absenceApprover.id;
+      }
+      this.show = true;
+      this.dialogData.userId = user.id;
     },
-    methods: {
-      openDialog(user) {
-        if (user.absenceApprover) {
-          this.dialogData.approverId = user.absenceApprover.id;
-        }
-        this.show = true;
-        this.dialogData.userId = user.id;
-      },
-      async confirmDialog () {
-        if (this.$refs.form.validate()) {
-          await this.$store.dispatch('users/setApprover', this.dialogData);
-          !this.errors.error.isVisible && this.cancelDialog();
-        }
-      },
-      cancelDialog () {
-        this.dialogData = { ...this.defaultDialogData };
-        this.show = false;
-        this.$refs.form.resetValidation();
-        this.$store.commit('errors/clearErrorState');
-      },
+    async confirmDialog() {
+      if (this.$refs.form.validate()) {
+        await this.$store.dispatch('users/setApprover', this.dialogData);
+        !this.errors.error.isVisible && this.cancelDialog();
+      }
     },
-  };
+    cancelDialog() {
+      this.dialogData = { ...this.defaultDialogData };
+      this.show = false;
+      this.$refs.form.resetValidation();
+      this.$store.commit('errors/clearErrorState');
+    },
+  },
+};
 </script>

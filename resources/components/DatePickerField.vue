@@ -56,11 +56,11 @@ export default {
     },
   },
   watch: {
-    value (v) {
+    value(v) {
       this.modelDate = v ? format(v, 'YYYY-MM-DD') : null;
     },
   },
-  created () {
+  created() {
     this.modelDate = this.value ? format(this.value, 'YYYY-MM-DD') : null;
   },
   methods: {

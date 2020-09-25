@@ -62,16 +62,14 @@ export default {
       default: 0,
     },
   },
-  data () {
+  data() {
     return {};
   },
   computed: {
-    ...mapState([
-      'notes',
-    ]),
+    ...mapState(['notes']),
   },
   methods: {
-    getNoteDeadlineClass (item) {
+    getNoteDeadlineClass(item) {
       const deadline = parse(item.deadlineDate);
       const today = isToday(deadline);
 
@@ -81,7 +79,7 @@ export default {
         'red--text': !today && isPast(deadline),
       };
     },
-    getNoteDeadlineIconColor (item) {
+    getNoteDeadlineIconColor(item) {
       const deadline = parse(item.deadlineDate);
 
       if (isToday(deadline)) {
@@ -92,10 +90,10 @@ export default {
 
       return undefined;
     },
-    formatDate (date) {
+    formatDate(date) {
       return format(parse(date), 'D. M. YYYY');
     },
-    markNoteCompleted (note) {
+    markNoteCompleted(note) {
       if (confirm('Opravdu chcete označit poznámku za dokončenou?')) {
         this.$store.dispatch('notes/markNoteCompleted', note.id);
       }
@@ -105,29 +103,29 @@ export default {
 </script>
 
 <style scoped>
-  .note-text {
-    white-space: pre-line;
-  }
+.note-text {
+  white-space: pre-line;
+}
 
+.note-columns {
+  column-count: 5;
+  column-gap: 20px;
+  column-fill: balance;
+}
+
+@media only screen and (max-width: 600px) {
   .note-columns {
-    column-count: 5;
-    column-gap: 20px;
-    column-fill: balance;
+    column-count: auto;
   }
+}
 
-  @media only screen and (max-width: 600px) {
-    .note-columns {
-      column-count: auto;
-    }
-  }
+.note-card {
+  display: inline-block;
+  width: 100%;
+}
 
-  .note-card {
-    display: inline-block;
-    width: 100%;
-  }
-
-  .note-text-alignment {
-    display: flex;
-    flex-direction: row;
-  }
+.note-text-alignment {
+  display: flex;
+  flex-direction: row;
+}
 </style>

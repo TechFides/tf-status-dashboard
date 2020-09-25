@@ -105,7 +105,7 @@ export default {
       default: () => {},
     },
   },
-  data () {
+  data() {
     return {
       dialog: false,
       className: 'material-icons',
@@ -120,18 +120,16 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'projects',
-    ]),
-    icon () {
+    ...mapState(['projects']),
+    icon() {
       return this.getRatingIconFromId(this.projectRating);
     },
-    projectName () {
+    projectName() {
       return this.projects.items.find(p => p.id === this.projectId).code;
     },
   },
   methods: {
-    getClassName () {
+    getClassName() {
       let className = 'material-icons custom-font-size';
       switch (this.projectRating) {
         case this.RATING_ENUM.HIATUS:
@@ -150,7 +148,7 @@ export default {
           return '';
       }
     },
-    async submit (icon) {
+    async submit(icon) {
       this.dialog = false;
 
       try {
@@ -171,7 +169,7 @@ export default {
         console.error(e);
       }
     },
-    getRatingId (icon) {
+    getRatingId(icon) {
       switch (icon) {
         case 'HIATUS':
           return this.RATING_ENUM.HIATUS;
@@ -185,7 +183,7 @@ export default {
           return this.RATING_ENUM.AMAZING;
       }
     },
-    getRatingIcon (icon) {
+    getRatingIcon(icon) {
       switch (icon) {
         case 'HIATUS':
           return 'remove';
@@ -199,7 +197,7 @@ export default {
           return 'done';
       }
     },
-    getRatingIconFromId (icon) {
+    getRatingIconFromId(icon) {
       switch (icon) {
         case this.RATING_ENUM.HIATUS:
           return 'remove';
@@ -220,7 +218,6 @@ export default {
 </script>
 
 <style scoped>
-
 .myicon {
   display: flex;
   flex-direction: row;

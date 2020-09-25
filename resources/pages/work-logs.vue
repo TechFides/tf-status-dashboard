@@ -11,9 +11,7 @@
         @click="createNewWorkLog()"
       >
         <i class="material-icons">add</i>
-        <span class="pl-2">
-          Zalogovat čas
-        </span>
+        <span class="pl-2"> Zalogovat čas </span>
       </v-btn>
     </v-row>
     <WorkLogDialog
@@ -21,9 +19,7 @@
       :confirm="resetFilters"
     />
     <v-card class="elevation-1">
-      <v-row
-        justify="start"
-      >
+      <v-row justify="start">
         <v-col
           v-if="isAdministration()"
           cols="2"
@@ -60,7 +56,6 @@
       <v-row>
         <v-col>
           <v-alert
-
             border="right"
             color="green lighten-1"
             class="ma-2"
@@ -73,16 +68,14 @@
         :headers="headers"
         :items="workLogs.items"
         :items-per-page="100"
-        :footer-props="{'items-per-page-options': [20, 50, 100, -1]}"
+        :footer-props="{ 'items-per-page-options': [20, 50, 100, -1] }"
         item-key="id"
         fill-height
         single-expand
         must-sort
         class="elevation-1 fullscreen"
       >
-        <template
-          v-slot:item="{item}"
-        >
+        <template v-slot:item="{ item }">
           <tr>
             <td
               v-if="isAdministration()"
@@ -131,147 +124,137 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
-  import WorkLogDialog from '../components/workLogs/dialogs/WorkLogDialog';
-  import DatePicker from '../components/common/DatePicker';
-  import moment from 'moment';
+import { mapState } from 'vuex';
+import WorkLogDialog from '../components/workLogs/dialogs/WorkLogDialog';
+import DatePicker from '../components/common/DatePicker';
+import moment from 'moment';
 
-  export default {
-    name: 'WorkLogs',
-    components: {
-      WorkLogDialog,
-      DatePicker,
-    },
-    data () {
-      return {
-        filter: {
-          authorId: '',
-          costCategoryId: '',
-          dates: [
-            moment().startOf('month').format('YYYY-MM-DD'),
-            moment().endOf('month').format('YYYY-MM-DD'),
-          ],
-        },
-        defaultFilter: {
-          authorId: '',
-          costCategoryId: '',
-          dates: [
-            moment().startOf('month').format('YYYY-MM-DD'),
-            moment().endOf('month').format('YYYY-MM-DD'),
-          ],
-        },
-        expandedRowId: null,
-      };
-    },
-    computed: {
-      ...mapState([
-        'workLogs',
-        'users',
-        'costCategories',
-      ]),
-      headers () {
-        const headers = [
-          {
-            text: 'Autor',
-            align: 'left',
-            sortable: true,
-            value: 'author.fullName',
-            isVisible: this.isAdministration(),
-          },
-          {
-            text: 'Zahájení práce',
-            align: 'left',
-            sortable: true,
-            value: 'startedByNumber',
-            isVisible: true,
-          },
-          {
-            text: 'Strávený čas',
-            align: 'right',
-            sortable: true,
-            value: 'timeSpentByNumber',
-            isVisible: true,
-          },
-          {
-            text: 'Popis',
-            align: 'left',
-            sortable: true,
-            value: 'description',
-            isVisible: true,
-          },
-          {
-            text: 'Kategorie',
-            align: 'left',
-            sortable: true,
-            value: 'costCategory.name',
-            isVisible: true,
-          },
-          {
-            text: 'Akce',
-            align: 'center',
-            sortable: false,
-            value: 'action',
-            isVisible: true,
-          },
-        ];
-
-        return headers.filter(h => h.isVisible);
-      },
-      costCategoryItems () {
-        return this.costCategories.items.map(c => ({
-          text: c.name,
-          value: c.id,
-        }));
-      },
-      authorItems () {
-        return this.users.items.map(user => ({
-          text: `${user.firstName} ${user.lastName}`,
-          value: user.id.toString(),
-        }));
-      },
-    },
-    watch: {
+export default {
+  name: 'WorkLogs',
+  components: {
+    WorkLogDialog,
+    DatePicker,
+  },
+  data() {
+    return {
       filter: {
-        handler() {
-          if (this.filter.dates[0] && this.filter.dates[1]) {
-            this.$store.dispatch('workLogs/getWorkLogs', this.filter);
-          }
-        },
-        deep: true,
+        authorId: '',
+        costCategoryId: '',
+        dates: [moment().startOf('month').format('YYYY-MM-DD'), moment().endOf('month').format('YYYY-MM-DD')],
       },
-    },
-    async created() {
-      await this.$store.dispatch('costCategories/costCategoriesSynchronizations');
-      await Promise.all([
-        this.$store.dispatch('workLogs/getWorkLogs', this.filter),
-        this.$store.dispatch('users/getUsers'),
-        this.$store.dispatch('costCategories/getCostCategories'),
-      ]);
-    },
-    methods: {
-      async deleteItem(item) {
-        const confirmed = confirm(`Opravdu chcete smazat tento worklog?`);
+      defaultFilter: {
+        authorId: '',
+        costCategoryId: '',
+        dates: [moment().startOf('month').format('YYYY-MM-DD'), moment().endOf('month').format('YYYY-MM-DD')],
+      },
+      expandedRowId: null,
+    };
+  },
+  computed: {
+    ...mapState(['workLogs', 'users', 'costCategories']),
+    headers() {
+      const headers = [
+        {
+          text: 'Autor',
+          align: 'left',
+          sortable: true,
+          value: 'author.fullName',
+          isVisible: this.isAdministration(),
+        },
+        {
+          text: 'Zahájení práce',
+          align: 'left',
+          sortable: true,
+          value: 'startedByNumber',
+          isVisible: true,
+        },
+        {
+          text: 'Strávený čas',
+          align: 'right',
+          sortable: true,
+          value: 'timeSpentByNumber',
+          isVisible: true,
+        },
+        {
+          text: 'Popis',
+          align: 'left',
+          sortable: true,
+          value: 'description',
+          isVisible: true,
+        },
+        {
+          text: 'Kategorie',
+          align: 'left',
+          sortable: true,
+          value: 'costCategory.name',
+          isVisible: true,
+        },
+        {
+          text: 'Akce',
+          align: 'center',
+          sortable: false,
+          value: 'action',
+          isVisible: true,
+        },
+      ];
 
-        if (confirmed) {
-          await this.$store.dispatch('workLogs/deleteWorkLog', item.id);
+      return headers.filter(h => h.isVisible);
+    },
+    costCategoryItems() {
+      return this.costCategories.items.map(c => ({
+        text: c.name,
+        value: c.id,
+      }));
+    },
+    authorItems() {
+      return this.users.items.map(user => ({
+        text: `${user.firstName} ${user.lastName}`,
+        value: user.id.toString(),
+      }));
+    },
+  },
+  watch: {
+    filter: {
+      handler() {
+        if (this.filter.dates[0] && this.filter.dates[1]) {
+          this.$store.dispatch('workLogs/getWorkLogs', this.filter);
         }
       },
-      resetFilters () {
-        this.filter = {...this.defaultFilter};
-      },
-      createNewWorkLog() {
-        this.$refs.workLogDialog.openDialog();
-      },
-      editItem(item) {
-        this.$refs.workLogDialog.openDialog(item);
-      },
+      deep: true,
     },
-  };
+  },
+  async created() {
+    await this.$store.dispatch('costCategories/costCategoriesSynchronizations');
+    await Promise.all([
+      this.$store.dispatch('workLogs/getWorkLogs', this.filter),
+      this.$store.dispatch('users/getUsers'),
+      this.$store.dispatch('costCategories/getCostCategories'),
+    ]);
+  },
+  methods: {
+    async deleteItem(item) {
+      const confirmed = confirm(`Opravdu chcete smazat tento worklog?`);
+
+      if (confirmed) {
+        await this.$store.dispatch('workLogs/deleteWorkLog', item.id);
+      }
+    },
+    resetFilters() {
+      this.filter = { ...this.defaultFilter };
+    },
+    createNewWorkLog() {
+      this.$refs.workLogDialog.openDialog();
+    },
+    editItem(item) {
+      this.$refs.workLogDialog.openDialog(item);
+    },
+  },
+};
 </script>
 
 <style scoped>
-  .time-spent-sum {
-    font-weight: bold;
-    font-size: 1.3rem;
-  }
+.time-spent-sum {
+  font-weight: bold;
+  font-size: 1.3rem;
+}
 </style>

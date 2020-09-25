@@ -81,86 +81,80 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+import { mapState } from 'vuex';
 
-  export default {
-    name: 'ProjectDialog',
-    data() {
-      return {
-        isOpen: false,
-        rules: {
-          required: value => !!value || 'Povinné.',
-        },
-        modalItem: {
-          id: null,
-          code: '',
-          description: '',
-          isActive: true,
-          meetingTimeId: null,
-          slackChannelName: null,
-
-        },
-        defaultModalItem: {
-          id: null,
-          code: '',
-          description: '',
-          isActive: true,
-          meetingTimeId: null,
-          slackChannelName: null,
-        },
-      };
+export default {
+  name: 'ProjectDialog',
+  data() {
+    return {
+      isOpen: false,
+      rules: {
+        required: value => !!value || 'Povinné.',
+      },
+      modalItem: {
+        id: null,
+        code: '',
+        description: '',
+        isActive: true,
+        meetingTimeId: null,
+        slackChannelName: null,
+      },
+      defaultModalItem: {
+        id: null,
+        code: '',
+        description: '',
+        isActive: true,
+        meetingTimeId: null,
+        slackChannelName: null,
+      },
+    };
+  },
+  computed: {
+    ...mapState(['errors', 'meetingTimes']),
+    projectDialogTitle() {
+      return this.modalItem.id ? 'Vytvořit projekt' : 'Editovat projekt';
     },
-    computed: {
-      ...mapState([
-        'errors',
-        'meetingTimes',
-      ]),
-      projectDialogTitle () {
-        return this.modalItem.id ? 'Vytvořit projekt' : 'Editovat projekt' ;
-      },
-      formattedMeetingTimesForSelect () {
-        return [
-          {text: 'Žádný', value: null},
-          ...this.meetingTimes.items.map(meetingTime => ({
-            text: meetingTime.dayAndTime,
-            value: meetingTime.id,
-          })),
-        ];
-      },
+    formattedMeetingTimesForSelect() {
+      return [
+        { text: 'Žádný', value: null },
+        ...this.meetingTimes.items.map(meetingTime => ({
+          text: meetingTime.dayAndTime,
+          value: meetingTime.id,
+        })),
+      ];
     },
-    methods: {
-      openDialog (project) {
-        if (project) {
-          this.modalItem = {
-            id: project.id,
-            code: project.code,
-            description: project.description,
-            isActive: project.isActive,
-            meetingTimeId: project.meetingTime.value,
-            slackChannelName: project.slackChannelName,
-          };
-        }
-        this.isOpen = true;
-      },
-      async save () {
-        if (this.$refs.form.validate()) {
-          const action = this.modalItem.id ? 'projects/editProject' : 'projects/createProject';
-          await this.$store.dispatch(action, this.modalItem);
-          await this.$store.dispatch('projects/getProjects');
-          await this.$store.dispatch('projects/getAllProjects');
-          !this.errors.error.isVisible && this.close();
-        }
-      },
-      close () {
-        this.isOpen = false;
-        this.$refs.form.resetValidation();
-        this.modalItem = { ...this.defaultModalItem };
-        this.$store.commit('errors/clearErrorState');
-      },
+  },
+  methods: {
+    openDialog(project) {
+      if (project) {
+        this.modalItem = {
+          id: project.id,
+          code: project.code,
+          description: project.description,
+          isActive: project.isActive,
+          meetingTimeId: project.meetingTime.value,
+          slackChannelName: project.slackChannelName,
+        };
+      }
+      this.isOpen = true;
     },
-  };
+    async save() {
+      if (this.$refs.form.validate()) {
+        const action = this.modalItem.id ? 'projects/editProject' : 'projects/createProject';
+        await this.$store.dispatch(action, this.modalItem);
+        await this.$store.dispatch('projects/getProjects');
+        await this.$store.dispatch('projects/getAllProjects');
+        !this.errors.error.isVisible && this.close();
+      }
+    },
+    close() {
+      this.isOpen = false;
+      this.$refs.form.resetValidation();
+      this.modalItem = { ...this.defaultModalItem };
+      this.$store.commit('errors/clearErrorState');
+    },
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

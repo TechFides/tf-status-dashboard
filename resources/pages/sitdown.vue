@@ -11,7 +11,7 @@
         <v-img
           width="100%"
           height="100%"
-          style="position:absolute"
+          style="position: absolute"
           :src="gifDialog.url"
         />
       </div>
@@ -70,9 +70,7 @@
         no-data-text="Žádná data"
         class="elevation-1 fullscreen"
       >
-        <template
-          v-slot:header="{ props }"
-        >
+        <template v-slot:header="{ props }">
           <thead>
             <tr>
               <th
@@ -113,9 +111,7 @@
             </tr>
           </thead>
         </template>
-        <template
-          v-slot:item="props"
-        >
+        <template v-slot:item="props">
           <tr>
             <td class="text-center element">
               {{ formatDate(props.item.standup.date) }}
@@ -142,9 +138,7 @@
               >
                 edit
               </v-icon>
-              <v-icon
-                @click="deleteStandup(props.item.standup)"
-              >
+              <v-icon @click="deleteStandup(props.item.standup)">
                 delete
               </v-icon>
             </td>
@@ -156,12 +150,8 @@
       :editable="isAdministration()"
       @edit="editNote"
     />
-    <note-dialog
-      ref="refNoteDialog"
-    />
-    <StandupDialog
-      ref="refStandupDialog"
-    />
+    <note-dialog ref="refNoteDialog" />
+    <StandupDialog ref="refStandupDialog" />
   </div>
 </template>
 
@@ -182,7 +172,7 @@ export default {
     DatePicker,
     StandupDialog,
   },
-  data () {
+  data() {
     return {
       GIF_ANIMATION_DURATION: 5500,
       gifDialog: {
@@ -197,14 +187,8 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'notes',
-      'projects',
-      'standups',
-      'errors',
-      'meetingTimes',
-    ]),
-    headers () {
+    ...mapState(['notes', 'projects', 'standups', 'errors', 'meetingTimes']),
+    headers() {
       const sortedProjects = this.sortProjectsByMeetingTime();
       const filteredProjects = this.getFilteredProjectsBySelectedMeetingTime(sortedProjects);
       const formattedProjectsForTable = filteredProjects.map(project => ({
@@ -234,7 +218,7 @@ export default {
         },
       ];
     },
-    rows () {
+    rows() {
       return this.standups.ratings.map(standup => ({
         standup: {
           id: sitdown.id,
@@ -243,9 +227,9 @@ export default {
         ratings: this.getRatings(sitdown),
       }));
     },
-    formattedMeetingTimesForSelect () {
+    formattedMeetingTimesForSelect() {
       return [
-        {text: 'Žádný', value: null},
+        { text: 'Žádný', value: null },
         ...this.meetingTimes.items.map(meetingTime => ({
           text: meetingTime.dayAndTime,
           value: meetingTime.id,
@@ -261,7 +245,7 @@ export default {
       deep: true,
     },
   },
-  fetch ({ store, params }) {
+  fetch({ store, params }) {
     return Promise.all([
       store.dispatch('standups/getStandupData'),
       store.dispatch('notes/getNotes'),
@@ -270,7 +254,7 @@ export default {
     ]);
   },
   methods: {
-    sortProjectsByMeetingTime () {
+    sortProjectsByMeetingTime() {
       const projectsWithoutMeetingTime = this.projects.items.filter(project => project.meetingTime.time === null);
       const sortedProjectsWithMeetingTime = this.projects.items
         .filter(project => project.meetingTime.time !== null)
@@ -278,41 +262,41 @@ export default {
 
       return [...sortedProjectsWithMeetingTime, ...projectsWithoutMeetingTime];
     },
-    sortByDayAndTime (timeA, timeB) {
+    sortByDayAndTime(timeA, timeB) {
       if (timeA.weekDayId !== timeB.weekDayId) {
         return timeA.weekDayId - timeB.weekDayId;
       }
 
-      if  (timeA.time !== timeB.time) {
+      if (timeA.time !== timeB.time) {
         return timeA.time > timeB.time ? 1 : -1;
       }
 
       return 0;
     },
-    getFilteredProjectsBySelectedMeetingTime (allProjects) {
+    getFilteredProjectsBySelectedMeetingTime(allProjects) {
       return this.selectedMeetingTimeId !== null
         ? allProjects.filter(project => project.meetingTime.id === this.selectedMeetingTimeId)
         : allProjects;
     },
-    formatDate (date) {
+    formatDate(date) {
       const d = new Date(date);
 
       return format(d, 'DD/MM/YYYY');
     },
-    formatMonth (date) {
+    formatMonth(date) {
       const d = new Date(date);
 
       return format(d, 'MM-YYYY');
     },
-    updateStandup () {
+    updateStandup() {
       const actualDate = new Date();
 
       const selectedDate = new Date();
       const [year, month] = this.filter.standupMonth.split('-');
       selectedDate.setFullYear(Number(year), Number(month) - 1);
 
-      const isSameMonth = (selectedDate.getMonth() === actualDate.getMonth());
-      const isSameYear = (selectedDate.getFullYear() === actualDate.getFullYear());
+      const isSameMonth = selectedDate.getMonth() === actualDate.getMonth();
+      const isSameYear = selectedDate.getFullYear() === actualDate.getFullYear();
 
       if (isSameMonth && isSameYear) {
         this.$store.dispatch('standups/getStandupData', selectedDate);
@@ -320,37 +304,37 @@ export default {
         this.$store.dispatch('standups/getProjectsForMonth', selectedDate);
       }
     },
-    getRatings (standup) {
+    getRatings(standup) {
       return this.getFilteredProjectsBySelectedMeetingTime(this.sortProjectsByMeetingTime()).map(p => ({
         standupId: sitdown.id,
         projectId: p.id,
         rating: sitdown.standupProjectRating[p.id] >= 0 ? sitdown.standupProjectRating[p.id] : this.defaultRating,
       }));
     },
-    isMissingNote (projectCode, hasIcon) {
+    isMissingNote(projectCode, hasIcon) {
       const date = format(new Date(), 'YYYY-MM-DD 00:00:00');
       const hasNoteAfterDeadline = this.notes.items.some(element => {
         return element.projectCode === projectCode && element.deadlineDate > date;
       });
       return !hasNoteAfterDeadline && hasIcon;
     },
-    async editNote (note) {
+    async editNote(note) {
       this.$refs.refNoteDialog.openDialog(note);
     },
-    createNote () {
+    createNote() {
       this.$refs.refNoteDialog.openDialog();
     },
-    editStandup (standup) {
+    editStandup(standup) {
       this.$refs.refStandupDialog.openDialog(sitdown);
     },
-    createStandup () {
+    createStandup() {
       this.$refs.refStandupDialog.openDialog();
     },
-    openGifDialog () {
+    openGifDialog() {
       this.gifDialog.isOpen = true;
-      this.gifDialog.url = "/giphy.gif"+"?a="+Math.random();
+      this.gifDialog.url = '/giphy.gif' + '?a=' + Math.random();
 
-      setTimeout(() => this.gifDialog.isOpen = false, this.GIF_ANIMATION_DURATION);
+      setTimeout(() => (this.gifDialog.isOpen = false), this.GIF_ANIMATION_DURATION);
     },
     async deleteStandup(standup) {
       const confirmed = confirm(`Opravdu chcete smazat standup ${this.formatDate(sitdown.date)}?`);
@@ -369,44 +353,44 @@ export default {
 </script>
 
 <style scoped>
-  .fullscreen {
-    width: 100%;
-    height: 100%;
-  }
+.fullscreen {
+  width: 100%;
+  height: 100%;
+}
 
-  .element {
-    font-size: 1.5em !important;
-  }
+.element {
+  font-size: 1.5em !important;
+}
 
-  .header {
-    font-size: 2em !important;
-  }
+.header {
+  font-size: 2em !important;
+}
 
-  .material-icons.alert-icon {
-    color:#c62828;
-    vertical-align: top;
-  }
+.material-icons.alert-icon {
+  color: #c62828;
+  vertical-align: top;
+}
 
-  .align-project {
-    display: inline-block;
-  }
+.align-project {
+  display: inline-block;
+}
 
-  .header-text {
-    color: rgba(0,0,0,.54) !important;
-    font-weight: 500 !important;
-    font-size: 1.2em !important;
-    padding: 0;
-    min-width: 150px;
-  }
+.header-text {
+  color: rgba(0, 0, 0, 0.54) !important;
+  font-weight: 500 !important;
+  font-size: 1.2em !important;
+  padding: 0;
+  min-width: 150px;
+}
 
-  .gif {
-    width:600px;
-    height:500px;
-    position:absolute;
-    z-index: 9999;
-  }
+.gif {
+  width: 600px;
+  height: 500px;
+  position: absolute;
+  z-index: 9999;
+}
 
-  .project-name {
-    display: flex;
-  }
+.project-name {
+  display: flex;
+}
 </style>

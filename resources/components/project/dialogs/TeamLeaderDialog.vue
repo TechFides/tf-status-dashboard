@@ -54,64 +54,59 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+import { mapState } from 'vuex';
 
-  export default {
-    name: 'TeamLeaderDialog',
-    data () {
-      return {
-        isOpen: false,
-        teamLeaderModalItem: {
-          projectId: null,
-          userId: 0,
-        },
-        defaultTeamLeaderModalItem: {
-          projectId: null,
-          userId: 0,
-        },
-      };
+export default {
+  name: 'TeamLeaderDialog',
+  data() {
+    return {
+      isOpen: false,
+      teamLeaderModalItem: {
+        projectId: null,
+        userId: 0,
+      },
+      defaultTeamLeaderModalItem: {
+        projectId: null,
+        userId: 0,
+      },
+    };
+  },
+  computed: {
+    ...mapState(['errors', 'users']),
+    formattedTeamleadersForSelect() {
+      return [
+        { text: 'Žádný', value: 0 },
+        ...this.users.items.map(user => ({
+          text: `${user.firstName} ${user.lastName}`,
+          value: user.id,
+        })),
+      ];
     },
-    computed: {
-      ...mapState([
-        'errors',
-        'users',
-      ]),
-      formattedTeamleadersForSelect () {
-        return [
-          {text: 'Žádný', value: 0},
-          ...this.users.items.map(user => ({
-            text: `${user.firstName} ${user.lastName}`,
-            value: user.id,
-          })),
-        ];
-      },
+  },
+  methods: {
+    openDialog(teamLeader) {
+      this.isOpen = true;
+      if (teamLeader) {
+        this.teamLeaderModalItem = {
+          projectId: teamLeader.id,
+          userId: teamLeader.teamLeader.id ? teamLeader.teamLeader.id : this.defaultTeamLeaderModalItem.userId,
+        };
+      }
     },
-    methods: {
-      openDialog (teamLeader) {
-        this.isOpen = true;
-        if (teamLeader) {
-          this.teamLeaderModalItem = {
-            projectId: teamLeader.id,
-            userId: teamLeader.teamLeader.id ? teamLeader.teamLeader.id : this.defaultTeamLeaderModalItem.userId,
-          };
-        }
-      },
-      closeTeamleaderModal () {
-        if (this.$refs.form.validate()) {
-          this.isOpen = false;
-          this.teamLeaderModalItem = { ...this.defaultTeamLeaderModalItem };
-          this.$store.commit('errors/clearErrorState');
-        }
-      },
-      async saveTeamleaderModal() {
-        this.$refs.form.resetValidation();
-        await this.$store.dispatch('projects/addTeamLeader', this.teamLeaderModalItem);
-        !this.errors.error.isVisible && this.closeTeamleaderModal();
-      },
+    closeTeamleaderModal() {
+      if (this.$refs.form.validate()) {
+        this.isOpen = false;
+        this.teamLeaderModalItem = { ...this.defaultTeamLeaderModalItem };
+        this.$store.commit('errors/clearErrorState');
+      }
     },
-  };
+    async saveTeamleaderModal() {
+      this.$refs.form.resetValidation();
+      await this.$store.dispatch('projects/addTeamLeader', this.teamLeaderModalItem);
+      !this.errors.error.isVisible && this.closeTeamleaderModal();
+    },
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

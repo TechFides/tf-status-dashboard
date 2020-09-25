@@ -109,9 +109,7 @@
       fill-height
       class="elevation-1 fullscreen"
     >
-      <template
-        v-slot:item="props"
-      >
+      <template v-slot:item="props">
         <tr>
           <td class="text-center element">
             {{ props.item.name }}
@@ -147,152 +145,147 @@
 </template>
 
 <script>
-  import { mapState, mapMutations } from 'vuex';
-  import { WEEK_DAYS } from '../constants';
+import { mapState, mapMutations } from 'vuex';
+import { WEEK_DAYS } from '../constants';
 
-  export default {
-    data () {
-      return {
-        weekDays: WEEK_DAYS,
-        editId: null,
-        dialog: {
-          isOpen: false,
-          title: '',
+export default {
+  data() {
+    return {
+      weekDays: WEEK_DAYS,
+      editId: null,
+      dialog: {
+        isOpen: false,
+        title: '',
+      },
+      formData: {
+        name: '',
+        weekDay: '',
+        time: '',
+      },
+    };
+  },
+  computed: {
+    ...mapState(['meetingTimes', 'errors']),
+    headers: function () {
+      return [
+        {
+          text: 'Název',
+          align: 'center',
+          sortable: false,
         },
-        formData: {
-          name: '',
-          weekDay: '',
-          time: '',
+        {
+          text: 'Hodina',
+          align: 'center',
+          sortable: false,
         },
+        {
+          text: 'Den v týdnu',
+          align: 'center',
+          sortable: false,
+        },
+        {
+          text: 'Projekty',
+          align: 'center',
+          sortable: false,
+        },
+        {
+          text: 'Akce',
+          align: 'center',
+          sortable: false,
+        },
+      ];
+    },
+  },
+  async fetch({ store }) {
+    await store.dispatch('meetingTimes/getMeetingTimes');
+  },
+  methods: {
+    updateName(value) {
+      this.formData.name = value;
+    },
+    updateTime(value) {
+      this.formData.time = value;
+    },
+    updateWeekDay(value) {
+      this.formData.weekDay = value;
+    },
+    getTitle(isEdit) {
+      return `${isEdit ? 'Upravit' : 'Nový'} čas konání sitdownu`;
+    },
+    closeDialog() {
+      if (!this.errors.error.isVisible) this.dialog.isOpen = false;
+    },
+    toggleDialogVisibility(dataForEdit) {
+      const isEdit = dataForEdit !== undefined;
+
+      isEdit ? this.setDataForEdit(dataForEdit) : this.resetData();
+      this.dialog.title = this.getTitle(isEdit);
+      this.dialog.isOpen = !this.dialog.isOpen;
+    },
+    resetData() {
+      this.formData = {
+        name: '',
+        weekDay: '',
+        time: '',
       };
+      this.editId = null;
     },
-    computed: {
-      ...mapState([
-        'meetingTimes',
-        'errors',
-      ]),
-      headers: function () {
-        return [
-          {
-            text: 'Název',
-            align: 'center',
-            sortable: false,
-          },
-          {
-            text: 'Hodina',
-            align: 'center',
-            sortable: false,
-          },
-          {
-            text: 'Den v týdnu',
-            align: 'center',
-            sortable: false,
-          },
-          {
-            text: 'Projekty',
-            align: 'center',
-            sortable: false,
-          },
-          {
-            text: 'Akce',
-            align: 'center',
-            sortable: false,
-          },
-        ];
-      },
+    setDataForEdit(dataForEdit) {
+      this.formData = {
+        name: dataForEdit.name,
+        weekDay: dataForEdit.weekDay,
+        time: dataForEdit.time,
+      };
+      this.editId = dataForEdit.id;
     },
-    async fetch ({ store }) {
-      await store.dispatch('meetingTimes/getMeetingTimes');
+    submit() {
+      this.editId ? this.editSitDownMeetingTime() : this.createSitDownMeetingTime();
     },
-    methods: {
-      updateName (value) {
-        this.formData.name = value;
-      },
-      updateTime (value) {
-        this.formData.time = value;
-      },
-      updateWeekDay (value) {
-        this.formData.weekDay = value;
-      },
-      getTitle (isEdit) {
-        return `${isEdit ? 'Upravit' : 'Nový'} čas konání sitdownu`;
-      },
-      closeDialog () {
-        if (!this.errors.error.isVisible) this.dialog.isOpen = false;
-      },
-      toggleDialogVisibility (dataForEdit) {
-        const isEdit = dataForEdit !== undefined;
+    getTransformedDataForRequest() {
+      const dataForRequest = {
+        weekDay: WEEK_DAYS.indexOf(this.formData.weekDay),
+        name: this.formData.name,
+        time: this.formData.time,
+      };
 
-        isEdit ? this.setDataForEdit(dataForEdit) : this.resetData();
-        this.dialog.title = this.getTitle(isEdit);
-        this.dialog.isOpen = !this.dialog.isOpen;
-      },
-      resetData () {
-        this.formData = {
-          name: '',
-          weekDay: '',
-          time: '',
-        };
-        this.editId = null;
-      },
-      setDataForEdit (dataForEdit) {
-        this.formData = {
-          name: dataForEdit.name,
-          weekDay: dataForEdit.weekDay,
-          time: dataForEdit.time,
-        };
-        this.editId = dataForEdit.id;
-      },
-      submit () {
-        this.editId
-          ? this.editSitDownMeetingTime()
-          : this.createSitDownMeetingTime();
-      },
-      getTransformedDataForRequest () {
-        const dataForRequest = {
-          weekDay: WEEK_DAYS.indexOf(this.formData.weekDay),
-          name: this.formData.name,
-          time: this.formData.time,
-        };
-
-        return this.editId ? Object.assign(dataForRequest, { id: this.editId }) : dataForRequest;
-      },
-      async createSitDownMeetingTime () {
-        await this.$store.dispatch('meetingTimes/createMeetingTime', this.getTransformedDataForRequest());
-        this.closeDialog();
-      },
-      async editSitDownMeetingTime () {
-        await this.$store.dispatch('meetingTimes/editMeetingTime', this.getTransformedDataForRequest());
-        this.closeDialog();
-      },
-      async deleteSitDownMeetingTime (id) {
-        const confirmed = confirm(`Opravdu chcete smazat sitdown (id: ${id})?`);
-
-        if (confirmed) {
-          await this.$store.dispatch('meetingTimes/deleteMeetingTime', id);
-        }
-      },
+      return this.editId ? Object.assign(dataForRequest, { id: this.editId }) : dataForRequest;
     },
-  };
+    async createSitDownMeetingTime() {
+      await this.$store.dispatch('meetingTimes/createMeetingTime', this.getTransformedDataForRequest());
+      this.closeDialog();
+    },
+    async editSitDownMeetingTime() {
+      await this.$store.dispatch('meetingTimes/editMeetingTime', this.getTransformedDataForRequest());
+      this.closeDialog();
+    },
+    async deleteSitDownMeetingTime(id) {
+      const confirmed = confirm(`Opravdu chcete smazat sitdown (id: ${id})?`);
+
+      if (confirmed) {
+        await this.$store.dispatch('meetingTimes/deleteMeetingTime', id);
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>
-  .fullscreen {
-    width: 100%;
-    height: 100%;
-  }
-  .time-picker {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
+.fullscreen {
+  width: 100%;
+  height: 100%;
+}
+.time-picker {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 
-  .element {
-    font-size: 1.3em !important;
-  }
+.element {
+  font-size: 1.3em !important;
+}
 
-  .button {
-    margin: 6px 8px;
-  }
+.button {
+  margin: 6px 8px;
+}
 </style>

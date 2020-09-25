@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="full-height"
-  >
+  <div class="full-height">
     <v-layout
       row
       reverse
@@ -21,12 +19,8 @@
           <v-form ref="form">
             <v-card-text>
               <v-container grid-list-md>
-                <v-layout
-                  wrap
-                >
-                  <v-flex
-                    xs12
-                  >
+                <v-layout wrap>
+                  <v-flex xs12>
                     <v-text-field
                       v-model="userInfoDialog.bonusXp"
                       type="number"
@@ -132,9 +126,7 @@
         class="elevation-1 fullscreen"
         @item-expanded="getRowId"
       >
-        <template
-          v-slot:item="{item, expand, isExpanded}"
-        >
+        <template v-slot:item="{ item, expand, isExpanded }">
           <tr
             class="expanded-row"
             @click.stop="expand(!isExpanded)"
@@ -153,7 +145,7 @@
             </td>
             <td
               class="text-right element pr-8"
-              :class="{ 'hero-element': isHeroOfMonth(item.id)}"
+              :class="{ 'hero-element': isHeroOfMonth(item.id) }"
             >
               {{ item.monthXp }}
             </td>
@@ -162,7 +154,7 @@
             </td>
             <td
               class="text-right element pr-8"
-              :class="{ 'hero-element': isHeroOfGame(item.id)}"
+              :class="{ 'hero-element': isHeroOfGame(item.id) }"
             >
               {{ item.totalXp }}
             </td>
@@ -185,17 +177,13 @@
               </v-icon>
             </td>
             <td class="text-left px-0">
-              <v-icon
-                class="mr-2"
-              >
-                {{ isExpanded ? "mdi-chevron-up" : "mdi-chevron-down" }}
+              <v-icon class="mr-2">
+                {{ isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
               </v-icon>
             </td>
           </tr>
         </template>
-        <template
-          v-slot:expanded-item="{ headers }"
-        >
+        <template v-slot:expanded-item="{ headers }">
           <td
             :colspan="headers.length"
             class="pr-0 pl-0"
@@ -211,9 +199,7 @@
               class="expanded-row-body"
             >
               <thead>
-                <tr
-                  class="expanded-header"
-                >
+                <tr class="expanded-header">
                   <th
                     v-for="h in expandedHeaders"
                     :key="h.text"
@@ -296,9 +282,7 @@
             </v-btn>
           </div>
         </template>
-        <span>
-          Probíhá synchronizace. Počkejte prosím...
-        </span>
+        <span> Probíhá synchronizace. Počkejte prosím... </span>
       </v-tooltip>
     </v-layout>
     <div
@@ -324,11 +308,11 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
-  import { format } from 'date-fns';
+import { mapState } from 'vuex';
+import { format } from 'date-fns';
 
 export default {
-  data () {
+  data() {
     return {
       statisticsMonthDialog: {
         isOpen: false,
@@ -347,10 +331,7 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'statistics',
-      'errors',
-    ]),
+    ...mapState(['statistics', 'errors']),
     headers: function () {
       const headers = [
         {
@@ -434,7 +415,7 @@ export default {
 
       return headers.filter(h => h.isVisible);
     },
-    expandedHeaders () {
+    expandedHeaders() {
       const projectsStandupDates = this.getProjectsStandupDates();
       let standupDate = [
         {
@@ -496,7 +477,7 @@ export default {
       return expandedHeaders.filter(h => h.isVisible);
     },
 
-    userDetailItems () {
+    userDetailItems() {
       const userDetail = this.statistics.items.userStatistics.find(u => u.id === this.expandedRowId);
       return userDetail.userDetail;
     },
@@ -512,7 +493,7 @@ export default {
       return selectedDate >= dateMonthAgo;
     },
   },
-  async fetch ({ store }) {
+  async fetch({ store }) {
     const now = new Date();
     const params = {
       month: now.getMonth() + 1,
@@ -534,7 +515,7 @@ export default {
       this.userInfoDialog.isOpen = true;
     },
 
-    close () {
+    close() {
       this.userInfoDialog = {
         id: null,
         previousXp: null,
@@ -546,14 +527,15 @@ export default {
       this.$store.commit('errors/clearErrorState');
     },
 
-    async save () {
+    async save() {
       const [year, month] = this.statisticsMonthDialog.month.split('-');
       const d = {
         year: Number(year),
         month: Number(month),
       };
 
-      const monthXp = this.userInfoDialog.sumXpProjects + this.userInfoDialog.sumHoursWorked + Number(this.userInfoDialog.bonusXp);
+      const monthXp =
+        this.userInfoDialog.sumXpProjects + this.userInfoDialog.sumHoursWorked + Number(this.userInfoDialog.bonusXp);
       const userBonusXp = {
         id: this.userInfoDialog.id,
         bonusXp: Number(this.userInfoDialog.bonusXp),
@@ -602,13 +584,13 @@ export default {
       await this.$store.dispatch('statistics/getJiraData', params);
     },
 
-    formatMonth (date) {
+    formatMonth(date) {
       const d = new Date(date);
 
       return format(d, 'DD. MM.');
     },
 
-    updateMonth (monthInput) {
+    updateMonth(monthInput) {
       if (!this.statisticsMonthDialog.month) {
         this.statisticsMonthDialog.isOpen = false;
         return;
@@ -631,90 +613,89 @@ export default {
 </script>
 
 <style scoped>
-  .fullscreen {
-    width: 100%;
-    height: 100%;
-  }
+.fullscreen {
+  width: 100%;
+  height: 100%;
+}
 
-  .hero-element {
-    color: #0091EA;
-    font-weight: bold;
-  }
+.hero-element {
+  color: #0091ea;
+  font-weight: bold;
+}
 
-  .element {
-    font-size: 1.3em !important;
-  }
+.element {
+  font-size: 1.3em !important;
+}
 
-  .month-picker {
-    margin-right: 20px;
-  }
+.month-picker {
+  margin-right: 20px;
+}
 
-  .standup-button {
-    background-color: #1976D2 !important;
-  }
+.standup-button {
+  background-color: #1976d2 !important;
+}
 
-  .full-height {
-    height: 100%;
-  }
+.full-height {
+  height: 100%;
+}
 
-  .synchronization-info-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-  }
+.synchronization-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
 
-  .column-align {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-  }
+.column-align {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
 
-  .row-align {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    flex-direction: row;
-  }
+.row-align {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: row;
+}
 
-  .blue-color {
-    color: #0091EA;
-  }
+.blue-color {
+  color: #0091ea;
+}
 
-  .synchronization-info {
-    font-weight: bold;
-    margin-left: 0.5rem;
-  }
+.synchronization-info {
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
 
-  .expanded-row {
-    cursor: pointer !important;
-  }
+.expanded-row {
+  cursor: pointer !important;
+}
 
-  .expanded-header {
-    color: rgba(0, 0, 0, 0.6);
-    font-size: 0.75rem;
-    height: 2.5rem;
-  }
+.expanded-header {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.75rem;
+  height: 2.5rem;
+}
 
-  .expanded-row-body {
-    width: 100%;
-  }
+.expanded-row-body {
+  width: 100%;
+}
 
-  .expanded-row-text {
-    font-size: 0.9rem;
-    height: 2.5rem;
-  }
+.expanded-row-text {
+  font-size: 0.9rem;
+  height: 2.5rem;
+}
 
-  .no-available-data {
-    display: flex;
-    justify-content: center;
-    color: rgba(0,0,0,.38);
-    height: 48px;
-    align-items: center;
-  }
+.no-available-data {
+  display: flex;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.38);
+  height: 48px;
+  align-items: center;
+}
 
-  .border-bottom {
-    border-bottom: 1px solid rgba(0,0,0,.12) !important;
-  }
-
+.border-bottom {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
 </style>
