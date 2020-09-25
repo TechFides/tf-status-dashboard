@@ -22,9 +22,9 @@
     async mounted () {
       console.log('redirected from google');
       try {
-        await this.$auth.loginWith('local', {data: {gToken: this.$route.query.token}}).then(
-          this.$router.push('/')
-        );
+        await this.$auth.loginWith('local', {data: {gToken: this.$route.query.token}}).then(()=>{
+          this.$router.push('/');
+        });
       } catch (error) {
         return handleError();
       }

@@ -61,7 +61,7 @@ class UsersXpCounter {
     ).toJSON();
 
     const userDetailStatistics = fetchedUserStatistics
-      .filter(f => f.position.is_player)
+      .filter(f => f.position && f.position.is_player)
       .map(s => ({
         id: s.id,
         userName: `${s.first_name} ${s.last_name}`,

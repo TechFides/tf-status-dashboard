@@ -160,7 +160,6 @@ export default {
   async fetch ({ store }) {
     await Promise.all([
       store.dispatch('users/getUsers'),
-      store.dispatch('users/getRoles'),
     ]);
   },
   methods: {
