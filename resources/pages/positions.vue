@@ -123,7 +123,7 @@ export default {
           value: 'isPlayer',
         },
         {
-          text: 'Kategorie',
+          text: 'Work Kategorie',
           align: 'left',
           sortable: true,
           value: 'costCategories',

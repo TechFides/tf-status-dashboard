@@ -1,8 +1,10 @@
 'use strict';
 const moment = require('moment');
+const axios = require('axios');
 const Logger = use('Logger');
 
 const PositionModel = use('App/Models/Position');
+const CostCategoryController = use('App/Controllers/Http/CostCategoryController');
 const PositionPermissionModel = use('App/Models/PositionPermission');
 const PositionCostCategory = use('App/Models/PositionCostCategory');
 
@@ -55,8 +57,16 @@ class PositionController {
     await PositionCostCategory.createMany(payload);
   }
 
-  async positionSynchronization({ request, response, params }) {
-    const positionsData = request.body;
+  async positionSynchronization() {
+    const positions = await axios({
+      url: '/api/employee-positions',
+      baseURL: process.env.NUXT_ENV_TF_ERP_API_URL,
+      headers: {
+        apitoken: process.env.NUXT_ENV_TF_ERP_API_TOKEN,
+        Authorization: '',
+      },
+    });
+    const positionsData = positions.data.data;
     await PositionController.checkDeletedPositions(positionsData);
 
     for (const position of positionsData) {
@@ -68,6 +78,7 @@ class PositionController {
       }
       await PositionController.setCostCategories(position);
     }
+    await CostCategoryController.costCategorySynchronization();
   }
 
   async setPermissions({ request, response, params }) {

@@ -28,15 +28,7 @@ export const mutations = {
 export const actions = {
   async usersSynchronizations({ dispatch, commit }) {
     try {
-      const employees = await this.$axios({
-        url: '/api/employees',
-        baseURL: process.env.NUXT_ENV_TF_ERP_API_URL,
-        headers: {
-          apitoken: process.env.NUXT_ENV_TF_ERP_API_TOKEN,
-          Authorization: '',
-        },
-      });
-      await this.$axios.post('/api/users/synchronization', employees.data.data);
+      await this.$axios.post('/api/users/synchronization');
       dispatch('getUsers');
       commit('notification/clearNotification', null, { root: true });
     } catch (error) {
