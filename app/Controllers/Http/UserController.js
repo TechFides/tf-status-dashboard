@@ -1,6 +1,7 @@
 'use strict';
 
 const moment = require('moment');
+const axios = require('axios');
 
 const UserModel = use('App/Models/User');
 const AbsenceApproverModel = use('App/Models/AbsenceApprover');
@@ -37,8 +38,16 @@ class UserController {
     await user.save();
   }
 
-  async userSynchronization({ request, response }) {
-    const employeesData = request.body;
+  async userSynchronization({ response }) {
+    const employeesResponse = await axios({
+      url: '/api/employees',
+      baseURL: process.env.NUXT_ENV_TF_ERP_API_URL,
+      headers: {
+        apitoken: process.env.NUXT_ENV_TF_ERP_API_TOKEN,
+        Authorization: '',
+      },
+    });
+    const employeesData = employeesResponse.data.data;
 
     try {
       for (const employee of employeesData) {

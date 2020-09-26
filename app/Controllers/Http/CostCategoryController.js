@@ -1,8 +1,32 @@
 'use strict';
 const moment = require('moment');
+const axios = require('axios');
 
 const CostCategoryModel = use('App/Models/CostCategory');
 const PositionModel = use('App/Models/Position');
+
+const formatCostCategories = costCategories => {
+  let flattenArray = [];
+  for (const category of costCategories) {
+    if (category.subCategories.length) {
+      for (const subCategorie of category.subCategories) {
+        flattenArray.push({
+          workCategory: subCategorie.workCategory,
+          name: `${category.name} -> ${subCategorie.name}`,
+          id: subCategorie.id,
+        });
+      }
+    } else {
+      flattenArray.push({
+        workCategory: category.workCategory,
+        name: category.name,
+        id: category.id,
+      });
+    }
+  }
+
+  return flattenArray.filter(f => f.workCategory);
+};
 
 class CostCategoryController {
   static async createCostCategory(data) {
@@ -36,27 +60,39 @@ class CostCategoryController {
     }
   }
 
-  async getCostCategories({ request, response, params }) {
-    const { positionId } = request.get();
+  static async costCategorySynchronization() {
+    const costCategories = await axios({
+      url: '/api/cost-categories/tree',
+      baseURL: process.env.NUXT_ENV_TF_ERP_API_URL,
+      headers: {
+        apitoken: process.env.NUXT_ENV_TF_ERP_API_TOKEN,
+        Authorization: '',
+      },
+    });
 
-    const position = (
-      await PositionModel.query().with('costCategories').where('id', positionId).orderBy('name', 'asc').first()
-    ).toJSON();
-
-    return position.costCategories;
-  }
-
-  async costCategorySynchronization({ request, response, params }) {
-    const { costCategoriesData } = request.body;
-    await CostCategoryController.checkDeletedCostCategory(costCategoriesData);
+    const costCategoriesData = formatCostCategories(costCategories.data.data);
 
     for (const costCategory of costCategoriesData) {
       const hubCostCategory = await CostCategoryModel.find(costCategory.id);
       if (!hubCostCategory) {
         await CostCategoryController.createCostCategory(costCategory);
-      } else if (hubCostCategory && moment(costCategory._updated).isAfter(moment(hubCostCategory.updated_at))) {
+      } else {
         await CostCategoryController.editCostCategory(hubCostCategory, costCategory);
       }
+    }
+  }
+
+  async getCostCategories({ request, response, params }) {
+    const { positionId } = request.get();
+
+    if (positionId) {
+      const position = (
+        await PositionModel.query().with('costCategories').where('id', positionId).orderBy('name', 'asc').first()
+      ).toJSON();
+
+      return position.costCategories;
+    } else {
+      return [];
     }
   }
 }
