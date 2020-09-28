@@ -32,10 +32,12 @@ export const mutations = {
       timeSpent: getTimeSpent(w.time_spent),
       timeSpentByNumber: w.time_spent,
       description: w.description,
-      costCategory: {
-        id: w.costCategory.id,
-        name: w.costCategory.name,
-      },
+      costCategory: w.costCategory
+        ? {
+            id: w.costCategory.id,
+            name: w.costCategory.name,
+          }
+        : {},
     }));
 
     state.timeSpentSum = getTimeSpent(workLogs.timeSpentSum);
