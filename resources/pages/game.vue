@@ -7,7 +7,7 @@
             <span class="headline">Přidat bonus XP</span>
           </v-card-title>
 
-          <v-form ref="form">
+          <v-form ref="form" @submit.prevent>
             <v-card-text>
               <v-container grid-list-md>
                 <v-layout wrap>
@@ -23,8 +23,8 @@
 
             <v-card-actions>
               <v-spacer />
-              <v-btn color="blue darken-1" text @click.native="close"> Zrušit </v-btn>
-              <v-btn color="blue darken-1" text @click.native="save"> Uložit </v-btn>
+              <v-btn text @click.native="close"> Zrušit </v-btn>
+              <v-btn color="green darken-2" dark @click.native="save"> Uložit </v-btn>
             </v-card-actions>
           </v-form>
         </v-card>
