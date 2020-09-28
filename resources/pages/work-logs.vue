@@ -146,16 +146,20 @@ export default {
       return headers.filter(h => h.isVisible);
     },
     costCategoryItems() {
-      return this.costCategories.items.map(c => ({
-        text: c.name,
-        value: c.id,
+      return this.costCategories.items.map(category => ({
+        text: category.name,
+        value: category.id,
       }));
     },
     authorItems() {
-      return this.users.items.map(user => ({
-        text: `${user.firstName} ${user.lastName}`,
-        value: user.id.toString(),
-      }));
+      return this.users.items.map(user => {
+        if (user) {
+          return {
+            text: `${user.firstName} ${user.lastName}`,
+            value: user.id.toString(),
+          };
+        }
+      });
     },
   },
   watch: {
