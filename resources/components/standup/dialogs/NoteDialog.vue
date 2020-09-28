@@ -23,8 +23,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" text @click.native="resetNote"> Zavřít </v-btn>
-          <v-btn color="blue darken-1" text type="submit"> Uložit </v-btn>
+          <v-btn text @click.native="resetNote"> Zavřít </v-btn>
+          <v-btn color="green darken-2" dark type="submit"> Uložit </v-btn>
         </v-card-actions>
       </v-card>
     </v-form>

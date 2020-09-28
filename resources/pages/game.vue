@@ -185,13 +185,13 @@
     <div v-if="statistics.items.jiraSynchronization.status" class="column-align">
       <div class="synchronization-info-wrapper">
         <div class="row-align blue-color">
-          Synchronizece začala:
+          Synchronizace začala:
           <div class="synchronization-info">
             {{ statistics.items.jiraSynchronization.startSyncTime }}
           </div>
         </div>
         <div class="row-align blue-color">
-          Synchronizece naposledy trvala:
+          Synchronizace naposledy trvala:
           <div class="synchronization-info">
             {{ statistics.items.jiraSynchronization.lastDuration }}
           </div>

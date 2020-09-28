@@ -117,8 +117,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" text @click.native="cancelDialog"> Zrušit </v-btn>
-          <v-btn color="blue darken-2" dark @click.native="confirmDialog"> Potvrdit </v-btn>
+          <v-btn text @click.native="cancelDialog"> Zrušit </v-btn>
+          <v-btn color="green darken-2" dark @click.native="confirmDialog"> Potvrdit </v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
@@ -142,9 +142,6 @@ export default {
       show: false,
       showApproverDescriptionTooltip: false,
       showGeneralDescriptionTooltip: false,
-      gif: {
-        url: '',
-      },
       gifTagEnum: ['', 'home office', 'holiday', 'work trip', 'holiday'],
       dialogData: {
         userId: null,
@@ -164,9 +161,6 @@ export default {
         approverDescription: '',
         approver: '',
         absenceHoursNumber: null,
-      },
-      defaultGif: {
-        url: '',
       },
       defaultSelectItems: [],
       rules: {
@@ -200,6 +194,9 @@ export default {
         value: absenceTypeEnum.id,
       }));
     },
+    gif() {
+      return this.gifs.items.length ? this.gifs.items[Math.floor(Math.random() * this.gifs.items.length)] : { url: '' };
+    },
   },
   watch: {
     absenceStart() {
@@ -212,6 +209,9 @@ export default {
       await this.loadGif();
     },
   },
+  mounted() {
+    this.loadGif();
+  },
   methods: {
     async loadGif() {
       const params = {
@@ -220,8 +220,6 @@ export default {
         api_key: process.env.NUXT_ENV_GIPHY_API_TOKEN,
       };
       await this.$store.dispatch('gifs/getRandomGif', params);
-
-      this.gif = this.gifs.items[Math.floor(Math.random() * this.gifs.items.length)];
     },
     openDialog() {
       if (this.officeAbsences.approvers.length) {
@@ -233,7 +231,6 @@ export default {
 
       this.dialogData.userId = this.auth.user.id;
       this.show = true;
-      this.gif = this.defaultGif;
     },
     async confirmDialog() {
       if (this.$refs.form.validate()) {
@@ -293,7 +290,6 @@ export default {
 }
 
 .card-text {
-  height: 560px;
   overflow: auto;
 }
 </style>

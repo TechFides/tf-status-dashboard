@@ -107,37 +107,37 @@ export default {
         {
           text: 'Název pozice',
           align: 'left',
-          sortable: true,
+          sortable: false,
           value: 'name',
         },
         {
           text: 'Oprávnění',
           align: 'left',
-          sortable: true,
+          sortable: false,
           value: 'permissions',
         },
         {
           text: 'Hráč',
           align: 'center',
-          sortable: true,
+          sortable: false,
           value: 'isPlayer',
         },
         {
           text: 'Work Kategorie',
           align: 'left',
-          sortable: true,
+          sortable: false,
           value: 'costCategories',
         },
         {
           text: 'Posílat feedback',
           align: 'center',
-          sortable: true,
+          sortable: false,
           value: 'sendFeedback',
         },
         {
           text: 'Akce',
           align: 'center',
-          sortable: true,
+          sortable: false,
           value: 'action',
         },
       ];

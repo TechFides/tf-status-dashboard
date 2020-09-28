@@ -45,7 +45,7 @@ export default {
       const heatmapWeeks = this.heatmap.items.map(h => ({
         text: this.formatDate(h.date),
         align: 'center',
-        sortable: true,
+        sortable: false,
         value: h.date,
       }));
 
@@ -53,7 +53,7 @@ export default {
         {
           text: 'Jméno',
           align: 'center',
-          sortable: true,
+          sortable: false,
           value: 'firstName',
         },
         ...heatmapWeeks,
