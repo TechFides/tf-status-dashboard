@@ -10,24 +10,38 @@
       </template>
       <v-card>
         <v-card-title class="headline grey lighten-2" primary-title>
-          <div class="flex-container">
+          <div>
             {{ `${date} - Vyberte hodnocení: ${projectName}` }}
-            <v-icon x-large class="material-icons" @click="dialog = false"> remove </v-icon>
           </div>
         </v-card-title>
 
-        <v-card-text class="myicon">
-          <v-icon large class="material-icons custom-picker-font-size" @click="submit('HIATUS')"> remove </v-icon>
-          <v-icon large class="material-icons red800 custom-picker-font-size" @click="submit('FAIL')"> close </v-icon>
-          <v-icon large class="material-icons blue500 custom-picker-font-size" @click="submit('STANDARD')">
-            radio_button_unchecked
-          </v-icon>
-          <v-icon large class="material-icons green500 custom-picker-font-size" @click="submit('GOOD')">
-            radio_button_unchecked
-          </v-icon>
-          <v-icon large class="material-icons green500 custom-picker-font-size" @click="submit('AMAZING')">
-            done
-          </v-icon>
+        <v-card-text>
+          <v-row class="text-center">
+            <v-col :cols="$device.isDesktop ? 2 : 12">
+              <v-icon large class="material-icons custom-picker-font-size" @click="submit('HIATUS')"> remove </v-icon>
+            </v-col>
+            <v-col cols="2" :v-if="$device.isDesktop"> </v-col>
+            <v-col :cols="$device.isDesktop ? 2 : 12">
+              <v-icon large class="material-icons red800 custom-picker-font-size" @click="submit('FAIL')">
+                close
+              </v-icon>
+            </v-col>
+            <v-col :cols="$device.isDesktop ? 2 : 12">
+              <v-icon large class="material-icons blue500 custom-picker-font-size" @click="submit('STANDARD')">
+                radio_button_unchecked
+              </v-icon>
+            </v-col>
+            <v-col :cols="$device.isDesktop ? 2 : 12">
+              <v-icon large class="material-icons green500 custom-picker-font-size" @click="submit('GOOD')">
+                radio_button_unchecked
+              </v-icon>
+            </v-col>
+            <v-col :cols="$device.isDesktop ? 2 : 12">
+              <v-icon large class="material-icons green500 custom-picker-font-size" @click="submit('AMAZING')">
+                done
+              </v-icon>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -177,14 +191,8 @@ export default {
 </script>
 
 <style scoped>
-.myicon {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
 .material-icons.custom-picker-font-size {
-  font-size: 1200% !important;
+  font-size: 1050% !important;
 }
 
 .material-icons.custom-font-size {
@@ -204,12 +212,6 @@ export default {
 
 .material-icons.green500 {
   color: #4caf50;
-}
-
-.flex-container {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
 }
 
 .material-icons.blue500 {

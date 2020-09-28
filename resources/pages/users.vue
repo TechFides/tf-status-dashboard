@@ -93,25 +93,25 @@ export default {
         {
           text: 'Schvalovatel dovolené',
           align: 'left',
-          sortable: true,
+          sortable: false,
           value: 'absenceAprrover',
         },
         {
           text: 'Pozice',
           align: 'left',
-          sortable: true,
+          sortable: false,
           value: 'roles',
         },
         {
           text: 'Admin',
           align: 'center',
-          sortable: true,
+          sortable: false,
           value: 'isAdmin',
         },
         {
           text: 'Akce',
           align: 'center',
-          sortable: true,
+          sortable: false,
           value: 'action',
         },
       ];
@@ -122,8 +122,7 @@ export default {
 
         return (
           this.getFullName(element.firstName, element.lastName).toUpperCase().match(uppercasedFilterText) ||
-          this.isUserActive(element.isActive, true).match(uppercasedFilterText) ||
-          this.userRoles(element).toUpperCase().match(uppercasedFilterText)
+          this.isUserActive(element.isActive, true).match(uppercasedFilterText)
         );
       });
     },

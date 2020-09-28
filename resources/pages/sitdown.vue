@@ -11,7 +11,7 @@
           label="Vyberte čas konání sitdownu"
         />
       </v-col>
-      <v-col :cols="$device.isDesktop ? 1 : 12" :class="$device.isDesktop ? 'pt-0' : 'pt-0 pl-6 pb-0'">
+      <v-col :cols="$device.isDesktop ? 2 : 12" :class="$device.isDesktop ? 'pt-0' : 'pt-0 pl-6 pb-0'">
         <DatePicker v-model="filter.standupMonth" label="Měsíc" :clearable="false" type="month" date-format="YYYY-MM" />
       </v-col>
       <v-btn

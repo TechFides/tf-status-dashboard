@@ -57,16 +57,16 @@
     >
       <template v-slot:item="props">
         <tr>
-          <td class="text-center element">
+          <td class="element">
             {{ props.item.name }}
           </td>
-          <td class="text-center element">
+          <td class="element">
             {{ props.item.time }}
           </td>
-          <td class="text-center element">
+          <td class="element">
             {{ props.item.weekDay }}
           </td>
-          <td class="text-center element">
+          <td class="element">
             {{ props.item.projects }}
           </td>
           <td class="justify-center layout px-0">
@@ -105,22 +105,22 @@ export default {
       return [
         {
           text: 'Název',
-          align: 'center',
+          align: 'left',
           sortable: false,
         },
         {
           text: 'Hodina',
-          align: 'center',
+          align: 'left',
           sortable: false,
         },
         {
           text: 'Den v týdnu',
-          align: 'center',
+          align: 'left',
           sortable: false,
         },
         {
           text: 'Projekty',
-          align: 'center',
+          align: 'left',
           sortable: false,
         },
         {
