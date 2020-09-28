@@ -9,6 +9,7 @@ const ProjectModel = use('App/Models/Project');
 const UserProjectParticipationModel = use('App/Models/UserProjectParticipation');
 const JiraSynchronizationModel = use('App/Models/JiraSynchronization');
 const UsersXpCounter = use('App/Services/UsersXpCounter');
+const Logger = use('Logger');
 
 let options;
 let UserIdMap = new Map();
@@ -139,7 +140,14 @@ class JiraWorklogSynchroner {
     let jiraUser;
 
     for (const user of users) {
-      jiraUser = await this.getUserFromJira(user.email);
+      try {
+        jiraUser = await this.getUserFromJira(user.email);
+      } catch (e) {
+        Logger.error('Can not get user from jira for email: ' + user.email);
+        Logger.error(JSON.stringify(e, null, 2));
+        continue;
+      }
+
       if (jiraUser.data[0]) {
         UserIdMap.set(jiraUser.data[0].accountId, user.id);
       }
