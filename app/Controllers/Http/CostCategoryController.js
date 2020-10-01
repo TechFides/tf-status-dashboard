@@ -92,7 +92,7 @@ class CostCategoryController {
 
       return position.costCategories;
     } else {
-      return [];
+      return (await CostCategoryModel.query().fetch()).toJSON();
     }
   }
 }

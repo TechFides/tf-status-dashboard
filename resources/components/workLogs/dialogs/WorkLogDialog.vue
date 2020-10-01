@@ -102,7 +102,7 @@ export default {
   computed: {
     ...mapState(['costCategories', 'officeAbsences', 'auth', 'errors']),
     costCategoryItems() {
-      return this.costCategories.items.map(c => ({
+      return this.costCategories.my.map(c => ({
         text: c.name,
         value: c.id,
       }));
@@ -138,7 +138,7 @@ export default {
           authorId: this.dialogData.authorId,
           started: this.dialogData.startedDate,
           timeSpent: this.timeSpentToMs(this.dialogData.timeSpent),
-          costCategory: this.costCategories.items.find(c => c.id === this.dialogData.costCategoryId),
+          costCategory: this.costCategories.my.find(c => c.id === this.dialogData.costCategoryId),
           description: this.dialogData.description,
         };
 
