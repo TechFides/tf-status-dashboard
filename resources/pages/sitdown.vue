@@ -208,6 +208,10 @@ export default {
       store.dispatch('projects/getProjects'),
     ]);
   },
+  mounted() {
+    const now = new Date();
+    this.filter.standupMonth = `${now.getFullYear()}-${now.getMonth() + 1}`;
+  },
   methods: {
     sortProjectsByMeetingTime() {
       const projectsWithoutMeetingTime = this.projects.items.filter(project => project.meetingTime.time === null);
