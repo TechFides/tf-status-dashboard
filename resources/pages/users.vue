@@ -46,7 +46,11 @@
               {{ props.item.position }}
             </td>
             <td class="justify-center align-center layout px-0">
-              <v-checkbox :input-value="props.item.isAdmin" @change="setIsAdmin(props.item, !props.item.isAdmin)" />
+              <v-checkbox
+                :disabled="!isAdministration()"
+                :input-value="props.item.isAdmin"
+                @change="setIsAdmin(props.item, !props.item.isAdmin)"
+              />
             </td>
             <td>
               <v-icon small class="ml-2" @click="setApprover(props.item)"> mdi-account-plus </v-icon>
