@@ -50,9 +50,9 @@
         <template v-slot:header="{ props }">
           <thead>
             <tr>
-              <th v-for="h in props.headers" :key="h.text" class="text-center header-text">
+              <th v-for="h in props.headers" :key="h.text" class="text-left header-text">
                 <span class="project-name">
-                  <div class="text-xs-center header align-project">
+                  <div class="text-xs-left header align-project">
                     {{ h.text }}
                   </div>
                   <v-tooltip bottom>
@@ -74,7 +74,7 @@
           </thead>
           <thead>
             <tr>
-              <th v-for="h in props.headers" :key="h.text" class="text-center header-text">
+              <th v-for="h in props.headers" :key="h.text" class="text-left header-text">
                 {{ h.meetingTime ? h.meetingTime.dayAndTime : '' }}
               </th>
             </tr>
@@ -82,11 +82,11 @@
         </template>
         <template v-slot:item="props">
           <tr>
-            <td class="text-center element">
+            <td class="text-left element">
               {{ formatDate(props.item.standup.date) }}
             </td>
 
-            <td v-for="(i, itemIndex) in props.item.ratings" :key="itemIndex" class="text-center">
+            <td v-for="(i, itemIndex) in props.item.ratings" :key="itemIndex" class="text-left">
               <project-status-picker
                 :project-rating="i.rating"
                 :project-id="i.projectId"
@@ -96,7 +96,7 @@
                 :on-submit="openGifDialog"
               />
             </td>
-            <td class="text-center px-0">
+            <td class="text-left">
               <v-icon class="mr-2" @click="editStandup(props.item.standup)"> edit </v-icon>
               <v-icon @click="deleteStandup(props.item.standup)"> delete </v-icon>
             </td>
@@ -148,7 +148,7 @@ export default {
       const filteredProjects = this.getFilteredProjectsBySelectedMeetingTime(sortedProjects);
       const formattedProjectsForTable = filteredProjects.map(project => ({
         text: project.code,
-        align: 'center',
+        align: 'left',
         sortable: false,
         value: project.code,
         hasIcon: true,
@@ -207,6 +207,10 @@ export default {
       store.dispatch('meetingTimes/getMeetingTimes'),
       store.dispatch('projects/getProjects'),
     ]);
+  },
+  mounted() {
+    const now = new Date();
+    this.filter.standupMonth = `${now.getFullYear()}-${now.getMonth() + 1}`;
   },
   methods: {
     sortProjectsByMeetingTime() {

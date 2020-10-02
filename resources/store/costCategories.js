@@ -1,18 +1,27 @@
 export const state = () => ({
-  items: [],
+  my: [],
+  all: [],
 });
 
 export const mutations = {
-  setCostCategories(state, costCategories) {
-    state.items = costCategories;
+  setMyCostCategories(state, costCategories) {
+    state.my = costCategories;
+  },
+  setAllCostCategories(state, costCategories) {
+    state.all = costCategories;
   },
 };
 
 export const actions = {
-  async getCostCategories({ commit }) {
+  async getMyCostCategories({ commit }) {
     const positionId = this.$auth.user.position_id;
     const costCategories = await this.$axios.$get('/api/cost-categories', { params: { positionId } });
 
-    commit('setCostCategories', costCategories);
+    commit('setMyCostCategories', costCategories);
+  },
+  async getAllCostCategories({ commit }) {
+    const costCategories = await this.$axios.$get('/api/cost-categories');
+
+    commit('setAllCostCategories', costCategories);
   },
 };

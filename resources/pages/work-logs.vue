@@ -146,7 +146,8 @@ export default {
       return headers.filter(h => h.isVisible);
     },
     costCategoryItems() {
-      return this.costCategories.items.map(category => ({
+      const costCategories = this.isAdministration() ? this.costCategories.all : this.costCategories.my;
+      return costCategories.map(category => ({
         text: category.name,
         value: category.id,
       }));
@@ -173,11 +174,15 @@ export default {
     },
   },
   async created() {
-    await Promise.all([
+    const actions = [
       this.$store.dispatch('workLogs/getWorkLogs', this.filter),
       this.$store.dispatch('users/getUsers'),
-      this.$store.dispatch('costCategories/getCostCategories'),
-    ]);
+      this.$store.dispatch('costCategories/getMyCostCategories'),
+    ];
+    if (this.isAdministration()) {
+      actions.push(this.$store.dispatch('costCategories/getAllCostCategories'));
+    }
+    await Promise.all(actions);
   },
   methods: {
     async deleteItem(item) {
