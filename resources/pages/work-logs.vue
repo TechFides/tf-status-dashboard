@@ -15,8 +15,28 @@
         <v-col cols="2" class="ml-5">
           <v-select v-model="filter.costCategoryId" :items="costCategoryItems" label="Kategorie" clearable />
         </v-col>
-        <v-col cols="3">
-          <DatePicker v-model="filter.dates" label="Zahájení práce" :clearable="false" required range />
+        <v-col cols="auto">
+          <v-radio-group class="mt-0 pl-4" hide-details :column="false" v-model="filter.dateRange">
+            <v-radio
+              v-for="option of dateRangeOptions"
+              :key="option.value"
+              :label="option.label"
+              :value="option.value"
+              class="mr-2"
+            />
+            <v-radio value="dates">
+              <template v-slot:label>
+                <DatePicker
+                  v-model="filter.dates"
+                  :disabled="filter.dateRange !== 'dates'"
+                  label="Zahájení práce"
+                  :clearable="false"
+                  required
+                  range
+                />
+              </template>
+            </v-radio>
+          </v-radio-group>
         </v-col>
       </v-row>
       <v-row>
@@ -86,13 +106,33 @@ export default {
         authorId: '',
         costCategoryId: '',
         dates: [moment().startOf('month').format('YYYY-MM-DD'), moment().endOf('month').format('YYYY-MM-DD')],
+        dateRange: 'currentMonth',
       },
       defaultFilter: {
         authorId: '',
         costCategoryId: '',
         dates: [moment().startOf('month').format('YYYY-MM-DD'), moment().endOf('month').format('YYYY-MM-DD')],
+        dateRange: 'currentMonth',
       },
       expandedRowId: null,
+      dateRangeOptions: [
+        {
+          label: 'Minulý týden',
+          value: 'lastWeek',
+        },
+        {
+          label: 'Aktuální týden',
+          value: 'currentWeek',
+        },
+        {
+          label: 'Minulý měsíc',
+          value: 'lastMonth',
+        },
+        {
+          label: 'Aktuální měsíc',
+          value: 'currentMonth',
+        },
+      ],
     };
   },
   computed: {
@@ -162,15 +202,47 @@ export default {
         }
       });
     },
+    computedFilter: function () {
+      return Object.assign({}, this.filter);
+    },
   },
   watch: {
-    filter: {
-      handler() {
+    computedFilter: {
+      handler(newVal, oldVal) {
+        if (oldVal && newVal.dateRange !== oldVal.dateRange) {
+          switch (newVal.dateRange) {
+            case 'lastWeek':
+              this.filter.dates = [
+                moment().subtract(1, 'week').startOf('week').format('YYYY-MM-DD'),
+                moment().subtract(1, 'week').endOf('week').format('YYYY-MM-DD'),
+              ];
+              break;
+            case 'currentWeek':
+              this.filter.dates = [
+                moment().startOf('week').format('YYYY-MM-DD'),
+                moment().endOf('week').format('YYYY-MM-DD'),
+              ];
+              break;
+            case 'lastMonth':
+              this.filter.dates = [
+                moment().subtract(1, 'month').startOf('month').format('YYYY-MM-DD'),
+                moment().subtract(1, 'month').endOf('month').format('YYYY-MM-DD'),
+              ];
+              break;
+            case 'currentMonth':
+              this.filter.dates = [
+                moment().startOf('month').format('YYYY-MM-DD'),
+                moment().endOf('month').format('YYYY-MM-DD'),
+              ];
+              break;
+          }
+        }
         if (this.filter.dates[0] && this.filter.dates[1]) {
           this.$store.dispatch('workLogs/getWorkLogs', this.filter);
         }
       },
       deep: true,
+      immediate: true,
     },
   },
   async created() {

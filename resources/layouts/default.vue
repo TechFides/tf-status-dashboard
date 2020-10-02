@@ -33,6 +33,7 @@
 <script>
 import LoginDialog from '../components/LoginDialog';
 import { mapState, mapMutations } from 'vuex';
+import moment from 'moment';
 
 export default {
   components: {
@@ -48,6 +49,14 @@ export default {
       rightDrawer: false,
       title: 'TF-Hub',
     };
+  },
+  created() {
+    // set first day of weeks on monday
+    moment.updateLocale('en', {
+      week: {
+        dow: 1,
+      },
+    });
   },
   computed: {
     ...mapState(['notification']),
