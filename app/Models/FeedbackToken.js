@@ -4,11 +4,11 @@
 const Model = use('Model');
 
 class FeedbackToken extends Model {
-  user () {
+  user() {
     return this.belongsTo('App/Models/User');
   }
 
-  heatmapWeek () {
+  heatmapWeek() {
     return this.belongsTo('App/Models/HeatmapWeek');
   }
 }

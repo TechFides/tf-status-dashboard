@@ -3,19 +3,19 @@
 const Model = use('Model');
 
 class StandupProjectRating extends Model {
-  static get hidden () {
+  static get hidden() {
     return ['created_at', 'updated_at'];
   }
 
-  project () {
+  project() {
     return this.belongsTo('App/Models/Project');
   }
 
-  projectRating () {
+  projectRating() {
     return this.belongsTo('App/Models/StandupProjectRatingEnum');
   }
 
-  standup () {
+  standup() {
     return this.belongsTo('App/Models/Standup');
   }
 }

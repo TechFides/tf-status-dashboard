@@ -1,34 +1,32 @@
 <template>
-  <div
-    v-if="error"
-    class="error-message"
-  >
+  <div v-if="error" class="error-message">
     {{ error }}
   </div>
 </template>
 
 <script>
-  const handleError = () => {
+const handleError = () => {
+  return {
+    error: `Jejda! Něco se pokazilo.`,
+  };
+};
+export default {
+  data() {
     return {
-      error: `Jejda! Něco se pokazilo.`,
+      error: null,
     };
-  };
-  export default {
-    data () {
-      return {
-        error: null,
-      };
-    },
-    async mounted () {
-      try {
-        await this.$auth.loginWith('local', {data: {gToken: this.$route.query.token}}).then(
-          this.$router.push(this.isHR || this.isSales ? '/office-absences': '/')
-        );
-      } catch (error) {
-        return handleError();
-      }
-    },
-  };
+  },
+  async mounted() {
+    console.log('redirected from google');
+    try {
+      await this.$auth.loginWith('local', { data: { gToken: this.$route.query.token } }).then(() => {
+        this.$router.push('/');
+      });
+    } catch (error) {
+      return handleError();
+    }
+  },
+};
 </script>
 
 <style scoped>

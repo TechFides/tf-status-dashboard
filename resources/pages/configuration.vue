@@ -1,32 +1,13 @@
 <template>
-  <v-layout
-    column
-    align-start
-    class="padding-content"
-  >
-    <v-form
-      v-model="valid"
-      class="settings-form"
-      @submit.prevent="saveSettings"
-    >
+  <v-layout column align-start class="padding-content">
+    <v-form v-model="valid" class="settings-form" @submit.prevent="saveSettings">
       <v-container>
-        <v-row
-          justify="start"
-        >
-          <h3 class="section-header">
-            E-mail pro zpětnou vazbu
-          </h3>
+        <v-row justify="start">
+          <h3 class="section-header">E-mail pro zpětnou vazbu</h3>
         </v-row>
-        <v-row
-          justify="space-between"
-        >
+        <v-row justify="space-between">
           <v-col>
-            <v-select
-              v-model="form.feedbackCrontab.weekday"
-              :items="weekdays"
-              label="Den v týdnu"
-              required
-            />
+            <v-select v-model="form.feedbackCrontab.weekday" :items="weekdays" label="Den v týdnu" required />
           </v-col>
           <v-col>
             <v-menu
@@ -62,27 +43,15 @@
             </v-menu>
           </v-col>
         </v-row>
-        <v-row
-          justify="start"
-        >
-          <h3 class="section-header">
-            Slack kanály
-          </h3>
+        <v-row justify="start">
+          <h3 class="section-header">Slack kanály</h3>
         </v-row>
         <v-row>
           <v-col cols="4">
-            <v-text-field
-              v-model="form.slackErrorChannel"
-              type="string"
-              label="Slack kanál pro chybové hlášky"
-            />
+            <v-text-field v-model="form.slackErrorChannel" type="string" label="Slack kanál pro chybové hlášky" />
           </v-col>
           <v-col cols="4">
-            <v-text-field
-              v-model="form.slackSchedulerChannel"
-              type="string"
-              label="Slack kanál pro sitdown"
-            />
+            <v-text-field v-model="form.slackSchedulerChannel" type="string" label="Slack kanál pro sitdown" />
           </v-col>
           <v-col cols="4">
             <v-text-field
@@ -92,16 +61,10 @@
             />
           </v-col>
         </v-row>
-        <v-row
-          justify="start"
-        >
-          <h3 class="section-header">
-            Nepřítomnosti v kanceláři
-          </h3>
+        <v-row justify="start">
+          <h3 class="section-header">Nepřítomnosti v kanceláři</h3>
         </v-row>
-        <v-row
-          justify="start"
-        >
+        <v-row justify="start">
           <v-col cols="4">
             <v-select
               v-model="form.absenceApproverId"
@@ -111,18 +74,8 @@
             />
           </v-col>
         </v-row>
-        <v-row
-          row
-          justify="end"
-        >
-          <v-btn
-            color="blue darken-2"
-            dark
-            type="submit"
-            :loading="loading"
-          >
-            Uložit nastavení
-          </v-btn>
+        <v-row row justify="end">
+          <v-btn color="blue darken-2" dark type="submit" :loading="loading"> Uložit nastavení </v-btn>
         </v-row>
       </v-container>
     </v-form>
@@ -133,7 +86,7 @@
 import { WEEK_DAYS } from '../constants';
 import { mapState } from 'vuex';
 
-const fromCrontab = (crontab) => {
+const fromCrontab = crontab => {
   const [minutes, hours, , , weekday] = crontab.split(' ');
   return { weekday: parseInt(weekday, 10), time: `${hours}:${minutes}` };
 };
@@ -144,7 +97,7 @@ const toCrontab = (weekday, time) => {
 };
 
 export default {
-  data () {
+  data() {
     return {
       valid: false,
       loading: false,
@@ -162,26 +115,26 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'users',
-    ]),
-    weekdays () {
+    ...mapState(['users']),
+    weekdays() {
       return WEEK_DAYS.map((weekday, index) => ({
         text: weekday,
         value: index + 1,
       }));
     },
-    approvers () {
+    approvers() {
       return this.users.items.map(user => ({
         text: `${user.firstName} ${user.lastName}`,
         value: user.id.toString(),
       }));
     },
   },
-  async asyncData ({ $axios }) {
+  async asyncData({ $axios }) {
     try {
       const response = await $axios.$get('/api/configuration');
-      let form = {};
+      let form = {
+        feedbackCrontab: {},
+      };
       if (response) {
         form = {
           feedbackCrontab: fromCrontab(response.feedbackCrontab),
@@ -196,16 +149,16 @@ export default {
       return null;
     }
   },
-  async fetch ({ store }) {
+  async fetch({ store }) {
     await store.dispatch('users/getUsers');
   },
   methods: {
-    async saveSettings () {
+    async saveSettings() {
       try {
         this.loading = true;
 
         const { weekday, time } = this.form.feedbackCrontab;
-        const settings = {
+        const configuration = {
           feedbackCrontab: toCrontab(weekday, time),
           slackErrorChannel: this.form.slackErrorChannel,
           slackSchedulerChannel: this.form.slackSchedulerChannel,
@@ -213,7 +166,7 @@ export default {
           absenceApproverId: this.form.absenceApproverId,
         };
 
-        await this.$axios.$post('/api/configuration', settings);
+        await this.$axios.$post('/api/configuration', configuration);
       } catch (e) {
         this.$store.commit('setNotification', { color: 'error', message: 'Aktualizace nastavení se nezdařila.' });
       } finally {
@@ -225,15 +178,15 @@ export default {
 </script>
 
 <style scoped>
-  .settings-form {
-    width: 100%;
-  }
+.settings-form {
+  width: 100%;
+}
 
-  .section-header {
-    margin-bottom: 5px;
-  }
+.section-header {
+  margin-bottom: 5px;
+}
 
-  .padding-content {
-    padding: 1rem;
-  }
+.padding-content {
+  padding: 1rem;
+}
 </style>

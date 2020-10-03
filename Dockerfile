@@ -1,10 +1,6 @@
 ### Builder
 FROM node:12 AS builder
 
-ARG CI_COMMIT_SHA
-
-LABEL server-builder=$CI_COMMIT_SHA
-
 COPY . /usr/src/app
 
 WORKDIR /usr/src/app

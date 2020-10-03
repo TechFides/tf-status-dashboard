@@ -4,8 +4,12 @@
 const Model = use('Model');
 
 class CostCategory extends Model {
-  static get hidden () {
+  static get hidden() {
     return ['created_at', 'updated_at'];
+  }
+
+  position() {
+    return this.belongsToMany('App/Models/Position');
   }
 }
 

@@ -8,7 +8,7 @@ export const state = () => ({
 });
 
 export const mutations = {
-  setOfficeAbsences (state, officeAbsences) {
+  setOfficeAbsences(state, officeAbsences) {
     state.items = officeAbsences.map(o => ({
       id: o.id,
       author: o.user,
@@ -29,13 +29,13 @@ export const mutations = {
       approverDescription: o.approver_description,
     }));
   },
-  setAbsenceTypeEnums (state, absenceTypeEnums) {
+  setAbsenceTypeEnums(state, absenceTypeEnums) {
     state.absenceTypeEnums = absenceTypeEnums;
   },
-  setAbsenceStateEnums (state, absenceStateEnums) {
+  setAbsenceStateEnums(state, absenceStateEnums) {
     state.absenceStateEnums = absenceStateEnums;
   },
-  setApprovers (state, approvers) {
+  setApprovers(state, approvers) {
     state.approvers = approvers.map(u => ({
       firstName: u.first_name,
       id: u.id,
@@ -46,38 +46,32 @@ export const mutations = {
 };
 
 export const actions = {
-  async getOfficeAbsences ({ commit }, params) {
+  async getOfficeAbsences({ commit }, params) {
     const payloads = {
-      ...
-        params,
+      ...params,
       userId: this.$auth.user.id,
     };
-    const officeAbsences = await this.$axios.$get(
-      '/api/office-absences',
-      { params: payloads },
-    );
+    const officeAbsences = await this.$axios.$get('/api/office-absences', { params: payloads });
 
     commit('setOfficeAbsences', officeAbsences);
   },
-  async getAbsenceTypeEnums ({ commit }) {
+  async getAbsenceTypeEnums({ commit }) {
     const absenceTypeEnums = await this.$axios.$get('/api/office-absences/type-enums');
 
     commit('setAbsenceTypeEnums', absenceTypeEnums);
   },
-  async getAbsenceStateEnums ({ commit }) {
+  async getAbsenceStateEnums({ commit }) {
     const absenceTypeEnums = await this.$axios.$get('/api/office-absences/state-enums');
     commit('setAbsenceStateEnums', absenceTypeEnums);
   },
-  async getApprovers ({ commit }) {
+  async getApprovers({ commit }) {
     const params = {
       userId: this.$auth.user.id,
     };
-    const approvers = await this.$axios.$get('/api/office-absences/approvers',
-      { params },
-    );
+    const approvers = await this.$axios.$get('/api/office-absences/approvers', { params });
     commit('setApprovers', approvers);
   },
-  async createOfficeAbsence ({ dispatch, commit }, officeAbsence) {
+  async createOfficeAbsence({ dispatch, commit }, officeAbsence) {
     try {
       await this.$axios.$post('/api/office-absence', officeAbsence);
       dispatch('getOfficeAbsences');
@@ -89,7 +83,7 @@ export const actions = {
       }
     }
   },
-  async cancelOfficeAbsence ({ dispatch, commit }, officeAbsence) {
+  async cancelOfficeAbsence({ dispatch, commit }, officeAbsence) {
     try {
       await this.$axios.$post('/api/office-absences/cancel', officeAbsence);
       dispatch('getOfficeAbsences');
@@ -100,13 +94,17 @@ export const actions = {
       }
     }
   },
-  async deleteOfficeAbsence ({ dispatch, commit }, absenceId) {
+  async deleteOfficeAbsence({ dispatch, commit }, absenceId) {
     try {
       await this.$axios.$delete(`/api/office-absences/${absenceId}`);
       dispatch('getOfficeAbsences');
       commit('notification/clearNotification', null, { root: true });
     } catch (error) {
-      commit('notification/setNotification', { color: 'error', message: `Nepřítomnost se nepodařilo odstranit.` }, { root: true });
+      commit(
+        'notification/setNotification',
+        { color: 'error', message: `Nepřítomnost se nepodařilo odstranit.` },
+        { root: true },
+      );
     }
   },
 };

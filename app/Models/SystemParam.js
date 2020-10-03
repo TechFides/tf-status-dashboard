@@ -4,15 +4,15 @@
 const Model = use('Model');
 
 class SystemParam extends Model {
-  static get hidden () {
+  static get hidden() {
     return ['created_at', 'updated_at'];
   }
 
-  static get primaryKey () {
+  static get primaryKey() {
     return 'key';
   }
 
-  static get incrementing () {
+  static get incrementing() {
     return false;
   }
 }

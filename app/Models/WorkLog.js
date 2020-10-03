@@ -4,11 +4,11 @@
 const Model = use('Model');
 
 class WorkLog extends Model {
-  user () {
+  user() {
     return this.belongsTo('App/Models/User');
   }
 
-  costCategory () {
+  costCategory() {
     return this.belongsTo('App/Models/CostCategory');
   }
 }

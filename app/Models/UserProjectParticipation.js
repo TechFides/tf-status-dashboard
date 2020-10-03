@@ -3,15 +3,15 @@
 const Model = use('Model');
 
 class UserProjectParticipation extends Model {
-  static get hidden () {
+  static get hidden() {
     return ['created_at', 'updated_at'];
   }
 
-  user () {
+  user() {
     return this.belongsTo('App/Models/User');
   }
 
-  project () {
+  project() {
     return this.belongsTo('App/Models/Project');
   }
 }

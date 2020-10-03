@@ -1,74 +1,47 @@
 <template>
   <div class="text-xs-center">
-    <v-dialog
-      v-model="dialog"
-      :disabled="disabled"
-      width="1080"
-    >
+    <v-dialog v-model="dialog" :disabled="disabled" max-width="1080">
       <template v-slot:activator="{ on, attrs }">
-        <div
-          color="red lighten-2"
-          v-bind="attrs"
-          v-on="on"
-        >
+        <div color="red lighten-2" v-bind="attrs" v-on="on">
           <v-icon :class="getClassName()">
             {{ icon }}
           </v-icon>
         </div>
       </template>
       <v-card>
-        <v-card-title
-          class="headline grey lighten-2"
-          primary-title
-        >
-          <div class="flex-container">
+        <v-card-title class="headline grey lighten-2" primary-title>
+          <div>
             {{ `${date} - Vyberte hodnocení: ${projectName}` }}
-            <v-icon
-              x-large
-              class="material-icons"
-              @click="dialog = false"
-            >
-              remove
-            </v-icon>
           </div>
         </v-card-title>
 
-        <v-card-text class="myicon">
-          <v-icon
-            large
-            class="material-icons custom-picker-font-size"
-            @click="submit('HIATUS')"
-          >
-            remove
-          </v-icon>
-          <v-icon
-            large
-            class="material-icons red800 custom-picker-font-size"
-            @click="submit('FAIL')"
-          >
-            close
-          </v-icon>
-          <v-icon
-            large
-            class="material-icons blue500 custom-picker-font-size"
-            @click="submit('STANDARD')"
-          >
-            radio_button_unchecked
-          </v-icon>
-          <v-icon
-            large
-            class="material-icons green500 custom-picker-font-size"
-            @click="submit('GOOD')"
-          >
-            radio_button_unchecked
-          </v-icon>
-          <v-icon
-            large
-            class="material-icons green500 custom-picker-font-size"
-            @click="submit('AMAZING')"
-          >
-            done
-          </v-icon>
+        <v-card-text>
+          <v-row class="text-center">
+            <v-col :cols="$device.isDesktop ? 2 : 12">
+              <v-icon large class="material-icons custom-picker-font-size" @click="submit('HIATUS')"> remove </v-icon>
+            </v-col>
+            <v-col cols="2" :v-if="$device.isDesktop"> </v-col>
+            <v-col :cols="$device.isDesktop ? 2 : 12">
+              <v-icon large class="material-icons red800 custom-picker-font-size" @click="submit('FAIL')">
+                close
+              </v-icon>
+            </v-col>
+            <v-col :cols="$device.isDesktop ? 2 : 12">
+              <v-icon large class="material-icons blue500 custom-picker-font-size" @click="submit('STANDARD')">
+                radio_button_unchecked
+              </v-icon>
+            </v-col>
+            <v-col :cols="$device.isDesktop ? 2 : 12">
+              <v-icon large class="material-icons green500 custom-picker-font-size" @click="submit('GOOD')">
+                radio_button_unchecked
+              </v-icon>
+            </v-col>
+            <v-col :cols="$device.isDesktop ? 2 : 12">
+              <v-icon large class="material-icons green500 custom-picker-font-size" @click="submit('AMAZING')">
+                done
+              </v-icon>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -105,7 +78,7 @@ export default {
       default: () => {},
     },
   },
-  data () {
+  data() {
     return {
       dialog: false,
       className: 'material-icons',
@@ -120,18 +93,16 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'projects',
-    ]),
-    icon () {
+    ...mapState(['projects']),
+    icon() {
       return this.getRatingIconFromId(this.projectRating);
     },
-    projectName () {
+    projectName() {
       return this.projects.items.find(p => p.id === this.projectId).code;
     },
   },
   methods: {
-    getClassName () {
+    getClassName() {
       let className = 'material-icons custom-font-size';
       switch (this.projectRating) {
         case this.RATING_ENUM.HIATUS:
@@ -150,7 +121,7 @@ export default {
           return '';
       }
     },
-    async submit (icon) {
+    async submit(icon) {
       this.dialog = false;
 
       try {
@@ -171,7 +142,7 @@ export default {
         console.error(e);
       }
     },
-    getRatingId (icon) {
+    getRatingId(icon) {
       switch (icon) {
         case 'HIATUS':
           return this.RATING_ENUM.HIATUS;
@@ -185,7 +156,7 @@ export default {
           return this.RATING_ENUM.AMAZING;
       }
     },
-    getRatingIcon (icon) {
+    getRatingIcon(icon) {
       switch (icon) {
         case 'HIATUS':
           return 'remove';
@@ -199,7 +170,7 @@ export default {
           return 'done';
       }
     },
-    getRatingIconFromId (icon) {
+    getRatingIconFromId(icon) {
       switch (icon) {
         case this.RATING_ENUM.HIATUS:
           return 'remove';
@@ -220,18 +191,8 @@ export default {
 </script>
 
 <style scoped>
-/deep/ .v-dialog {
-  overflow: hidden !important;
-}
-
-.myicon {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
 .material-icons.custom-picker-font-size {
-  font-size: 1200% !important;
+  font-size: 1050% !important;
 }
 
 .material-icons.custom-font-size {
@@ -251,12 +212,6 @@ export default {
 
 .material-icons.green500 {
   color: #4caf50;
-}
-
-.flex-container {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
 }
 
 .material-icons.blue500 {

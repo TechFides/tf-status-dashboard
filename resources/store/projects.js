@@ -13,7 +13,7 @@ export const state = () => ({
 });
 
 export const mutations = {
-  async setProjects (state, data) {
+  async setProjects(state, data) {
     state.items = data.projects.map(p => {
       const meetingTime = data.meetingTimes.find(meetingTime => meetingTime.id === p.meeting_time_id);
 
@@ -32,41 +32,44 @@ export const mutations = {
       };
     });
   },
-  async setAllProjects (state, data) {
-    state.all = data.projects.map(p => ({
-      id: p.id,
-      code: p.code,
-      description: p.description,
-      isActive: p.is_active === 1,
-      slackChannelName: p.slackChannel ? p.slackChannel.channel_name : '',
-      teamLeader: {
-        id: p.projectUser ? p.projectUser.user.id : null,
-        name: p.projectUser ? `${p.projectUser.user.first_name} ${p.projectUser.user.last_name}` : '',
-      },
-      meetingTime: {
-        text: findAndFormatMeetingTimeTextForSelect(data.meetingTimes, p.meeting_time_id),
-        value: p.meeting_time_id,
-      },
-    })).sort(sortAscByProperty.bind(this, 'code'));
+  async setAllProjects(state, data) {
+    state.all = data.projects
+      .map(p => ({
+        id: p.id,
+        code: p.code,
+        description: p.description,
+        isActive: p.is_active === 1,
+        slackChannelName: p.slackChannel ? p.slackChannel.channel_name : '',
+        teamLeader: {
+          id: p.projectUser && p.projectUser.user ? p.projectUser.user.id : null,
+          name:
+            p.projectUser && p.projectUser.user
+              ? `${p.projectUser.user.first_name} ${p.projectUser.user.last_name}`
+              : '',
+        },
+        meetingTime: {
+          text: findAndFormatMeetingTimeTextForSelect(data.meetingTimes, p.meeting_time_id),
+          value: p.meeting_time_id,
+        },
+      }))
+      .sort(sortAscByProperty.bind(this, 'code'));
   },
 };
 
 export const actions = {
-  async getProjects ({ commit, rootState }) {
+  async getProjects({ commit, rootState }) {
     const meetingTimes = rootState.meetingTimes.items;
-    const projects = await this.$axios.$get('/api/projects',
-      getActiveParams(),
-    );
+    const projects = await this.$axios.$get('/api/projects', getActiveParams());
 
-    commit('setProjects', {projects, meetingTimes});
+    commit('setProjects', { projects, meetingTimes });
   },
-  async getAllProjects ({ commit, rootState}) {
+  async getAllProjects({ commit, rootState }) {
     const meetingTimes = rootState.meetingTimes.items;
     const projects = await this.$axios.$get('/api/projects');
 
-    commit('setAllProjects', {projects, meetingTimes});
+    commit('setAllProjects', { projects, meetingTimes });
   },
-  async createProject ({ dispatch, commit }, project) {
+  async createProject({ dispatch, commit }, project) {
     try {
       await this.$axios.$post('/api/projects', project);
       dispatch('getAllProjects');
@@ -78,7 +81,7 @@ export const actions = {
       }
     }
   },
-  async editProject ({ dispatch, commit }, project) {
+  async editProject({ dispatch, commit }, project) {
     try {
       await this.$axios.$put(`/api/projects/${project.id}`, project);
       dispatch('getAllProjects');
@@ -90,16 +93,20 @@ export const actions = {
       }
     }
   },
-  async deleteProject ({ dispatch, commit }, projectId) {
+  async deleteProject({ dispatch, commit }, projectId) {
     try {
       await this.$axios.$delete(`/api/projects/${projectId}`);
       dispatch('getAllProjects');
       commit('notification/clearNotification', null, { root: true });
     } catch (error) {
-      commit('notification/setNotification', { color: 'error', message: 'Smazat projekt se nezdařilo.' }, { root: true });
+      commit(
+        'notification/setNotification',
+        { color: 'error', message: 'Smazat projekt se nezdařilo.' },
+        { root: true },
+      );
     }
   },
-  async addTeamLeader ({ dispatch, commit }, teamLeader) {
+  async addTeamLeader({ dispatch, commit }, teamLeader) {
     try {
       await this.$axios.$put('/api/projects/teamLeader', teamLeader);
       dispatch('getAllProjects');

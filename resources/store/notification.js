@@ -10,7 +10,7 @@ export const state = () => ({
 });
 
 export const mutations = {
-  setNotification (state, notification) {
+  setNotification(state, notification) {
     state.items = {
       isVisible: true,
       message: notification.message ? notification.message : '',
@@ -24,7 +24,7 @@ export const mutations = {
       this.commit('clearNotification');
     }, NOTIFICATION_TIMEOUT);
   },
-  clearNotification (state) {
+  clearNotification(state) {
     state.items = {
       isVisible: false,
       message: '',

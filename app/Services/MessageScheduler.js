@@ -20,21 +20,21 @@ function initialization() {
 }
 
 function fetchMeetings() {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     const query = 'SELECT id, time, week_day FROM meeting_times';
     connection.query(query, (err, data) => (err ? reject(err) : resolve(data)));
   });
 }
 
 function fetchProjects(meetingTimeId) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     const query = `SELECT code FROM projects where meeting_time_id=${meetingTimeId} AND is_active=1`;
     connection.query(query, (err, data) => (err ? reject(err) : resolve(data)));
   });
 }
 
 function getChannelName(channelName) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     const query = `SELECT value FROM system_params where \`key\`='${channelName}'`;
     connection.query(query, (err, data) => (err ? reject(err) : resolve(data)));
   });
@@ -42,13 +42,17 @@ function getChannelName(channelName) {
 
 async function sendNotificationOfStandup(slackChannel, time, projects) {
   try {
-    await slackWebClient.chat.scheduleMessage({ channel: slackChannel.value, text: transformProjectsToString(projects), post_at: time});
+    await slackWebClient.chat.scheduleMessage({
+      channel: slackChannel.value,
+      text: transformProjectsToString(projects),
+      post_at: time,
+    });
   } catch (error) {
     const errorChannelName = await getChannelName(SYSTEM_PARAMS.SLACK_ERROR_CHANNEL);
     const attachments = [
       {
         color: '#c62828',
-        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: \*${error.data.error}\*.`,
+        text: `Jeejda, něco se porouchalo :exclamation: \n Chyba: *${error.data.error}*.`,
       },
     ];
 
@@ -57,14 +61,17 @@ async function sendNotificationOfStandup(slackChannel, time, projects) {
   }
 }
 
-function transformProjectsToString (projects) {
+function transformProjectsToString(projects) {
   let text;
-  const stringOfProjects = projects.map(project => project.code).sort().join(', ');
+  const stringOfProjects = projects
+    .map(project => project.code)
+    .sort()
+    .join(', ');
 
   if (projects.length === 1) {
-    text = `Za 15 minut začne sitdown pro projekt \*${stringOfProjects}\*. Připravte si, co jste za poslední týden dělali a co budete dělat následující týden.`;
+    text = `Za 15 minut začne sitdown pro projekt *${stringOfProjects}*. Připravte si, co jste za poslední týden dělali a co budete dělat následující týden.`;
   } else {
-    text = `Za 15 minut začne sitdown pro projekty: \*${stringOfProjects}\*. Připravte si, co jste za poslední týden dělali a co budete dělat následující týden.`;
+    text = `Za 15 minut začne sitdown pro projekty: *${stringOfProjects}*. Připravte si, co jste za poslední týden dělali a co budete dělat následující týden.`;
   }
 
   return text;
@@ -85,10 +92,14 @@ function getUnixTimestamp(time, weekDay) {
   const distance = weekDay - currentDay;
   date.setDate(date.getDate() + distance);
 
-  return (date.setHours(parseInt(separatedTime[0]), parseInt(separatedTime[1]), parseInt(separatedTime[2])) - quarterMinute) / 1000;
+  return (
+    (date.setHours(parseInt(separatedTime[0]), parseInt(separatedTime[1]), parseInt(separatedTime[2])) -
+      quarterMinute) /
+    1000
+  );
 }
 
-async function main () {
+async function main() {
   initialization();
 
   connection.connect();

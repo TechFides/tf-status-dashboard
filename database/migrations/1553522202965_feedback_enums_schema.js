@@ -3,7 +3,7 @@
 const Schema = use('Schema');
 
 class FeedbackEnumsSchema extends Schema {
-  async up () {
+  async up() {
     const enumData = [
       {
         id: 1,
@@ -24,9 +24,9 @@ class FeedbackEnumsSchema extends Schema {
     ];
 
     await use('App/Models/FeedbackEnum').createMany(enumData);
-  };
+  }
 
-  async down () {
+  async down() {
     await use('App/Models/FeedbackEnum').truncate();
   }
 }

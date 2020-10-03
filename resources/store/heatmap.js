@@ -7,7 +7,7 @@ export const state = () => ({
 });
 
 export const mutations = {
-  setUsersFeedbacks (state, userFeedbacks) {
+  setUsersFeedbacks(state, userFeedbacks) {
     const newUserFeedbacks = userFeedbacks.sort(sortAscByProperty.bind(this, 'first_name'));
     for (const [index, { feedback }] of newUserFeedbacks.entries()) {
       const newFeedback = {};
@@ -20,22 +20,16 @@ export const mutations = {
 
     state.usersFeedbacks = newUserFeedbacks;
   },
-  setHeatmapWeeks (state, heatmap) {
+  setHeatmapWeeks(state, heatmap) {
     state.items = heatmap.sort(sortAscByProperty.bind(this, 'date'));
   },
 };
 
 export const actions = {
-  async getFeedbackData ({ commit }, date) {
+  async getFeedbackData({ commit }, date) {
     const [heatmap, feedbacks] = await Promise.all([
-      this.$axios.$get(
-        '/api/heatmap',
-        getDateParams(date),
-      ),
-      this.$axios.$get(
-        '/api/heatmap/feedbacks',
-        getActiveParams(),
-      ),
+      this.$axios.$get('/api/heatmap', getDateParams(date)),
+      this.$axios.$get('/api/heatmap/feedbacks', getActiveParams()),
     ]);
 
     commit('setHeatmapWeeks', heatmap);

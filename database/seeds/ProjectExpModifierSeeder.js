@@ -13,12 +13,11 @@
 const Database = use('Database');
 
 class ProjectExpModifierSeeder {
-  async run () {
-    await Database.table('project_exp_modifiers')
-      .insert(ProjectExpModifierSeeder.getInitialData());
+  async run() {
+    await Database.table('project_exp_modifiers').insert(ProjectExpModifierSeeder.getInitialData());
   }
 
-  static getInitialData () {
+  static getInitialData() {
     return [
       {
         id: 0,

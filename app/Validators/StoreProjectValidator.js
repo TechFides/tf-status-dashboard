@@ -1,7 +1,7 @@
 'use strict';
 
 class StoreProjectValidator {
-  get rules () {
+  get rules() {
     const projectId = this.ctx.params.id;
 
     return {

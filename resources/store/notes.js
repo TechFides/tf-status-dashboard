@@ -6,24 +6,26 @@ export const state = () => ({
 });
 
 export const mutations = {
-  setNotes (state, notes) {
-    state.items = notes.map(n => ({
-      id: n.id,
-      projectId: n.project.id,
-      projectCode: n.project.code,
-      deadlineDate: n.deadline,
-      created: n.created_at,
-      text: n.note,
-    })).sort(sortAscByProperty.bind(this, 'projectCode'));
+  setNotes(state, notes) {
+    state.items = notes
+      .map(n => ({
+        id: n.id,
+        projectId: n.project.id,
+        projectCode: n.project.code,
+        deadlineDate: n.deadline,
+        created: n.created_at,
+        text: n.note,
+      }))
+      .sort(sortAscByProperty.bind(this, 'projectCode'));
   },
 };
 
 export const actions = {
-  async getNotes ({ commit }) {
+  async getNotes({ commit }) {
     const notes = await this.$axios.$get('/api/notes');
     commit('setNotes', notes);
   },
-  async createNote ({ dispatch, commit }, note) {
+  async createNote({ dispatch, commit }, note) {
     try {
       await this.$axios.$post('/api/notes', note);
       dispatch('getNotes');
@@ -34,7 +36,7 @@ export const actions = {
       }
     }
   },
-  async editNote ({ dispatch, commit }, note) {
+  async editNote({ dispatch, commit }, note) {
     try {
       await this.$axios.$put(`/api/notes/${note.id}`, note);
       dispatch('getNotes');
@@ -45,13 +47,17 @@ export const actions = {
       }
     }
   },
-  async markNoteCompleted ({ dispatch, commit }, noteId) {
+  async markNoteCompleted({ dispatch, commit }, noteId) {
     try {
       await this.$axios.$post(`/api/notes/${noteId}/completed`);
       dispatch('getNotes');
       commit('notification/clearNotification', null, { root: true });
     } catch (error) {
-      commit('notification/setNotification', { color: 'error', message: `Označení poznámky za dokončenou se nezdařilo.` }, { root: true });
+      commit(
+        'notification/setNotification',
+        { color: 'error', message: `Označení poznámky za dokončenou se nezdařilo.` },
+        { root: true },
+      );
     }
   },
 };

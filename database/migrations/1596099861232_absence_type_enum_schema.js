@@ -1,10 +1,10 @@
-'use strict'
+'use strict';
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
-const Schema = use('Schema')
+const Schema = use('Schema');
 
 class AbsenceTypeEnumSchema extends Schema {
-  async up () {
+  async up() {
     const enumData = [
       {
         name: 'HOME_OFFICE',
@@ -27,8 +27,7 @@ class AbsenceTypeEnumSchema extends Schema {
     await use('App/Models/AbsenceTypeEnum').createMany(enumData);
   }
 
-  down () {
-  }
+  down() {}
 }
 
-module.exports = AbsenceTypeEnumSchema
+module.exports = AbsenceTypeEnumSchema;

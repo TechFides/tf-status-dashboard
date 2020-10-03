@@ -25,7 +25,7 @@ const UserModel = use('App/Models/User');
 const MeetingTimeModel = use('App/Models/MeetingTime');
 
 class TruncateSeeder {
-  async run () {
+  async run() {
     await BonusExpModel.query().delete();
     await FeedbackModel.query().delete();
     await FeedbackTokenModel.query().delete();

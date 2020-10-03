@@ -13,12 +13,11 @@
 const Database = use('Database');
 
 class StandupProjectRatingEnumSeeder {
-  async run () {
-    await Database.table('standup_project_rating_enums')
-      .insert(StandupProjectRatingEnumSeeder.getInitialData());
+  async run() {
+    await Database.table('standup_project_rating_enums').insert(StandupProjectRatingEnumSeeder.getInitialData());
   }
 
-  static getInitialData () {
+  static getInitialData() {
     return [
       {
         id: 0,

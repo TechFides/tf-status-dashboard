@@ -5,11 +5,11 @@ const GoogleToken = use('App/Models/GoogleToken');
 const Env = use('Env');
 
 class GoogleLoginController {
-  async redirect ({ ally }) {
+  async redirect({ ally }) {
     await ally.driver('google').redirect();
   }
 
-  async callback ({ ally, response }) {
+  async callback({ ally, response }) {
     try {
       const gUser = await ally.driver('google').getUser();
 

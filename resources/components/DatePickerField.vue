@@ -1,11 +1,5 @@
 <template>
-  <v-menu
-    v-model="menuDate"
-    :close-on-content-click="false"
-    transition="scale-transition"
-    offset-y
-    min-width="290px"
-  >
+  <v-menu v-model="menuDate" :close-on-content-click="false" transition="scale-transition" offset-y min-width="290px">
     <template v-slot:activator="{ on, attrs }">
       <v-text-field
         slot="activator"
@@ -20,12 +14,7 @@
         @input="datePicked"
       />
     </template>
-    <v-date-picker
-      v-model="modelDate"
-      :first-day-of-week="1"
-      no-title
-      @input="datePicked"
-    />
+    <v-date-picker v-model="modelDate" :first-day-of-week="1" no-title @input="datePicked" />
   </v-menu>
 </template>
 
@@ -56,11 +45,11 @@ export default {
     },
   },
   watch: {
-    value (v) {
+    value(v) {
       this.modelDate = v ? format(v, 'YYYY-MM-DD') : null;
     },
   },
-  created () {
+  created() {
     this.modelDate = this.value ? format(this.value, 'YYYY-MM-DD') : null;
   },
   methods: {

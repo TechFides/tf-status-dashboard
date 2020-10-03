@@ -3,8 +3,8 @@
 const Schema = use('Schema');
 
 class NoteSchema extends Schema {
-  up () {
-    this.create('notes', (table) => {
+  up() {
+    this.create('notes', table => {
       table.increments();
       table.timestamps();
       table.text('note');
@@ -13,7 +13,7 @@ class NoteSchema extends Schema {
     });
   }
 
-  down () {
+  down() {
     this.drop('notes');
   }
 }

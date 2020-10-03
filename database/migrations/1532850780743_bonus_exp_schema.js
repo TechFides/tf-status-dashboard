@@ -3,8 +3,8 @@
 const Schema = use('Schema');
 
 class BonusExpSchema extends Schema {
-  up () {
-    this.create('bonus_exps', (table) => {
+  up() {
+    this.create('bonus_exps', table => {
       table.increments();
       table.integer('user_id').unsigned().notNullable();
       table.foreign('user_id').references('users');
@@ -15,7 +15,7 @@ class BonusExpSchema extends Schema {
     });
   }
 
-  down () {
+  down() {
     this.drop('bonus_exps');
   }
 }

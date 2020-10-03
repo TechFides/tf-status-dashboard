@@ -3,11 +3,11 @@
 const Model = use('Model');
 
 class SlackChannel extends Model {
-  static get hidden () {
+  static get hidden() {
     return ['created_at', 'updated_at'];
   }
 
-  project () {
+  project() {
     return this.hasOne('App/Models/Project');
   }
 }

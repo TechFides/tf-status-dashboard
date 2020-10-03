@@ -13,12 +13,11 @@
 const Database = use('Database');
 
 class MeetinTimeSeeder {
-  async run () {
-    await Database.table('meeting_times')
-      .insert(MeetinTimeSeeder.getInitialData());
+  async run() {
+    await Database.table('meeting_times').insert(MeetinTimeSeeder.getInitialData());
   }
 
-  static getInitialData () {
+  static getInitialData() {
     return [
       {
         week_day: '1',

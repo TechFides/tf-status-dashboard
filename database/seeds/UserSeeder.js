@@ -18,16 +18,15 @@ const USER_ROLES = {
 };
 
 class UserSeeder {
-  async run () {
+  async run() {
     const user = await Factory.model('App/Models/User').create({
       first_name: 'admin',
       last_name: 'admin',
       username: 'admin',
       password: 'admin',
+      is_admin: 1,
       is_active: 1,
     });
-
-    await user.roles().attach([USER_ROLES.USER, USER_ROLES.ADMIN]);
   }
 }
 
