@@ -152,7 +152,7 @@ Route.get('/api/office-absences/changes', 'OfficeAbsenceController.getOfficeAbse
 
 Route.post('/api/office-absence', 'OfficeAbsenceController.createOfficeAbsence').middleware([
   AUTH,
-  AUTHORIZATION_ADMIN,
+  AUTHORIZATION_OFFICE_ABSENCES,
 ]);
 Route.post('/api/office-absence/approve-absence-state', 'OfficeAbsenceController.approveAbsenceState');
 Route.post('/api/office-absence/reject-absence-state', 'OfficeAbsenceController.rejectAbsenceState');
