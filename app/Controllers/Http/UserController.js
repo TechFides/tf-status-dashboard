@@ -65,16 +65,20 @@ class UserController {
     }
   }
 
-  async setAdmin({ request, response, params }) {
-    const { id } = params;
-    const { isAdmin } = request.body;
+  async setAdmin({ request, response, params, auth }) {
+    if (auth.user.is_admin) {
+      const { id } = params;
+      const { isAdmin } = request.body;
 
-    try {
-      const user = await UserModel.find(id);
-      user.is_admin = isAdmin;
-      await user.save();
-    } catch (e) {
-      response.status(500).send({ message: e.message });
+      try {
+        const user = await UserModel.find(id);
+        user.is_admin = isAdmin;
+        await user.save();
+      } catch (e) {
+        response.status(500).send({ message: e.message });
+      }
+    } else {
+      response.status(403).send();
     }
   }
 
