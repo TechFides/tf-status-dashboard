@@ -23,16 +23,15 @@ class WorkLogController {
     };
   }
 
-  async getWorkLogList({ request, response, params }) {
+  async getWorkLogList({ request, auth }) {
     const { startDate, endDate, authorId, costCategoryId, loggedInUserId } = request.get();
-    const user = (await UserModel.query().first()).toJSON();
 
     const WorkLogModelQuery = WorkLogModel.query()
       .with('user')
       .with('costCategory')
       .whereBetween('started', [startDate, endDate]);
 
-    if (!user.is_admin) {
+    if (!auth.user.is_admin) {
       WorkLogModelQuery.where('user_id', loggedInUserId);
     }
 
