@@ -21,7 +21,7 @@ module.exports = {
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' },
     ],
   },
-  plugins: ['~/plugins/auth-inject.js', '~/plugins/auth.js'],
+  plugins: ['~/plugins/auth-inject.js', '~/plugins/auth.js', '~/plugins/axios.client.js', '~/plugins/notifier.js'],
   modules: ['@nuxtjs/axios', '@nuxtjs/auth', '@nuxtjs/vuetify', '@nuxtjs/device'],
   auth: {
     redirect: {

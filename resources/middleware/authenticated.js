@@ -6,6 +6,11 @@ export default function ({ app, store, route, redirect }) {
   if (route.name === 'submit-google-auth') {
     return;
   }
+
+  if (route.name === 'submit-office-absence') {
+    return;
+  }
+
   if (app.isAdministration()) {
     return;
   } else if (

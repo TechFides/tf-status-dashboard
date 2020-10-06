@@ -17,11 +17,11 @@ export const mutations = {
       color: notification.color ? notification.color : '',
     };
     if (state.items.notificationTimeout) {
-      this.commit('clearNotification');
+      this.commit('notification/clearNotification');
     }
 
     state.items.notificationTimeout = setTimeout(() => {
-      this.commit('clearNotification');
+      this.commit('notification/clearNotification');
     }, NOTIFICATION_TIMEOUT);
   },
   clearNotification(state) {
