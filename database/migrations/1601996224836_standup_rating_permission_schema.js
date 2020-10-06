@@ -1,0 +1,82 @@
+'use strict';
+
+/** @type {import('@adonisjs/lucid/src/Schema')} */
+const Schema = use('Schema');
+const Database = use('Database');
+
+class StandupRatingPermissionSchema extends Schema {
+  async up() {
+    await Database.raw('SET FOREIGN_KEY_CHECKS = 0;');
+    await use('App/Models/Permission').truncate();
+
+    const enumData = [
+      {
+        id: 1,
+        name: 'Dashboard',
+        value: 'dashboard',
+      },
+      {
+        id: 2,
+        name: 'Sitdown',
+        value: 'sitdown',
+      },
+      {
+        id: 3,
+        name: 'Projekty',
+        value: 'projects',
+      },
+      {
+        id: 4,
+        name: 'Nepřítomnosti',
+        value: 'office-absences',
+      },
+      {
+        id: 5,
+        name: 'The Game',
+        value: 'game',
+      },
+      {
+        id: 6,
+        name: 'Logování práce',
+        value: 'work-logs',
+      },
+      {
+        id: 7,
+        name: 'Uživatelé',
+        value: 'users',
+      },
+      {
+        id: 8,
+        name: 'Pozice',
+        value: 'positions',
+      },
+      {
+        id: 9,
+        name: 'Heatmap',
+        value: 'heatmap',
+      },
+      {
+        id: 10,
+        name: 'Časy konání sitdownu',
+        value: 'meeting-times',
+      },
+      {
+        id: 11,
+        name: 'Nastavení',
+        value: 'configuration',
+      },
+      {
+        id: 12,
+        name: 'Standup rating',
+        value: 'standup-rating',
+      },
+    ];
+
+    await use('App/Models/Permission').createMany(enumData);
+    await Database.raw('SET FOREIGN_KEY_CHECKS = 1;');
+  }
+
+  down() {}
+}
+
+module.exports = StandupRatingPermissionSchema;
