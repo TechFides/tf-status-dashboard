@@ -29,6 +29,7 @@
         hide-default-footer
         fill-height
         :sort-by="sortBy"
+        :custom-sort="customSort"
         class="elevation-1 fullscreen"
       >
         <template v-slot:item="props">
@@ -159,6 +160,30 @@ export default {
     },
     getFullName(firstName, lastName) {
       return `${firstName} ${lastName}`;
+    },
+    customSort(items, index, isDesc) {
+      items.sort((a, b) => {
+        if (index[0] === 'firstName') {
+          if (!isDesc[0]) {
+            return this.getFullName(a.firstName, a.lastName).localeCompare(
+              this.getFullName(b.firstName, b.lastName),
+              'cs',
+            );
+          } else {
+            return this.getFullName(b.firstName, b.lastName).localeCompare(
+              this.getFullName(a.firstName, a.lastName),
+              'cs',
+            );
+          }
+        } else {
+          if (!isDesc[0]) {
+            return a[index[0]] < b[index[0]] ? -1 : 1;
+          } else {
+            return b[index[0]] < a[index[0]] ? -1 : 1;
+          }
+        }
+      });
+      return items;
     },
   },
 };

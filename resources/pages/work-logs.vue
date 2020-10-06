@@ -279,6 +279,30 @@ export default {
     showDatepicker() {
       this.$refs.datepicker.menu = true;
     },
+    customSort(items, index, isDesc) {
+      items.sort((a, b) => {
+        if (index[0] === 'author.fullName') {
+          if (!isDesc[0]) {
+            return a.author.fullName.localeCompare(b.author.fullName, 'cs');
+          } else {
+            return b.author.fullName.localeCompare(a.author.fullName, 'cs');
+          }
+        } else if (index[0] === 'description') {
+          if (!isDesc[0]) {
+            return a.description.localeCompare(b.description, 'cs');
+          } else {
+            return b.description.localeCompare(a.description, 'cs');
+          }
+        } else {
+          if (!isDesc[0]) {
+            return a[index[0]] < b[index[0]] ? -1 : 1;
+          } else {
+            return b[index[0]] < a[index[0]] ? -1 : 1;
+          }
+        }
+      });
+      return items;
+    },
   },
 };
 </script>

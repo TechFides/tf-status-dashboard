@@ -505,6 +505,24 @@ export default {
       this.$store.dispatch('statistics/getProjectStatistics', selectedDate);
       this.statisticsMonthDialog.isOpen = false;
     },
+    customSort(items, index, isDesc) {
+      items.sort((a, b) => {
+        if (index[0] === 'userName') {
+          if (!isDesc[0]) {
+            return a.userName.localeCompare(b.userName, 'cs');
+          } else {
+            return b.userName.localeCompare(a.userName, 'cs');
+          }
+        } else {
+          if (!isDesc[0]) {
+            return a[index[0]] < b[index[0]] ? -1 : 1;
+          } else {
+            return b[index[0]] < a[index[0]] ? -1 : 1;
+          }
+        }
+      });
+      return items;
+    },
   },
 };
 </script>

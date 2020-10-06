@@ -178,6 +178,24 @@ export default {
 
       return toUpper ? result.toUpperCase() : result.toLowerCase();
     },
+    customSort(items, index, isDesc) {
+      items.sort((a, b) => {
+        if (index[0] === 'description') {
+          if (!isDesc[0]) {
+            return a.description.localeCompare(b.description, 'cs');
+          } else {
+            return b.description.localeCompare(a.description, 'cs');
+          }
+        } else {
+          if (!isDesc[0]) {
+            return a[index[0]] < b[index[0]] ? -1 : 1;
+          } else {
+            return b[index[0]] < a[index[0]] ? -1 : 1;
+          }
+        }
+      });
+      return items;
+    },
   },
 };
 </script>

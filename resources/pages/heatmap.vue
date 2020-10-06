@@ -102,6 +102,24 @@ export default {
           return '';
       }
     },
+    customSort(items, index, isDesc) {
+      items.sort((a, b) => {
+        if (index[0] === 'firstName') {
+          if (!isDesc[0]) {
+            return a.fullName.localeCompare(b.fullName, 'cs');
+          } else {
+            return b.fullName.localeCompare(a.fullName, 'cs');
+          }
+        } else {
+          if (!isDesc[0]) {
+            return a[index[0]] < b[index[0]] ? -1 : 1;
+          } else {
+            return b[index[0]] < a[index[0]] ? -1 : 1;
+          }
+        }
+      });
+      return items;
+    },
   },
 };
 </script>

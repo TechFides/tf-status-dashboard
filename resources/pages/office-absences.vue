@@ -267,6 +267,24 @@ export default {
     createNewAbsence() {
       this.$refs.createAbsenceDialog.openDialog();
     },
+    customSort(items, index, isDesc) {
+      items.sort((a, b) => {
+        if (index[0] === 'absenceApprover.fullName') {
+          if (!isDesc[0]) {
+            return a.absenceApprover.fullName.localeCompare(b.absenceApprover.fullName, 'cs');
+          } else {
+            return b.absenceApprover.fullName.localeCompare(a.absenceApprover.fullName, 'cs');
+          }
+        } else {
+          if (!isDesc[0]) {
+            return a[index[0]] < b[index[0]] ? -1 : 1;
+          } else {
+            return b[index[0]] < a[index[0]] ? -1 : 1;
+          }
+        }
+      });
+      return items;
+    },
   },
 };
 </script>
