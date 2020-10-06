@@ -21,6 +21,7 @@
         item-key="code"
         hide-default-footer
         fill-height
+        :sort-by="sortBy"
       >
         <template v-slot:item="props">
           <tr>
@@ -69,7 +70,7 @@ export default {
   },
   data() {
     return {
-      pagination: { sortBy: 'code' },
+      sortBy: 'code',
       filteringText: '',
     };
   },

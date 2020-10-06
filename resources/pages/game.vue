@@ -73,8 +73,10 @@
         hide-default-footer
         fill-height
         single-expand
-        must-sort
+        :sort-by="sortBy"
+        sort-desc
         class="elevation-1 fullscreen"
+        :custom-sort="customSort"
         @item-expanded="getRowId"
       >
         <template v-slot:item="{ item, expand, isExpanded }">
@@ -208,6 +210,7 @@ import { format } from 'date-fns';
 export default {
   data() {
     return {
+      sortBy: 'monthXp',
       statisticsMonthDialog: {
         isOpen: false,
         month: `${new Date().getFullYear()}-${new Date().getMonth() + 1}`,

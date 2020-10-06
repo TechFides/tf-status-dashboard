@@ -53,6 +53,9 @@
       item-key="id"
       hide-default-footer
       fill-height
+      :sort-by="sortBy"
+      :custom-sort="customSort"
+      multi-sort
       class="elevation-1 fullscreen"
     >
       <template v-slot:item="props">
@@ -86,6 +89,7 @@ import { WEEK_DAYS } from '../constants';
 export default {
   data() {
     return {
+      sortBy: 'weekDay',
       weekDays: WEEK_DAYS,
       editId: null,
       dialog: {
@@ -106,17 +110,20 @@ export default {
         {
           text: 'Název',
           align: 'left',
-          sortable: false,
+          sortable: true,
+          value: 'name',
         },
         {
           text: 'Hodina',
           align: 'left',
-          sortable: false,
+          sortable: true,
+          value: 'time',
         },
         {
           text: 'Den v týdnu',
           align: 'left',
-          sortable: false,
+          sortable: true,
+          value: 'weekDay',
         },
         {
           text: 'Projekty',

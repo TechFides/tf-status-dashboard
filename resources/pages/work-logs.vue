@@ -55,7 +55,8 @@
         item-key="id"
         fill-height
         single-expand
-        must-sort
+        :sort-by="sortBy"
+        sort-desc
         class="elevation-1 fullscreen"
       >
         <template v-slot:item="{ item }">
@@ -103,6 +104,7 @@ export default {
   },
   data() {
     return {
+      sortBy: 'startedByNumber',
       filter: {
         authorId: '',
         costCategoryId: '',

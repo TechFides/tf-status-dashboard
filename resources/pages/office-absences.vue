@@ -24,8 +24,8 @@
         item-key="id"
         fill-height
         single-expand
-        must-sort
         class="elevation-1 fullscreen"
+        :sort-by="sortBy"
         @item-expanded="getRowId"
       >
         <template v-slot:item="{ item, expand, isExpanded }">
@@ -116,6 +116,7 @@ export default {
   },
   data() {
     return {
+      sortBy: 'absenceStartByNumber',
       filter: {
         absenceType: '',
         absenceState: '',

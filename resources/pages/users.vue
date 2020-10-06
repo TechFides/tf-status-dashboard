@@ -28,7 +28,7 @@
         item-key="id"
         hide-default-footer
         fill-height
-        must-sort
+        :sort-by="sortBy"
         class="elevation-1 fullscreen"
       >
         <template v-slot:item="props">
@@ -76,6 +76,7 @@ export default {
       isAdmin: false,
       filteringText: '',
       loading: false,
+      sortBy: 'firstName',
     };
   },
   computed: {
