@@ -91,7 +91,7 @@
                 :project-rating="i.rating"
                 :project-id="i.projectId"
                 :standup-id="i.standupId"
-                :disabled="!isAdministration()"
+                :disabled="!isStandupRatingEditAllowed"
                 :date="formatDate(props.item.standup.date)"
                 :on-submit="openGifDialog"
               />
@@ -190,6 +190,9 @@ export default {
           value: meetingTime.id,
         })),
       ];
+    },
+    isStandupRatingEditAllowed() {
+      return this.$auth.user.position.permissions.find(permission => permission.value === 'standup-rating');
     },
   },
   watch: {
