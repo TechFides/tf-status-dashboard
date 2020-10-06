@@ -24,7 +24,7 @@
               :value="option.value"
               class="mr-2"
             />
-            <v-radio value="dates">
+            <v-radio value="dates" @click="showDatepicker">
               <template v-slot:label>
                 <DatePicker
                   v-model="filter.dates"
@@ -33,6 +33,7 @@
                   :clearable="false"
                   required
                   range
+                  ref="datepicker"
                 />
               </template>
             </v-radio>
@@ -272,6 +273,9 @@ export default {
     },
     editItem(item) {
       this.$refs.workLogDialog.openDialog(item);
+    },
+    showDatepicker() {
+      this.$refs.datepicker.menu = true;
     },
   },
 };
