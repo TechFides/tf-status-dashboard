@@ -73,7 +73,6 @@ export const actions = {
     try {
       await this.$axios.$delete(`/api/standups/${standup.id}`);
       dispatch('getProjectRating', standup.selectedDate);
-      commit('notification/clearNotification', null, { root: true });
     } catch (error) {
       commit(
         'notification/setNotification',
@@ -97,7 +96,6 @@ export const actions = {
     try {
       const res = await this.$axios.$get('/api/projectRatings', getDateParams(date));
       commit('setProjectRatings', res);
-      commit('notification/clearNotification', null, { root: true });
     } catch (error) {
       commit(
         'notification/setNotification',

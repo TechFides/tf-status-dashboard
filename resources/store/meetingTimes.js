@@ -52,7 +52,6 @@ export const actions = {
   async deleteMeetingTime({ dispatch, commit }, meetingTimeId) {
     try {
       await this.$axios.$delete(`/api/meeting-times/${meetingTimeId}`);
-      commit('notification/clearNotification', null, { root: true });
       dispatch('getMeetingTimes');
     } catch (error) {
       commit(

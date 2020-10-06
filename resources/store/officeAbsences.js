@@ -98,7 +98,6 @@ export const actions = {
     try {
       await this.$axios.$delete(`/api/office-absences/${absenceId}`);
       dispatch('getOfficeAbsences');
-      commit('notification/clearNotification', null, { root: true });
     } catch (error) {
       commit(
         'notification/setNotification',

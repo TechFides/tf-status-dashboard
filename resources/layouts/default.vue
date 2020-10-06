@@ -25,14 +25,16 @@
     </v-main>
     <v-snackbar :value="notification.items.isVisible" :color="notification.items.color" :multi-line="true">
       {{ notification.items.message }}
-      <v-btn dark text @click="closeNotification"> Close </v-btn>
+      <template v-slot:action>
+        <v-icon @click="closeNotification">mdi-close</v-icon>
+      </template>
     </v-snackbar>
   </v-app>
 </template>
 
 <script>
 import LoginDialog from '../components/LoginDialog';
-import { mapState, mapMutations } from 'vuex';
+import { mapState } from 'vuex';
 import moment from 'moment';
 
 export default {
