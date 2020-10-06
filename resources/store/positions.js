@@ -20,7 +20,6 @@ export const actions = {
     try {
       await this.$axios.post('/api/positions/synchronization');
       dispatch('getPositions');
-      commit('notification/clearNotification', null, { root: true });
     } catch (error) {
       if (error && error.response && error.response.data && error.response.data[0]) {
         commit('notification/setNotification', error.response.data[0], { root: true });

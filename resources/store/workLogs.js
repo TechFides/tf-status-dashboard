@@ -81,7 +81,6 @@ export const actions = {
     try {
       await this.$axios.$delete(`/api/work-logs/${workLogId}`);
       dispatch('getWorkLogs');
-      commit('notification/clearNotification', null, { root: true });
     } catch (error) {
       commit(
         'notification/setNotification',

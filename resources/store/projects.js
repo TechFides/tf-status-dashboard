@@ -97,7 +97,6 @@ export const actions = {
     try {
       await this.$axios.$delete(`/api/projects/${projectId}`);
       dispatch('getAllProjects');
-      commit('notification/clearNotification', null, { root: true });
     } catch (error) {
       commit(
         'notification/setNotification',

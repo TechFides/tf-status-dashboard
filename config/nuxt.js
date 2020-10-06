@@ -4,8 +4,8 @@ const resolve = require('path').resolve;
 
 module.exports = {
   /*
-  ** Headers of the page
-  */
+   ** Headers of the page
+   */
   head: {
     title: 'TF-Hub',
     htmlAttrs: {
@@ -21,16 +21,8 @@ module.exports = {
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' },
     ],
   },
-  plugins: [
-    '~/plugins/auth-inject.js',
-    '~/plugins/auth.js',
-  ],
-  modules: [
-    '@nuxtjs/axios',
-    '@nuxtjs/auth',
-    '@nuxtjs/vuetify',
-    '@nuxtjs/device',
-  ],
+  plugins: ['~/plugins/auth-inject.js', '~/plugins/auth.js', '~/plugins/axios.client.js', '~/plugins/notifier.js'],
+  modules: ['@nuxtjs/axios', '@nuxtjs/auth', '@nuxtjs/vuetify', '@nuxtjs/device'],
   auth: {
     redirect: {
       login: false,
@@ -48,28 +40,24 @@ module.exports = {
       },
     },
   },
-  css: [
-    '~/assets/style/variables.scss'
-  ],
+  css: ['~/assets/style/variables.scss'],
   router: {
     middleware: 'authenticated',
   },
   /*
-  ** Customize the progress bar color
-  */
+   ** Customize the progress bar color
+   */
   loading: { color: '#3B8070' },
   /*
-  ** Build configuration
-  */
+   ** Build configuration
+   */
   build: {
-    vendor: [
-      'axios',
-    ],
+    vendor: ['axios'],
     extractCSS: true,
     /*
-    ** Run ESLint on save
-    */
-    extend (config, ctx) {
+     ** Run ESLint on save
+     */
+    extend(config, ctx) {
       if (ctx.isDev && ctx.isClient) {
         config.module.rules.push({
           enforce: 'pre',

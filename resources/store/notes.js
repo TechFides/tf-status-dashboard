@@ -51,7 +51,6 @@ export const actions = {
     try {
       await this.$axios.$post(`/api/notes/${noteId}/completed`);
       dispatch('getNotes');
-      commit('notification/clearNotification', null, { root: true });
     } catch (error) {
       commit(
         'notification/setNotification',
