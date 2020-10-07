@@ -28,6 +28,7 @@ const AUTHORIZATION_USERS = 'authorization:users';
 const AUTHORIZATION_POSITIONS = 'authorization:positions';
 const AUTHORIZATION_MEETING_TIMES = 'authorization:meeting-times';
 const AUTHORIZATION_CONFIGURATION = 'authorization:configuration';
+const AUTHORIZATION_STANDUP_RATING = 'authorization:standup-rating';
 
 /******************************************************************************
  * AUTH
@@ -105,7 +106,10 @@ Route.delete('/api/projects/:id', 'ProjectController.deleteProject').middleware(
  * PROJECT RATINGS
  *****************************************************************************/
 Route.get('/api/projectRatings', 'ProjectRatingController.getProjectRatings').middleware([AUTH, AUTHORIZATION_SITDOWN]);
-Route.post('/api/projectRatings', 'ProjectRatingController.setProjectRating').middleware([AUTH, AUTHORIZATION_SITDOWN]);
+Route.post('/api/projectRatings', 'ProjectRatingController.setProjectRating').middleware([
+  AUTH,
+  AUTHORIZATION_STANDUP_RATING,
+]);
 
 /******************************************************************************
  * STANDUPS

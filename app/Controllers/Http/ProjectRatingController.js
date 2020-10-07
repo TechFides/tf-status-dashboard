@@ -8,30 +8,24 @@ const PositionModel = use('App/Models/Position');
 
 class ProjectRatingController {
   async setProjectRating({ request, response, auth }) {
-    const position = await PositionModel.query().with('permissions').where({ id: auth.user.position_id }).first();
-    const permission = position.permissions;
-    if (permission.find(permission => permission.value === 'standup-rating')) {
-      const { projectId, standupId, ratingValueId } = request.body;
+    const { projectId, standupId, ratingValueId } = request.body;
 
-      try {
-        const ratingData = { project_id: projectId, standup_id: standupId };
-        const [rating, ratingValue] = await Promise.all([
-          StandupProjectRating.findOrCreate(ratingData, ratingData),
-          StandupProjectRatingEnumModel.find(ratingValueId),
-        ]);
+    try {
+      const ratingData = { project_id: projectId, standup_id: standupId };
+      const [rating, ratingValue] = await Promise.all([
+        StandupProjectRating.findOrCreate(ratingData, ratingData),
+        StandupProjectRatingEnumModel.find(ratingValueId),
+      ]);
 
-        rating.projectRating().associate(ratingValue);
+      rating.projectRating().associate(ratingValue);
 
-        await ProjectRatingMessenger.sendRatingMessage(projectId, ratingValue.toJSON(), ratingValueId);
+      await ProjectRatingMessenger.sendRatingMessage(projectId, ratingValue.toJSON(), ratingValueId);
 
-        await rating.save();
-        response.status(200).send();
-      } catch (e) {
-        console.error(e);
-        response.status(404).send();
-      }
-    } else {
-      response.status(403).send();
+      await rating.save();
+      response.status(200).send();
+    } catch (e) {
+      console.error(e);
+      response.status(404).send();
     }
   }
 
