@@ -182,7 +182,7 @@ Route.delete('/api/work-logs/:id', 'WorkLogController.deleteWorkLog').middleware
  *****************************************************************************/
 Route.get('/api/users', 'UserController.getUsers').middleware(AUTH);
 Route.post('/api/users/synchronization', 'UserController.userSynchronization').middleware([AUTH, AUTHORIZATION_USERS]);
-Route.post('/api/users/set-admin/:id', 'UserController.setAdmin').middleware([AUTH, AUTHORIZATION_USERS]);
+Route.post('/api/users/set-admin/:id', 'UserController.setAdmin').middleware([AUTH]);
 Route.post('/api/users/set-approver/:id', 'UserController.setApprover').middleware([AUTH, AUTHORIZATION_USERS]);
 
 /******************************************************************************
