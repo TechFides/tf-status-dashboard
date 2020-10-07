@@ -28,6 +28,7 @@ const AUTHORIZATION_USERS = 'authorization:users';
 const AUTHORIZATION_POSITIONS = 'authorization:positions';
 const AUTHORIZATION_MEETING_TIMES = 'authorization:meeting-times';
 const AUTHORIZATION_CONFIGURATION = 'authorization:configuration';
+const AUTHORIZATION_MANAGE_GAME = 'authorization:manage-game';
 
 /******************************************************************************
  * AUTH
@@ -119,8 +120,11 @@ Route.put('/api/standups/:id', 'StandupController.editStandup').middleware([AUTH
  * STATISTICS
  *****************************************************************************/
 Route.get('/api/statistics/projects', 'StatisticsController.getProjectStatistics').middleware(AUTH, AUTHORIZATION_GAME);
-Route.post('/api/statistics/bonus-xp', 'StatisticsController.addUserBonusXp').middleware([AUTH, AUTHORIZATION_ADMIN]);
-Route.get('/api/statistics/data', 'JiraController.fetchData').middleware([AUTH, AUTHORIZATION_ADMIN]);
+Route.post('/api/statistics/bonus-xp', 'StatisticsController.addUserBonusXp').middleware([
+  AUTH,
+  AUTHORIZATION_MANAGE_GAME,
+]);
+Route.get('/api/statistics/data', 'JiraController.fetchData').middleware([AUTH, AUTHORIZATION_MANAGE_GAME]);
 
 /******************************************************************************
  * OFFICE ABSENCE

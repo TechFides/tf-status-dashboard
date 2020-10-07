@@ -106,7 +106,7 @@
             <td class="text-right element pr-8">
               {{ item.newLevel }}
             </td>
-            <td v-if="isAdministration()" class="text-center px-0">
+            <td v-if="isManageGameAllowed" class="text-center px-0">
               <v-icon color="green lighten-1" class="justify-center" @click.stop="addExp(item)">
                 mdi-plus-circle-outline
               </v-icon>
@@ -161,7 +161,7 @@
         <template v-slot:activator="{ on, attrs }">
           <div v-bind="attrs" v-on="on">
             <v-btn
-              v-show="isAdministration() && checkSyncButton"
+              v-show="isManageGameAllowed && checkSyncButton"
               class="my-2 standup-button"
               color="primary"
               :disabled="!!statistics.items.jiraSynchronization.status"
@@ -370,12 +370,10 @@ export default {
 
       return expandedHeaders.filter(h => h.isVisible);
     },
-
     userDetailItems() {
       const userDetail = this.statistics.items.userStatistics.find(u => u.id === this.expandedRowId);
       return userDetail.userDetail;
     },
-
     checkSyncButton() {
       const selectedDate = new Date(this.selectedDate);
       selectedDate.setDate(2);
@@ -385,6 +383,12 @@ export default {
       dateMonthAgo.setDate(1);
 
       return selectedDate >= dateMonthAgo;
+    },
+    isManageGameAllowed() {
+      return (
+        this.$auth.user.is_admin ||
+        this.$auth.user.position.permissions.find(permission => permission.value === 'manage-game')
+      );
     },
   },
   async fetch({ store }) {
