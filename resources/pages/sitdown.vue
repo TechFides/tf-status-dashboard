@@ -192,7 +192,10 @@ export default {
       ];
     },
     isStandupRatingEditAllowed() {
-      return this.$auth.user.position.permissions.find(permission => permission.value === 'standup-rating');
+      return (
+        this.$auth.user.is_admin ||
+        this.$auth.user.position.permissions.find(permission => permission.value === 'standup-rating')
+      );
     },
   },
   watch: {

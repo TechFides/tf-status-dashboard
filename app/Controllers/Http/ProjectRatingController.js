@@ -7,7 +7,7 @@ const ProjectRatingMessenger = use('App/Services/ProjectRatingMessenger');
 const PositionModel = use('App/Models/Position');
 
 class ProjectRatingController {
-  async setProjectRating({ request, response, auth }) {
+  async setProjectRating({ request, response }) {
     const { projectId, standupId, ratingValueId } = request.body;
 
     try {
