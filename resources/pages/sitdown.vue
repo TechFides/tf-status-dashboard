@@ -12,17 +12,17 @@
         />
       </v-col>
       <v-col :cols="$device.isDesktop ? 2 : 12" :class="$device.isDesktop ? 'pt-0' : 'pt-0 pl-6 pb-0'">
-        <DatePicker v-model="filter.standupMonth" label="Měsíc" :clearable="false" type="month" date-format="YYYY-MM" />
+        <DatePicker v-model="filter.sitdownMonth" label="Měsíc" :clearable="false" type="month" date-format="YYYY-MM" />
       </v-col>
       <v-btn
         v-show="isAdministration()"
         :class="$device.isDesktop ? 'mt-2 ml-4' : 'mb-4'"
         color="light-blue accent-4"
         dark
-        @click="createStandup"
+        @click="createSitdown"
       >
         <i class="material-icons">add</i>
-        Přidat standup
+        Přidat sitdown
       </v-btn>
       <v-btn
         color="green darken-2"
@@ -66,7 +66,7 @@
                         report_problem
                       </i>
                     </template>
-                    <span>Chybí cíl na další standup</span>
+                    <span>Chybí cíl na další sitdown</span>
                   </v-tooltip>
                 </span>
               </th>
@@ -83,22 +83,22 @@
         <template v-slot:item="props">
           <tr>
             <td class="text-left element">
-              {{ formatDate(props.item.standup.date) }}
+              {{ formatDate(props.item.sitdown.date) }}
             </td>
 
             <td v-for="(i, itemIndex) in props.item.ratings" :key="itemIndex" class="text-left">
               <project-status-picker
                 :project-rating="i.rating"
                 :project-id="i.projectId"
-                :standup-id="i.standupId"
-                :disabled="!isStandupRatingEditAllowed"
-                :date="formatDate(props.item.standup.date)"
+                :sitdown-id="i.sitdownId"
+                :disabled="!isSitdownRatingEditAllowed"
+                :date="formatDate(props.item.sitdown.date)"
                 :on-submit="openGifDialog"
               />
             </td>
             <td class="text-left">
-              <v-icon class="mr-2" @click="editStandup(props.item.standup)"> edit </v-icon>
-              <v-icon @click="deleteStandup(props.item.standup)"> delete </v-icon>
+              <v-icon class="mr-2" @click="editSitdown(props.item.sitdown)"> edit </v-icon>
+              <v-icon @click="deleteSitdown(props.item.sitdown)"> delete </v-icon>
             </td>
           </tr>
         </template>
@@ -106,15 +106,15 @@
     </v-card>
     <note-list :editable="isAdministration()" @edit="editNote" />
     <note-dialog ref="refNoteDialog" />
-    <StandupDialog ref="refStandupDialog" />
+    <SitdownDialog ref="refSitdownDialog" />
   </div>
 </template>
 
 <script>
-import NoteList from '../components/standup/NoteList';
-import NoteDialog from '../components/standup/dialogs/NoteDialog';
-import StandupDialog from '../components/standup/dialogs/StandupDialog';
-import ProjectStatusPicker from '../components/standup/dialogs/ProjectStatusPicker';
+import NoteList from '../components/sitdown/NoteList';
+import NoteDialog from '../components/sitdown/dialogs/NoteDialog';
+import SitdownDialog from '../components/sitdown/dialogs/SitdownDialog';
+import ProjectStatusPicker from '../components/sitdown/dialogs/ProjectStatusPicker';
 import { parse, format } from 'date-fns';
 import { mapState } from 'vuex';
 import DatePicker from '../../resources/components/common/DatePicker';
@@ -125,7 +125,7 @@ export default {
     NoteList,
     NoteDialog,
     DatePicker,
-    StandupDialog,
+    SitdownDialog,
   },
   data() {
     return {
@@ -137,12 +137,12 @@ export default {
       selectedMeetingTimeId: null,
       defaultRating: 8,
       filter: {
-        standupMonth: null,
+        sitdownMonth: null,
       },
     };
   },
   computed: {
-    ...mapState(['notes', 'projects', 'standups', 'errors', 'meetingTimes']),
+    ...mapState(['notes', 'projects', 'sitdowns', 'errors', 'meetingTimes']),
     headers() {
       const sortedProjects = this.sortProjectsByMeetingTime();
       const filteredProjects = this.getFilteredProjectsBySelectedMeetingTime(sortedProjects);
@@ -174,12 +174,12 @@ export default {
       ];
     },
     rows() {
-      return this.standups.ratings.map(standup => ({
-        standup: {
-          id: standup.id,
-          date: standup.date,
+      return this.sitdowns.ratings.map(sitdown => ({
+        sitdown: {
+          id: sitdown.id,
+          date: sitdown.date,
         },
-        ratings: this.getRatings(standup),
+        ratings: this.getRatings(sitdown),
       }));
     },
     formattedMeetingTimesForSelect() {
@@ -191,24 +191,24 @@ export default {
         })),
       ];
     },
-    isStandupRatingEditAllowed() {
+    isSitdownRatingEditAllowed() {
       return (
         this.$auth.user.is_admin ||
-        this.$auth.user.position.permissions.find(permission => permission.value === 'standup-rating')
+        this.$auth.user.position.permissions.find(permission => permission.value === 'sitdown-rating')
       );
     },
   },
   watch: {
     filter: {
       handler() {
-        this.updateStandup();
+        this.updateSitdown();
       },
       deep: true,
     },
   },
   fetch({ store, params }) {
     return Promise.all([
-      store.dispatch('standups/getStandupData'),
+      store.dispatch('sitdowns/getSitdownData'),
       store.dispatch('notes/getNotes'),
       store.dispatch('meetingTimes/getMeetingTimes'),
       store.dispatch('projects/getProjects'),
@@ -216,7 +216,7 @@ export default {
   },
   mounted() {
     const now = new Date();
-    this.filter.standupMonth = `${now.getFullYear()}-${now.getMonth() + 1}`;
+    this.filter.sitdownMonth = `${now.getFullYear()}-${now.getMonth() + 1}`;
   },
   methods: {
     sortProjectsByMeetingTime() {
@@ -253,27 +253,27 @@ export default {
 
       return format(d, 'MM-YYYY');
     },
-    updateStandup() {
+    updateSitdown() {
       const actualDate = new Date();
 
       const selectedDate = new Date();
-      const [year, month] = this.filter.standupMonth.split('-');
+      const [year, month] = this.filter.sitdownMonth.split('-');
       selectedDate.setFullYear(Number(year), Number(month) - 1);
 
       const isSameMonth = selectedDate.getMonth() === actualDate.getMonth();
       const isSameYear = selectedDate.getFullYear() === actualDate.getFullYear();
 
       if (isSameMonth && isSameYear) {
-        this.$store.dispatch('standups/getStandupData', selectedDate);
+        this.$store.dispatch('sitdowns/getSitdownData', selectedDate);
       } else {
-        this.$store.dispatch('standups/getProjectsForMonth', selectedDate);
+        this.$store.dispatch('sitdowns/getProjectsForMonth', selectedDate);
       }
     },
-    getRatings(standup) {
+    getRatings(sitdown) {
       return this.getFilteredProjectsBySelectedMeetingTime(this.sortProjectsByMeetingTime()).map(p => ({
-        standupId: standup.id,
+        sitdownId: sitdown.id,
         projectId: p.id,
-        rating: standup.standupProjectRating[p.id] >= 0 ? standup.standupProjectRating[p.id] : this.defaultRating,
+        rating: sitdown.sitdownProjectRating[p.id] >= 0 ? sitdown.sitdownProjectRating[p.id] : this.defaultRating,
       }));
     },
     isMissingNote(projectCode, hasIcon) {
@@ -289,11 +289,11 @@ export default {
     createNote() {
       this.$refs.refNoteDialog.openDialog();
     },
-    editStandup(standup) {
-      this.$refs.refStandupDialog.openDialog(standup);
+    editSitdown(sitdown) {
+      this.$refs.refSitdownDialog.openDialog(sitdown);
     },
-    createStandup() {
-      this.$refs.refStandupDialog.openDialog();
+    createSitdown() {
+      this.$refs.refSitdownDialog.openDialog();
     },
     openGifDialog() {
       this.gifDialog.isOpen = true;
@@ -301,16 +301,16 @@ export default {
 
       setTimeout(() => (this.gifDialog.isOpen = false), this.GIF_ANIMATION_DURATION);
     },
-    async deleteStandup(standup) {
-      const confirmed = confirm(`Opravdu chcete smazat standup ${this.formatDate(standup.date)}?`);
-      this.standupDialog = {
-        id: standup.id,
-        date: parse(standup.date),
+    async deleteSitdown(sitdown) {
+      const confirmed = confirm(`Opravdu chcete smazat sitdown ${this.formatDate(sitdown.date)}?`);
+      this.sitdownDialog = {
+        id: sitdown.id,
+        date: parse(sitdown.date),
         selectedDate: this.selectedDate,
       };
 
       if (confirmed) {
-        await this.$store.dispatch('standups/deleteStandup', this.standupDialog);
+        await this.$store.dispatch('sitdowns/deleteSitdown', this.sitdownDialog);
       }
     },
   },

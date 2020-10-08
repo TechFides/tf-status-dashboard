@@ -2,13 +2,13 @@
   <v-dialog v-model="isOpen" max-width="500px" :persistent="true">
     <v-card>
       <v-card-title>
-        <span class="headline">{{ standupDialogTitle }}</span>
+        <span class="headline">{{ sitdownDialogTitle }}</span>
       </v-card-title>
       <v-card-text style="max-height: 800px">
         <v-row class="pl-2 pr-4">
           <DatePicker
-            v-model="standupDialog.date"
-            label="Datum standupu"
+            v-model="sitdownDialog.date"
+            label="Datum sitdownu"
             required
             :min="getMinDate()"
             :clearable="false"
@@ -22,7 +22,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn text @click.native="resetStandup"> Zavřít </v-btn>
+        <v-btn text @click.native="resetSitdown"> Zavřít </v-btn>
         <v-btn color="green darken-2" dark @click.native="save"> Uložit </v-btn>
       </v-card-actions>
     </v-card>
@@ -34,14 +34,14 @@ import { mapState } from 'vuex';
 import moment from 'moment';
 
 export default {
-  name: 'StandupDialog',
+  name: 'SitdownDialog',
   components: {
     DatePicker,
   },
   data() {
     return {
       isOpen: false,
-      standupDialog: {
+      sitdownDialog: {
         id: null,
         date: null,
         selectedDate: null,
@@ -50,21 +50,21 @@ export default {
   },
   computed: {
     ...mapState(['errors']),
-    standupDialogTitle() {
-      return this.standupDialog.id ? 'Upravení standupu' : 'Přidání standupu';
+    sitdownDialogTitle() {
+      return this.sitdownDialog.id ? 'Upravení sitdownu' : 'Přidání sitdownu';
     },
   },
   methods: {
-    openDialog(standup) {
+    openDialog(sitdown) {
       this.isOpen = true;
-      if (standup) {
-        this.standupDialog = {
-          id: standup.id,
-          date: moment(standup.date).format('YYYY-MM-DD'),
+      if (sitdown) {
+        this.sitdownDialog = {
+          id: sitdown.id,
+          date: moment(sitdown.date).format('YYYY-MM-DD'),
           selectedDate: this.selectedDate,
         };
       } else {
-        this.standupDialog = {
+        this.sitdownDialog = {
           isOpen: true,
           date: moment().format('YYYY-MM-DD'),
           selectedDate: this.selectedDate,
@@ -72,26 +72,26 @@ export default {
       }
     },
     async save() {
-      const action = this.standupDialog.id ? 'standups/editStandup' : 'standups/createStandup';
+      const action = this.sitdownDialog.id ? 'sitdowns/editSitdown' : 'sitdowns/createSitdown';
       let errorMsg = null;
 
-      if (!this.standupDialog.date) {
-        errorMsg = 'Chybí datum standupu.';
-      } else if (moment().isAfter(moment(this.standupDialog.date).add(1, 'day'))) {
-        errorMsg = 'Datum standupu je v minulosti.';
+      if (!this.sitdownDialog.date) {
+        errorMsg = 'Chybí datum sitdownu.';
+      } else if (moment().isAfter(moment(this.sitdownDialog.date).add(1, 'day'))) {
+        errorMsg = 'Datum sitdownu je v minulosti.';
       }
 
       if (errorMsg) {
         this.$store.commit('errors/setErrorState', { message: errorMsg });
         return;
       }
-      await this.$store.dispatch(action, this.standupDialog);
-      this.resetStandup();
+      await this.$store.dispatch(action, this.sitdownDialog);
+      this.resetSitdown();
     },
-    resetStandup() {
+    resetSitdown() {
       this.$store.commit('errors/clearErrorState');
       this.isOpen = false;
-      this.standupDialog = {
+      this.sitdownDialog = {
         date: null,
       };
     },

@@ -1,20 +1,20 @@
 'use strict';
 
-const StandupModel = use('App/Models/Standup');
-const StandupProjectRatingEnumModel = use('App/Models/StandupProjectRatingEnum');
-const StandupProjectRating = use('App/Models/StandupProjectRating');
+const SitdownModel = use('App/Models/Sitdown');
+const SitdownProjectRatingEnumModel = use('App/Models/SitdownProjectRatingEnum');
+const SitdownProjectRating = use('App/Models/SitdownProjectRating');
 const ProjectRatingMessenger = use('App/Services/ProjectRatingMessenger');
 const PositionModel = use('App/Models/Position');
 
 class ProjectRatingController {
   async setProjectRating({ request, response }) {
-    const { projectId, standupId, ratingValueId } = request.body;
+    const { projectId, sitdownId, ratingValueId } = request.body;
 
     try {
-      const ratingData = { project_id: projectId, standup_id: standupId };
+      const ratingData = { project_id: projectId, sitdown_id: sitdownId };
       const [rating, ratingValue] = await Promise.all([
-        StandupProjectRating.findOrCreate(ratingData, ratingData),
-        StandupProjectRatingEnumModel.find(ratingValueId),
+        SitdownProjectRating.findOrCreate(ratingData, ratingData),
+        SitdownProjectRatingEnumModel.find(ratingValueId),
       ]);
 
       rating.projectRating().associate(ratingValue);
@@ -36,10 +36,10 @@ class ProjectRatingController {
     const currentMonth = new Date(year, month, 1);
     const nextMonth = new Date(year, month + 1, 1);
 
-    const projects = await StandupModel.query()
+    const projects = await SitdownModel.query()
       .where('date', '>=', currentMonth)
       .where('date', '<', nextMonth)
-      .with('standupProjectRating')
+      .with('sitdownProjectRating')
       .fetch();
 
     return projects.toJSON();

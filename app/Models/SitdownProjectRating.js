@@ -2,7 +2,7 @@
 
 const Model = use('Model');
 
-class StandupProjectRating extends Model {
+class SitdownProjectRating extends Model {
   static get hidden() {
     return ['created_at', 'updated_at'];
   }
@@ -12,12 +12,12 @@ class StandupProjectRating extends Model {
   }
 
   projectRating() {
-    return this.belongsTo('App/Models/StandupProjectRatingEnum');
+    return this.belongsTo('App/Models/SitdownProjectRatingEnum');
   }
 
-  standup() {
-    return this.belongsTo('App/Models/Standup');
+  sitdown() {
+    return this.belongsTo('App/Models/Sitdown');
   }
 }
 
-module.exports = StandupProjectRating;
+module.exports = SitdownProjectRating;

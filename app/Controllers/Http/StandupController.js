@@ -1,53 +1,53 @@
 'use strict';
 
-const StandupModel = use('App/Models/Standup');
-const StandupProjectRating = use('App/Models/StandupProjectRating');
+const SitdownModel = use('App/Models/Sitdown');
+const SitdownProjectRating = use('App/Models/SitdownProjectRating');
 
-class StandupController {
-  static getStandupData(request) {
-    const { date } = request.only(['standupDate']);
+class SitdownController {
+  static getSitdownData(request) {
+    const { date } = request.only(['sitdownDate']);
 
     return {
       date,
     };
   }
 
-  async getStandups({ request, response, session }) {
+  async getSitdowns({ request, response, session }) {
     let { month, year } = request.get();
     month = Number(month);
     year = Number(year);
     const currentMonth = new Date(year, month, 1);
     const nextMonth = new Date(year, month + 1, 1);
 
-    const standups = await StandupModel.query().where('date', '>=', currentMonth).where('date', '<', nextMonth).fetch();
+    const sitdowns = await SitdownModel.query().where('date', '>=', currentMonth).where('date', '<', nextMonth).fetch();
 
-    return standups.toJSON();
+    return sitdowns.toJSON();
   }
 
-  async createStandup({ request, response, params }) {
-    const standup = new StandupModel();
+  async createSitdown({ request, response, params }) {
+    const sitdown = new SitdownModel();
     const date = request.only(['date']);
 
-    standup.fill(date);
-    await standup.save();
+    sitdown.fill(date);
+    await sitdown.save();
 
-    return standup.toJSON();
+    return sitdown.toJSON();
   }
 
-  async editStandup({ request, response, params }) {
+  async editSitdown({ request, response, params }) {
     const { id } = params;
     const { date } = request.only(['date']);
-    await StandupModel.query().where('id', '=', id).update({ date: date });
+    await SitdownModel.query().where('id', '=', id).update({ date: date });
   }
 
-  async deleteStandup({ request, response, params }) {
+  async deleteSitdown({ request, response, params }) {
     const { id } = params;
-    const standup = await StandupModel.find(id);
+    const sitdown = await SitdownModel.find(id);
 
     try {
-      await StandupProjectRating.query().where('standup_id', '=', id).delete();
+      await SitdownProjectRating.query().where('sitdown_id', '=', id).delete();
 
-      await standup.delete();
+      await sitdown.delete();
       response.send();
     } catch (e) {
       response.status(500).send({ message: e.message });
@@ -55,4 +55,4 @@ class StandupController {
   }
 }
 
-module.exports = StandupController;
+module.exports = SitdownController;

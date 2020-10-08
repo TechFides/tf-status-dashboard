@@ -2,10 +2,10 @@
 
 const Model = use('Model');
 
-class StandupProjectRatingEnum extends Model {
+class SitdownProjectRatingEnum extends Model {
   static get hidden() {
     return ['created_at', 'updated_at'];
   }
 }
 
-module.exports = StandupProjectRatingEnum;
+module.exports = SitdownProjectRatingEnum;

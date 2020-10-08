@@ -20,7 +20,7 @@
         schema:
           type: array
           items:
-            $ref: '#/definitions/StandupDetail'
+            $ref: '#/definitions/SitdownDetail'
 
 /api/projectRating:
   post:
@@ -36,13 +36,13 @@
           properties:
             projectId:
               type: integer
-            standupId:
+            sitdownId:
               type: integer
             ratingValueId:
               type: integer
           required:
             - projectId
-            - standupId
+            - sitdownId
             - ratingValueId
     responses:
       200:

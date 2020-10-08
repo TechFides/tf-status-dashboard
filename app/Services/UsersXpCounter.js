@@ -4,7 +4,7 @@ const { EXP_MODIFIER, AVERAGE_MONTH_WORKED_HOURS } = require('../../constants');
 const format = require('date-fns/format');
 
 const UserModel = use('App/Models/User');
-const StandupModel = use('App/Models/Standup');
+const SitdownModel = use('App/Models/Sitdown');
 const UserTotalExpModel = use('App/Models/UserTotalExp');
 const UserProjectParticipationModel = use('App/Models/UserProjectParticipation');
 const JiraSynchronizationModel = use('App/Models/JiraSynchronization');
@@ -32,21 +32,21 @@ class UsersXpCounter {
                 .with('projectUser', builder => {
                   builder.with('projectExpModifier');
                 })
-                .with('standupProjectRating', builder => {
+                .with('sitdownProjectRating', builder => {
                   builder
-                    .whereHas('standup', builder => {
+                    .whereHas('sitdown', builder => {
                       builder.where('date', '>=', currentMonth).where('date', '<', nextMonth);
                     })
                     .with('projectRating')
-                    .with('standup');
+                    .with('sitdown');
                 });
             });
         })
         .fetch()
     ).toJSON();
 
-    const standups = (
-      await StandupModel.query()
+    const sitdowns = (
+      await SitdownModel.query()
         .where('date', '>=', currentMonth)
         .where('date', '<', nextMonth)
         .orderBy('date', 'asc')
@@ -74,11 +74,11 @@ class UsersXpCounter {
           ),
           timeSpent: this.getTimeSpentInHours(p.time_spent),
           coefficient: this.getProjectCoefficient(p.time_spent),
-          projectRatings: this.getRatings(p.project.standupProjectRating, standups),
+          projectRatings: this.getRatings(p.project.sitdownProjectRating, sitdowns),
           projectsXp: this.getProjectXp(
-            this.getRatings(p.project.standupProjectRating, standups),
+            this.getRatings(p.project.sitdownProjectRating, sitdowns),
             this.getProjectCoefficient(p.time_spent),
-            p.project.standupProjectRating,
+            p.project.sitdownProjectRating,
             this.getExpModifier(p.project.projectUser, s.id, allUsersTimespent),
           ),
         })),
@@ -87,7 +87,7 @@ class UsersXpCounter {
     const syncData = await this.getSyncData();
 
     const userStatistics = {
-      standups: standups,
+      sitdowns: sitdowns,
       jiraSynchronization: {
         status: syncData.status,
         startSyncTime: syncData.startSyncTime,
@@ -181,9 +181,9 @@ class UsersXpCounter {
     return this.roundNumber(projectCoefficient);
   }
 
-  getRatings(ratings, standups) {
-    return standups.map(p => {
-      const projectRating = ratings.filter(r => r.standup_id === p.id)[0];
+  getRatings(ratings, sitdowns) {
+    return sitdowns.map(p => {
+      const projectRating = ratings.filter(r => r.sitdown_id === p.id)[0];
 
       return {
         rating: projectRating ? projectRating.projectRating.value : 0,

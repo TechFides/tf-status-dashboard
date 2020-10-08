@@ -17,7 +17,7 @@ const Route = use('Route');
 const Logger = use('Logger');
 
 const AUTH = 'auth';
-const AUTHORIZATION_ADMIN = 'authorization:standup';
+const AUTHORIZATION_ADMIN = 'authorization:sitdown';
 const AUTHORIZATION_SITDOWN = 'authorization:sitdown';
 const AUTHORIZATION_HEATMAP = 'authorization:heatmap';
 const AUTHORIZATION_PROJECTS = 'authorization:projects';
@@ -28,7 +28,8 @@ const AUTHORIZATION_USERS = 'authorization:users';
 const AUTHORIZATION_POSITIONS = 'authorization:positions';
 const AUTHORIZATION_MEETING_TIMES = 'authorization:meeting-times';
 const AUTHORIZATION_CONFIGURATION = 'authorization:configuration';
-const AUTHORIZATION_STANDUP_RATING = 'authorization:standup-rating';
+const AUTHORIZATION_SITDOWN_RATING = 'authorization:sitdown-rating';
+const AUTHORIZATION_MANAGE_GAME = 'authorization:manage-game';
 
 /******************************************************************************
  * AUTH
@@ -108,23 +109,26 @@ Route.delete('/api/projects/:id', 'ProjectController.deleteProject').middleware(
 Route.get('/api/projectRatings', 'ProjectRatingController.getProjectRatings').middleware([AUTH, AUTHORIZATION_SITDOWN]);
 Route.post('/api/projectRatings', 'ProjectRatingController.setProjectRating').middleware([
   AUTH,
-  AUTHORIZATION_STANDUP_RATING,
+  AUTHORIZATION_SITDOWN_RATING,
 ]);
 
 /******************************************************************************
- * STANDUPS
+ * SITDOWNS
  *****************************************************************************/
-Route.get('/api/standups', 'StandupController.getStandups').middleware([AUTH, AUTHORIZATION_SITDOWN]);
-Route.post('/api/standups', 'StandupController.createStandup').middleware([AUTH, AUTHORIZATION_SITDOWN]);
-Route.delete('/api/standups/:id', 'StandupController.deleteStandup').middleware([AUTH, AUTHORIZATION_SITDOWN]);
-Route.put('/api/standups/:id', 'StandupController.editStandup').middleware([AUTH, AUTHORIZATION_SITDOWN]);
+Route.get('/api/sitdowns', 'SitdownController.getSitdowns').middleware([AUTH, AUTHORIZATION_SITDOWN]);
+Route.post('/api/sitdowns', 'SitdownController.createSitdown').middleware([AUTH, AUTHORIZATION_SITDOWN]);
+Route.delete('/api/sitdowns/:id', 'SitdownController.deleteSitdown').middleware([AUTH, AUTHORIZATION_SITDOWN]);
+Route.put('/api/sitdowns/:id', 'SitdownController.editSitdown').middleware([AUTH, AUTHORIZATION_SITDOWN]);
 
 /******************************************************************************
  * STATISTICS
  *****************************************************************************/
 Route.get('/api/statistics/projects', 'StatisticsController.getProjectStatistics').middleware(AUTH, AUTHORIZATION_GAME);
-Route.post('/api/statistics/bonus-xp', 'StatisticsController.addUserBonusXp').middleware([AUTH, AUTHORIZATION_ADMIN]);
-Route.get('/api/statistics/data', 'JiraController.fetchData').middleware([AUTH, AUTHORIZATION_ADMIN]);
+Route.post('/api/statistics/bonus-xp', 'StatisticsController.addUserBonusXp').middleware([
+  AUTH,
+  AUTHORIZATION_MANAGE_GAME,
+]);
+Route.get('/api/statistics/data', 'JiraController.fetchData').middleware([AUTH, AUTHORIZATION_MANAGE_GAME]);
 
 /******************************************************************************
  * OFFICE ABSENCE
