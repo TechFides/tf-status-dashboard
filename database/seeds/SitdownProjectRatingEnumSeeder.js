@@ -2,7 +2,7 @@
 
 /*
 |--------------------------------------------------------------------------
-| StandupProjectRatingEnumSeeder
+| SitdownProjectRatingEnumSeeder
 |--------------------------------------------------------------------------
 |
 | Make use of the Factory instance to seed database with dummy data or
@@ -12,9 +12,9 @@
 
 const Database = use('Database');
 
-class StandupProjectRatingEnumSeeder {
+class SitdownProjectRatingEnumSeeder {
   async run() {
-    await Database.table('standup_project_rating_enums').insert(StandupProjectRatingEnumSeeder.getInitialData());
+    await Database.table('sitdown_project_rating_enums').insert(SitdownProjectRatingEnumSeeder.getInitialData());
   }
 
   static getInitialData() {
@@ -71,4 +71,4 @@ class StandupProjectRatingEnumSeeder {
   }
 }
 
-module.exports = StandupProjectRatingEnumSeeder;
+module.exports = SitdownProjectRatingEnumSeeder;

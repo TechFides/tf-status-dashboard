@@ -108,7 +108,7 @@
             <td class="text-right element pr-8">
               {{ item.newLevel }}
             </td>
-            <td v-if="isAdministration()" class="text-center px-0">
+            <td v-if="isManageGameAllowed" class="text-center px-0">
               <v-icon color="green lighten-1" class="justify-center" @click.stop="addExp(item)">
                 mdi-plus-circle-outline
               </v-icon>
@@ -163,8 +163,8 @@
         <template v-slot:activator="{ on, attrs }">
           <div v-bind="attrs" v-on="on">
             <v-btn
-              v-show="isAdministration() && checkSyncButton"
-              class="my-2 standup-button"
+              v-show="isManageGameAllowed && checkSyncButton"
+              class="my-2 sitdown-button"
               color="primary"
               :disabled="!!statistics.items.jiraSynchronization.status"
               @click="fetchJiraData()"
@@ -313,8 +313,8 @@ export default {
       return headers.filter(h => h.isVisible);
     },
     expandedHeaders() {
-      const projectsStandupDates = this.getProjectsStandupDates();
-      let standupDate = [
+      const projectsSitdownDates = this.getProjectsSitdownDates();
+      let sitdownDate = [
         {
           text: '',
           value: '',
@@ -322,8 +322,8 @@ export default {
         },
       ];
 
-      if (projectsStandupDates) {
-        standupDate = projectsStandupDates.map(p => ({
+      if (projectsSitdownDates) {
+        sitdownDate = projectsSitdownDates.map(p => ({
           text: p.date,
           align: 'text-right',
           sortable: false,
@@ -361,7 +361,7 @@ export default {
           value: 'timeSpent',
           isVisible: true,
         },
-        ...standupDate,
+        ...sitdownDate,
         {
           text: 'XP za projekty',
           align: 'text-right',
@@ -373,12 +373,10 @@ export default {
 
       return expandedHeaders.filter(h => h.isVisible);
     },
-
     userDetailItems() {
       const userDetail = this.statistics.items.userStatistics.find(u => u.id === this.expandedRowId);
       return userDetail.userDetail;
     },
-
     checkSyncButton() {
       const selectedDate = new Date(this.selectedDate);
       selectedDate.setDate(2);
@@ -388,6 +386,12 @@ export default {
       dateMonthAgo.setDate(1);
 
       return selectedDate >= dateMonthAgo;
+    },
+    isManageGameAllowed() {
+      return (
+        this.$auth.user.is_admin ||
+        this.$auth.user.position.permissions.find(permission => permission.value === 'manage-game')
+      );
     },
   },
   async fetch({ store }) {
@@ -457,15 +461,15 @@ export default {
       this.expandedRowId = row.item.id;
     },
 
-    getProjectsStandupDates() {
-      let standupDates;
-      if (this.statistics.items.standups.length > 0) {
-        standupDates = this.statistics.items.standups.map(p => ({
+    getProjectsSitdownDates() {
+      let sitdownDates;
+      if (this.statistics.items.sitdowns.length > 0) {
+        sitdownDates = this.statistics.items.sitdowns.map(p => ({
           date: this.formatMonth(p.date),
         }));
       }
 
-      return standupDates;
+      return sitdownDates;
     },
 
     async fetchJiraData() {
@@ -546,7 +550,7 @@ export default {
   margin-right: 20px;
 }
 
-.standup-button {
+.sitdown-button {
   background-color: #1976d2 !important;
 }
 

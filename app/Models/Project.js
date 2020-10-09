@@ -15,8 +15,8 @@ class Project extends Model {
     return this.hasMany('App/Models/UserProjectParticipation');
   }
 
-  standupProjectRating() {
-    return this.hasMany('App/Models/StandupProjectRating');
+  sitdownProjectRating() {
+    return this.hasMany('App/Models/SitdownProjectRating');
   }
 
   projectUser() {

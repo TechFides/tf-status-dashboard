@@ -61,7 +61,7 @@ export default {
       type: Number,
       required: true,
     },
-    standupId: {
+    sitdownId: {
       type: Number,
       required: true,
     },
@@ -129,14 +129,14 @@ export default {
         const ratingData = {
           projectId: this.projectId,
           ratingValueId: ratingValue,
-          standupId: this.standupId,
+          sitdownId: this.sitdownId,
         };
 
         if (this.getRatingId(icon) === this.RATING_ENUM.AMAZING) {
           this.onSubmit();
         }
 
-        await this.$store.dispatch('standups/editRating', ratingData);
+        await this.$store.dispatch('sitdowns/editRating', ratingData);
       } catch (e) {
         // TODO handle error
         console.error(e);
