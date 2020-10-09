@@ -24,8 +24,9 @@
         item-key="id"
         fill-height
         single-expand
-        must-sort
         class="elevation-1 fullscreen"
+        :sort-by="sortBy"
+        sort-desc
         @item-expanded="getRowId"
       >
         <template v-slot:item="{ item, expand, isExpanded }">
@@ -116,6 +117,7 @@ export default {
   },
   data() {
     return {
+      sortBy: 'absenceStartByNumber',
       filter: {
         absenceType: '',
         absenceState: '',
@@ -265,6 +267,24 @@ export default {
     },
     createNewAbsence() {
       this.$refs.createAbsenceDialog.openDialog();
+    },
+    customSort(items, index, isDesc) {
+      items.sort((a, b) => {
+        if (index[0] === 'absenceApprover.fullName') {
+          if (!isDesc[0]) {
+            return a.absenceApprover.fullName.localeCompare(b.absenceApprover.fullName, 'cs');
+          } else {
+            return b.absenceApprover.fullName.localeCompare(a.absenceApprover.fullName, 'cs');
+          }
+        } else {
+          if (!isDesc[0]) {
+            return a[index[0]] < b[index[0]] ? -1 : 1;
+          } else {
+            return b[index[0]] < a[index[0]] ? -1 : 1;
+          }
+        }
+      });
+      return items;
     },
   },
 };
