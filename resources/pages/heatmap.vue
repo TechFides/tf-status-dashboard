@@ -9,6 +9,8 @@
         fill-height
         no-data-text="Žádná data"
         class="elevation-1 fullscreen"
+        :sort-by="sortBy"
+        :custom-sort="customSort"
       >
         <template v-slot:item="props">
           <tr>
@@ -35,10 +37,15 @@
 
 <script>
 import { mapState } from 'vuex';
-import { parse, format, addWeeks, setDay, setHours, getHours } from 'date-fns';
+import { format } from 'date-fns';
 import { FEEDBACKS } from '../constants';
 
 export default {
+  data() {
+    return {
+      sortBy: 'firstName',
+    };
+  },
   computed: {
     ...mapState(['usersFeedbacks', 'heatmap']),
     headers() {
@@ -53,7 +60,7 @@ export default {
         {
           text: 'Jméno',
           align: 'center',
-          sortable: false,
+          sortable: true,
           value: 'firstName',
         },
         ...heatmapWeeks,
@@ -94,6 +101,24 @@ export default {
         default:
           return '';
       }
+    },
+    customSort(items, index, isDesc) {
+      items.sort((a, b) => {
+        if (index[0] === 'firstName') {
+          if (!isDesc[0]) {
+            return a.fullName.localeCompare(b.fullName, 'cs');
+          } else {
+            return b.fullName.localeCompare(a.fullName, 'cs');
+          }
+        } else {
+          if (!isDesc[0]) {
+            return a[index[0]] < b[index[0]] ? -1 : 1;
+          } else {
+            return b[index[0]] < a[index[0]] ? -1 : 1;
+          }
+        }
+      });
+      return items;
     },
   },
 };

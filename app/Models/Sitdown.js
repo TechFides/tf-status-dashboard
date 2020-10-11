@@ -2,7 +2,7 @@
 
 const Model = use('Model');
 
-class Standup extends Model {
+class Sitdown extends Model {
   static get dates() {
     return super.dates.concat(['date']);
   }
@@ -11,9 +11,9 @@ class Standup extends Model {
     return ['created_at', 'updated_at'];
   }
 
-  standupProjectRating() {
-    return this.hasMany('App/Models/StandupProjectRating');
+  sitdownProjectRating() {
+    return this.hasMany('App/Models/SitdownProjectRating');
   }
 }
 
-module.exports = Standup;
+module.exports = Sitdown;

@@ -1,10 +1,10 @@
 definitions:
-  StandupDetail:
+  SitdownDetail:
     type: object
     properties:
       id:
         type: integer
       date:
         type: string
-      standupProjectRating:
+      sitdownProjectRating:
         $ref: '#/definitions/ProjectRating'

@@ -40,7 +40,7 @@ function getChannelName(channelName) {
   });
 }
 
-async function sendNotificationOfStandup(slackChannel, time, projects) {
+async function sendNotificationOfSitdown(slackChannel, time, projects) {
   try {
     await slackWebClient.chat.scheduleMessage({
       channel: slackChannel.value,
@@ -111,7 +111,7 @@ async function main() {
     if (projects.length) {
       let unixTimestamp = getUnixTimestamp(projectsMeetingTime.time, parseInt(projectsMeetingTime.week_day));
       if (unixTimestamp) {
-        await sendNotificationOfStandup(sitdownChannelName[0], unixTimestamp, projects);
+        await sendNotificationOfSitdown(sitdownChannelName[0], unixTimestamp, projects);
       }
     }
   }

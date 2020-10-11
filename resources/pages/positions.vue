@@ -22,7 +22,7 @@
         item-key="id"
         fill-height
         single-expand
-        must-sort
+        :sort-by="sortBy"
         class="elevation-1 fullscreen"
       >
         <template v-slot:item="{ item }">
@@ -98,6 +98,7 @@ export default {
     return {
       loading: false,
       chipsNumber: 5,
+      sortBy: 'name',
     };
   },
   computed: {
@@ -107,7 +108,7 @@ export default {
         {
           text: 'Název pozice',
           align: 'left',
-          sortable: false,
+          sortable: true,
           value: 'name',
         },
         {

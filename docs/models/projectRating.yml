@@ -4,9 +4,9 @@ definitions:
     properties:
       id:
         type: integer
-      standup_id:
+      sitdown_id:
         type: integer
-      standup_project_rating_enum_id:
+      sitdown_project_rating_enum_id:
         type: integer
       project_id:
         type: integer

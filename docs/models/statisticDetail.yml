@@ -2,8 +2,8 @@ definitions:
   Statistic:
     type: object
     properties:
-      standups:
-        $ref: '#/definitions/Standup'
+      sitdowns:
+        $ref: '#/definitions/Sitdown'
       jiraSynchronization:
         $ref: '#/definitions/JiraSynchronization'
       userStatistic:

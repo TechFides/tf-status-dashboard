@@ -24,7 +24,7 @@ class ProjectRatingMessenger {
           {
             color: '#c62828',
             text: `Tak tohle se hodně nepovedlo :disappointed: chtělo by to zase pořádně máknout! \n Ze sitdownu máte *${ratingValue.value}XP*.`,
-            image_url: `${process.env.VUE_APP_URL}/images/standup_rating_fail.gif`,
+            image_url: `${process.env.VUE_APP_URL}/images/sitdown_rating_fail.gif`,
           },
         ];
         break;
@@ -33,7 +33,7 @@ class ProjectRatingMessenger {
           {
             color: '#3f51b5',
             text: `Nazvěme to průměrně odvedená práce... ale tu my přece neděláme. Ze sitdownu máte *${ratingValue.value}XP* :sunglasses:.`,
-            thumb_url: `${process.env.VUE_APP_URL}/images/standup_rating_standard.png`,
+            thumb_url: `${process.env.VUE_APP_URL}/images/sitdown_rating_standard.png`,
           },
         ];
         break;
@@ -42,7 +42,7 @@ class ProjectRatingMessenger {
           {
             color: '#4caf50',
             text: `Prostor na zlepšení by tu byl, ale v zásadě dobře odvedený kus práce :thumbsup:. \n Ze sitdownu máte hodnotu *${ratingValue.value}XP*.`,
-            thumb_url: `${process.env.VUE_APP_URL}/images/standup_rating_good.png`,
+            thumb_url: `${process.env.VUE_APP_URL}/images/sitdown_rating_good.png`,
           },
         ];
         break;
@@ -51,7 +51,7 @@ class ProjectRatingMessenger {
           {
             color: '#4caf50',
             text: `Fantastická práce :muscle:. Ze sitdownu máte *${ratingValue.value}XP*. Jen tak dál!`,
-            thumb_url: `${process.env.VUE_APP_URL}/images/standup_rating_amazing.png`,
+            thumb_url: `${process.env.VUE_APP_URL}/images/sitdown_rating_amazing.png`,
           },
         ];
         break;

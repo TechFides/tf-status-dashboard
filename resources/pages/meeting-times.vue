@@ -53,6 +53,9 @@
       item-key="id"
       hide-default-footer
       fill-height
+      :sort-by="sortBy"
+      :custom-sort="customSort"
+      multi-sort
       class="elevation-1 fullscreen"
     >
       <template v-slot:item="props">
@@ -86,6 +89,7 @@ import { WEEK_DAYS } from '../constants';
 export default {
   data() {
     return {
+      sortBy: 'weekDay',
       weekDays: WEEK_DAYS,
       editId: null,
       dialog: {
@@ -106,17 +110,20 @@ export default {
         {
           text: 'Název',
           align: 'left',
-          sortable: false,
+          sortable: true,
+          value: 'name',
         },
         {
           text: 'Hodina',
           align: 'left',
-          sortable: false,
+          sortable: true,
+          value: 'time',
         },
         {
           text: 'Den v týdnu',
           align: 'left',
-          sortable: false,
+          sortable: true,
+          value: 'weekDay',
         },
         {
           text: 'Projekty',
@@ -199,6 +206,43 @@ export default {
       if (confirmed) {
         await this.$store.dispatch('meetingTimes/deleteMeetingTime', id);
       }
+    },
+    customSort(items, index, isDesc) {
+      items.sort((a, b) => {
+        let result = 0;
+        for (const i in index) {
+          if (index[i] === 'name') {
+            if (!isDesc[i]) {
+              result = a.name.localeCompare(b.name, 'cs');
+            } else {
+              result = b.name.localeCompare(a.name, 'cs');
+            }
+          } else if (index[i] === 'weekDay') {
+            if (a.weekDayId === b.weekDayId) {
+              result = 0;
+            } else if (!isDesc[i]) {
+              result = a.weekDayId < b.weekDayId ? -1 : 1;
+            } else {
+              result = b.weekDayId < a.weekDayId ? -1 : 1;
+            }
+          } else {
+            if (a[index[i]] === b[index[i]]) {
+              result = 0;
+            } else if (!isDesc[i]) {
+              result = a[index[i]] < b[index[i]] ? -1 : 1;
+            } else {
+              result = b[index[i]] < a[index[i]] ? -1 : 1;
+            }
+          }
+
+          if (result !== 0) {
+            return result;
+          }
+        }
+        return result;
+      });
+
+      return items;
     },
   },
 };

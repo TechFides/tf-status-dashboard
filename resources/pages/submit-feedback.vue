@@ -21,8 +21,6 @@
   </v-layout>
 </template>
 <script>
-const REDIRECT_TIMEOUT = 10000;
-
 const handleFeedbackError = ({ response }) => {
   const status = response.status;
   const data = {
@@ -47,7 +45,7 @@ const handleFeedbackError = ({ response }) => {
 };
 
 export default {
-  validate({ store, route, redirect }) {
+  validate({ route, redirect }) {
     const { token, feedbackEnumId } = route.query;
     if (!token || !feedbackEnumId) {
       redirect('/');
@@ -59,34 +57,18 @@ export default {
     return {
       loading: true,
       submitted: false,
-      redirect: false,
       error: null,
     };
   },
-  watch: {
-    redirect: {
-      immediate: true,
-      handler(val) {
-        if (val) {
-          this.timeout = setTimeout(() => void this.$router.push('/'), REDIRECT_TIMEOUT);
-        }
-      },
-    },
-  },
-  async asyncData({ route, store, redirect, $axios }) {
+  async asyncData({ route, $axios }) {
     try {
       await $axios.post('/api/feedback', {
         token: route.query.token,
         feedbackEnumId: route.query.feedbackEnumId,
       });
-      return { loading: false, submitted: true, redirect: true };
+      return { loading: false, submitted: true };
     } catch (error) {
       return handleFeedbackError(error);
-    }
-  },
-  beforeDestroy() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
     }
   },
 };

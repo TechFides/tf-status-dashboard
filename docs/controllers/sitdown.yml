@@ -1,7 +1,7 @@
-/api/standups:
+/api/sitdowns:
   get:
     tags:
-      - Standup
+      - Sitdown
     summary: Get all stanudps
     description: Get all stanudps
     parameters:
@@ -20,12 +20,12 @@
         schema:
           type: array
           items:
-            $ref: '#/definitions/Standup'
+            $ref: '#/definitions/Sitdown'
 
-/api/standup:
+/api/sitdown:
   post:
     tags:
-      - Standup
+      - Sitdown
     summary: Create stanudp
     description: Create stanudp
     parameters:
@@ -42,18 +42,18 @@
       200:
         description: Success
         schema:
-          $ref: '#/definitions/Standup'
+          $ref: '#/definitions/Sitdown'
 
-/api/standup/:id:
+/api/sitdown/:id:
   put:
     tags:
-      - Standup
-    summary: Edit standup
-    description: Edit standup
+      - Sitdown
+    summary: Edit sitdown
+    description: Edit sitdown
     parameters:
       - in: query
         name: id
-        description: id of standup
+        description: id of sitdown
         required: true
         type: string
       - in: body
@@ -69,18 +69,18 @@
       200:
         description: Success
         schema:
-          $ref: '#/definitions/Standup'
+          $ref: '#/definitions/Sitdown'
 
-/api/standups/:id:
+/api/sitdowns/:id:
   delete:
     tags:
-      - Standup
-    summary: Delete standup
-    description: Delete standup
+      - Sitdown
+    summary: Delete sitdown
+    description: Delete sitdown
     parameters:
       - in: query
         name: id
-        description: id of standup
+        description: id of sitdown
         required: true
         type: string
     responses:
