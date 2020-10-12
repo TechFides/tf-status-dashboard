@@ -9,7 +9,7 @@ class GoogleLoginController {
     await ally.driver('google').redirect();
   }
 
-  async registerToken({request, response, ally}) {
+  async registerToken({ request, response, ally }) {
     try {
       const { token } = request.all();
 
