@@ -43,6 +43,7 @@ Route.get('/api/auth/me', 'AuthController.me');
  *****************************************************************************/
 Route.get('/auth/google', 'GoogleLoginController.redirect');
 Route.get('/authenticated/google', 'GoogleLoginController.callback');
+Route.get('/auth/google/register-token', 'GoogleLoginController.registerToken')
 
 /******************************************************************************
  * CONFIGURATION

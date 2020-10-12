@@ -9,45 +9,59 @@ class GoogleLoginController {
     await ally.driver('google').redirect();
   }
 
+  async registerToken({request, response, ally}) {
+    try {
+      const { token } = request.all();
+
+      const gUser = await ally.driver('google').getUserByToken(token);
+      await this.registerGoogleUser(gUser);
+    } catch (e) {
+      response.status(401).send({ message: 'Unable to register a token.' });
+    }
+  }
+
   async callback({ ally, response }) {
     try {
       const gUser = await ally.driver('google').getUser();
-
-      // user details to be saved
-      const userDetails = {
-        email: gUser.getEmail(),
-        first_name: gUser.getName().split(' ').slice(0, -1).join(' '),
-        last_name: gUser.getName().split(' ').slice(-1).join(' '),
-        username: gUser.getNickname(),
-        is_active: true,
-      };
-
-      // search for existing user
-      const whereClauseForUsers = {
-        email: gUser.getEmail(),
-      };
-
-      const user = await User.findOrCreate(whereClauseForUsers, userDetails);
-
-      // user details to be saved
-      const googleTokenDetails = {
-        token: gUser.getAccessToken(),
-        status: false,
-        user_id: user.id,
-      };
-
-      // search for existing user
-      const whereClauseForGoogleTokens = {
-        token: gUser.getAccessToken(),
-      };
-
-      const googleToken = await GoogleToken.findOrCreate(whereClauseForGoogleTokens, googleTokenDetails);
+      const googleToken = await this.registerGoogleUser(gUser);
 
       const vueAppUrl = Env.get('VUE_APP_URL');
       response.redirect(`${vueAppUrl}/submit-google-auth/?token=${googleToken.token}`);
     } catch (error) {
       return 'Unable to authenticate. Try again later';
     }
+  }
+
+  async registerGoogleUser(googleUser) {
+    // user details to be saved
+    const userDetails = {
+      email: googleUser.getEmail(),
+      first_name: googleUser.getName().split(' ').slice(0, -1).join(' '),
+      last_name: googleUser.getName().split(' ').slice(-1).join(' '),
+      username: googleUser.getNickname(),
+      is_active: true,
+    };
+
+    // search for existing user
+    const whereClauseForUsers = {
+      email: googleUser.getEmail(),
+    };
+
+    const user = await User.findOrCreate(whereClauseForUsers, userDetails);
+
+    // user details to be saved
+    const googleTokenDetails = {
+      token: googleUser.getAccessToken(),
+      status: false,
+      user_id: user.id,
+    };
+
+    // search for existing user
+    const whereClauseForGoogleTokens = {
+      token: googleUser.getAccessToken(),
+    };
+
+    return GoogleToken.findOrCreate(whereClauseForGoogleTokens, googleTokenDetails);
   }
 }
 
