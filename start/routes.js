@@ -167,11 +167,11 @@ Route.post('/api/office-absence/approve-absence-state', 'OfficeAbsenceController
 Route.post('/api/office-absence/reject-absence-state', 'OfficeAbsenceController.rejectAbsenceState');
 Route.post('/api/office-absences/cancel', 'OfficeAbsenceController.cancelOfficeAbsence').middleware([
   AUTH,
-  AUTHORIZATION_ADMIN,
+  AUTHORIZATION_OFFICE_ABSENCES,
 ]);
 Route.delete('/api/office-absences/:id', 'OfficeAbsenceController.deleteOfficeAbsence').middleware([
   AUTH,
-  AUTHORIZATION_ADMIN,
+  AUTHORIZATION_OFFICE_ABSENCES,
 ]);
 
 /******************************************************************************
