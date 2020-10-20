@@ -30,7 +30,10 @@ class UsersXpCounter {
             .with('project', builder => {
               builder
                 .with('projectUser', builder => {
-                  builder.with('projectExpModifier');
+                  builder
+                    .whereRaw('YEAR(month) = ?', currentMonth.getFullYear())
+                    .andWhereRaw('MONTH(month) = ?', currentMonth.getMonth() + 1)
+                    .with('projectExpModifier');
                 })
                 .with('sitdownProjectRating', builder => {
                   builder
