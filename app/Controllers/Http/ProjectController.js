@@ -52,6 +52,7 @@ class ProjectController {
 
   async getProjects({ request, response, params }) {
     const { isActive } = request.get();
+    const now = new Date();
     const projectsQuery = ProjectModel.query()
       .with('notes')
       .with('meetingTime')
@@ -61,6 +62,8 @@ class ProjectController {
           .whereHas('projectExpModifier', builder => {
             builder.where('value', '>', 1);
           })
+          .andWhereRaw('YEAR(month) = ?', now.getFullYear())
+          .andWhereRaw('MONTH(month) = ?', now.getMonth() + 1)
           .with('user');
       });
 
@@ -163,23 +166,29 @@ class ProjectController {
 
   async addTeamLeader({ request, response, params }) {
     const { projectId, userId } = request.only(['projectId', 'userId']);
+    const now = new Date();
+    const query = ProjectUserModel.query()
+      .where('project_id', '=', projectId)
+      .andWhereRaw('YEAR(month) = ?', now.getFullYear())
+      .andWhereRaw('MONTH(month) = ?', now.getMonth() + 1);
 
-    const projectUser = await ProjectUserModel.query().where('project_id', '=', projectId).fetch();
+    if (userId === 0) {
+      return await query.delete();
+    }
+
+    const projectUser = await query.fetch();
 
     if (projectUser.rows.length > 0) {
-      if (userId === 0) {
-        await ProjectUserModel.query().where('project_id', '=', projectId).delete();
-      } else {
-        await ProjectUserModel.query().where('project_id', '=', projectId).update({
-          project_exp_modifier_id: 1,
-          user_id: userId,
-        });
-      }
+      await query.update({
+        project_exp_modifier_id: 1,
+        user_id: userId,
+      });
     } else {
       await ProjectUserModel.create({
         project_id: projectId,
         user_id: userId,
         project_exp_modifier_id: 1,
+        month: new Date(),
       });
     }
   }
