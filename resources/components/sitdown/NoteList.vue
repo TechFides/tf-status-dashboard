@@ -34,8 +34,8 @@ export default {
   name: 'NoteList',
   props: {
     editable: {
-      type: Number,
-      default: 0,
+      type: Boolean,
+      default: false,
     },
   },
   data() {

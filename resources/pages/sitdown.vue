@@ -105,7 +105,7 @@
         </template>
       </v-data-table>
     </v-card>
-    <note-list :editable="isAdministration() || hasPermission('manage-project-notes')" @edit="editNote" />
+    <note-list :editable="Boolean(isAdministration() || hasPermission('manage-project-notes'))" @edit="editNote" />
     <note-dialog ref="refNoteDialog" />
     <SitdownDialog ref="refSitdownDialog" />
   </div>
