@@ -3,11 +3,12 @@ export default function ({ app, store, route, redirect }) {
     return;
   }
 
-  if (route.name === 'submit-google-auth') {
-    return;
-  }
-
-  if (route.name === 'submit-office-absence') {
+  if (
+    route.name === 'submit-google-auth' ||
+    route.name === 'submit-office-absence' ||
+    route.name === 'submit-office-absence' ||
+    route.name === 'submit-feedback'
+  ) {
     return;
   }
 
