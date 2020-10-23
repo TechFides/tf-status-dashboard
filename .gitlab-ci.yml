@@ -87,17 +87,6 @@ deploy:staging:
   tags:
     - docker
 
-deploy:dev:
-  extends: .deploy
-  only:
-    - develop
-  variables:
-    TARGET_SOURCES_PATH: $DEV_TARGET_SOURCES_PATH
-    TARGET_INSTANCE: $DEV_TARGET_INSTANCE
-  environment:
-    name: dev
-    url: https://dev.projects.status.techfides.cz/
-
 deploy:production:
   extends: .deploy
   when: manual
