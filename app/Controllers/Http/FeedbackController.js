@@ -35,9 +35,9 @@ class FeedbackController {
     const user = await feedbackToken.user().fetch();
     const heatmapWeek = await feedbackToken.heatmapWeek().fetch();
 
-    const feedback = await FeedbackModel.findOrNew(function () {
-      this.where('heatmap_week_id', heatmapWeek.id);
-      this.where('user_id', user.id);
+    const feedback = await FeedbackModel.findOrNew({
+      heatmap_week_id: heatmapWeek.id,
+      user_id: user.id,
     });
 
     feedback.merge({
