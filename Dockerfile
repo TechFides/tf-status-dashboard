@@ -24,4 +24,4 @@ EXPOSE 3333 9229
 
 ENV ENV_SILENT=true
 
-CMD node ./ace migration:run && node server.js
+CMD node ./ace migration:run --force && node server.js
