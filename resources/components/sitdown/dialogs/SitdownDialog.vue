@@ -38,6 +38,12 @@ export default {
   components: {
     DatePicker,
   },
+  props: {
+    actionAfterSubmit: {
+      type: Function,
+      default: () => {},
+    },
+  },
   data() {
     return {
       isOpen: false,
@@ -86,6 +92,7 @@ export default {
         return;
       }
       await this.$store.dispatch(action, this.sitdownDialog);
+      await this.actionAfterSubmit();
       this.resetSitdown();
     },
     resetSitdown() {

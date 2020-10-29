@@ -107,7 +107,7 @@
     </v-card>
     <note-list :editable="Boolean(isAdministration() || hasPermission('manage-project-notes'))" @edit="editNote" />
     <note-dialog ref="refNoteDialog" />
-    <SitdownDialog ref="refSitdownDialog" />
+    <SitdownDialog ref="refSitdownDialog" :action-after-submit="fetchSitdowns" />
   </div>
 </template>
 
@@ -313,6 +313,9 @@ export default {
       if (confirmed) {
         await this.$store.dispatch('sitdowns/deleteSitdown', this.sitdownDialog);
       }
+    },
+    async fetchSitdowns() {
+      await this.$store.dispatch('sitdowns/getProjectRating', new Date(this.filter.sitdownMonth));
     },
   },
 };

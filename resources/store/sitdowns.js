@@ -61,7 +61,6 @@ export const actions = {
   async createSitdown({ dispatch, commit }, sitdown) {
     try {
       await this.$axios.$post('/api/sitdowns', sitdown);
-      dispatch('getProjectRating', sitdown.selectedDate);
       commit('errors/clearErrorState', null, { root: true });
     } catch (error) {
       if (error && error.response && error.response.data && error.response.data[0]) {
@@ -84,7 +83,6 @@ export const actions = {
   async editSitdown({ dispatch, commit }, sitdown) {
     try {
       await this.$axios.$put(`/api/sitdowns/${sitdown.id}`, sitdown);
-      dispatch('getProjectRating', sitdown.selectedDate);
       commit('errors/clearErrorState', null, { root: true });
     } catch (error) {
       if (error && error.response && error.response.data && error.response.data[0]) {
