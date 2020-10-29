@@ -17,8 +17,8 @@
       <v-data-table
         :headers="headers"
         :items="positions.items"
-        :items-per-page="100"
-        :footer-props="{ 'items-per-page-options': [20, 50, 100, -1] }"
+        :hide-default-footer="true"
+        disable-pagination
         item-key="id"
         fill-height
         single-expand
