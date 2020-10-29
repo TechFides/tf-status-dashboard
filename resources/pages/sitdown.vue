@@ -108,6 +108,7 @@
     <note-list :editable="Boolean(isAdministration() || hasPermission('manage-project-notes'))" @edit="editNote" />
     <note-dialog ref="refNoteDialog" />
     <SitdownDialog ref="refSitdownDialog" :action-after-submit="fetchSitdowns" />
+    <ConfirmDialog ref="deleteSitdownDialog" />
   </div>
 </template>
 
@@ -119,9 +120,11 @@ import ProjectStatusPicker from '../components/sitdown/dialogs/ProjectStatusPick
 import { parse, format } from 'date-fns';
 import { mapState } from 'vuex';
 import DatePicker from '../../resources/components/common/DatePicker';
+import ConfirmDialog from '../../resources/components/common/ConfirmDialog';
 
 export default {
   components: {
+    ConfirmDialog,
     ProjectStatusPicker,
     NoteList,
     NoteDialog,
@@ -303,16 +306,16 @@ export default {
       setTimeout(() => (this.gifDialog.isOpen = false), this.GIF_ANIMATION_DURATION);
     },
     async deleteSitdown(sitdown) {
-      const confirmed = confirm(`Opravdu chcete smazat sitdown ${this.formatDate(sitdown.date)}?`);
       this.sitdownDialog = {
         id: sitdown.id,
         date: parse(sitdown.date),
         selectedDate: this.selectedDate,
       };
 
-      if (confirmed) {
-        await this.$store.dispatch('sitdowns/deleteSitdown', this.sitdownDialog);
-      }
+      this.$refs.deleteSitdownDialog.openDialog({
+        title: `Opravdu chcete smazat sitdown ${this.formatDate(sitdown.date)}?`,
+        confirmAction: () => this.$store.dispatch('sitdowns/deleteSitdown', this.sitdownDialog),
+      });
     },
     async fetchSitdowns() {
       await this.$store.dispatch('sitdowns/getProjectRating', new Date(this.filter.sitdownMonth));

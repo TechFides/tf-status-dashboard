@@ -74,19 +74,22 @@
           </td>
           <td class="justify-center layout px-0">
             <v-icon small class="mr-2" @click="toggleDialogVisibility(props.item)"> edit </v-icon>
-            <v-icon small @click="deleteSitDownMeetingTime(props.item.id)"> delete </v-icon>
+            <v-icon small @click="deleteSitDownMeetingTime(props.item)"> delete </v-icon>
           </td>
         </tr>
       </template>
     </v-data-table>
+    <ConfirmDialog ref="deleteMeetingTimeDialog" />
   </v-layout>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState } from 'vuex';
 import { WEEK_DAYS } from '../constants';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 
 export default {
+  components: { ConfirmDialog },
   data() {
     return {
       sortBy: 'weekDay',
@@ -200,12 +203,11 @@ export default {
       await this.$store.dispatch('meetingTimes/editMeetingTime', this.getTransformedDataForRequest());
       this.closeDialog();
     },
-    async deleteSitDownMeetingTime(id) {
-      const confirmed = confirm(`Opravdu chcete smazat sitdown (id: ${id})?`);
-
-      if (confirmed) {
-        await this.$store.dispatch('meetingTimes/deleteMeetingTime', id);
-      }
+    async deleteSitDownMeetingTime(meetingTime) {
+      this.$refs.deleteMeetingTimeDialog.openDialog({
+        title: `Opravdu chcete smazat čas konání sitdownu (${meetingTime.name})?`,
+        confirmAction: () => this.$store.dispatch('meetingTimes/deleteMeetingTime', meetingTime.id),
+      });
     },
     customSort(items, index, isDesc) {
       items.sort((a, b) => {
