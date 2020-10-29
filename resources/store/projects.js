@@ -41,10 +41,10 @@ export const mutations = {
         isActive: p.is_active === 1,
         slackChannelName: p.slackChannel ? p.slackChannel.channel_name : '',
         teamLeader: {
-          id: p.projectUser && p.projectUser.user ? p.projectUser.user.id : null,
+          id: p.projectUser && p.projectUser[0] && p.projectUser[0].user ? p.projectUser[0].user.id : null,
           name:
-            p.projectUser && p.projectUser.user
-              ? `${p.projectUser.user.first_name} ${p.projectUser.user.last_name}`
+            p.projectUser && p.projectUser[0] && p.projectUser[0].user
+              ? `${p.projectUser[0].user.first_name} ${p.projectUser[0].user.last_name}`
               : '',
         },
         meetingTime: {
