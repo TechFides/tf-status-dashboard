@@ -30,37 +30,13 @@
         </v-card>
       </v-dialog>
       <v-flex md1 class="pad">
-        <v-dialog
-          ref="dialogMonth"
-          v-model="statisticsMonthDialog.isOpen"
-          :return-value.sync="statisticsMonthDialog.month"
-          persistent
-          width="290px"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <div class="month-picker">
-              <v-text-field
-                v-model="statisticsMonthDialog.month"
-                label="Měsíc"
-                append-icon="event"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-              />
-            </div>
-          </template>
-          <v-date-picker
-            v-model="statisticsMonthDialog.month"
-            scrollable
-            type="month"
-            header-color="blue darken-2"
-            color="blue darken-2"
-          >
-            <v-spacer />
-            <v-btn text color="primary" @click="statisticsMonthDialog.isOpen = false"> Zrušit </v-btn>
-            <v-btn text color="primary" @click="updateMonth($refs.dialogMonth)"> OK </v-btn>
-          </v-date-picker>
-        </v-dialog>
+        <DatePicker
+          v-model="statisticsMonthDialog.month"
+          label="Měsíc"
+          :clearable="false"
+          type="month"
+          date-format="YYYY-MM"
+        />
       </v-flex>
     </v-layout>
 
@@ -206,8 +182,12 @@
 <script>
 import { mapState } from 'vuex';
 import { format } from 'date-fns';
+import DatePicker from '../../resources/components/common/DatePicker';
 
 export default {
+  components: {
+    DatePicker,
+  },
   data() {
     return {
       sortBy: 'monthXp',
@@ -394,6 +374,14 @@ export default {
       );
     },
   },
+  watch: {
+    statisticsMonthDialog: {
+      handler() {
+        this.updateMonth();
+      },
+      deep: true,
+    },
+  },
   async fetch({ store }) {
     const now = new Date();
     const params = {
@@ -491,13 +479,12 @@ export default {
       return format(d, 'DD. MM.');
     },
 
-    updateMonth(monthInput) {
+    updateMonth() {
       if (!this.statisticsMonthDialog.month) {
         this.statisticsMonthDialog.isOpen = false;
         return;
       }
 
-      monthInput.save(this.statisticsMonthDialog.month);
       this.selectedDate = this.statisticsMonthDialog.month;
 
       const [year, month] = this.statisticsMonthDialog.month.split('-');
