@@ -19,10 +19,11 @@
             </v-alert>
           </v-row>
         </v-card-text>
+
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" text @click.native="closeTeamleaderModal"> Zrušit </v-btn>
-          <v-btn color="blue darken-1" text @click.native="saveTeamleaderModal"> Uložit </v-btn>
+          <v-btn text @click.native="closeTeamleaderModal"> Zrušit </v-btn>
+          <v-btn color="blue darken-2" dark @click.native="saveTeamleaderModal"> Uložit </v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
