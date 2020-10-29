@@ -74,7 +74,7 @@ export default {
   computed: {
     ...mapState(['errors', 'meetingTimes']),
     projectDialogTitle() {
-      return this.modalItem.id ? 'Vytvořit projekt' : 'Editovat projekt';
+      return this.modalItem.id ? 'Editovat projekt' : 'Vytvořit projekt';
     },
     formattedMeetingTimesForSelect() {
       return [
