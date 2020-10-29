@@ -23,7 +23,7 @@
         </div>
       </div>
     </v-card>
-    <ConfirmDialog default-title="Opravdu chcete označit poznámku za dokončenou?" ref="deleteNoteDialog" />
+    <ConfirmDialog default-title="Opravdu chcete označit cíl za dokončenou?" ref="deleteNoteDialog" />
   </div>
 </template>
 
