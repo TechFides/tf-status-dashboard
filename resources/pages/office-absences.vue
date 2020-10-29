@@ -27,6 +27,7 @@
         class="elevation-1 fullscreen"
         :sort-by="sortBy"
         sort-desc
+        :page.sync="page"
         @item-expanded="getRowId"
       >
         <template v-slot:item="{ item, expand, isExpanded }">
@@ -123,6 +124,7 @@ export default {
         absenceState: '',
       },
       expandedRowId: null,
+      page: 1,
     };
   },
   computed: {
@@ -214,6 +216,7 @@ export default {
     filter: {
       handler() {
         this.$store.dispatch('officeAbsences/getOfficeAbsences', this.filter);
+        this.resetTablePage();
       },
       deep: true,
     },
@@ -285,6 +288,9 @@ export default {
         }
       });
       return items;
+    },
+    resetTablePage() {
+      this.page = 1;
     },
   },
 };
