@@ -39,7 +39,7 @@
           </v-row>
           <v-row>
             <v-col class="pl-11 pr-11 pt-0">
-              <v-textarea v-model="dialogData.description" label="Popis práce" :rules="[rules.required]" />
+              <v-textarea v-model="dialogData.description" label="Popis práce" />
             </v-col>
           </v-row>
         </v-card-text>
