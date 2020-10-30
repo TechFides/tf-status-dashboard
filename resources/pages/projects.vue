@@ -54,6 +54,7 @@
       <ProjectDialog ref="refProjectDialog" />
       <TeamLeaderDialog ref="refTeamLeaderDialog" />
     </v-card>
+    <ConfirmDialog ref="deleteProjectDialog" />
   </v-layout>
 </template>
 
@@ -62,11 +63,13 @@ import { mapState } from 'vuex';
 import format from 'date-fns/format';
 import ProjectDialog from '../components/project/dialogs/ProjectDialog';
 import TeamLeaderDialog from '../components/project/dialogs/TeamLeaderDialog';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 
 export default {
   components: {
     ProjectDialog,
     TeamLeaderDialog,
+    ConfirmDialog,
   },
   data() {
     return {
@@ -154,12 +157,13 @@ export default {
       this.$refs.refProjectDialog.openDialog(project);
     },
     async deleteProject(item) {
-      const confirmed = confirm(`Opravdu chcete smazat projekt ${item.code}?`);
-
-      if (confirmed) {
-        await this.$store.dispatch('projects/deleteProject', item.id);
-        await this.$store.dispatch('projects/getAllProjects');
-      }
+      this.$refs.deleteProjectDialog.openDialog({
+        title: `Opravdu chcete smazat projekt ${item.code}?`,
+        confirmAction: async () => {
+          await this.$store.dispatch('projects/deleteProject', item.id);
+          await this.$store.dispatch('projects/getAllProjects');
+        },
+      });
     },
     addTeamleader(teamLeader) {
       this.$refs.refTeamLeaderDialog.openDialog(teamLeader);

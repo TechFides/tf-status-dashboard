@@ -30,6 +30,8 @@ const AUTHORIZATION_MEETING_TIMES = 'authorization:meeting-times';
 const AUTHORIZATION_CONFIGURATION = 'authorization:configuration';
 const AUTHORIZATION_SITDOWN_RATING = 'authorization:sitdown-rating';
 const AUTHORIZATION_MANAGE_GAME = 'authorization:manage-game';
+const AUTHORIZATION_MANAGE_PROJECT_NOTES = 'authorization:manage-project-notes';
+const AUTHORIZATION_MANAGE_SITDOWNS = 'authorization:manage-sitdowns';
 
 /******************************************************************************
  * AUTH
@@ -43,6 +45,7 @@ Route.get('/api/auth/me', 'AuthController.me');
  *****************************************************************************/
 Route.get('/auth/google', 'GoogleLoginController.redirect');
 Route.get('/authenticated/google', 'GoogleLoginController.callback');
+Route.get('/auth/google/register-token', 'GoogleLoginController.registerToken');
 
 /******************************************************************************
  * CONFIGURATION
@@ -82,13 +85,17 @@ Route.delete('/api/meeting-times/:id', 'MeetingTimeController.deleteMeetingTime'
  * NOTES
  *****************************************************************************/
 Route.get('/api/notes', 'NoteController.getNotes').middleware([AUTH, AUTHORIZATION_SITDOWN]);
+Route.get('/api/notes', 'NoteController.getNotes').middleware([AUTH, AUTHORIZATION_SITDOWN]);
 Route.post('/api/notes', 'NoteController.createNote')
   .validator('StoreNoteValidator')
-  .middleware([AUTH, AUTHORIZATION_SITDOWN]);
+  .middleware([AUTH, AUTHORIZATION_MANAGE_PROJECT_NOTES]);
 Route.put('/api/notes/:id', 'NoteController.editNote')
   .validator('StoreNoteValidator')
-  .middleware([AUTH, AUTHORIZATION_SITDOWN]);
-Route.post('/api/notes/:id/completed', 'NoteController.markCompleted').middleware([AUTH, AUTHORIZATION_SITDOWN]);
+  .middleware([AUTH, AUTHORIZATION_MANAGE_PROJECT_NOTES]);
+Route.post('/api/notes/:id/completed', 'NoteController.markCompleted').middleware([
+  AUTH,
+  AUTHORIZATION_MANAGE_PROJECT_NOTES,
+]);
 
 /******************************************************************************
  * PROJECTS
@@ -116,9 +123,9 @@ Route.post('/api/projectRatings', 'ProjectRatingController.setProjectRating').mi
  * SITDOWNS
  *****************************************************************************/
 Route.get('/api/sitdowns', 'SitdownController.getSitdowns').middleware([AUTH, AUTHORIZATION_SITDOWN]);
-Route.post('/api/sitdowns', 'SitdownController.createSitdown').middleware([AUTH, AUTHORIZATION_SITDOWN]);
-Route.delete('/api/sitdowns/:id', 'SitdownController.deleteSitdown').middleware([AUTH, AUTHORIZATION_SITDOWN]);
-Route.put('/api/sitdowns/:id', 'SitdownController.editSitdown').middleware([AUTH, AUTHORIZATION_SITDOWN]);
+Route.post('/api/sitdowns', 'SitdownController.createSitdown').middleware([AUTH, AUTHORIZATION_MANAGE_SITDOWNS]);
+Route.delete('/api/sitdowns/:id', 'SitdownController.deleteSitdown').middleware([AUTH, AUTHORIZATION_MANAGE_SITDOWNS]);
+Route.put('/api/sitdowns/:id', 'SitdownController.editSitdown').middleware([AUTH, AUTHORIZATION_MANAGE_SITDOWNS]);
 
 /******************************************************************************
  * STATISTICS
@@ -166,11 +173,11 @@ Route.post('/api/office-absence/approve-absence-state', 'OfficeAbsenceController
 Route.post('/api/office-absence/reject-absence-state', 'OfficeAbsenceController.rejectAbsenceState');
 Route.post('/api/office-absences/cancel', 'OfficeAbsenceController.cancelOfficeAbsence').middleware([
   AUTH,
-  AUTHORIZATION_ADMIN,
+  AUTHORIZATION_OFFICE_ABSENCES,
 ]);
 Route.delete('/api/office-absences/:id', 'OfficeAbsenceController.deleteOfficeAbsence').middleware([
   AUTH,
-  AUTHORIZATION_ADMIN,
+  AUTHORIZATION_OFFICE_ABSENCES,
 ]);
 
 /******************************************************************************

@@ -71,16 +71,21 @@ build:
   tags:
     - docker
 
-deploy:dev:
-  extends: .deploy
+deploy:staging:
+  stage: deploy
   only:
     - develop
-  variables:
-    TARGET_SOURCES_PATH: $DEV_TARGET_SOURCES_PATH
-    TARGET_INSTANCE: $DEV_TARGET_INSTANCE
+  image:
+    name: bitnami/kubectl:1.19
+    entrypoint: [""]
+  script:
+    - kubectl -n tf-platform-staging set image deployment/tf-hub tf-hub=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
   environment:
-    name: dev
-    url: https://dev.projects.status.techfides.cz/
+    name: staging
+    url: https://hub-staging.techfides.app
+  dependencies: []
+  tags:
+    - docker
 
 deploy:production:
   extends: .deploy

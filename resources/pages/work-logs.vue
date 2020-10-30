@@ -87,6 +87,7 @@
     <v-row>
       <v-col cols="6" class="time-spent-sum pl-6" />
     </v-row>
+    <ConfirmDialog ref="deleteWorklogDialog" default-title="Opravdu chcete smazat tento worklog?" />
   </div>
 </template>
 
@@ -94,6 +95,7 @@
 import { mapState } from 'vuex';
 import WorkLogDialog from '../components/workLogs/dialogs/WorkLogDialog';
 import DatePicker from '../components/common/DatePicker';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 import moment from 'moment';
 
 export default {
@@ -101,6 +103,7 @@ export default {
   components: {
     WorkLogDialog,
     DatePicker,
+    ConfirmDialog,
   },
   data() {
     return {
@@ -261,11 +264,9 @@ export default {
   },
   methods: {
     async deleteItem(item) {
-      const confirmed = confirm(`Opravdu chcete smazat tento worklog?`);
-
-      if (confirmed) {
-        await this.$store.dispatch('workLogs/deleteWorkLog', item.id);
-      }
+      this.$refs.deleteWorklogDialog.openDialog({
+        confirmAction: () => this.$store.dispatch('workLogs/deleteWorkLog', item.id),
+      });
     },
     resetFilters() {
       this.filter = { ...this.defaultFilter };

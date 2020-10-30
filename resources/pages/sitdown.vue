@@ -15,7 +15,7 @@
         <DatePicker v-model="filter.sitdownMonth" label="Měsíc" :clearable="false" type="month" date-format="YYYY-MM" />
       </v-col>
       <v-btn
-        v-show="isAdministration()"
+        v-show="isAdministration() || hasPermission('manage-sitdowns')"
         :class="$device.isDesktop ? 'mt-2 ml-4' : 'mb-4'"
         color="light-blue accent-4"
         dark
@@ -25,6 +25,7 @@
         Přidat sitdown
       </v-btn>
       <v-btn
+        v-show="isAdministration() || hasPermission('manage-project-notes')"
         color="green darken-2"
         dark
         right
@@ -96,7 +97,7 @@
                 :on-submit="openGifDialog"
               />
             </td>
-            <td class="text-left">
+            <td v-if="isAdministration() || hasPermission('manage-sitdowns')" class="text-left">
               <v-icon class="mr-2" @click="editSitdown(props.item.sitdown)"> edit </v-icon>
               <v-icon @click="deleteSitdown(props.item.sitdown)"> delete </v-icon>
             </td>
@@ -104,9 +105,10 @@
         </template>
       </v-data-table>
     </v-card>
-    <note-list :editable="isAdministration()" @edit="editNote" />
+    <note-list :editable="Boolean(isAdministration() || hasPermission('manage-project-notes'))" @edit="editNote" />
     <note-dialog ref="refNoteDialog" />
-    <SitdownDialog ref="refSitdownDialog" />
+    <SitdownDialog ref="refSitdownDialog" :action-after-submit="fetchSitdowns" />
+    <ConfirmDialog ref="deleteSitdownDialog" />
   </div>
 </template>
 
@@ -118,9 +120,11 @@ import ProjectStatusPicker from '../components/sitdown/dialogs/ProjectStatusPick
 import { parse, format } from 'date-fns';
 import { mapState } from 'vuex';
 import DatePicker from '../../resources/components/common/DatePicker';
+import ConfirmDialog from '../../resources/components/common/ConfirmDialog';
 
 export default {
   components: {
+    ConfirmDialog,
     ProjectStatusPicker,
     NoteList,
     NoteDialog,
@@ -302,16 +306,19 @@ export default {
       setTimeout(() => (this.gifDialog.isOpen = false), this.GIF_ANIMATION_DURATION);
     },
     async deleteSitdown(sitdown) {
-      const confirmed = confirm(`Opravdu chcete smazat sitdown ${this.formatDate(sitdown.date)}?`);
       this.sitdownDialog = {
         id: sitdown.id,
         date: parse(sitdown.date),
         selectedDate: this.selectedDate,
       };
 
-      if (confirmed) {
-        await this.$store.dispatch('sitdowns/deleteSitdown', this.sitdownDialog);
-      }
+      this.$refs.deleteSitdownDialog.openDialog({
+        title: `Opravdu chcete smazat sitdown ${this.formatDate(sitdown.date)}?`,
+        confirmAction: () => this.$store.dispatch('sitdowns/deleteSitdown', this.sitdownDialog),
+      });
+    },
+    async fetchSitdowns() {
+      await this.$store.dispatch('sitdowns/getProjectRating', new Date(this.filter.sitdownMonth));
     },
   },
 };

@@ -2,13 +2,13 @@
 
 set -e
 
-npx adonis migration:run --force
-npx adonis seed --files='TruncateSeeder.js' --force
-npx adonis seed --files='ProjectExpModifierSeeder.js' --force
-npx adonis seed --files='ProjectSeeder.js' --force
-npx adonis seed --files='SitdownProjectRatingEnumSeeder.js' --force
-npx adonis seed --files='SitdownSeeder.js' --force
-npx adonis seed --files='UserSeeder.js' --force
+node ace migration:run --force
+node ace seed --files='TruncateSeeder.js' --force
+node ace seed --files='ProjectExpModifierSeeder.js' --force
+node ace seed --files='ProjectSeeder.js' --force
+node ace seed --files='SitdownProjectRatingEnumSeeder.js' --force
+node ace seed --files='SitdownSeeder.js' --force
+node ace seed --files='UserSeeder.js' --force
 
-npx adonis seed --files='SitdownProjectRatingSeeder.js' --force
-npx adonis seed --files='MeetingTimeSeeder.js' --force
+node ace seed --files='SitdownProjectRatingSeeder.js' --force
+node ace seed --files='MeetingTimeSeeder.js' --force

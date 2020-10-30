@@ -73,7 +73,7 @@ async function getUserSlackId(email) {
   return await slackWebClient.users.lookupByEmail({ email: email });
 }
 
-async function main() {
+async function run() {
   initialization();
 
   connection.connect();
@@ -101,4 +101,4 @@ async function main() {
   connection.end();
 }
 
-main();
+module.exports = run;

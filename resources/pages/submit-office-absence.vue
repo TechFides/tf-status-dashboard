@@ -10,11 +10,8 @@
           max-width="125"
         />
         <v-img v-else class="thumb-up" src="/reject_absence.png" max-height="125" max-width="125" />
-        <h2 v-if="approverDecisionId === '1'">
-          <strong>Žádost nepřítomnosti byla schválena</strong>
-        </h2>
-        <h2 v-else>
-          <strong>Žádost nepřítomnosti byla zamítnuta</strong>
+        <h2>
+          <strong>{{ title }}</strong>
         </h2>
       </div>
       <div v-if="error" class="redirect-message">
@@ -29,6 +26,16 @@
 const APPROVER_DECISION_ENUM = {
   APPROVED: '1',
   REJECTED: '2',
+};
+
+const ABSENCE_STATE_ENUM = {
+  APPROVED: 1,
+  REJECTED: 2,
+  AWAITING_CANCELLATION_APPROVAL: 3,
+  DONE: 4,
+  CANCELED: 5,
+  WAITING_FOR_APPROVAL: 6,
+  REJECT_CANCELLATION: 7,
 };
 
 const handleFeedbackError = ({ response }) => {
@@ -69,10 +76,30 @@ export default {
       redirect: false,
       error: null,
       approverDecisionId: null,
+      absenceState: null,
     };
+  },
+  computed: {
+    title() {
+      const approverDecision = this.approverDecisionId === APPROVER_DECISION_ENUM.APPROVED ? 'schválena' : 'zamítnuta';
+      switch (this.absenceState.id) {
+        case ABSENCE_STATE_ENUM.AWAITING_CANCELLATION_APPROVAL:
+        case ABSENCE_STATE_ENUM.CANCELED:
+        case ABSENCE_STATE_ENUM.REJECT_CANCELLATION:
+          return `Žádost o zrušení nepřítomnosti byla ${approverDecision}`;
+        case ABSENCE_STATE_ENUM.WAITING_FOR_APPROVAL:
+        case ABSENCE_STATE_ENUM.REJECTED:
+        case ABSENCE_STATE_ENUM.APPROVED:
+          return `Žádost nepřítomnosti byla ${approverDecision}`;
+        default:
+          return `Žádost byla ${approverDecision}`;
+      }
+    },
   },
   async asyncData({ route, store, redirect, $axios }) {
     try {
+      const absenceRequest = await $axios.get(`/api/office-absence/${route.query.officeAbsenceId}`);
+
       if (route.query.approverDecisionId === APPROVER_DECISION_ENUM.APPROVED) {
         await $axios.post('/api/office-absence/approve-absence-state', {
           token: route.query.token,
@@ -84,7 +111,12 @@ export default {
           officeAbsenceId: route.query.officeAbsenceId,
         });
       }
-      return { loading: false, submitted: true, approverDecisionId: route.query.approverDecisionId };
+      return {
+        loading: false,
+        submitted: true,
+        approverDecisionId: route.query.approverDecisionId,
+        absenceState: absenceRequest.data.absenceStateEnum,
+      };
     } catch (error) {
       return handleFeedbackError(error);
     }

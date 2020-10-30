@@ -1,6 +1,6 @@
 <template>
   <v-layout column justify-center align-end>
-    <v-btn color="blue darken-2" dark class="button" @click="toggleDialogVisibility">
+    <v-btn color="blue darken-2" dark class="button" @click="() => toggleDialogVisibility()">
       <i class="material-icons">add</i>
       NOVÝ ČAS KONÁNÍ SITDOWNU
     </v-btn>
@@ -40,8 +40,8 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" text @click="toggleDialogVisibility"> Zrušit </v-btn>
-          <v-btn color="blue darken-1" text @click="submit"> Uložit </v-btn>
+          <v-btn text @click.native="toggleDialogVisibility"> Zrušit </v-btn>
+          <v-btn :color="`${dialog.isEdit ? 'blue' : 'green'} darken-2`" dark @click.native="submit"> Uložit </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -74,19 +74,22 @@
           </td>
           <td class="justify-center layout px-0">
             <v-icon small class="mr-2" @click="toggleDialogVisibility(props.item)"> edit </v-icon>
-            <v-icon small @click="deleteSitDownMeetingTime(props.item.id)"> delete </v-icon>
+            <v-icon small @click="deleteSitDownMeetingTime(props.item)"> delete </v-icon>
           </td>
         </tr>
       </template>
     </v-data-table>
+    <ConfirmDialog ref="deleteMeetingTimeDialog" />
   </v-layout>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState } from 'vuex';
 import { WEEK_DAYS } from '../constants';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 
 export default {
+  components: { ConfirmDialog },
   data() {
     return {
       sortBy: 'weekDay',
@@ -95,6 +98,7 @@ export default {
       dialog: {
         isOpen: false,
         title: '',
+        isEdit: false,
       },
       formData: {
         name: '',
@@ -162,6 +166,7 @@ export default {
 
       isEdit ? this.setDataForEdit(dataForEdit) : this.resetData();
       this.dialog.title = this.getTitle(isEdit);
+      this.dialog.isEdit = isEdit;
       this.dialog.isOpen = !this.dialog.isOpen;
     },
     resetData() {
@@ -200,12 +205,11 @@ export default {
       await this.$store.dispatch('meetingTimes/editMeetingTime', this.getTransformedDataForRequest());
       this.closeDialog();
     },
-    async deleteSitDownMeetingTime(id) {
-      const confirmed = confirm(`Opravdu chcete smazat sitdown (id: ${id})?`);
-
-      if (confirmed) {
-        await this.$store.dispatch('meetingTimes/deleteMeetingTime', id);
-      }
+    async deleteSitDownMeetingTime(meetingTime) {
+      this.$refs.deleteMeetingTimeDialog.openDialog({
+        title: `Opravdu chcete smazat čas konání sitdownu (${meetingTime.name})?`,
+        confirmAction: () => this.$store.dispatch('meetingTimes/deleteMeetingTime', meetingTime.id),
+      });
     },
     customSort(items, index, isDesc) {
       items.sort((a, b) => {

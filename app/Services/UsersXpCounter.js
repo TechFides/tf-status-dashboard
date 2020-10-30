@@ -30,7 +30,10 @@ class UsersXpCounter {
             .with('project', builder => {
               builder
                 .with('projectUser', builder => {
-                  builder.with('projectExpModifier');
+                  builder
+                    .whereRaw('YEAR(month) = ?', currentMonth.getFullYear())
+                    .andWhereRaw('MONTH(month) = ?', currentMonth.getMonth() + 1)
+                    .with('projectExpModifier');
                 })
                 .with('sitdownProjectRating', builder => {
                   builder
@@ -70,7 +73,7 @@ class UsersXpCounter {
         userDetailStatistics: s.projectParticipations.map(p => ({
           code: p.project.code,
           projectExpModifierName: this.getProjectExpModifierName(
-            this.getExpModifier(p.project.projectUser, s.id, allUsersTimespent),
+            this.getExpModifier(p.project.projectUser && p.project.projectUser[0], s.id, allUsersTimespent),
           ),
           timeSpent: this.getTimeSpentInHours(p.time_spent),
           coefficient: this.getProjectCoefficient(p.time_spent),

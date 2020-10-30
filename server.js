@@ -31,6 +31,7 @@ new Ignitor(require('@adonisjs/fold'))
     }
 
     use('App/Services/FeedbackScheduler').schedule();
+    use('App/Services/SchedulerService').scheduleJobs();
 
     return use('App/Services/Nuxt').build();
   })

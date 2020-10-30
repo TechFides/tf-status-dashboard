@@ -22,4 +22,6 @@ WORKDIR /usr/src/app
 
 EXPOSE 3333 9229
 
-CMD ENV_SILENT=true node server.js
+ENV ENV_SILENT=true
+
+CMD node ./ace migration:run --force && node server.js

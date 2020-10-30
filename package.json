@@ -14,9 +14,7 @@
     "precommit": "npm run lint",
     "lint": "prettier --check ./resources/**/*.{js,vue} ./app/**/*.js ./database/**/*.js ./start/**/*.js && eslint --max-warnings 0 --ext .js,.vue resources/ app/",
     "lint:fix": "prettier --write ./resources/**/*.{js,vue} ./app/**/*.js ./database/**/*.js ./start/**/*.js && eslint --fix --max-warnings 0 --ext .js,.vue resources/ app/",
-    "google:accounts:sync": "node app/Services/GoogleAccountsSyncScript.js",
-    "slack:bot": "node app/Services/SlackBot.js",
-    "message:scheduler": "node app/Services/MessageScheduler.js"
+    "google:accounts:sync": "node app/Services/GoogleAccountsSyncScript.js"
   },
   "dependencies": {
     "@adonisjs/ace": "^5.0.8",

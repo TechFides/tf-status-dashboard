@@ -99,7 +99,7 @@ function getUnixTimestamp(time, weekDay) {
   );
 }
 
-async function main() {
+async function run() {
   initialization();
 
   connection.connect();
@@ -118,4 +118,4 @@ async function main() {
   connection.end();
 }
 
-main();
+module.exports = run;
