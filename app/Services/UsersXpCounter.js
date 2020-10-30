@@ -82,7 +82,7 @@ class UsersXpCounter {
             this.getRatings(p.project.sitdownProjectRating, sitdowns),
             this.getProjectCoefficient(p.time_spent),
             p.project.sitdownProjectRating,
-            this.getExpModifier(p.project.projectUser, s.id, allUsersTimespent),
+            this.getExpModifier(p.project.projectUser && p.project.projectUser[0], s.id, allUsersTimespent),
           ),
         })),
       }));
