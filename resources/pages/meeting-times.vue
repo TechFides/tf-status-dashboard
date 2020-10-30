@@ -1,6 +1,6 @@
 <template>
   <v-layout column justify-center align-end>
-    <v-btn color="blue darken-2" dark class="button" @click="toggleDialogVisibility">
+    <v-btn color="blue darken-2" dark class="button" @click="() => toggleDialogVisibility()">
       <i class="material-icons">add</i>
       NOVÝ ČAS KONÁNÍ SITDOWNU
     </v-btn>
@@ -40,8 +40,8 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" text @click="toggleDialogVisibility"> Zrušit </v-btn>
-          <v-btn color="blue darken-1" text @click="submit"> Uložit </v-btn>
+          <v-btn text @click.native="toggleDialogVisibility"> Zrušit </v-btn>
+          <v-btn :color="`${dialog.isEdit ? 'blue' : 'green'} darken-2`" dark @click.native="submit"> Uložit </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -98,6 +98,7 @@ export default {
       dialog: {
         isOpen: false,
         title: '',
+        isEdit: false,
       },
       formData: {
         name: '',
@@ -165,6 +166,7 @@ export default {
 
       isEdit ? this.setDataForEdit(dataForEdit) : this.resetData();
       this.dialog.title = this.getTitle(isEdit);
+      this.dialog.isEdit = isEdit;
       this.dialog.isOpen = !this.dialog.isOpen;
     },
     resetData() {
