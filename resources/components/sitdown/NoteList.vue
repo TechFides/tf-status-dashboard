@@ -23,15 +23,20 @@
         </div>
       </div>
     </v-card>
+    <ConfirmDialog default-title="Opravdu chcete označit cíl za dokončenou?" ref="deleteNoteDialog" />
   </div>
 </template>
 
 <script>
 import { format, parse, isPast, isToday } from 'date-fns';
 import { mapState } from 'vuex';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 export default {
   name: 'NoteList',
+  components: {
+    ConfirmDialog,
+  },
   props: {
     editable: {
       type: Boolean,
@@ -70,9 +75,9 @@ export default {
       return format(parse(date), 'D. M. YYYY');
     },
     markNoteCompleted(note) {
-      if (confirm('Opravdu chcete označit poznámku za dokončenou?')) {
-        this.$store.dispatch('notes/markNoteCompleted', note.id);
-      }
+      this.$refs.deleteNoteDialog.openDialog({
+        confirmAction: () => this.$store.dispatch('notes/markNoteCompleted', note.id),
+      });
     },
   },
 };

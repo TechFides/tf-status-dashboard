@@ -34,8 +34,8 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" text @click.native="close"> Zrušit </v-btn>
-          <v-btn color="blue darken-1" text @click.native="save"> Uložit </v-btn>
+          <v-btn text @click.native="close"> Zrušit </v-btn>
+          <v-btn :color="`${this.modalItem.id ? 'blue' : 'green'} darken-2`" dark @click.native="save"> Uložit </v-btn>
         </v-card-actions>
       </v-form>
     </v-card>

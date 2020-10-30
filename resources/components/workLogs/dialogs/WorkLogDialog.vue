@@ -46,7 +46,9 @@
         <v-card-actions>
           <v-spacer />
           <v-btn text @click.native="cancelDialog"> Zrušit </v-btn>
-          <v-btn color="green darken-2" dark @click.native="confirmDialog"> Potvrdit </v-btn>
+          <v-btn :color="`${dialogType ? 'green' : 'blue'} darken-2`" dark @click.native="confirmDialog">
+            Potvrdit
+          </v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
