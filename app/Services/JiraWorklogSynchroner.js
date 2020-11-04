@@ -39,7 +39,7 @@ class JiraWorklogSynchroner {
   async getProjectIssuesFromJira() {
     const startOfMonth = format(currentMonth, 'YYYY-MM-DD');
     const endOfMonth = format(nextMonth, 'YYYY-MM-DD');
-    const MAX_RESULT = 1000;
+    const MAX_RESULT = 100;
     let startAt = 0;
     let allIssues = [];
     let issues;
