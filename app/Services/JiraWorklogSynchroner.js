@@ -144,18 +144,20 @@ class JiraWorklogSynchroner {
     const users = (await UserModel.query().fetch()).toJSON();
 
     for (const user of users) {
-      let jiraUser;
-      try {
-        jiraUser = await this.getUserFromJira(user.email);
-        if (jiraUser.data[0]) {
-          UserIdMap.set(jiraUser.data[0].accountId, user.id);
-          Logger.info(`Setting accountId ${jiraUser.data[0].accountId} for userId ${user.id} by email ${user.email}`);
-        } else {
-          Logger.info(`Email ${user.email} not found in jira, skipping user`);
+      if (user.email) {
+        let jiraUser;
+        try {
+          jiraUser = await this.getUserFromJira(user.email);
+          if (jiraUser.data[0]) {
+            UserIdMap.set(jiraUser.data[0].accountId, user.id);
+            Logger.info(`Setting accountId ${jiraUser.data[0].accountId} for userId ${user.id} by email ${user.email}`);
+          } else {
+            Logger.info(`Email ${user.email} not found in jira, skipping user`);
+          }
+        } catch (e) {
+          Logger.error('Can not get user from jira for email: ' + user.email);
+          Logger.error(JSON.stringify(e, null, 2));
         }
-      } catch (e) {
-        Logger.error('Can not get user from jira for email: ' + user.email);
-        Logger.error(JSON.stringify(e, null, 2));
       }
     }
   }
