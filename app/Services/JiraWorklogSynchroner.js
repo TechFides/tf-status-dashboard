@@ -90,20 +90,20 @@ class JiraWorklogSynchroner {
 
       for (const worklog of worklogs.data.worklogs) {
         if (this.isDateInThisMonth(worklog.started)) {
-          let isUser = usersProject.find(u => u.accountId === UserIdMap.get(worklog.author.accountId));
+          let isUser = usersProject.find(u => u.userId === UserIdMap.get(worklog.author.accountId));
 
           if (isUser) {
-            let userId = usersProject.findIndex(
-              u => u.accountId === UserIdMap.get(worklog.author.accountId) && u.projectId === projectId,
+            let userIndex = usersProject.findIndex(
+              u => u.userId === UserIdMap.get(worklog.author.accountId) && u.projectId === projectId,
             );
 
-            if (userId >= 0) {
-              usersProject[userId].timeSpent += worklog.timeSpentSeconds;
+            if (userIndex >= 0) {
+              usersProject[userIndex].timeSpent += worklog.timeSpentSeconds;
             } else {
               userObj = {
                 projectId: projectId,
                 timeSpent: worklog.timeSpentSeconds,
-                accountId: UserIdMap.get(worklog.author.accountId),
+                userId: UserIdMap.get(worklog.author.accountId),
               };
               usersProject.push(userObj);
             }
@@ -111,7 +111,7 @@ class JiraWorklogSynchroner {
             userObj = {
               projectId: projectId,
               timeSpent: worklog.timeSpentSeconds,
-              accountId: UserIdMap.get(worklog.author.accountId),
+              userId: UserIdMap.get(worklog.author.accountId),
             };
             usersProject.push(userObj);
           }
@@ -131,7 +131,7 @@ class JiraWorklogSynchroner {
     for (const u of usersProject) {
       if (u.accountId && u.projectId) {
         await UserProjectParticipationModel.create({
-          user_id: u.accountId,
+          user_id: u.userId,
           project_id: u.projectId,
           time_spent: u.timeSpent,
           date: currentMonth,
@@ -157,6 +157,9 @@ class JiraWorklogSynchroner {
         UserIdMap.set(jiraUser.data[0].accountId, user.id);
       }
     }
+
+    Logger.info('UserID <> Jira accont id map');
+    Logger.info(JSON.stringify(UserIdMap, null, 2));
   }
 
   isDateInThisMonth(dateToCompare) {
