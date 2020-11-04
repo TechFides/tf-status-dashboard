@@ -129,7 +129,7 @@ class JiraWorklogSynchroner {
 
   async insertWorklogToDB(usersProject) {
     for (const u of usersProject) {
-      if (u.accountId && u.projectId) {
+      if (u.userId && u.projectId) {
         await UserProjectParticipationModel.create({
           user_id: u.userId,
           project_id: u.projectId,
@@ -159,7 +159,7 @@ class JiraWorklogSynchroner {
     }
 
     Logger.info('UserID <> Jira accont id map');
-    Logger.info(JSON.stringify(UserIdMap, null, 2));
+    Logger.info(UserIdMap);
   }
 
   isDateInThisMonth(dateToCompare) {
