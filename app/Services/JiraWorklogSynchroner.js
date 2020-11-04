@@ -155,12 +155,10 @@ class JiraWorklogSynchroner {
 
       if (jiraUser.data[0]) {
         UserIdMap.set(jiraUser.data[0].accountId, user.id);
+        Logger.info(`Setting accountId ${jiraUser.data[0].accountId} for userId ${user.id} by email ${user.email}`);
+      } else {
+        Logger.info(`Email ${user.email} not found in jira, skipping user`);
       }
-    }
-
-    Logger.info('UserID <> Jira account id map');
-    for (let [key, value] of UserIdMap.entries()) {
-      Logger.info(key + ' = ' + value);
     }
   }
 
