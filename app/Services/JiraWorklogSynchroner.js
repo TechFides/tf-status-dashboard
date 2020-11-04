@@ -158,8 +158,10 @@ class JiraWorklogSynchroner {
       }
     }
 
-    Logger.info('UserID <> Jira accont id map');
-    Logger.info(UserIdMap);
+    Logger.info('UserID <> Jira account id map');
+    for (let [key, value] of UserIdMap.entries()) {
+      Logger.info(key + ' = ' + value);
+    }
   }
 
   isDateInThisMonth(dateToCompare) {
