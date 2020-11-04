@@ -54,6 +54,9 @@ class JiraWorklogSynchroner {
       allIssues = [...allIssues, ...issues.data.issues];
     } while (issues.data.total > startAt);
 
+    Logger.info(
+      `Fetched  ${allIssues.length} issues from jira for: https://techfides.atlassian.net/rest/api/latest/search?jql=worklogDate>='${startOfMonth}'&worklogDate<'${endOfMonth}'`,
+    );
     return allIssues;
   }
 
@@ -115,6 +118,8 @@ class JiraWorklogSynchroner {
         }
       }
     }
+    Logger.info('Fetched worklog time spends');
+    Logger.info(JSON.stringify(usersProject, null, 2));
     await this.insertWorklogToDB(usersProject);
   }
 
