@@ -142,9 +142,10 @@ class JiraWorklogSynchroner {
 
   async mapUserId() {
     const users = (await UserModel.query().fetch()).toJSON();
-    let jiraUser;
+    let jiraUser = { data: [] };
 
     for (const user of users) {
+      jiraUser = { data: [] };
       try {
         jiraUser = await this.getUserFromJira(user.email);
       } catch (e) {
