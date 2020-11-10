@@ -54,6 +54,9 @@ class JiraWorklogSynchroner {
       allIssues = [...allIssues, ...issues.data.issues];
     } while (issues.data.total > startAt);
 
+    Logger.info(
+      `Fetched  ${allIssues.length} issues from jira for: https://techfides.atlassian.net/rest/api/latest/search?jql=worklogDate>='${startOfMonth}'&worklogDate<'${endOfMonth}'`,
+    );
     return allIssues;
   }
 
@@ -87,20 +90,20 @@ class JiraWorklogSynchroner {
 
       for (const worklog of worklogs.data.worklogs) {
         if (this.isDateInThisMonth(worklog.started)) {
-          let isUser = usersProject.find(u => u.accountId === UserIdMap.get(worklog.author.accountId));
+          let isUser = usersProject.find(u => u.userId === UserIdMap.get(worklog.author.accountId));
 
           if (isUser) {
-            let userId = usersProject.findIndex(
-              u => u.accountId === UserIdMap.get(worklog.author.accountId) && u.projectId === projectId,
+            let userIndex = usersProject.findIndex(
+              u => u.userId === UserIdMap.get(worklog.author.accountId) && u.projectId === projectId,
             );
 
-            if (userId >= 0) {
-              usersProject[userId].timeSpent += worklog.timeSpentSeconds;
+            if (userIndex >= 0) {
+              usersProject[userIndex].timeSpent += worklog.timeSpentSeconds;
             } else {
               userObj = {
                 projectId: projectId,
                 timeSpent: worklog.timeSpentSeconds,
-                accountId: UserIdMap.get(worklog.author.accountId),
+                userId: UserIdMap.get(worklog.author.accountId),
               };
               usersProject.push(userObj);
             }
@@ -108,13 +111,15 @@ class JiraWorklogSynchroner {
             userObj = {
               projectId: projectId,
               timeSpent: worklog.timeSpentSeconds,
-              accountId: UserIdMap.get(worklog.author.accountId),
+              userId: UserIdMap.get(worklog.author.accountId),
             };
             usersProject.push(userObj);
           }
         }
       }
     }
+    Logger.info('Fetched worklog time spends');
+    Logger.info(JSON.stringify(usersProject, null, 2));
     await this.insertWorklogToDB(usersProject);
   }
 
@@ -124,9 +129,9 @@ class JiraWorklogSynchroner {
 
   async insertWorklogToDB(usersProject) {
     for (const u of usersProject) {
-      if (u.accountId && u.projectId) {
+      if (u.userId && u.projectId) {
         await UserProjectParticipationModel.create({
-          user_id: u.accountId,
+          user_id: u.userId,
           project_id: u.projectId,
           time_spent: u.timeSpent,
           date: currentMonth,
@@ -137,19 +142,22 @@ class JiraWorklogSynchroner {
 
   async mapUserId() {
     const users = (await UserModel.query().fetch()).toJSON();
-    let jiraUser;
 
     for (const user of users) {
-      try {
-        jiraUser = await this.getUserFromJira(user.email);
-      } catch (e) {
-        Logger.error('Can not get user from jira for email: ' + user.email);
-        Logger.error(JSON.stringify(e, null, 2));
-        continue;
-      }
-
-      if (jiraUser.data[0]) {
-        UserIdMap.set(jiraUser.data[0].accountId, user.id);
+      if (user.email) {
+        let jiraUser;
+        try {
+          jiraUser = await this.getUserFromJira(user.email);
+          if (jiraUser.data[0]) {
+            UserIdMap.set(jiraUser.data[0].accountId, user.id);
+            Logger.info(`Setting accountId ${jiraUser.data[0].accountId} for userId ${user.id} by email ${user.email}`);
+          } else {
+            Logger.info(`Email ${user.email} not found in jira, skipping user`);
+          }
+        } catch (e) {
+          Logger.error('Can not get user from jira for email: ' + user.email);
+          Logger.error(JSON.stringify(e, null, 2));
+        }
       }
     }
   }
