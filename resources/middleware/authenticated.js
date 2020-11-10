@@ -6,7 +6,6 @@ export default function ({ app, store, route, redirect }) {
   if (
     route.name === 'submit-google-auth' ||
     route.name === 'submit-office-absence' ||
-    route.name === 'submit-office-absence' ||
     route.name === 'submit-feedback'
   ) {
     return;

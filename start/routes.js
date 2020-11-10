@@ -144,10 +144,7 @@ Route.get('/api/office-absences', 'OfficeAbsenceController.getOfficeAbsenceList'
   AUTH,
   AUTHORIZATION_OFFICE_ABSENCES,
 ]);
-Route.get('/api/office-absence/:id', 'OfficeAbsenceController.getOfficeAbsence').middleware([
-  AUTH,
-  AUTHORIZATION_OFFICE_ABSENCES,
-]);
+Route.get('/api/office-absence/:id', 'OfficeAbsenceController.getOfficeAbsence');
 Route.get('/api/office-absences/type-enums', 'OfficeAbsenceController.getAbsenceTypeEnums').middleware([
   AUTH,
   AUTHORIZATION_OFFICE_ABSENCES,
