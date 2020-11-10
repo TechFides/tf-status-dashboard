@@ -2,6 +2,7 @@
 
 const UserModel = use('App/Models/User');
 const GoogleToken = use('App/Models/GoogleToken');
+const Logger = use('Logger');
 
 class AuthController {
   async login({ request, response, auth }) {
@@ -59,6 +60,7 @@ class AuthController {
 
       return { data: data };
     } catch (e) {
+      Logger.error('[/api/auth/me] User not authenticated - returning 401');
       response.status(401).send({ message: 'Invalid credentials' });
     }
   }

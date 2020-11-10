@@ -75,4 +75,5 @@ module.exports = {
     },
   },
   srcDir: resolve(__dirname, '..', 'resources'),
+  telemetry: false,
 };
