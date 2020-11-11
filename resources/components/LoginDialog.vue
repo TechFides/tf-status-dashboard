@@ -42,8 +42,8 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" text @click="close"> Zavřít </v-btn>
-        <v-btn color="blue darken-1" text @click="submit"> Přihlásit </v-btn>
+        <v-btn text @click="close"> Zavřít </v-btn>
+        <v-btn color="blue darken-2" dark @click="submit"> Přihlásit </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
