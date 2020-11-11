@@ -56,12 +56,14 @@ class GoogleLoginController {
       user_id: user.id,
     };
 
-    // search for existing user
-    const whereClauseForGoogleTokens = {
-      token: googleUser.getAccessToken(),
-    };
+    const googleToken = await GoogleToken.findBy('token', googleUser.getAccessToken());
 
-    return GoogleToken.findOrCreate(whereClauseForGoogleTokens, googleTokenDetails);
+    if (googleToken) {
+      googleToken.status = false;
+      googleToken.save();
+    } else {
+      GoogleToken.create(googleTokenDetails);
+    }
   }
 }
 
