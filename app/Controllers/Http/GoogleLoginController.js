@@ -69,7 +69,7 @@ class GoogleLoginController {
       await googleToken.save();
       return googleToken;
     } else {
-      return GoogleToken.create(googleTokenDetails);
+      return await GoogleToken.create(googleTokenDetails);
     }
   }
 }
