@@ -30,7 +30,7 @@ class GoogleLoginController {
       const vueAppUrl = Env.get('VUE_APP_URL');
       response.redirect(`${vueAppUrl}/submit-google-auth/?token=${googleToken.token}`);
     } catch (error) {
-      Logger.error(Logger);
+      Logger.error(error);
       return 'Unable to authenticate. Try again later';
     }
   }
