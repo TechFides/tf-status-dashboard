@@ -63,9 +63,9 @@ class GoogleLoginController {
 
     if (googleToken) {
       googleToken.status = false;
-      googleToken.save();
+      await googleToken.save();
     } else {
-      GoogleToken.create(googleTokenDetails);
+      await GoogleToken.create(googleTokenDetails);
     }
   }
 }
