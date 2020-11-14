@@ -67,10 +67,10 @@ class GoogleLoginController {
     if (googleToken) {
       googleToken.status = false;
       await googleToken.save();
+      return googleToken;
     } else {
-      await GoogleToken.create(googleTokenDetails);
+      return GoogleToken.create(googleTokenDetails);
     }
-    return googleToken;
   }
 }
 
