@@ -36,6 +36,7 @@ build:
   stage: build
   only:
     - develop
+    - master
   image: docker:19.03
   services:
     - docker:19.03-dind
