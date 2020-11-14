@@ -32,25 +32,6 @@ lint:
   tags:
     - docker
 
-.deploy:
-  stage: deploy
-  cache:
-    key: "$CI_BUILD_REF_NAME-$CI_PIPELINE_ID"
-    paths:
-      - node_modules/
-    policy: pull
-  script:
-    - cp .env.example .env
-    - npm install --unsafe-perm=true
-    - npm run build
-    - rsync -rlEci -e "ssh" --delete --delay-updates --
-      .nuxt app assets config constants database docs node_modules providers public resources start storage ace init_database.sh package.json server.js
-      "$TARGET_USER@$TARGET_SERVER:$TARGET_SOURCES_PATH/"
-    - ssh "$TARGET_USER@$TARGET_SERVER" sudo tf-projects-status-operations $TARGET_INSTANCE update
-    - ssh "$TARGET_USER@$TARGET_SERVER" sudo tf-projects-status-operations $TARGET_INSTANCE restart
-  tags:
-    - docker
-
 build:
   stage: build
   only:
@@ -88,14 +69,18 @@ deploy:staging:
     - docker
 
 deploy:production:
-  extends: .deploy
+  stage: deploy
   when: manual
-  allow_failure: false
   only:
     - master
-  variables:
-    TARGET_SOURCES_PATH: $PRODUCTION_TARGET_SOURCES_PATH
-    TARGET_INSTANCE: $PRODUCTION_TARGET_INSTANCE
+  image:
+    name: bitnami/kubectl:1.19
+    entrypoint: [""]
+  script:
+    - kubectl -n tf-platform-production set image deployment/tf-hub tf-hub=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
   environment:
     name: production
-    url: https://projects.status.techfides.cz/
+    url: https://hub.techfides.app
+  dependencies: []
+  tags:
+    - docker
