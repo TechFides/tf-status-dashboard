@@ -27,6 +27,9 @@ class GoogleLoginController {
       const gUser = await ally.driver('google').getUser();
       const googleToken = await this.registerGoogleUser(gUser);
 
+      Logger.error(gUser);
+      Logger.error(googleToken);
+
       const vueAppUrl = Env.get('VUE_APP_URL');
       response.redirect(`${vueAppUrl}/submit-google-auth/?token=${googleToken.token}`);
     } catch (error) {
