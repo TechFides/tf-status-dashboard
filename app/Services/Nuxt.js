@@ -16,13 +16,12 @@ class NuxtService {
    *
    * @return {void}
    */
-  build() {
-    this.init();
+  build(dev) {
+    this.init(dev);
     return new Builder(this.nuxt).build();
   }
 
-  init() {
-    const dev = Env.get('NODE_ENV') === 'development';
+  init(dev = Env.get('NODE_ENV') === 'development') {
     const config = Config.merge('nuxt', { dev });
     this.nuxt = new Nuxt(config);
   }
