@@ -30,6 +30,7 @@ new Ignitor(require('@adonisjs/fold'))
       Logger.level = 'debug';
       use('App/Services/Nuxt').build();
     } else {
+      Logger.info('Start in production mode');
       use('App/Services/Nuxt').init();
     }
 
