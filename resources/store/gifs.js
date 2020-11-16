@@ -4,7 +4,7 @@ export const state = () => ({
 
 export const mutations = {
   setGifs(state, gifData) {
-    state.items = gifData.data.map(g => ({
+    state.items = gifData.map(g => ({
       url: g.embed_url,
     }));
   },
@@ -12,7 +12,7 @@ export const mutations = {
 
 export const actions = {
   async getRandomGif({ dispatch, commit }, params) {
-    const gifs = await this.$axios({ baseURL: `${process.env.NUXT_ENV_GIPHY_API_URL}/v1/gifs/search`, params });
+    const gifs = await this.$axios.$get(`${process.env.NUXT_ENV_GIPHY_API_URL}/v1/gifs/search`, { params });
     commit('setGifs', gifs.data);
   },
 };
