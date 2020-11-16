@@ -31,7 +31,7 @@ new Ignitor(require('@adonisjs/fold'))
       use('App/Services/Nuxt').build();
     } else {
       Logger.info('Start in production mode');
-      use('App/Services/Nuxt').init();
+      use('App/Services/Nuxt').build();
     }
 
     use('App/Services/FeedbackScheduler').schedule();
