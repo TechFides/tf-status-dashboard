@@ -69,7 +69,6 @@ export const actions = {
   async createWorkLog({ dispatch, commit }, workLog) {
     try {
       await this.$axios.$post('/api/work-log', workLog);
-      dispatch('getWorkLogs');
       commit('errors/clearErrorState', null, { root: true });
     } catch (error) {
       if (error && error.response && error.response.data) {
