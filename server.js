@@ -28,12 +28,14 @@ new Ignitor(require('@adonisjs/fold'))
 
     if (Env.get('NODE_ENV') === 'development') {
       Logger.level = 'debug';
+      use('App/Services/Nuxt').build();
+    } else {
+      Logger.info('Start in production mode');
+      use('App/Services/Nuxt').build();
     }
 
     use('App/Services/FeedbackScheduler').schedule();
     use('App/Services/SchedulerService').scheduleJobs();
-
-    return use('App/Services/Nuxt').build();
   })
   .then(() => {
     use('Logger').info('Nuxt is ready to handle requests');
