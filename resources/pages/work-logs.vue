@@ -6,7 +6,7 @@
         <span class="pl-2"> Zalogovat čas </span>
       </v-btn>
     </v-row>
-    <WorkLogDialog ref="workLogDialog" :confirm="resetFilters" />
+    <WorkLogDialog ref="workLogDialog" :confirm="getWorkLogs" />
     <v-card class="elevation-1">
       <v-row justify="start">
         <v-col v-if="isAdministration()" cols="2" class="ml-5">
@@ -246,12 +246,17 @@ export default {
         if (this.filter.dates[0] && this.filter.dates[1]) {
           this.$store.dispatch('workLogs/getWorkLogs', this.filter);
         }
+        this.$router.push({ query: this.filter });
       },
       deep: true,
       immediate: true,
     },
   },
   async created() {
+    this.filter = {
+      ...this.filter,
+      ...this.$route.query,
+    };
     const actions = [
       this.$store.dispatch('workLogs/getWorkLogs', this.filter),
       this.$store.dispatch('users/getUsers'),
@@ -263,13 +268,13 @@ export default {
     await Promise.all(actions);
   },
   methods: {
+    getWorkLogs() {
+      this.$store.dispatch('workLogs/getWorkLogs', this.filter);
+    },
     async deleteItem(item) {
       this.$refs.deleteWorklogDialog.openDialog({
         confirmAction: () => this.$store.dispatch('workLogs/deleteWorkLog', item.id),
       });
-    },
-    resetFilters() {
-      this.filter = { ...this.defaultFilter };
     },
     createNewWorkLog() {
       this.$refs.workLogDialog.openDialog();
