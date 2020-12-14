@@ -1,3 +1,5 @@
+const moment = require('moment-timezone');
+
 const { WebClient } = require('@slack/web-api');
 const mysql = require('mysql');
 const { SYSTEM_PARAMS } = require('../../constants');
@@ -78,10 +80,10 @@ function transformProjectsToString(projects) {
 }
 
 function getUnixTimestamp(time, weekDay) {
-  const date = new Date();
-  const quarterMinute = 900000;
+  const date = moment.tz(new Date(), 'Europe/Prague');
+  const quarterMinute = 15;
   const separatedTime = time.split(':');
-  const currentDay = date.getDay();
+  const currentDay = date.day();
 
   weekDay = (weekDay + 1) % 7;
 
@@ -89,14 +91,14 @@ function getUnixTimestamp(time, weekDay) {
     return null;
   }
 
-  const distance = weekDay - currentDay;
-  date.setDate(date.getDate() + distance);
+  date.set({
+    hour: parseInt(separatedTime[0]),
+    minute: parseInt(separatedTime[1]),
+    second: parseInt(separatedTime[2]),
+  });
+  date.subtract(quarterMinute, 'minutes');
 
-  return (
-    (date.setHours(parseInt(separatedTime[0]), parseInt(separatedTime[1]), parseInt(separatedTime[2])) -
-      quarterMinute) /
-    1000
-  );
+  return date.unix();
 }
 
 async function run() {
