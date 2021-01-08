@@ -93,8 +93,8 @@ class FeedbackSchedulerService {
       };
 
       const commonEmailData = {
-        text: `Jaký jsi měl tento týden v práci?`,
-        subject: `Jaký jsi měl tento týden v práci?`,
+        text: `Jaký jsi měl/a tento týden v práci?`,
+        subject: `Jaký jsi měl/a tento týden v práci?`,
       };
 
       users.forEach(async user => {
