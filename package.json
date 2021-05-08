@@ -46,7 +46,7 @@
     "dotenv": "^8.2.0",
     "google-auth-library": "^6.1.0",
     "handlebars": "^4.7.6",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "minimist": "^1.2.5",
     "moment": "^2.29.0",
     "moment-timezone": "^0.5.32",
